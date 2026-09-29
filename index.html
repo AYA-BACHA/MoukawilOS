@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="MoukawilOS — Digital workspace for Algerian auto-entrepreneurs. Track revenue, create invoices, manage documents, and stay compliant.">
+  <title>MoukawilOS</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ===== Sidebar ===== -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">MoukawilOS</div>
+
+    <nav class="sidebar-nav">
+      <button class="nav-item active" data-screen="dashboard">
+        <svg viewBox="0 0 18 18"><rect x="2" y="2" width="5.5" height="5.5" rx="0.75"/><rect x="10.5" y="2" width="5.5" height="5.5" rx="0.75"/><rect x="2" y="10.5" width="5.5" height="5.5" rx="0.75"/><rect x="10.5" y="10.5" width="5.5" height="5.5" rx="0.75"/></svg>
+        <span>Dashboard</span>
+      </button>
+      <button class="nav-item" data-screen="invoices">
+        <svg viewBox="0 0 18 18"><path d="M4.5 1.5h6l4 4.5v10.5h-10z"/><path d="M10.5 1.5v4.5h4"/><path d="M7 9h5M7 11.5h3.5"/></svg>
+        <span>Invoices</span>
+      </button>
+      <button class="nav-item" data-screen="documents">
+        <svg viewBox="0 0 18 18"><path d="M1.5 6h15v10h-15z"/><path d="M1.5 6l2-3h5l2 3"/></svg>
+        <span>Documents</span>
+      </button>
+      <button class="nav-item" data-screen="compliance">
+        <svg viewBox="0 0 18 18"><circle cx="9" cy="9" r="7"/><path d="M6 9.5l2 2 4-4.5"/></svg>
+        <span>Compliance</span>
+      </button>
+      <button class="nav-item" data-screen="assistant">
+        <svg viewBox="0 0 18 18"><path d="M2.5 3h13v9h-7l-3.5 3v-3h-2.5z"/></svg>
+        <span>Assistant</span>
+      </button>
+      <button class="nav-item" data-screen="settings">
+        <svg viewBox="0 0 18 18"><line x1="3" y1="5" x2="15" y2="5"/><line x1="3" y1="9" x2="15" y2="9"/><line x1="3" y1="13" x2="15" y2="13"/><circle cx="6" cy="5" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="9" r="1.5" fill="currentColor" stroke="none"/><circle cx="8" cy="13" r="1.5" fill="currentColor" stroke="none"/></svg>
+        <span>Settings</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="user-avatar">AB</div>
+        <div class="user-meta">
+          <span class="user-name">Amina Benali</span>
+          <span class="user-role">Auto-entrepreneur</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===== Main ===== -->
+  <div class="main">
+
+    <header class="main-header">
+      <h1 class="page-title" id="page-title">Dashboard</h1>
+      <div class="header-actions" id="header-actions"></div>
+    </header>
+
+    <div class="main-body">
+
+      <!-- ============================================================
+           DASHBOARD
+           ============================================================ -->
+      <section class="screen active" id="screen-dashboard">
+
+        <div class="stats-row">
+          <div class="stat-item">
+            <div class="stat-label">Revenue this year</div>
+            <div class="stat-value">1 850 000 DZD</div>
+            <div class="stat-detail positive">+12% vs. last year</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">This month</div>
+            <div class="stat-value">240 000 DZD</div>
+            <div class="stat-detail">3 invoices paid</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Outstanding</div>
+            <div class="stat-value">127 000 DZD</div>
+            <div class="stat-detail">2 invoices pending</div>
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+
+          <div class="dashboard-left">
+            <!-- Recent Invoices -->
+            <div class="dashboard-section">
+              <div class="section-header">
+                <h2 class="section-title">Recent invoices</h2>
+                <a href="#" class="link" data-navigate="invoices">View all</a>
+              </div>
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Invoice</th>
+                    <th>Client</th>
+                    <th>Date</th>
+                    <th class="align-right">Amount</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="col-id">FA-2026-012</td>
+                    <td>TechVision Algérie</td>
+                    <td class="col-date">15 Sep 2026</td>
+                    <td class="col-amount">228 000 DZD</td>
+                    <td><span class="status status-paid">Paid</span></td>
+                  </tr>
+                  <tr>
+                    <td class="col-id">FA-2026-011</td>
+                    <td>Studio Andalous</td>
+                    <td class="col-date">2 Sep 2026</td>
+                    <td class="col-amount">85 000 DZD</td>
+                    <td><span class="status status-pending">Pending</span></td>
+                  </tr>
+                  <tr>
+                    <td class="col-id">FA-2026-010</td>
+                    <td>Dar Digital</td>
+                    <td class="col-date">28 Aug 2026</td>
+                    <td class="col-amount">156 000 DZD</td>
+                    <td><span class="status status-paid">Paid</span></td>
+                  </tr>
+                  <tr>
+                    <td class="col-id">FA-2026-009</td>
+                    <td>Collectif Créatif</td>
+                    <td class="col-date">15 Aug 2026</td>
+                    <td class="col-amount">42 000 DZD</td>
+                    <td><span class="status status-overdue">Overdue</span></td>
+                  </tr>
+                  <tr>
+                    <td class="col-id">FA-2026-008</td>
+                    <td>Espace Numérique</td>
+                    <td class="col-date">1 Aug 2026</td>
+                    <td class="col-amount">195 000 DZD</td>
+                    <td><span class="status status-paid">Paid</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="dashboard-section">
+              <h2 class="section-title" style="margin-bottom: var(--s4)">Recent activity</h2>
+              <ul class="activity-list">
+                <li>
+                  <span class="activity-date">Today</span>
+                  <span>Invoice FA-2026-012 marked as paid by TechVision Algérie</span>
+                </li>
+                <li>
+                  <span class="activity-date">15 Sep</span>
+                  <span>Invoice FA-2026-012 sent to TechVision Algérie</span>
+                </li>
+                <li>
+                  <span class="activity-date">12 Sep</span>
+                  <span>Document uploaded: Reçu CASNOS Q2 2026</span>
+                </li>
+                <li>
+                  <span class="activity-date">2 Sep</span>
+                  <span>Invoice FA-2026-011 created for Studio Andalous</span>
+                </li>
+                <li>
+                  <span class="activity-date">28 Aug</span>
+                  <span>Quarterly declaration G12bis Q2 submitted</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="dashboard-right">
+            <!-- Upcoming Obligations -->
+            <div class="dashboard-section">
+              <h2 class="section-title" style="margin-bottom: var(--s4)">Upcoming obligations</h2>
+              <div class="obligation-item">
+                <div class="obligation-name">CASNOS quarterly contribution</div>
+                <div class="obligation-meta"><span class="due-soon">Due 30 Sep 2026</span> · Est. 27 000 DZD</div>
+                <button class="btn btn-sm btn-secondary" onclick="showToast('Payment recorded')">Mark as paid</button>
+              </div>
+              <div class="obligation-item">
+                <div class="obligation-name">Quarterly declaration (G12bis)</div>
+                <div class="obligation-meta">Due 20 Oct 2026</div>
+                <button class="btn btn-sm btn-ghost" onclick="navigateTo('compliance')">View details</button>
+              </div>
+              <div class="obligation-item">
+                <div class="obligation-name">Follow up: FA-2026-009</div>
+                <div class="obligation-meta"><span class="overdue">42 000 DZD overdue since 15 Sep</span></div>
+                <button class="btn btn-sm btn-ghost" onclick="navigateTo('invoices')">View invoice</button>
+              </div>
+            </div>
+
+            <!-- Revenue Threshold -->
+            <div class="dashboard-section">
+              <h2 class="section-title" style="margin-bottom: var(--s4)">Revenue threshold</h2>
+              <div class="threshold">
+                <div class="threshold-values">
+                  <span>1 850 000 DZD</span>
+                  <span>5 000 000 DZD</span>
+                </div>
+                <div class="threshold-bar">
+                  <div class="threshold-fill" style="width: 37%"></div>
+                </div>
+                <div class="threshold-note">37% of annual limit — within threshold</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+
+      <!-- ============================================================
+           INVOICES
+           ============================================================ -->
+      <section class="screen" id="screen-invoices">
+        <p class="page-intro">Manage your invoices. Create, track, and follow up on payments.</p>
+
+        <div class="invoices-toolbar">
+          <div style="display:flex; gap: var(--s4); align-items:center">
+            <input type="text" class="search-input" placeholder="Search invoices..." id="invoice-search">
+            <div class="filter-tabs">
+              <button class="filter-tab active" data-filter="all">All</button>
+              <button class="filter-tab" data-filter="paid">Paid</button>
+              <button class="filter-tab" data-filter="pending">Pending</button>
+              <button class="filter-tab" data-filter="overdue">Overdue</button>
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="navigateTo('create-invoice')">
+            <svg viewBox="0 0 15 15"><line x1="7.5" y1="2" x2="7.5" y2="13"/><line x1="2" y1="7.5" x2="13" y2="7.5"/></svg>
+            New invoice
+          </button>
+        </div>
+
+        <table class="data-table" id="invoices-table">
+          <thead>
+            <tr>
+              <th>Invoice</th>
+              <th>Client</th>
+              <th>Date</th>
+              <th>Due date</th>
+              <th class="align-right">Amount</th>
+              <th>Status</th>
+              <th class="align-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="invoices-tbody">
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+      </section>
+
+
+      <!-- ============================================================
+           CREATE INVOICE
+           ============================================================ -->
+      <section class="screen" id="screen-create-invoice">
+        <p class="page-intro">Fill in the details below. The preview updates as you type.</p>
+
+        <div class="invoice-layout">
+          <div class="invoice-form">
+            <div class="invoice-form-section">
+              <h3 class="section-title">Invoice details</h3>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Invoice number</label>
+                  <input type="text" class="form-input" id="inv-number" value="FA-2026-013" readonly style="color: var(--text-3)">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Currency</label>
+                  <input type="text" class="form-input" value="DZD" readonly style="color: var(--text-3)">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Invoice date</label>
+                  <input type="date" class="form-input" id="inv-date" value="2026-09-29">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Due date</label>
+                  <input type="date" class="form-input" id="inv-due-date" value="2026-10-29">
+                </div>
+              </div>
+            </div>
+
+            <div class="invoice-form-section">
+              <h3 class="section-title">Client</h3>
+              <div class="form-group">
+                <label class="form-label">Client name</label>
+                <input type="text" class="form-input" id="inv-client" placeholder="e.g. Agence Atlas">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Client address <span style="color: var(--text-4); font-weight: 400">(optional)</span></label>
+                <input type="text" class="form-input" id="inv-client-address" placeholder="Street address, city">
+              </div>
+            </div>
+
+            <div class="invoice-form-section">
+              <h3 class="section-title">Line items</h3>
+              <table class="line-items-table">
+                <thead>
+                  <tr>
+                    <th>Description</th>
+                    <th>Qty</th>
+                    <th>Rate</th>
+                    <th>Amount</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="line-items-body">
+                  <tr class="line-item-row">
+                    <td><input type="text" placeholder="Service description" class="li-desc" oninput="updatePreview()"></td>
+                    <td><input type="number" class="num-input li-qty" value="1" min="0" step="1" oninput="updatePreview()"></td>
+                    <td><input type="number" class="num-input li-rate" value="0" min="0" step="500" oninput="updatePreview()"></td>
+                    <td class="line-item-total">0 DZD</td>
+                    <td>
+                      <button class="remove-line-btn" onclick="removeLineItem(this)" title="Remove">
+                        <svg viewBox="0 0 14 14"><line x1="3" y1="3" x2="11" y2="11"/><line x1="11" y1="3" x2="3" y2="11"/></svg>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <button class="add-line-btn" onclick="addLineItem()">+ Add line item</button>
+
+              <div class="invoice-totals" id="invoice-totals">
+                <div class="invoice-total-row grand">
+                  <span class="label">Total</span>
+                  <span class="value" id="invoice-grand-total">0 DZD</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="invoice-form-section">
+              <div class="form-group">
+                <label class="form-label">Notes <span style="color: var(--text-4); font-weight: 400">(optional)</span></label>
+                <textarea class="form-textarea" id="inv-notes" placeholder="Payment terms, bank details, or additional notes" oninput="updatePreview()"></textarea>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button class="btn btn-primary" onclick="createInvoice()">Create invoice</button>
+              <button class="btn btn-ghost" onclick="navigateTo('invoices')">Cancel</button>
+            </div>
+          </div>
+
+          <!-- Live Preview -->
+          <div class="preview-panel">
+            <div class="preview-label">Preview</div>
+            <div class="preview-doc" id="invoice-preview">
+              <div class="doc-header">
+                <div>
+                  <div class="doc-brand">MoukawilOS</div>
+                  <div style="font-size:8px; color: var(--text-3)">Amina Benali · Software Development</div>
+                </div>
+                <div class="doc-title">Facture</div>
+              </div>
+              <div class="doc-details">
+                <div><strong>N°</strong> <span id="pv-number">FA-2026-013</span></div>
+                <div><strong>Date</strong> <span id="pv-date">29 Sep 2026</span></div>
+                <div><strong>Client</strong> <span id="pv-client" style="color: var(--text-4)">—</span></div>
+                <div><strong>Échéance</strong> <span id="pv-due">29 Oct 2026</span></div>
+              </div>
+              <table class="doc-items-table">
+                <thead>
+                  <tr>
+                    <th>Description</th>
+                    <th class="align-right">Qté</th>
+                    <th class="align-right">Prix</th>
+                    <th class="align-right">Total</th>
+                  </tr>
+                </thead>
+                <tbody id="pv-items">
+                  <tr>
+                    <td style="color: var(--text-4)">—</td>
+                    <td class="align-right">1</td>
+                    <td class="align-right">0</td>
+                    <td class="align-right">0</td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="doc-totals">
+                <div id="pv-total" class="grand">Total: 0 DZD</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ============================================================
+           INVOICE PREVIEW
+           ============================================================ -->
+      <section class="screen" id="screen-invoice-preview">
+        <div class="invoice-preview-screen">
+          <div class="invoice-preview-actions">
+            <button class="btn btn-secondary" onclick="navigateTo('invoices')">
+              <svg viewBox="0 0 15 15"><path d="M10 2L4 7.5L10 13"/></svg>
+              Back to invoices
+            </button>
+            <button class="btn btn-secondary" onclick="showToast('PDF downloaded')">
+              <svg viewBox="0 0 15 15"><path d="M7.5 2v8M4 7.5L7.5 11 11 7.5"/><path d="M2 12v1h11v-1"/></svg>
+              Download PDF
+            </button>
+            <button class="btn btn-ghost">Edit</button>
+            <button class="btn btn-ghost">Duplicate</button>
+          </div>
+
+          <div class="invoice-document" id="invoice-document">
+            <!-- Populated by JS when viewing an invoice -->
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ============================================================
+           DOCUMENTS
+           ============================================================ -->
+      <section class="screen" id="screen-documents">
+        <p class="page-intro">Your business documents in one place. Invoices, declarations, and administrative records.</p>
+
+        <div class="invoices-toolbar" style="margin-bottom: var(--s5)">
+          <input type="text" class="search-input" placeholder="Search documents...">
+          <button class="btn btn-secondary">
+            <svg viewBox="0 0 15 15"><path d="M7.5 13V2M4 5.5L7.5 2 11 5.5"/><path d="M2 13h11"/></svg>
+            Upload document
+          </button>
+        </div>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Document</th>
+              <th>Type</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th class="align-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="font-weight: var(--w-medium)">Facture FA-2026-012</td>
+              <td><span class="doc-type-badge">Invoice</span></td>
+              <td class="col-date">15 Sep 2026</td>
+              <td><span class="status status-filed">Filed</span></td>
+              <td class="col-actions">
+                <button class="btn btn-ghost btn-sm" onclick="showToast('Document downloaded')">Download</button>
+              </td>
+            </tr>
+            <tr>
+              <td style="font-weight: var(--w-medium)">Facture FA-2026-011</td>
+              <td><span class="doc-type-badge">Invoice</span></td>
+              <td class="col-date">2 Sep 2026</td>
+              <td><span class="status status-filed">Filed</span></td>
+              <td class="col-actions">
+                <button class="btn btn-ghost btn-sm" onclick="showToast('Document downloaded')">Download</button>
+              </td>
+            </tr>
+            <tr>
+              <td style="font-weight: var(--w-medium)">Reçu CASNOS Q2 2026</td>
+              <td><span class="doc-type-badge">Receipt</span></td>
+              <td class="col-date">22 Aug 2026</td>
+              <td><span class="status status-archived">Archived</span></td>
+              <td class="col-actions">
+                <button class="btn btn-ghost btn-sm" onclick="showToast('Document downloaded')">Download</button>
+              </td>
+            </tr>
+            <tr>
+              <td style="font-weight: var(--w-medium)">Déclaration G12bis Q2 2026</td>
+              <td><span class="doc-type-badge">Declaration</span></td>
+              <td class="col-date">30 Jun 2026</td>
+              <td><span class="status status-submitted">Submitted</span></td>
+              <td class="col-actions">
+                <button class="btn btn-ghost btn-sm" onclick="showToast('Document downloaded')">Download</button>
+              </td>
+            </tr>
+            <tr>
+              <td style="font-weight: var(--w-medium)">Déclaration annuelle 2025</td>
+              <td><span class="doc-type-badge">Declaration</span></td>
+              <td class="col-date">18 Jan 2026</td>
+              <td><span class="status status-submitted">Submitted</span></td>
+              <td class="col-actions">
+                <button class="btn btn-ghost btn-sm" onclick="showToast('Document downloaded')">Download</button>
+              </td>
+            </tr>
+            <tr>
+              <td style="font-weight: var(--w-medium)">Registre de commerce</td>
+              <td><span class="doc-type-badge">Registration</span></td>
+              <td class="col-date">3 Mar 2025</td>
+              <td><span class="status status-active">Active</span></td>
+              <td class="col-actions">
+                <button class="btn btn-ghost btn-sm" onclick="showToast('Document downloaded')">Download</button>
+              </td>
+            </tr>
+            <tr>
+              <td style="font-weight: var(--w-medium)">Attestation NIF</td>
+              <td><span class="doc-type-badge">Identification</span></td>
+              <td class="col-date">15 Mar 2025</td>
+              <td><span class="status status-active">Active</span></td>
+              <td class="col-actions">
+                <button class="btn btn-ghost btn-sm" onclick="showToast('Document downloaded')">Download</button>
+              </td>
+            </tr>
+            <tr>
+              <td style="font-weight: var(--w-medium)">Certificat d'existence CASNOS</td>
+              <td><span class="doc-type-badge">Certificate</span></td>
+              <td class="col-date">10 Jan 2026</td>
+              <td><span class="status status-active">Active</span></td>
+              <td class="col-actions">
+                <button class="btn btn-ghost btn-sm" onclick="showToast('Document downloaded')">Download</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+
+      <!-- ============================================================
+           COMPLIANCE
+           ============================================================ -->
+      <section class="screen" id="screen-compliance">
+        <p class="page-intro">Track your administrative obligations. Stay ahead of deadlines so nothing catches you off guard.</p>
+
+        <div class="compliance-grid">
+          <div class="compliance-main">
+
+            <!-- Needs Attention -->
+            <div class="compliance-section">
+              <div class="section-label">Needs attention</div>
+
+              <div class="obligation-card attention">
+                <div class="ob-name">CASNOS quarterly contribution — Q3 2026</div>
+                <div class="ob-meta">Due 30 September 2026 · Estimated amount: 27 000 DZD</div>
+                <div style="display: flex; gap: var(--s3)">
+                  <button class="btn btn-sm btn-primary" onclick="showToast('Payment recorded')">Mark as paid</button>
+                  <button class="btn btn-sm btn-ghost">Remind me later</button>
+                </div>
+              </div>
+
+              <div class="obligation-card attention">
+                <div class="ob-name">Invoice FA-2026-009 — overdue</div>
+                <div class="ob-meta">42 000 DZD due from Collectif Créatif · Originally due 15 Sep 2026</div>
+                <button class="btn btn-sm btn-ghost" onclick="navigateTo('invoices')">View invoice</button>
+              </div>
+            </div>
+
+            <!-- Upcoming -->
+            <div class="compliance-section">
+              <div class="section-label">Upcoming</div>
+
+              <div class="obligation-card">
+                <div class="ob-name">Quarterly revenue declaration (G12bis) — Q3 2026</div>
+                <div class="ob-meta">Due 20 October 2026</div>
+                <div class="ob-status" style="color: var(--text-3)">Not yet started</div>
+              </div>
+
+              <div class="obligation-card">
+                <div class="ob-name">CASNOS quarterly contribution — Q4 2026</div>
+                <div class="ob-meta">Due 31 December 2026 · Estimated: 27 000 DZD</div>
+                <div class="ob-status" style="color: var(--text-3)">Not yet due</div>
+              </div>
+
+              <div class="obligation-card">
+                <div class="ob-name">Annual tax declaration (G12) — 2026</div>
+                <div class="ob-meta">Due 20 January 2027</div>
+                <div class="ob-status" style="color: var(--text-3)">Not yet due</div>
+              </div>
+            </div>
+
+            <!-- Completed -->
+            <div class="compliance-section">
+              <div class="section-label">Completed</div>
+
+              <div class="completed-list">
+                <div class="completed-item">
+                  <div class="completed-check">
+                    <svg viewBox="0 0 10 10"><path d="M2 5.5L4 7.5L8 3"/></svg>
+                  </div>
+                  <div class="completed-text">
+                    <div class="c-name">Quarterly declaration G12bis — Q2 2026</div>
+                    <div class="c-date">Submitted 28 Jun 2026</div>
+                  </div>
+                </div>
+                <div class="completed-item">
+                  <div class="completed-check">
+                    <svg viewBox="0 0 10 10"><path d="M2 5.5L4 7.5L8 3"/></svg>
+                  </div>
+                  <div class="completed-text">
+                    <div class="c-name">CASNOS contribution — Q2 2026</div>
+                    <div class="c-date">Paid 25 Jun 2026</div>
+                  </div>
+                </div>
+                <div class="completed-item">
+                  <div class="completed-check">
+                    <svg viewBox="0 0 10 10"><path d="M2 5.5L4 7.5L8 3"/></svg>
+                  </div>
+                  <div class="completed-text">
+                    <div class="c-name">Quarterly declaration G12bis — Q1 2026</div>
+                    <div class="c-date">Submitted 18 Apr 2026</div>
+                  </div>
+                </div>
+                <div class="completed-item">
+                  <div class="completed-check">
+                    <svg viewBox="0 0 10 10"><path d="M2 5.5L4 7.5L8 3"/></svg>
+                  </div>
+                  <div class="completed-text">
+                    <div class="c-name">CASNOS contribution — Q1 2026</div>
+                    <div class="c-date">Paid 22 Mar 2026</div>
+                  </div>
+                </div>
+                <div class="completed-item">
+                  <div class="completed-check">
+                    <svg viewBox="0 0 10 10"><path d="M2 5.5L4 7.5L8 3"/></svg>
+                  </div>
+                  <div class="completed-text">
+                    <div class="c-name">Annual declaration G12 — 2025</div>
+                    <div class="c-date">Submitted 18 Jan 2026</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Sidebar -->
+          <div class="compliance-aside">
+            <div class="dashboard-section">
+              <h2 class="section-title" style="margin-bottom: var(--s4)">Revenue threshold</h2>
+              <div class="threshold">
+                <div class="threshold-values">
+                  <span>1 850 000 DZD</span>
+                  <span>5 000 000 DZD</span>
+                </div>
+                <div class="threshold-bar">
+                  <div class="threshold-fill" style="width: 37%"></div>
+                </div>
+                <div class="threshold-note">37% — You are within the auto-entrepreneur annual revenue limit. No action needed.</div>
+              </div>
+            </div>
+
+            <div class="dashboard-section" style="margin-top: var(--s8)">
+              <h2 class="section-title" style="margin-bottom: var(--s4)">Quick reference</h2>
+              <div style="font-size: var(--fs-sm); color: var(--text-2); line-height: 1.6">
+                <p style="margin-bottom: var(--s3)"><strong style="font-weight: var(--w-medium); color: var(--text-1)">Tax regime:</strong> IFU (Impôt Forfaitaire Unique)</p>
+                <p style="margin-bottom: var(--s3)"><strong style="font-weight: var(--w-medium); color: var(--text-1)">Tax rate:</strong> 0.5% of revenue (services)</p>
+                <p style="margin-bottom: var(--s3)"><strong style="font-weight: var(--w-medium); color: var(--text-1)">CASNOS:</strong> Quarterly contributions</p>
+                <p><strong style="font-weight: var(--w-medium); color: var(--text-1)">Revenue limit:</strong> 5 000 000 DZD/year</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ============================================================
+           REGULATORY ASSISTANT
+           ============================================================ -->
+      <section class="screen" id="screen-assistant">
+        <div class="assistant-layout">
+          <div class="assistant-intro">
+            Answers are grounded in official Algerian regulatory texts and verified administrative procedures. Always confirm important deadlines with your local tax office.
+          </div>
+
+          <div class="chat-messages" id="chat-messages">
+
+            <div class="message">
+              <div class="message-sender user">You</div>
+              <div class="message-body">
+                <p>What are the steps after registering as an auto-entrepreneur in Algeria?</p>
+              </div>
+            </div>
+
+            <div class="message">
+              <div class="message-sender assistant">Regulatory Assistant</div>
+              <div class="message-body">
+                <p>After your registration is confirmed, you need to complete the following steps within the first 30 days:</p>
+                <ol>
+                  <li><strong>Obtain your tax identification number (NIF)</strong> from the tax inspection office (Centre des Impôts) in your registered wilaya. You will need your registration certificate and a copy of your national ID.</li>
+                  <li><strong>Register with CASNOS</strong> (Caisse Nationale de Sécurité Sociale des Non-Salariés) for social security coverage. This is mandatory even during the first year, though you benefit from a reduced rate.</li>
+                  <li><strong>Open a dedicated bank account</strong> (CCP or bank account) for your business transactions. This is required for declaring revenue and receiving payments.</li>
+                  <li><strong>Begin tracking your revenue</strong> from day one, as you will need to declare it quarterly via the G12bis form.</li>
+                </ol>
+                <p>Your first quarterly declaration is due at the end of the quarter following your registration date.</p>
+              </div>
+              <div class="message-sources">
+                <div class="sources-label">Sources</div>
+                <div class="source-item">Loi n° 22-18 du 25 juillet 2022 relative au statut de l'auto-entrepreneur — <span class="source-ref">Art. 12-15</span></div>
+                <div class="source-item">Guide pratique de l'auto-entrepreneur, ANDI — <span class="source-ref">Section 4.2, Procédures post-inscription</span></div>
+              </div>
+            </div>
+
+            <div class="message">
+              <div class="message-sender user">You</div>
+              <div class="message-body">
+                <p>What happens if I exceed the 5 million DZD revenue threshold?</p>
+              </div>
+            </div>
+
+            <div class="message">
+              <div class="message-sender assistant">Regulatory Assistant</div>
+              <div class="message-body">
+                <p>If your annual revenue exceeds 5 000 000 DZD, you lose the auto-entrepreneur status starting from the following fiscal year. Here is what that means in practice:</p>
+                <ol>
+                  <li><strong>You must register as a standard enterprise</strong> — either as a sole proprietorship (Entreprise Individuelle) or choose another legal form. This requires re-registration with the CNRC (Centre National du Registre de Commerce).</li>
+                  <li><strong>Your tax regime changes</strong> from the IFU (Impôt Forfaitaire Unique) to the regime réel, which involves more detailed accounting and potentially higher tax obligations.</li>
+                  <li><strong>You retain auto-entrepreneur status</strong> for the remainder of the year in which you crossed the threshold — the change takes effect on January 1 of the following year.</li>
+                </ol>
+                <p>It is advisable to monitor your revenue closely as you approach 80% of the threshold (4 000 000 DZD) to prepare for the transition.</p>
+              </div>
+              <div class="message-sources">
+                <div class="sources-label">Sources</div>
+                <div class="source-item">Loi n° 22-18, Art. 8 — <span class="source-ref">Conditions de perte du statut</span></div>
+                <div class="source-item">Décret exécutif n° 23-159, Art. 5 — <span class="source-ref">Modalités de transition</span></div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="chat-input-area">
+            <textarea class="chat-input" id="chat-input" placeholder="Ask about regulations, deadlines, or procedures..." rows="1" onkeydown="handleChatKey(event)"></textarea>
+            <button class="btn btn-primary" onclick="sendMessage()" id="send-btn">Send</button>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ============================================================
+           SETTINGS
+           ============================================================ -->
+      <section class="screen" id="screen-settings">
+        <div class="settings-screen">
+
+          <div class="settings-group">
+            <h2 class="section-title">Profile</h2>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Full name</label>
+                <input type="text" class="form-input" value="Amina Benali">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-input" value="amina.benali@email.com">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Phone</label>
+              <input type="tel" class="form-input" value="+213 555 12 34 56">
+            </div>
+          </div>
+
+          <div class="settings-group">
+            <h2 class="section-title">Business information</h2>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Activity</label>
+                <input type="text" class="form-input" value="Software Development">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Registration number</label>
+                <input type="text" class="form-input" value="25/00-0142857">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">NIF</label>
+                <input type="text" class="form-input" value="002345678901234">
+              </div>
+              <div class="form-group">
+                <label class="form-label">CASNOS number</label>
+                <input type="text" class="form-input" value="0142857390">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Business address</label>
+              <input type="text" class="form-input" value="12 Rue des Frères Bouadou, Bir Mourad Raïs, Alger">
+            </div>
+          </div>
+
+          <div class="settings-group">
+            <h2 class="section-title">Preferences</h2>
+            <div class="settings-row">
+              <span class="sr-label">Language</span>
+              <select class="form-select" style="width: 160px">
+                <option selected>English</option>
+                <option>Français</option>
+                <option>العربية</option>
+              </select>
+            </div>
+            <div class="settings-row">
+              <span class="sr-label">Date format</span>
+              <select class="form-select" style="width: 160px">
+                <option selected>DD MMM YYYY</option>
+                <option>DD/MM/YYYY</option>
+                <option>YYYY-MM-DD</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="settings-group">
+            <h2 class="section-title">Notifications</h2>
+            <div class="checkbox-row">
+              <input type="checkbox" id="notif-deadlines" checked>
+              <label for="notif-deadlines">Upcoming deadlines (7 days before)</label>
+            </div>
+            <div class="checkbox-row">
+              <input type="checkbox" id="notif-invoices" checked>
+              <label for="notif-invoices">Invoice payment reminders</label>
+            </div>
+            <div class="checkbox-row">
+              <input type="checkbox" id="notif-threshold">
+              <label for="notif-threshold">Revenue threshold alerts (at 80%)</label>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn btn-primary" onclick="showToast('Settings saved')">Save changes</button>
+            <button class="btn btn-ghost">Cancel</button>
+          </div>
+
+        </div>
+      </section>
+
+    </div><!-- /main-body -->
+  </div><!-- /main -->
+
+</div><!-- /app -->
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
