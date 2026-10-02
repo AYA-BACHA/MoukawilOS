@@ -7,5 +7,5 @@ This document will outline the collaborative workflow and standards for the Mouk
 ### Planned Sections
 - Monorepo branch management strategy (e.g., feature branches, PR review requirements).
 - Commit message conventions (`Conventional Commits`) and code formatting standards.
-- Testing requirements across `client/`, `server/`, and `rag/`.
+- Testing requirements across `frontend/`, `backend/`, and `rag/`.
 - Local development workflow and environment setup.

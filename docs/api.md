@@ -4,8 +4,8 @@
 
 This document will define the API specifications and service contracts for MoukawilOS.
 
-### Planned Contents
-- Server REST API routes (`server/src/routes/`), controllers, and payload validation.
+### Purpose
+- Backend REST API routes (`backend/src/routes/`), controllers, and payload validation.
 - FastAPI RAG microservice endpoints (`rag/app/api/`) and retrieval parameters.
 - Supabase client interactions, edge functions, and authentication headers.
-- Standardized error codes and response formats.
+- Standardized error response formats and HTTP status code conventions.

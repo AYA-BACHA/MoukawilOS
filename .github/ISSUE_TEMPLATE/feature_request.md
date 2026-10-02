@@ -16,8 +16,8 @@ A clear and concise description of what you want to happen.
 How does this feature support or simplify compliance for Algerian freelancers/auto-entrepreneurs?
 
 **Applicable Component**
-- [ ] Client (Next.js)
-- [ ] Server (Node.js API)
+- [ ] Frontend (Next.js)
+- [ ] Backend (Node.js API)
 - [ ] RAG Service (FastAPI)
 - [ ] Database (PostgreSQL / Supabase)
 

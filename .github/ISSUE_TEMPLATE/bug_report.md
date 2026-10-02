@@ -10,8 +10,8 @@ assignees: ''
 A clear and concise description of what the bug is.
 
 **Service / Component**
-- [ ] Client (Next.js)
-- [ ] Server (Node.js API)
+- [ ] Frontend (Next.js)
+- [ ] Backend (Node.js API)
 - [ ] RAG Service (FastAPI)
 - [ ] Database (PostgreSQL / Supabase)
 - [ ] Documentation / Tooling

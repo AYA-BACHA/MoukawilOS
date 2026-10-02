@@ -1,55 +1,67 @@
 # MoukawilOS
 
-MoukawilOS is a lightweight operational platform for Algerian digital and creative freelancers operating under the Auto-Entrepreneur framework.
+A lightweight operational platform for Algerian digital and creative freelancers operating under the Auto-Entrepreneur framework.
 
-## Project Status
+## Status
+
 **Pre-development / Sprint 0**
 
-The repository is currently configured as a development skeleton. Feature implementation and business logic will begin following the team's Sprint 1 task-assignment meeting.
+The technical skeleton has been initialized. Application features, business logic, and UI screens will be developed following the team's Sprint 1 task assignments.
 
 ---
 
-## High-Level Architecture
-
-MoukawilOS is organized as a decoupled monorepo comprising three core services and a database management tier:
+## Architecture
 
 ```text
-┌────────────────────────────────────────────────────────┐
-│                   Client (Next.js)                     │
-│   Dashboard • Invoicing UI • Document Viewer • shadcn  │
-└───────────────┬────────────────────────┬───────────────┘
-                │                        │
-       REST API │                        │ Auth / Direct Read
-                ▼                        ▼
-┌───────────────────────────┐    ┌───────────────────────┐
-│     Server (Node.js)      │    │  Supabase PostgreSQL  │
-│  API Orchestration • Auth ├───►│  RLS • pgvector Store │
-└───────────────┬───────────┘    └───────────▲───────────┘
-                │                            │
-       Internal │                            │ Vector Search
-        Service │                            │
-                ▼                            │
-┌───────────────────────────┐                │
-│    RAG Service (Python)   ├────────────────┘
-│  FastAPI • Embeddings     │
-└───────────────────────────┘
+┌─────────────────┐
+│    FRONTEND     │
+│    Next.js      │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│     BACKEND     │
+│ Node/TypeScript │
+└───────┬─┬───────┘
+        │ │
+┌───────┘ └───────┐
+▼                 ▼
+┌─────────────┐   ┌─────────────┐
+│  Supabase / │   │ RAG SERVICE │
+│ PostgreSQL  │   │Python/FastAPI│
+└─────────────┘   └─────────────┘
 ```
 
-- **Client (`client/`):** Next.js App Router frontend for user workflows, dashboard management, and client-side PDF document generation.
-- **Server (`server/`):** Node.js & TypeScript REST API coordinating business processes, service integrations, and Supabase data access.
-- **RAG Service (`rag/`):** Python / FastAPI microservice specialized in vector embeddings and regulatory knowledge retrieval.
-- **Database (`database/`):** Centralized directory for PostgreSQL schemas, `pgvector` extensions, migrations, and seed scripts.
+The system architecture follows a decoupled flow:
+- **Frontend → Backend:** The Next.js client communicates with the Node.js / TypeScript API server.
+- **Backend → Database:** The backend interacts with Supabase / PostgreSQL for transactional persistence and access controls.
+- **Backend → RAG Service:** The backend routes regulatory intelligence and context retrieval requests to the dedicated Python/FastAPI RAG microservice.
 
 ---
 
-## Planned Technology Stack
+## Technology Stack
 
-| Layer | Technologies |
-| :--- | :--- |
-| **Frontend** | Next.js (App Router), TypeScript, Tailwind CSS, shadcn/ui, `@react-pdf/renderer` |
-| **Backend** | Node.js, TypeScript, REST API (Express), Supabase / PostgreSQL |
-| **RAG Service** | Python, FastAPI, `pgvector`, LangChain |
-| **Deployment (Target)** | Vercel (Client), Render / Fly.io (Server & RAG Service), Supabase Cloud |
+### Frontend
+- Next.js (App Router)
+- TypeScript
+- Tailwind CSS
+
+### Backend
+- Node.js
+- TypeScript
+- Express / Fastify (REST API)
+
+### Database
+- Supabase
+- PostgreSQL
+- `pgvector` (planned)
+
+### RAG Service
+- Python
+- FastAPI
+- `pgvector` (planned)
+- Embeddings (planned)
+- LangChain (if required later)
 
 ---
 
@@ -57,117 +69,82 @@ MoukawilOS is organized as a decoupled monorepo comprising three core services a
 
 ```text
 moukawilos/
-├── client/                     # Next.js App Router frontend
-│   ├── app/                    # App Router routes and pages
-│   ├── components/             # Reusable UI components (shadcn/ui)
-│   ├── lib/                    # Shared client utilities
-│   ├── public/                 # Static assets
-│   ├── types/                  # TypeScript types
-│   ├── .env.example            # Client environment variables template
-│   ├── next.config.mjs         # Next.js configuration
-│   ├── package.json            # Client dependencies and scripts
-│   ├── postcss.config.mjs      # PostCSS configuration
-│   ├── tailwind.config.ts      # Tailwind CSS configuration
-│   └── tsconfig.json           # Client TypeScript configuration
-├── server/                     # Node.js / Express REST API
-│   ├── src/
-│   │   ├── config/             # Environment and client configurations
-│   │   ├── controllers/        # Request handling logic
-│   │   ├── middleware/         # Auth, validation, and error middlewares
-│   │   ├── routes/             # API route definitions
-│   │   ├── services/           # Business services
-│   │   ├── types/              # Server TypeScript definitions
-│   │   ├── utils/              # Helper functions
-│   │   └── index.ts            # Server entrypoint and healthcheck
-│   ├── tests/                  # Backend unit and integration tests
-│   ├── .env.example            # Server environment variables template
-│   ├── package.json            # Server dependencies and scripts
-│   └── tsconfig.json           # Server TypeScript configuration
-├── rag/                        # Python / FastAPI RAG Microservice
-│   ├── app/
-│   │   ├── api/                # FastAPI endpoint routers
-│   │   ├── models/             # Pydantic schemas and data models
-│   │   ├── retrieval/          # pgvector retrieval and search logic
-│   │   ├── services/           # Ingestion and embedding pipelines
-│   │   ├── utils/              # Text processing and token helpers
-│   │   └── main.py             # FastAPI entrypoint and healthcheck
-│   ├── tests/                  # RAG service test suite
-│   ├── .env.example            # RAG environment variables template
-│   └── requirements.txt        # Python dependencies
-├── database/                   # Database organization (PostgreSQL / Supabase)
-│   ├── migrations/             # Incremental migration files
-│   ├── schema/                 # DDL schemas and extension definitions
-│   ├── seeds/                  # Initial seed data
-│   └── README.md               # Database guidelines
-├── docs/                       # Project and technical documentation
-│   ├── api.md                  # API specifications
-│   ├── architecture.md         # System architecture blueprint
-│   ├── contributing.md         # Team contribution guidelines
-│   ├── database.md             # Database schema documentation
-│   ├── product.md              # Product specifications (Aya)
-│   └── rag.md                  # RAG pipeline documentation
-├── scripts/                    # Automation and tooling scripts
-├── .github/                    # GitHub workflows and issue templates
+├── frontend/          # Next.js App Router web application
+├── backend/           # Node.js & TypeScript REST API service
+├── rag/               # Python & FastAPI retrieval-augmented generation microservice
+├── database/          # Database migrations, raw schema definitions, and seed scripts
+├── docs/              # Specifications, API contracts, and team guidelines
+├── scripts/           # Automation and dev orchestration tooling
+├── .github/           # GitHub Actions workflows and issue templates
 │   ├── ISSUE_TEMPLATE/
-│   │   ├── bug_report.md
-│   │   └── feature_request.md
 │   └── workflows/
-│       └── ci.yml
-├── .env.example                # Root environment variables template
-├── .gitignore                  # Monorepo ignore rules
-├── LICENSE                     # MIT License
-└── README.md                   # Repository overview
+├── .env.example       # Root environment variable names template
+├── .gitignore         # Monorepo-wide ignore rules
+├── LICENSE            # License placeholder
+└── README.md          # Project overview and setup documentation
 ```
+
+### Purpose of Directories
+- **`frontend/`**: Hosts the client-side Next.js web application, standard App Router structure (`app/`, `components/`, `lib/`, `public/`, `types/`).
+- **`backend/`**: Hosts the core REST API backend (`src/config/`, `controllers/`, `routes/`, `services/`, `middleware/`, `utils/`, `types/`, and `tests/`).
+- **`rag/`**: Hosts the Python/FastAPI microservice for regulatory knowledge ingestion, embeddings, and vector search (`app/api/`, `services/`, `retrieval/`, `models/`, `utils/`, and `tests/`).
+- **`database/`**: Dedicated folder for organizing database assets (`migrations/`, `schema/`, `seeds/`). No active schema or tables exist yet.
+- **`docs/`**: Central knowledge base for architecture, API specs, database design, RAG documentation, product vision, and contributing guides.
+- **`scripts/`**: Repository tooling, automation, and cross-service orchestration scripts.
 
 ---
 
-## Team Roles
+## Team
 
 - **Aya** — Product Lead
-- **Backend Developer 1** — Backend & Database Architecture
-- **Backend Developer 2** — Backend Services & Integrations
-- **Data/ML Developer 1** — RAG Pipeline & Ingestion
-- **Data/ML Developer 2** — Vector Search & Model Integration
+- **Backend Developer 1**
+- **Backend Developer 2**
+- **Data/ML Developer 1**
+- **Data/ML Developer 2**
 
 ---
 
-## Development Setup
+## Development
 
-> **Status:** Coming Soon — Complete environment setup and automated orchestration scripts will be finalized during Sprint 1.
+Instructions for starting each service locally:
 
-### Running the Empty Skeletons (Preview)
-
-#### 1. Client (`client/`)
+### 1. Frontend (`frontend/`)
 ```bash
-cd client
+cd frontend
 npm install
 npm run dev
-# Running on http://localhost:3000
+# Starts on http://localhost:3000
 ```
 
-#### 2. Server (`server/`)
+### 2. Backend (`backend/`)
 ```bash
-cd server
+cd backend
 npm install
 npm run dev
-# Running on http://localhost:5000 (Health check: http://localhost:5000/health)
+# Starts on http://localhost:5000 (Health check: http://localhost:5000/health)
 ```
 
-#### 3. RAG Service (`rag/`)
+### 3. RAG Service (`rag/`)
 ```bash
 cd rag
 python -m venv .venv
-# Windows:
+
+# On Windows:
 .venv\Scripts\activate
-# macOS/Linux:
+# On macOS/Linux:
 # source .venv/bin/activate
+
 pip install -r requirements.txt
-python -m app.main
-# Running on http://localhost:8000 (Health check: http://localhost:8000/health)
+uvicorn app.main:app --reload --port 8000
+# Starts on http://localhost:8000 (Health check: http://localhost:8000/health)
 ```
 
 ---
 
-## Contribution Guidelines
+## Additional Information
 
-> **Status:** Coming Soon — Team contribution workflows, branching strategy, and PR review standards will be finalized following Sprint 1 task assignments. See [`docs/contributing.md`](docs/contributing.md) for planned guidelines.
+- **Full Application Implementation:** *Coming soon* (Sprint 1)
+- **Database Migrations & Seed Data:** *Coming soon*
+- **RAG Pipeline & Embeddings:** *Coming soon*
+- **Contribution Guidelines:** *Coming soon* (See [`docs/contributing.md`](docs/contributing.md))
+- **Production Deployment CI/CD:** *Coming soon*
