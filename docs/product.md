@@ -6,5 +6,5 @@ This document will capture the product vision, user requirements, and functional
 
 ### Planned Contents
 - Target user personas: Algerian creative and digital freelancers operating under the Auto-Entrepreneur framework.
-- Core operational modules: client & project tracking, administrative compliance, and invoice/document generation.
-- Product roadmap, release milestones, and feature priority list.
+- Core operational modules: client & project management, administrative compliance tracking, and PDF invoice generation.
+- Product roadmap, sprint milestones, and feature priority list.

@@ -1,11 +1,11 @@
 # Contributing Guide
 
-> **Status:** Placeholder — Pending Sprint 1 Task Assignment
+> **Status:** Coming Soon — Guidelines will be finalized following Sprint 1 Task Assignment
 
-This document will outline the collaborative workflow and standards for the MoukawilOS team.
+This document will outline the collaborative workflow and standards for the MoukawilOS engineering team.
 
-### Planned Contents
-- Monorepo branch management strategy (e.g., feature branches, pull request workflow).
-- Commit message conventions and code formatting guidelines.
-- Code review criteria and quality assurance checklists.
-- Local development guidelines across Frontend, Backend, and RAG services.
+### Planned Sections
+- Monorepo branch management strategy (e.g., feature branches, PR review requirements).
+- Commit message conventions (`Conventional Commits`) and code formatting standards.
+- Testing requirements across `client/`, `server/`, and `rag/`.
+- Local development workflow and environment setup.

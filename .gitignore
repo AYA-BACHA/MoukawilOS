@@ -3,13 +3,13 @@ node_modules/
 .pnp
 .pnp.js
 
-# Next.js build output
+# Build outputs
 .next/
 out/
 build/
 dist/
 
-# Python
+# Python & Virtual Environments
 __pycache__/
 *.py[cod]
 *$py.class
