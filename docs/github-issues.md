@@ -123,7 +123,7 @@ This document contains the exact formatted titles and descriptions for all 31 de
 - **Workstream:** BACKEND
 - **Dependencies:** DB-01, BE-01, BE-02
 - **Description:**
-  Develop the invoice creation service (`POST /api/invoices`, `GET /api/invoices`, `GET /api/invoices/:id`). Implement gapless, thread-safe chronological numbering in the format `FA-YYYY-NNN` resetting each calendar year. Strictly enforce immutability: once status is `pending` or `paid`, any `PUT`, `PATCH`, or `DELETE` attempt on the invoice must return HTTP 403 / 400 with a legal compliance error message.
+  Develop the invoice creation service (`POST /api/invoices`, `GET /api/invoices`, `GET /api/invoices/:id`). Implement gapless, thread-safe chronological numbering in the format `FA-YYYY-NNN` resetting each calendar year. Strictly enforce immutability: once status is `issued` (UI: `pending`) or `paid`, any `PUT`, `PATCH`, or `DELETE` attempt on the invoice must return HTTP 403 / 400 with a legal compliance error message.
 - **Definition of Done:**
   Numbering generates incrementing sequence with zero gaps; finalized invoices cannot be modified or deleted via any endpoint; invoice creation verifies that seller NIF and ANAE card exist in profile.
 

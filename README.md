@@ -1,130 +1,187 @@
 # MoukawilOS
 
-A lightweight operational platform for Algerian digital and creative freelancers operating under the Auto-Entrepreneur framework.
-
-## Status
-
-**Pre-development / Sprint 0**
-
-The technical skeleton has been initialized. Application features, business logic, and UI screens will be developed following the team's Sprint 1 task assignments.
+> **A lightweight operational platform for Algerian digital and creative freelancers operating under the Auto-Entrepreneur framework (*Loi n° 22-23*).**
 
 ---
 
-## Architecture
+## 1. Project Status
+
+**Pre-development / Sprint 0 → ready for implementation.**
+
+The technical skeleton, monorepo architecture, canonical product direction, Figma prototype alignment, developer handoff, and execution backlog have been finalized. Feature implementation will begin immediately following team sprint task assignments.
+
+---
+
+## 2. Canonical Documentation Index
+
+All technical, product, and regulatory specifications are consolidated in `docs/`:
+
+- **Product Specifications** → [`docs/product.md`](docs/product.md)
+- **Architecture Overview** → [`docs/architecture.md`](docs/architecture.md)
+- **Developer Handoff** → [`docs/developer-handoff.md`](docs/developer-handoff.md)
+- **Execution Plan & Backlog** → [`docs/execution-plan.md`](docs/execution-plan.md)
+- **API Contracts & Endpoints** → [`docs/api.md`](docs/api.md)
+- **Database Schema & RLS** → [`docs/database.md`](docs/database.md)
+- **Regulatory RAG Service** → [`docs/rag.md`](docs/rag.md)
+- **Legal & Regulatory Sources** → [`docs/legal-sources.md`](docs/legal-sources.md)
+- **Contributing & Git Workflow** → [`docs/contributing.md`](docs/contributing.md)
+
+---
+
+## 3. System Architecture & Tech Stack
 
 ```text
-┌─────────────────┐
-│    FRONTEND     │
-│    Next.js      │
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│     BACKEND     │
-│ Node/TypeScript │
-└───────┬─┬───────┘
-        │ │
-┌───────┘ └───────┐
-▼                 ▼
-┌─────────────┐   ┌─────────────┐
-│  Supabase / │   │ RAG SERVICE │
-│ PostgreSQL  │   │Python/FastAPI│
-└─────────────┘   └─────────────┘
+┌────────────────────────────────────────────────────────┐
+│                   Frontend (Next.js)                   │
+│   Next.js App Router • TypeScript • Tailwind • shadcn  │
+└───────────────┬────────────────────────┬───────────────┘
+                │                        │
+       REST API │                        │ Direct Auth / RLS
+                ▼                        ▼
+┌───────────────────────────┐    ┌───────────────────────┐
+│     Backend (Node.js)     │    │  Supabase PostgreSQL  │
+│ Express • TypeScript • API ├───►│  RLS • pgvector Store │
+└───────────────┬───────────┘    └───────────▲───────────┘
+                │                            │
+  Internal HTTP │                            │ Vector Search
+        Service │                            │
+                ▼                            │
+┌───────────────────────────┐                │
+│    RAG Service (Python)   ├────────────────┘
+│ FastAPI • Grounded Q&A    │
+└───────────────────────────┘
 ```
 
-The system architecture follows a decoupled flow:
-- **Frontend → Backend:** The Next.js client communicates with the Node.js / TypeScript API server.
-- **Backend → Database:** The backend interacts with Supabase / PostgreSQL for transactional persistence and access controls.
-- **Backend → RAG Service:** The backend routes regulatory intelligence and context retrieval requests to the dedicated Python/FastAPI RAG microservice.
+- **Frontend:** Next.js (App Router), React, TypeScript, Tailwind CSS, shadcn/ui, `@react-pdf/renderer` (client-side PDF generation).
+- **Backend:** Node.js, Express, TypeScript (deterministic calculations, sequence generation, API gateway).
+- **Database:** Supabase managed PostgreSQL 15+, Row-Level Security (RLS), `pgvector` extension.
+- **RAG Microservice:** Python 3.13, FastAPI, Uvicorn, LangChain / Pydantic.
+- **Target Deployment:** Vercel (Frontend), Render / Fly.io (Backend & RAG), Supabase Cloud (Database).
 
 ---
 
-## Technology Stack
-
-### Frontend
-- Next.js (App Router)
-- TypeScript
-- Tailwind CSS
-
-### Backend
-- Node.js
-- TypeScript
-- Express / Fastify (REST API)
-
-### Database
-- Supabase
-- PostgreSQL
-- `pgvector` (planned)
-
-### RAG Service
-- Python
-- FastAPI
-- `pgvector` (planned)
-- Embeddings (planned)
-- LangChain (if required later)
-
----
-
-## Repository Structure
+## 4. Repository Structure
 
 ```text
 moukawilos/
-├── frontend/          # Next.js App Router web application
-├── backend/           # Node.js & TypeScript REST API service
-├── rag/               # Python & FastAPI retrieval-augmented generation microservice
-├── database/          # Database migrations, raw schema definitions, and seed scripts
-├── docs/              # Specifications, API contracts, and team guidelines
-├── scripts/           # Automation and dev orchestration tooling
-├── .github/           # GitHub Actions workflows and issue templates
-│   ├── ISSUE_TEMPLATE/
-│   └── workflows/
-├── .env.example       # Root environment variable names template
-├── .gitignore         # Monorepo-wide ignore rules
-├── LICENSE            # License placeholder
-└── README.md          # Project overview and setup documentation
+├── frontend/             # Next.js App Router web application
+│   ├── app/              # Routes & layouts
+│   ├── components/       # UI & design system components
+│   ├── lib/              # Client utilities & helpers
+│   ├── public/           # Static assets
+│   └── types/            # TypeScript interfaces
+├── backend/              # Node.js & TypeScript REST API service
+│   ├── src/
+│   │   ├── config/       # Environment & DB configurations
+│   │   ├── controllers/  # Route controller handlers
+│   │   ├── middleware/   # Auth & validation middleware
+│   │   ├── routes/       # Express route definitions
+│   │   ├── services/     # Pure business & calc logic
+│   │   ├── types/        # Domain type definitions
+│   │   └── utils/        # Shared helpers
+│   └── tests/            # Test suite (Jest)
+├── rag/                  # Python & FastAPI RAG microservice
+│   ├── app/
+│   │   ├── api/          # FastAPI endpoint routers
+│   │   ├── models/       # Pydantic data schemas
+│   │   ├── retrieval/    # Vector similarity search
+│   │   └── services/     # LLM orchestration & prompt guards
+│   ├── corpus/           # Curated legal gazettes & laws
+│   └── tests/            # Retrieval benchmark suite
+├── database/             # PostgreSQL migrations, schema, and seed scripts
+├── docs/                 # Single source of truth canonical documentation
+├── project-management/   # Execution checklists & team resources
+├── scripts/              # Development orchestration scripts
+├── .github/              # Issue templates and CI workflows
+├── .env.example          # Environment variable template
+├── .gitignore            # Monorepo ignore rules
+└── README.md             # Project overview & quick start
 ```
 
-### Purpose of Directories
-- **`frontend/`**: Hosts the client-side Next.js web application, standard App Router structure (`app/`, `components/`, `lib/`, `public/`, `types/`).
-- **`backend/`**: Hosts the core REST API backend (`src/config/`, `controllers/`, `routes/`, `services/`, `middleware/`, `utils/`, `types/`, and `tests/`).
-- **`rag/`**: Hosts the Python/FastAPI microservice for regulatory knowledge ingestion, embeddings, and vector search (`app/api/`, `services/`, `retrieval/`, `models/`, `utils/`, and `tests/`).
-- **`database/`**: Dedicated folder for organizing database assets (`migrations/`, `schema/`, `seeds/`). No active schema or tables exist yet.
-- **`docs/`**: Central knowledge base for architecture, API specs, database design, RAG documentation, product vision, and contributing guides.
-- **`scripts/`**: Repository tooling, automation, and cross-service orchestration scripts.
+---
+
+## 5. Team & Responsibilities
+
+- **Aya** — Product Lead & UX
+- **Backend Developer 1** — Auth, Profiles, Sequence Numbering, Invoicing API
+- **Backend Developer 2** — Deterministic Calculations, Compliance Calendar, Turnover Analytics
+- **Data/ML Developer 1** — Legal Corpus Ingestion, Chunking Pipeline, Embedding Model
+- **Data/ML Developer 2** — pgvector Retrieval, FastAPI Microservice, Prompt Guardrails
 
 ---
 
-## Team
+## 6. How the Team Works & How to Find Tasks
 
-- **Aya** — Product Lead
-- **Backend Developer 1**
-- **Backend Developer 2**
-- **Data/ML Developer 1**
-- **Data/ML Developer 2**
+1. **Find Your Tasks:**
+   - Tasks are tracked in the [GitHub Issues](https://github.com/AYA-BACHA/MoukawilOS/issues) board and detailed in [`docs/execution-plan.md`](docs/execution-plan.md).
+   - Tasks are prioritized as **P0** (MVP Required), **P1** (Important), or **P2** (Polish).
+2. **Execution Plan:**
+   - Organized across workstreams A through L (Product, Frontend, Backend, Invoicing, PDF, Legal Corpus, RAG, Deterministic Calculations, Integration, QA, Deployment, Docs).
+3. **Canonical Rules:**
+   - Invoices follow strict canonical states: `DRAFT` → `ISSUED` (UI: `Pending`) → `PAID`.
+   - `PAID` invoices are **100% immutable**; editing is strictly prohibited.
+   - All legal numbers (IFU 0.5%, CASNOS 24,000 DA, 5M ceiling) are deterministic and sourced from [`docs/legal-sources.md`](docs/legal-sources.md).
 
 ---
 
-## Development
+## 7. Development & Git Workflow
 
-Instructions for starting each service locally:
+We follow a lightweight, branch-and-PR workflow (see [`docs/contributing.md`](docs/contributing.md)):
 
-### 1. Frontend (`frontend/`)
+```text
+main
+  │
+  ▼
+feature branch (e.g., feature/invoice-editor)
+  │
+  ▼
+implementation (focused commits + local tests)
+  │
+  ▼
+pull request (PR linked to GitHub Issue)
+  │
+  ▼
+peer review & approval
+  │
+  ▼
+merge into main
+```
+
+### Sensible Branch Naming:
+- `feature/invoice-editor`
+- `feature/rag-retrieval`
+- `feature/dashboard`
+- `fix/invoice-numbering`
+
+### Team Rules:
+- Work strictly from assigned GitHub Issues.
+- Create a dedicated feature branch for each issue.
+- Keep commits focused and descriptive.
+- Open a Pull Request referencing the issue (e.g., `Closes #14`).
+- Request a peer review before merging.
+- **Never push experimental or unverified work directly to `main`.**
+
+---
+
+## 8. Local Setup & Running Locally
+
+### 1. Frontend
 ```bash
 cd frontend
 npm install
 npm run dev
-# Starts on http://localhost:3000
+# Running on http://localhost:3000
 ```
 
-### 2. Backend (`backend/`)
+### 2. Backend
 ```bash
 cd backend
 npm install
 npm run dev
-# Starts on http://localhost:5000 (Health check: http://localhost:5000/health)
+# Running on http://localhost:5000 (Health check: http://localhost:5000/health)
 ```
 
-### 3. RAG Service (`rag/`)
+### 3. RAG Service
 ```bash
 cd rag
 python -m venv .venv
@@ -136,15 +193,11 @@ python -m venv .venv
 
 pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8000
-# Starts on http://localhost:8000 (Health check: http://localhost:8000/health)
+# Running on http://localhost:8000 (Health check: http://localhost:8000/health)
 ```
 
 ---
 
-## Additional Information
+## 9. How to Contribute
 
-- **Full Application Implementation:** *Coming soon* (Sprint 1)
-- **Database Migrations & Seed Data:** *Coming soon*
-- **RAG Pipeline & Embeddings:** *Coming soon*
-- **Contribution Guidelines:** *Coming soon* (See [`docs/contributing.md`](docs/contributing.md))
-- **Production Deployment CI/CD:** *Coming soon*
+See [`docs/contributing.md`](docs/contributing.md) for full contribution guidelines, PR conventions, and the Definition of Done.
