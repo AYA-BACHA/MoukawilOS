@@ -165,7 +165,29 @@ merge into main
 
 ## 8. Local Setup & Running Locally
 
-### 1. Frontend
+### Option A: Using Docker & Docker Compose (Recommended)
+
+The fastest way to spin up the entire multi-tier stack (PostgreSQL with `pgvector`, Express Backend, FastAPI RAG Service, and Next.js Frontend) with live reloading:
+
+```bash
+# 1. Copy the docker environment template
+cp .env.docker.example .env
+
+# 2. Build and run all services
+docker compose up --build
+```
+
+Services will be available at:
+- **Frontend**: [http://localhost:3000](http://localhost:3000)
+- **Backend API**: [http://localhost:5000](http://localhost:5000) (Health check: [http://localhost:5000/health](http://localhost:5000/health))
+- **RAG Service**: [http://localhost:8000](http://localhost:8000) (Health check: [http://localhost:8000/health](http://localhost:8000/health))
+- **PostgreSQL (`pgvector`)**: `localhost:5432` (`postgres:postgres@localhost:5432/moukawilos`)
+
+---
+
+### Option B: Running Services Manually
+
+#### 1. Frontend
 ```bash
 cd frontend
 npm install
@@ -173,7 +195,7 @@ npm run dev
 # Running on http://localhost:3000
 ```
 
-### 2. Backend
+#### 2. Backend
 ```bash
 cd backend
 npm install
@@ -181,7 +203,7 @@ npm run dev
 # Running on http://localhost:5000 (Health check: http://localhost:5000/health)
 ```
 
-### 3. RAG Service
+#### 3. RAG Service
 ```bash
 cd rag
 python -m venv .venv
@@ -189,7 +211,7 @@ python -m venv .venv
 # On Windows:
 .venv\Scripts\activate
 # On macOS/Linux:
-# source .venv/bin/activate
+source .venv/bin/activate
 
 pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8000
