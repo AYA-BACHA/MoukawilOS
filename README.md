@@ -8,7 +8,7 @@ Statutory compliance under Law 22-23 and Executive Decree 23-197 &nbsp;|&nbsp; S
 
 [Live Demo](https://moukawil-os.vercel.app) &nbsp;|&nbsp; [Demo Video](https://moukawil-os.vercel.app) &nbsp;|&nbsp; [Source Code](https://github.com/AYA-BACHA/MoukawilOS)
 
-![Next.js](https://img.shields.io/badge/Next.js_14-000000?logo=nextdotjs&logoColor=white)
+![Next.js](https://img.shields.io/badge/Next.js_15-000000?logo=nextdotjs&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript_5-3178C6?logo=typescript&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS_v3-06B6D4?logo=tailwindcss&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
