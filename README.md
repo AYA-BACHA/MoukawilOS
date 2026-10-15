@@ -139,26 +139,32 @@ Evaluators and reviewers can verify the end-to-end statutory and fiscal workflow
 The platform uses a decoupled architecture separating the presentation tier, core API, relational and vector persistence, and document compilation:
 
 ```mermaid
-flowchart LR
-    ClientBrowser(["User Web Browser"]):::client -->|HTTPS / REST API| Frontend["Next.js 14+ Frontend<br/>Vercel (App Router, TypeScript)"]:::frontend
-    Frontend -->|Internal REST API| CoreAPI["FastAPI Core Backend<br/>Render (Python 3.11, Pydantic v2)"]:::backend
+flowchart TD
+    Client(["User Web Browser"]):::client
 
-    subgraph DataPersistence ["Persistence & Storage Tier"]
-        CoreAPI --> RelationalDB[("PostgreSQL 15+<br/>Supabase (Managed)")]:::database
-        CoreAPI --> VectorStore[("pgvector Extension<br/>HNSW Semantic Index")]:::database
+    subgraph FE ["1. Presentation Layer (Vercel)"]
+        NextApp["Next.js 14+ Frontend<br/>App Router • TypeScript • Tailwind CSS • Lucide Icons"]:::frontend
     end
 
-    subgraph DocumentEngine ["Document Generation"]
-        CoreAPI --> PDFGen["ReportLab / PyMuPDF<br/>Arabic RTL Shaping (Cairo/Amiri)"]:::engine
+    subgraph BE ["2. Application & Fiscal Engine (Render)"]
+        FastAPI["FastAPI Core Backend (Python 3.11)<br/>Pydantic v2 Strict Decimal Math • Uvicorn Async REST API"]:::backend
     end
 
-    subgraph IntelligenceService ["Regulatory Intelligence"]
-        CoreAPI --> RAGService["LangChain RAG Pipeline<br/>Similarity Threshold Gate"]:::ai
-        RAGService --> VectorStore
-        RAGService --> LLMAPI["OpenAI API<br/>text-embedding-3-small & GPT-4o-mini"]:::ai
+    subgraph SVCS ["3. Persistence, Intelligence & Document Services"]
+        direction LR
+        DB[("PostgreSQL 15+ & pgvector<br/>Supabase Managed Relational Store<br/>Row-Level Security & Immutability Triggers")]:::database
+        RAG["Regulatory RAG Pipeline<br/>LangChain • text-embedding-3-small • GPT-4o-mini<br/>Article Citations & Refusal Fallback Gate"]:::ai
+        PDF["Document Generator<br/>ReportLab / PyMuPDF<br/>Arabic RTL Shaping (Cairo / Amiri)"]:::engine
     end
 
-    classDef client fill:#f8fafc,stroke:#334155,stroke-width:1px;
+    Client -->|HTTPS REST API| NextApp
+    NextApp -->|JSON API Requests| FastAPI
+    FastAPI -->|SQL via asyncpg| DB
+    FastAPI -->|Query Relaying| RAG
+    FastAPI -->|Invoice Data| PDF
+    RAG -->|Vector Cosine Search| DB
+
+    classDef client fill:#f8fafc,stroke:#334155,stroke-width:2px;
     classDef frontend fill:#eff6ff,stroke:#2563eb,stroke-width:2px;
     classDef backend fill:#ecfdf5,stroke:#059669,stroke-width:2px;
     classDef database fill:#fef3c7,stroke:#d97706,stroke-width:2px;
@@ -172,17 +178,35 @@ flowchart LR
 
 MoukawilOS enforces a formal state machine across the database, API, and user interface. Invoices transition through three canonical states:
 
-```
-[ DRAFT ]  ────────── Finalize ──────────>  [ ISSUED / PENDING ]  ────────── Record Payment ──────────>  [ PAID / SETTLED ]
-(Brouillon)                                   (En attente)              with settlement confirmation       (Encaissée)
-     │                                              │                                                           │
-     ▼                                              ▼                                                           ▼
- • Fully editable                               • Assigned permanent FA-YYYY-NNN                            • Strictly and permanently immutable
- • Excluded from turnover                       • Locked against edits and deletion                         • Included in cash-basis collected turnover
- • Excluded from IFU tax                        • Excluded from cash-basis turnover                         • Consumes 5,000,000 DZD statutory ceiling
- • Can be deleted                               • Excluded from IFU tax liability                           • Calculates definitive IFU tax liability
-                                                • Can be settled via "Record Payment"                       • Action: View & Download PDF only
-                                                • Error requires Credit Note (AV-YYYY-NNN)                  • Error requires Credit Note (AV-YYYY-NNN)
+```mermaid
+flowchart LR
+    subgraph DRAFT ["1. DRAFT (Brouillon)"]
+        direction TB
+        D_TITLE["Editable Workspace"]
+        D_DESC["• Fully editable across all fields<br/>• Can be safely deleted<br/>• Excluded from annual turnover<br/>• Zero IFU tax liability"]
+        D_TITLE --- D_DESC
+    end
+
+    subgraph ISSUED ["2. ISSUED / PENDING (En attente)"]
+        direction TB
+        I_TITLE["Locked Receivable"]
+        I_DESC["• Permanent sequential FA-YYYY-NNN<br/>• Locked against edits & deletion<br/>• Zero cash-basis turnover impact<br/>• Errors require Credit Note (AV-YYYY-NNN)"]
+        I_TITLE --- I_DESC
+    end
+
+    subgraph PAID ["3. PAID / SETTLED (Encaissée)"]
+        direction TB
+        P_TITLE["Cleared Cash Receipt"]
+        P_DESC["• Permanently immutable record<br/>• Consumes 5,000,000 DZD ceiling<br/>• Computes definitive 0.5% IFU tax<br/>• Actions: View & Download PDF only"]
+        P_TITLE --- P_DESC
+    end
+
+    DRAFT ==>|"Finalize Invoice"| ISSUED
+    ISSUED ==>|"Record Settlement Payment"| PAID
+
+    style DRAFT fill:#f8fafc,stroke:#64748b,stroke-width:2px;
+    style ISSUED fill:#eff6ff,stroke:#3b82f6,stroke-width:2px;
+    style PAID fill:#ecfdf5,stroke:#10b981,stroke-width:2px;
 ```
 
 #### Lifecycle State Definitions & Invariants
@@ -217,35 +241,30 @@ The sequence below illustrates the separation between invoice finalization (whic
 sequenceDiagram
     autonumber
     actor User as Freelancer
-    participant FE as Next.js Frontend
-    participant API as FastAPI Backend
-    participant Calc as Decimal Fiscal Engine
-    participant DB as PostgreSQL (Supabase)
+    participant Web as Next.js Web App
+    participant API as FastAPI Backend (Decimal Engine)
+    participant DB as PostgreSQL Database
 
-    Note over User,DB: Phase 1: Invoice Finalization (Zero Turnover Impact)
-    User->>FE: Fill line items & click "Finalize Invoice"
-    FE->>API: POST /api/invoices (status="issued")
+    Note over User,DB: Phase 1: Invoice Finalization (Zero Fiscal Impact)
+    User->>Web: Fill line items & click "Finalize Invoice"
+    Web->>API: POST /api/invoices (status="issued")
     API->>API: Validate NIF, ANAE Card & Nomenclature Code
-    API->>DB: Assign next sequential number (FA-YYYY-NNN) & save as ISSUED
-    DB-->>API: Invoice saved (State = ISSUED)
-    API-->>FE: Return Invoice FA-YYYY-NNN
-    FE-->>User: Display locked invoice. Turnover meter remains at 0 DZD.
+    API->>DB: Save as ISSUED with next FA-YYYY-NNN
+    DB-->>API: Confirm record saved
+    API-->>Web: Return Invoice FA-YYYY-NNN
+    Web-->>User: Invoice locked (Turnover unchanged: 0 DZD)
 
     Note over User,DB: Phase 2: Payment Settlement (Statutory Cash-Basis Trigger)
-    User->>FE: Click "Record Payment" (Select date & payment method)
-    FE->>API: POST /api/invoices/{id}/payment
-    API->>DB: UPDATE invoice SET status='paid', payment_date=..., method=...
+    User->>Web: Click "Record Payment" (date & channel)
+    Web->>API: POST /api/invoices/{id}/payment
+    API->>DB: UPDATE status="paid", settled_at=...
     DB-->>API: Status updated to PAID
     
-    API->>Calc: Compute annual collected turnover for active calendar year
-    Calc->>DB: SELECT SUM(total_amount) FROM invoices WHERE status='paid' AND year=...
-    DB-->>Calc: Return raw settled total
-    Calc->>Calc: Apply exact Decimal arithmetic: max(0.005 * Turnover, 10000)
-    Calc->>Calc: Evaluate 5,000,000 DZD statutory ceiling & 80% warning
-    Calc-->>API: Return updated fiscal state (Turnover, Ceiling %, IFU Due)
-    
-    API-->>FE: Return confirmation + updated turnover metrics
-    FE-->>User: Turnover gauge advances, IFU updates, remaining ceiling decreases
+    API->>DB: Query sum of PAID invoices for active year
+    DB-->>API: Return raw settled turnover
+    API->>API: Decimal calc: max(0.005 * Turnover, 10,000 DA)
+    API-->>Web: Return updated fiscal state (Turnover, Ceiling %, IFU)
+    Web-->>User: Ceiling gauge advances & IFU tax updates
 ```
 
 ---
@@ -630,9 +649,22 @@ We believe rigorous engineering requires transparently documenting technical con
 
 ## 14. Roadmap & Future Scope
 
-```
-[ Phase 1: MVP Core ] ──► [ Phase 2: Compliance Exports ] ──► [ Phase 3: Banking Ingest ] ──► [ Phase 4: Portal Integration ]
-(Completed)               (Q3 2026)                           (Q4 2026)                       (2027)
+```mermaid
+flowchart LR
+    P1["<strong>Phase 1: MVP Core</strong><br/><em>[Completed]</em><br/>• Cash-basis turnover tracker<br/>• 5M DA ceiling & 80% warning<br/>• Multilingual PDF invoices<br/>• Regulatory RAG assistant"]
+    
+    P2["<strong>Phase 2: Declarations</strong><br/><em>[Q3 2026]</em><br/>• Pre-filled DGI G12 / G12 bis<br/>• Official tax PDF exports<br/>• Accountant fiscal package"]
+    
+    P3["<strong>Phase 3: Banking Ingest</strong><br/><em>[Q4 2026]</em><br/>• BaridiMob statement parsing<br/>• CCP & bank CSV reconciliation<br/>• Auto-match settled payments"]
+    
+    P4["<strong>Phase 4: Integrations</strong><br/><em>[2027]</em><br/>• DGI Jibayatic API integration<br/>• Direct CASNOS portal bridge<br/>• Multi-operator workspaces"]
+
+    P1 --> P2 --> P3 --> P4
+
+    style P1 fill:#ecfdf5,stroke:#059669,stroke-width:2px;
+    style P2 fill:#eff6ff,stroke:#2563eb,stroke-width:2px;
+    style P3 fill:#fef3c7,stroke:#d97706,stroke-width:2px;
+    style P4 fill:#f3e8ff,stroke:#7c3aed,stroke-width:2px;
 ```
 
 - **Phase 1: MVP Core (Completed):**
