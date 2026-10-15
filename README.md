@@ -140,36 +140,29 @@ The platform uses a decoupled architecture separating the presentation tier, cor
 
 ```mermaid
 flowchart TD
-    Client(["User Web Browser"]):::client
+    Client(["User Web Browser"])
 
-    subgraph FE ["1. Presentation Layer (Vercel)"]
-        NextApp["Next.js 14+ Frontend<br/>App Router • TypeScript • Tailwind CSS • Lucide Icons"]:::frontend
+    subgraph PresentationTier ["1. Presentation Layer (Vercel)"]
+        NextApp["Next.js 14+ Frontend<br/>App Router • TypeScript • Tailwind CSS • Lucide Icons"]
     end
 
-    subgraph BE ["2. Application & Fiscal Engine (Render)"]
-        FastAPI["FastAPI Core Backend (Python 3.11)<br/>Pydantic v2 Strict Decimal Math • Uvicorn Async REST API"]:::backend
+    subgraph BackendTier ["2. Application & Fiscal Engine (Render)"]
+        FastAPI["FastAPI Core Backend (Python 3.11)<br/>Pydantic v2 Strict Decimal Math • Uvicorn Async REST API"]
     end
 
-    subgraph SVCS ["3. Persistence, Intelligence & Document Services"]
+    subgraph ServicesTier ["3. Persistence, Intelligence & Document Services"]
         direction LR
-        DB[("PostgreSQL 15+ & pgvector<br/>Supabase Managed Relational Store<br/>Row-Level Security & Immutability Triggers")]:::database
-        RAG["Regulatory RAG Pipeline<br/>LangChain • text-embedding-3-small • GPT-4o-mini<br/>Article Citations & Refusal Fallback Gate"]:::ai
-        PDF["Document Generator<br/>ReportLab / PyMuPDF<br/>Arabic RTL Shaping (Cairo / Amiri)"]:::engine
+        DB[("PostgreSQL 15+ & pgvector<br/>Supabase Managed Relational Store<br/>Row-Level Security & Immutability Triggers")]
+        RAG["Regulatory RAG Pipeline<br/>LangChain • text-embedding-3-small • GPT-4o-mini<br/>Article Citations & Refusal Fallback Gate"]
+        PDF["Document Generator<br/>ReportLab / PyMuPDF<br/>Arabic RTL Shaping (Cairo / Amiri)"]
     end
 
     Client -->|HTTPS REST API| NextApp
     NextApp -->|JSON API Requests| FastAPI
     FastAPI -->|SQL via asyncpg| DB
     FastAPI -->|Query Relaying| RAG
-    FastAPI -->|Invoice Data| PDF
+    FastAPI -->|Invoice Data Payloads| PDF
     RAG -->|Vector Cosine Search| DB
-
-    classDef client fill:#f8fafc,stroke:#334155,stroke-width:2px;
-    classDef frontend fill:#eff6ff,stroke:#2563eb,stroke-width:2px;
-    classDef backend fill:#ecfdf5,stroke:#059669,stroke-width:2px;
-    classDef database fill:#fef3c7,stroke:#d97706,stroke-width:2px;
-    classDef engine fill:#f3e8ff,stroke:#7c3aed,stroke-width:2px;
-    classDef ai fill:#fff1f2,stroke:#e11d48,stroke-width:2px;
 ```
 
 ---
@@ -180,33 +173,14 @@ MoukawilOS enforces a formal state machine across the database, API, and user in
 
 ```mermaid
 flowchart LR
-    subgraph DRAFT ["1. DRAFT (Brouillon)"]
-        direction TB
-        D_TITLE["Editable Workspace"]
-        D_DESC["• Fully editable across all fields<br/>• Can be safely deleted<br/>• Excluded from annual turnover<br/>• Zero IFU tax liability"]
-        D_TITLE --- D_DESC
-    end
+    DRAFT["<strong>1. DRAFT</strong><br/><em>(Brouillon)</em><br/>• Fully editable<br/>• Zero turnover impact<br/>• No tax liability<br/>• Can be safely deleted"]
+    
+    ISSUED["<strong>2. ISSUED / PENDING</strong><br/><em>(En attente)</em><br/>• Permanent FA-YYYY-NNN<br/>• Locked against edits<br/>• Zero cash-basis impact<br/>• Errors require Credit Note"]
+    
+    PAID["<strong>3. PAID / SETTLED</strong><br/><em>(Encaissée)</em><br/>• Permanently immutable<br/>• Consumes 5M DA ceiling<br/>• Computes definitive 0.5% IFU<br/>• View & Download PDF only"]
 
-    subgraph ISSUED ["2. ISSUED / PENDING (En attente)"]
-        direction TB
-        I_TITLE["Locked Receivable"]
-        I_DESC["• Permanent sequential FA-YYYY-NNN<br/>• Locked against edits & deletion<br/>• Zero cash-basis turnover impact<br/>• Errors require Credit Note (AV-YYYY-NNN)"]
-        I_TITLE --- I_DESC
-    end
-
-    subgraph PAID ["3. PAID / SETTLED (Encaissée)"]
-        direction TB
-        P_TITLE["Cleared Cash Receipt"]
-        P_DESC["• Permanently immutable record<br/>• Consumes 5,000,000 DZD ceiling<br/>• Computes definitive 0.5% IFU tax<br/>• Actions: View & Download PDF only"]
-        P_TITLE --- P_DESC
-    end
-
-    DRAFT ==>|"Finalize Invoice"| ISSUED
-    ISSUED ==>|"Record Settlement Payment"| PAID
-
-    style DRAFT fill:#f8fafc,stroke:#64748b,stroke-width:2px;
-    style ISSUED fill:#eff6ff,stroke:#3b82f6,stroke-width:2px;
-    style PAID fill:#ecfdf5,stroke:#10b981,stroke-width:2px;
+    DRAFT -->|"Finalize Invoice"| ISSUED
+    ISSUED -->|"Record Settlement Payment"| PAID
 ```
 
 #### Lifecycle State Definitions & Invariants
@@ -660,11 +634,6 @@ flowchart LR
     P4["<strong>Phase 4: Integrations</strong><br/><em>[2027]</em><br/>• DGI Jibayatic API integration<br/>• Direct CASNOS portal bridge<br/>• Multi-operator workspaces"]
 
     P1 --> P2 --> P3 --> P4
-
-    style P1 fill:#ecfdf5,stroke:#059669,stroke-width:2px;
-    style P2 fill:#eff6ff,stroke:#2563eb,stroke-width:2px;
-    style P3 fill:#fef3c7,stroke:#d97706,stroke-width:2px;
-    style P4 fill:#f3e8ff,stroke:#7c3aed,stroke-width:2px;
 ```
 
 - **Phase 1: MVP Core (Completed):**
