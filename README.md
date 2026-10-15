@@ -17,7 +17,7 @@ Statutory compliance under Law 22-23 and Executive Decree 23-197 &nbsp;|&nbsp; S
 ![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?logo=supabase&logoColor=white)
 ![Vercel](https://img.shields.io/badge/Frontend-Vercel-000000?logo=vercel&logoColor=white)
 ![Render](https://img.shields.io/badge/API-Render-46E3B7?logo=render&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-green.svg)
+![License](https://img.shields.io/badge/License-Proprietary-red.svg)
 
 <img src="docs/screenshots/hero.png" alt="MoukawilOS Dashboard" width="860">
 
@@ -687,23 +687,11 @@ MoukawilOS is an administrative and fiscal productivity tool designed to help Al
 
 ## 17. License
 
-Distributed under the **MIT License**. See [`LICENSE`](LICENSE) for complete terms.
+Copyright (c) 2026 Aya Bacha. All rights reserved.
 
-```text
-MIT License
+This project, its source code, architecture, and associated documentation are proprietary. The repository is made publicly accessible strictly for portfolio review, technical demonstration, and evaluation purposes.
 
-Copyright (c) 2026 Aya Bacha & MoukawilOS Contributors
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-```
+No license or permission is granted to copy, reproduce, modify, redistribute, fork for commercial use, or deploy this software in any commercial or production environment without prior express written authorization from the copyright holder. See [`LICENSE`](LICENSE) for complete terms.
 
 ---
 
