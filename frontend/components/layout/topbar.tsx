@@ -7,6 +7,7 @@ import { Bell, CalendarDays, CheckCircle2, ChevronDown, Clock, Plus, ShieldCheck
 import { buttonClass } from "@/components/ui/button";
 import { Pill } from "@/components/ui/pill";
 import { SelectDropdown } from "@/components/ui/select-dropdown";
+import { ThemeToggle } from "@/components/layout/theme-toggle";
 
 const yearOptions = [
   { value: "2026", label: "FY 2026", badge: "Active" },
@@ -57,18 +58,18 @@ export function Topbar({ utilization }: { utilization: number }) {
       desc: "Your legal auto-entrepreneur card is active with 0% VAT exemption.",
       time: "System",
       icon: ShieldCheck,
-      color: "text-primary bg-mint/50",
+      color: "text-accent bg-mint/50",
     },
   ];
 
   return (
-    <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-slate-100 bg-white/95 px-6 shadow-xs backdrop-blur-md">
+    <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-slate-100 bg-card/95 px-6 shadow-xs backdrop-blur-md">
       <div className="flex items-center gap-3">
         <SelectDropdown
           value={fiscalYear}
           options={yearOptions}
           onChange={setFiscalYear}
-          icon={<CalendarDays className="size-3.5 text-primary" />}
+          icon={<CalendarDays className="size-3.5 text-accent" />}
         />
         <Pill dot="size-2 bg-primary" className="bg-mint px-3 py-1 text-mint-ink shadow-xs">
           Status: {Math.round(utilization * 100)}% Utilized • In Compliance
@@ -76,6 +77,8 @@ export function Topbar({ utilization }: { utilization: number }) {
       </div>
 
       <div className="flex items-center gap-3">
+        <ThemeToggle />
+
         {/* Notifications Popover */}
         <div ref={notifRef} className="relative">
           <button
@@ -85,11 +88,11 @@ export function Topbar({ utilization }: { utilization: number }) {
             className="relative rounded-lg p-2 text-body transition-colors hover:bg-surface hover:text-ink"
           >
             <Bell className="size-[18px]" />
-            <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-emerald-500 ring-2 ring-white" />
+            <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-emerald-500 ring-2 ring-card" />
           </button>
 
           {showNotifications && (
-            <div className="absolute right-0 z-50 mt-2 w-80 origin-top-right rounded-2xl border border-slate-200 bg-white p-3 shadow-xl shadow-black/8 animate-in fade-in zoom-in-95">
+            <div className="absolute right-0 z-50 mt-2 w-80 origin-top-right rounded-2xl border border-slate-200 bg-card p-3 shadow-xl shadow-black/8 animate-in fade-in zoom-in-95">
               <div className="flex items-center justify-between border-b border-slate-100 pb-2 px-1">
                 <span className="text-xs font-bold text-ink">Statutory Notifications</span>
                 <span className="rounded bg-mint px-1.5 py-0.5 text-[10px] font-semibold text-mint-ink">3 alerts</span>
@@ -140,7 +143,7 @@ export function Topbar({ utilization }: { utilization: number }) {
           </button>
 
           {showUserMenu && (
-            <div className="absolute right-0 z-50 mt-2 w-48 origin-top-right rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl shadow-black/8 animate-in fade-in zoom-in-95">
+            <div className="absolute right-0 z-50 mt-2 w-48 origin-top-right rounded-xl border border-slate-200 bg-card p-1.5 shadow-xl shadow-black/8 animate-in fade-in zoom-in-95">
               <Link
                 href="/settings"
                 onClick={() => setShowUserMenu(false)}

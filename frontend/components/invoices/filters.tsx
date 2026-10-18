@@ -49,7 +49,7 @@ export function Filters({
   const [fiscalYear, setFiscalYear] = useState("2026");
 
   return (
-    <div className="flex flex-wrap items-center gap-3 rounded-xl border border-slate-100 bg-white p-3 shadow-xs">
+    <div className="flex flex-wrap items-center gap-3 rounded-xl border border-slate-100 bg-card p-3 shadow-xs">
       {/* Status Filter Tabs */}
       <div className="flex rounded-lg bg-surface-low p-1">
         {tabs.map(({ value, label }) => (
@@ -60,7 +60,7 @@ export function Filters({
             className={cn(
               "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-all",
               status === value
-                ? "bg-white font-bold text-ink shadow-xs"
+                ? "bg-card font-bold text-ink shadow-xs"
                 : "text-body hover:text-ink",
             )}
           >
@@ -85,7 +85,7 @@ export function Filters({
             value={query}
             onChange={(event) => onQueryChange(event.target.value)}
             placeholder="Search client or invoice ref..."
-            className="h-10 w-full rounded-lg border border-slate-200/80 bg-surface-low pl-9 pr-3 text-xs text-ink placeholder:text-muted transition-all focus:border-primary/40 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20"
+            className="h-10 w-full rounded-lg border border-slate-200/80 bg-surface-low pl-9 pr-3 text-xs text-ink placeholder:text-muted transition-all focus:border-primary/40 focus:bg-card focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
         </label>
 
@@ -102,7 +102,7 @@ export function Filters({
           value={fiscalYear}
           options={yearOptions}
           onChange={setFiscalYear}
-          icon={<CalendarDays className="size-3.5 text-primary" />}
+          icon={<CalendarDays className="size-3.5 text-accent" />}
         />
       </div>
     </div>

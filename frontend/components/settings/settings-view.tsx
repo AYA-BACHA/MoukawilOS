@@ -67,7 +67,7 @@ export function SettingsView({ user, stats }: { user: User; stats: TurnoverStats
 
   return (
     <div className="flex flex-col gap-6 px-6 pb-6 pt-4">
-      <header className="flex items-end justify-between rounded-lg bg-white p-6 shadow-[0_1px_1px_rgba(0,0,0,0.05)]">
+      <header className="flex items-end justify-between rounded-lg bg-card p-6 shadow-[0_1px_1px_rgba(0,0,0,0.05)]">
         <div className="flex flex-col gap-1">
           <nav className="flex items-center gap-1 text-xs font-medium uppercase tracking-[0.05em] text-body">
             Fiscal OS
@@ -98,7 +98,7 @@ export function SettingsView({ user, stats }: { user: User; stats: TurnoverStats
             onClick={() => goTo(id)}
             className={cn(
               "flex items-center gap-1 whitespace-nowrap rounded px-3 py-2 text-sm font-medium",
-              activeTab === id ? "bg-white text-primary-ink shadow-[0_1px_1px_rgba(0,0,0,0.05)]" : "text-body",
+              activeTab === id ? "bg-card text-primary-ink shadow-[0_1px_1px_rgba(0,0,0,0.05)]" : "text-body",
             )}
           >
             <Icon className="size-[15px]" strokeWidth={1.75} />
@@ -120,9 +120,9 @@ export function SettingsView({ user, stats }: { user: User; stats: TurnoverStats
         </div>
       </div>
 
-      <div className="sticky bottom-4 z-10 flex items-center justify-between rounded-lg bg-white p-4 shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_8px_10px_-6px_rgba(0,0,0,0.1)]">
+      <div className="sticky bottom-4 z-10 flex items-center justify-between rounded-lg bg-card p-4 shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_8px_10px_-6px_rgba(0,0,0,0.1)]">
         <p className="flex items-center gap-2 text-xs tracking-[0.01em] text-body">
-          <Info className="size-4 shrink-0 text-primary" />
+          <Info className="size-4 shrink-0 text-accent" />
           Any modification to your legal name, NIF, or statutory activity code requires formal ANAE re-validation.
         </p>
         <div className="flex items-center gap-3">
@@ -137,8 +137,8 @@ export function SettingsView({ user, stats }: { user: User; stats: TurnoverStats
       </div>
 
       {toast && (
-        <div role="status" className="fixed right-8 top-20 z-30 flex items-center gap-2 rounded bg-white px-3 py-2 shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_8px_10px_-6px_rgba(0,0,0,0.1)]">
-          <ShieldCheck className="size-[17px] text-primary" />
+        <div role="status" className="fixed right-8 top-20 z-30 flex items-center gap-2 rounded bg-card px-3 py-2 shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_8px_10px_-6px_rgba(0,0,0,0.1)]">
+          <ShieldCheck className="size-[17px] text-accent" />
           <div>
             <p className="text-sm font-semibold text-primary-ink">Settings saved successfully</p>
             <p className="text-xs tracking-[0.01em] text-body">Invoicing defaults and fiscal registry synced.</p>

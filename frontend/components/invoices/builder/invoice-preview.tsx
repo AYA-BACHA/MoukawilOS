@@ -9,7 +9,7 @@ import { hashSeed } from "@/lib/hash";
 import { addDays, lineTotal, subtotal } from "@/lib/invoice-math";
 import type { InvoiceDraft, User } from "@/types/models";
 
-const toolButton = "rounded bg-white p-1.5 text-body shadow-[0_1px_1px_rgba(0,0,0,0.05)] disabled:opacity-40";
+const toolButton = "rounded bg-card p-1.5 text-body shadow-[0_1px_1px_rgba(0,0,0,0.05)] disabled:opacity-40";
 const SCALES = [0.6, 0.7, 0.8, 0.9, 1];
 
 function Row({ label, value, bold }: { label: string; value: React.ReactNode; bold?: boolean }) {
@@ -73,7 +73,7 @@ export function InvoicePreview({ user, draft }: { user: User; draft: InvoiceDraf
               </div>
             </div>
             <div className="flex flex-col items-end">
-              <p className="pl-10 text-right font-num text-[28px] font-bold leading-9 tracking-[-0.025em] text-primary">
+              <p className="pl-10 text-right font-num text-[28px] font-bold leading-9 tracking-[-0.025em] text-accent">
                 COMMERCIAL
                 <br />
                 INVOICE
@@ -160,7 +160,7 @@ export function InvoicePreview({ user, draft }: { user: User; draft: InvoiceDraf
                   <br />
                   Due:
                 </span>
-                <span className="text-right font-num text-[28px] font-bold leading-9 tracking-[-0.02em] text-primary">
+                <span className="text-right font-num text-[28px] font-bold leading-9 tracking-[-0.02em] text-accent">
                   {formatAmount(total)}
                   <br />
                   DZD

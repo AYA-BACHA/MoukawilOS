@@ -9,7 +9,7 @@ import type { InvoiceStatus, InvoiceWithClient } from "@/types/models";
 
 const statusStyles: Record<InvoiceStatus, { label: string; pill: string; dot: string }> = {
   pending: { label: "Pending", pill: "bg-surface-high text-body", dot: "bg-teal" },
-  paid: { label: "Paid", pill: "bg-mint font-semibold text-primary", dot: "bg-primary" },
+  paid: { label: "Paid", pill: "bg-mint font-semibold text-accent", dot: "bg-primary" },
   draft: { label: "Draft", pill: "bg-surface text-muted", dot: "bg-muted" },
 };
 
@@ -46,7 +46,7 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
               <tr>
                 <td colSpan={7} className="py-12 text-center">
                   <div className="flex flex-col items-center justify-center gap-2">
-                    <div className="flex size-10 items-center justify-center rounded-full bg-mint text-primary">
+                    <div className="flex size-10 items-center justify-center rounded-full bg-mint text-accent">
                       <FileText className="size-5" />
                     </div>
                     <p className="text-sm font-semibold text-ink">No commercial records found</p>
@@ -188,7 +188,7 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
                           }}
                           className="rounded-lg p-1.5 text-body transition-colors hover:bg-surface hover:text-ink"
                         >
-                          <FileDown className="size-3.5 text-primary" />
+                          <FileDown className="size-3.5 text-accent" />
                         </button>
                       )}
                     </div>
@@ -203,7 +203,7 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
       {/* Official Receipt Voucher Modal */}
       {viewingReceipt && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm animate-in fade-in">
-          <div className="relative w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl animate-in zoom-in-95">
+          <div className="relative w-full max-w-md rounded-2xl border border-slate-200 bg-card p-6 shadow-2xl animate-in zoom-in-95">
             <div className="flex items-start justify-between border-b border-slate-100 pb-3">
               <div>
                 <span className="rounded bg-mint px-2 py-0.5 text-[10px] font-bold text-mint-ink">
@@ -235,7 +235,7 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
               </div>
               <div className="flex justify-between py-1 font-bold text-sm">
                 <span className="text-slate-900">Total Settled:</span>
-                <span className="text-primary">{formatAmount(viewingReceipt.amount)} DZD</span>
+                <span className="text-accent">{formatAmount(viewingReceipt.amount)} DZD</span>
               </div>
             </div>
 
@@ -247,7 +247,7 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
               <button
                 type="button"
                 onClick={() => window.print()}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-ink hover:bg-slate-50"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-card px-3 py-1.5 text-xs font-semibold text-ink hover:bg-slate-50"
               >
                 <Printer className="size-3.5" />
                 Print Voucher

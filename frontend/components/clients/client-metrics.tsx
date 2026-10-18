@@ -13,11 +13,11 @@ interface MetricCardProps {
 
 function MetricCard({ label, icon: Icon, value, footer }: MetricCardProps) {
   return (
-    <article className="flex flex-1 flex-col justify-between overflow-hidden rounded-lg bg-white shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
+    <article className="flex flex-1 flex-col justify-between overflow-hidden rounded-lg bg-card shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
       <div className="flex flex-col gap-2 p-4 pb-3">
         <div className="flex items-center justify-between">
           <h3 className="text-xs font-medium uppercase tracking-[0.05em] text-body">{label}</h3>
-          <span className="grid size-6 place-items-center rounded bg-surface-low text-primary">
+          <span className="grid size-6 place-items-center rounded bg-surface-low text-accent">
             <Icon className="size-3.5" strokeWidth={1.75} />
           </span>
         </div>

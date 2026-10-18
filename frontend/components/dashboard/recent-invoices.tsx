@@ -10,7 +10,7 @@ import type { InvoiceStatus, InvoiceWithClient } from "@/types/models";
 
 const statusStyles: Record<InvoiceStatus, { label: string; pill: string; dot: string }> = {
   pending: { label: "Pending / Issued", pill: "bg-surface text-ink", dot: "bg-teal" },
-  paid: { label: "Paid", pill: "bg-mint font-semibold text-primary", dot: "bg-primary" },
+  paid: { label: "Paid", pill: "bg-mint font-semibold text-accent", dot: "bg-primary" },
   draft: { label: "Draft", pill: "bg-surface text-body", dot: "bg-muted" },
 };
 
@@ -42,7 +42,7 @@ export function RecentInvoices({ invoices: initialInvoices }: { invoices: Invoic
 
   return (
     <>
-      <section className="overflow-hidden rounded-xl border border-slate-100 bg-white shadow-sm transition-all">
+      <section className="overflow-hidden rounded-xl border border-slate-100 bg-card shadow-sm transition-all">
         <div className="flex items-center justify-between border-b border-slate-100 p-4">
           <div className="flex items-center gap-2.5">
             <h2 className="text-lg font-bold tracking-tight text-ink">Recent Invoices</h2>
@@ -52,7 +52,7 @@ export function RecentInvoices({ invoices: initialInvoices }: { invoices: Invoic
           </div>
           <Link
             href="/invoices"
-            className="inline-flex items-center gap-1 rounded-lg border border-slate-200/80 bg-surface-low px-3 py-1.5 text-xs font-semibold text-primary transition-all hover:border-slate-300 hover:bg-surface"
+            className="inline-flex items-center gap-1 rounded-lg border border-slate-200/80 bg-surface-low px-3 py-1.5 text-xs font-semibold text-accent transition-all hover:border-slate-300 hover:bg-surface"
           >
             View all in ledger
             <ArrowRight className="size-3" />
@@ -118,7 +118,7 @@ export function RecentInvoices({ invoices: initialInvoices }: { invoices: Invoic
                             onClick={() => handleAction(invoice)}
                             className="inline-flex items-center gap-1 rounded-lg border border-slate-200/80 bg-surface-low px-2.5 py-1 text-xs font-medium text-body transition-colors hover:bg-surface hover:text-ink"
                           >
-                            <Download className="size-3 text-primary" />
+                            <Download className="size-3 text-accent" />
                             PDF Receipt
                           </button>
                         )}
@@ -142,7 +142,7 @@ export function RecentInvoices({ invoices: initialInvoices }: { invoices: Invoic
                           </button>
 
                           {activeMenuId === invoice.id && (
-                            <div className="absolute right-0 z-50 mt-1 w-40 origin-top-right rounded-xl border border-slate-200 bg-white p-1 shadow-lg shadow-black/8 animate-in fade-in zoom-in-95">
+                            <div className="absolute right-0 z-50 mt-1 w-40 origin-top-right rounded-xl border border-slate-200 bg-card p-1 shadow-lg shadow-black/8 animate-in fade-in zoom-in-95">
                               <Link
                                 href="/invoices"
                                 className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-body hover:bg-surface-low hover:text-ink"
@@ -177,7 +177,7 @@ export function RecentInvoices({ invoices: initialInvoices }: { invoices: Invoic
           <p className="text-xs text-body">
             Displaying latest transactions compliant with Executive Decree 23-197.
           </p>
-          <span className="rounded-lg border border-slate-200/70 bg-white px-2.5 py-1 font-num text-xs font-semibold text-ink shadow-xs">
+          <span className="rounded-lg border border-slate-200/70 bg-card px-2.5 py-1 font-num text-xs font-semibold text-ink shadow-xs">
             Subtotal Pending: {formatAmount(subtotalPending)} DZD
           </span>
         </div>
@@ -185,7 +185,7 @@ export function RecentInvoices({ invoices: initialInvoices }: { invoices: Invoic
 
       {/* Payment Confirmation Toast */}
       {settledInvoice && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-xl animate-in slide-in-from-bottom-2">
+        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-xl border border-slate-200 bg-card px-4 py-3 shadow-xl animate-in slide-in-from-bottom-2">
           <span className="flex size-7 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
             <Check className="size-4" />
           </span>

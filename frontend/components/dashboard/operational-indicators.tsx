@@ -11,8 +11,8 @@ interface IndicatorProps {
 
 function Indicator({ icon: Icon, label, value, description }: IndicatorProps) {
   return (
-    <article className="flex flex-1 items-start gap-3 rounded-lg bg-white p-4 shadow-[0_1px_1px_rgba(0,0,0,0.05)]">
-      <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-mint/60 text-primary">
+    <article className="flex flex-1 items-start gap-3 rounded-lg bg-card p-4 shadow-[0_1px_1px_rgba(0,0,0,0.05)]">
+      <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-mint/60 text-accent">
         <Icon className="size-4" />
       </span>
       <div>

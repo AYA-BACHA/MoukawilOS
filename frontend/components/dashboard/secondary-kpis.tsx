@@ -7,9 +7,9 @@ import { Pill } from "@/components/ui/pill";
 import { formatAmount, formatLongDate } from "@/lib/format";
 import type { Deadline, TurnoverStats } from "@/types/models";
 
-const cardClass = "flex flex-1 flex-col justify-between rounded-xl border border-slate-100 bg-white p-6 shadow-sm transition-all hover:border-slate-200";
+const cardClass = "flex flex-1 flex-col justify-between rounded-xl border border-slate-100 bg-card p-6 shadow-sm transition-all hover:border-slate-200";
 const labelClass = "text-xs font-bold uppercase tracking-wider text-muted";
-const linkClass = "inline-flex items-center gap-1.5 rounded-lg border border-slate-200/80 bg-surface-low px-3 py-1.5 text-xs font-semibold text-primary transition-all hover:border-slate-300 hover:bg-surface";
+const linkClass = "inline-flex items-center gap-1.5 rounded-lg border border-slate-200/80 bg-surface-low px-3 py-1.5 text-xs font-semibold text-accent transition-all hover:border-slate-300 hover:bg-surface";
 
 export function SecondaryKpis({ deadline, stats }: { deadline: Deadline; stats: TurnoverStats }) {
   const [showDeclaration, setShowDeclaration] = useState(false);
@@ -23,7 +23,7 @@ export function SecondaryKpis({ deadline, stats }: { deadline: Deadline; stats: 
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
               <h3 className={labelClass}>Next Statutory Deadline</h3>
-              <span className="grid size-9 place-items-center rounded-xl bg-mint/70 text-primary shadow-xs">
+              <span className="grid size-9 place-items-center rounded-xl bg-mint/70 text-accent shadow-xs">
                 <CalendarCheck className="size-4" />
               </span>
             </div>
@@ -55,7 +55,7 @@ export function SecondaryKpis({ deadline, stats }: { deadline: Deadline; stats: 
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
               <h3 className={labelClass}>Pending Inflow</h3>
-              <span className="grid size-9 place-items-center rounded-xl bg-surface text-primary shadow-xs">
+              <span className="grid size-9 place-items-center rounded-xl bg-surface text-accent shadow-xs">
                 <ClipboardClock className="size-4" />
               </span>
             </div>
@@ -88,7 +88,7 @@ export function SecondaryKpis({ deadline, stats }: { deadline: Deadline; stats: 
       {/* Statutory Form G50-A Preview Modal */}
       {showDeclaration && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm animate-in fade-in">
-          <div className="relative w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl animate-in zoom-in-95">
+          <div className="relative w-full max-w-lg rounded-2xl border border-slate-200 bg-card p-6 shadow-2xl animate-in zoom-in-95">
             <div className="flex items-start justify-between border-b border-slate-100 pb-3">
               <div>
                 <span className="rounded bg-mint px-2 py-0.5 text-[10px] font-bold text-mint-ink">
@@ -129,7 +129,7 @@ export function SecondaryKpis({ deadline, stats }: { deadline: Deadline; stats: 
               </div>
               <div className="flex justify-between border-t border-slate-200 pt-2 font-bold">
                 <span className="text-slate-900">Impôt Forfaitaire Unique Dû:</span>
-                <span className="text-sm text-primary">{formatAmount(ifuTax)} DZD</span>
+                <span className="text-sm text-accent">{formatAmount(ifuTax)} DZD</span>
               </div>
             </div>
 
@@ -137,7 +137,7 @@ export function SecondaryKpis({ deadline, stats }: { deadline: Deadline; stats: 
               <button
                 type="button"
                 onClick={() => window.print()}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-ink hover:bg-slate-50"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-card px-3 py-1.5 text-xs font-medium text-ink hover:bg-slate-50"
               >
                 <Printer className="size-3.5" />
                 Imprimer Déclaration

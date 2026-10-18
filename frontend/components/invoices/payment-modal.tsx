@@ -8,7 +8,7 @@ import type { InvoiceWithClient, PaymentConfirmation, TurnoverStats } from "@/ty
 const rails = ["Bank Transfer (BNA / CPA / CCP)", "Cheque"];
 
 const fieldClass =
-  "relative flex h-10 items-center rounded-xl border border-slate-300 bg-slate-50/70 hover:border-slate-400 focus-within:border-primary focus-within:bg-white focus-within:ring-2 focus-within:ring-primary/20 transition-all";
+  "relative flex h-10 items-center rounded-xl border border-slate-300 bg-slate-50/70 hover:border-slate-400 focus-within:border-primary focus-within:bg-card focus-within:ring-2 focus-within:ring-primary/20 transition-all";
 const labelClass = "text-xs font-semibold text-ink";
 
 interface PaymentModalProps {
@@ -35,10 +35,10 @@ export function PaymentModal({ invoice, stats, onClose, onConfirm }: PaymentModa
         aria-modal="true"
         aria-labelledby="payment-modal-title"
         onClick={(event) => event.stopPropagation()}
-        className="w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl border border-slate-100 animate-in fade-in zoom-in-95 duration-200"
+        className="w-full max-w-lg overflow-hidden rounded-2xl bg-card shadow-2xl border border-slate-100 animate-in fade-in zoom-in-95 duration-200"
       >
         <div className="flex items-start gap-3 bg-surface-low p-4">
-          <span className="grid size-10 place-items-center rounded-xl bg-mint text-primary">
+          <span className="grid size-10 place-items-center rounded-xl bg-mint text-accent">
             <BadgeCheck className="size-[22px]" />
           </span>
           <div className="flex-1">
@@ -70,7 +70,7 @@ export function PaymentModal({ invoice, stats, onClose, onConfirm }: PaymentModa
                 {invoice.client.name} ({invoice.client.type})
               </span>
             </p>
-            <div className="mt-2 flex flex-col gap-1 rounded bg-white/70 p-2 font-normal tracking-[0.01em]">
+            <div className="mt-2 flex flex-col gap-1 rounded bg-card/70 p-2 font-normal tracking-[0.01em]">
               <p className="flex items-center gap-1 font-semibold tracking-[0.02em] text-ink">
                 <ShieldCheck className="size-3.5" />
                 Ceiling Realization Impact:
@@ -127,7 +127,7 @@ export function PaymentModal({ invoice, stats, onClose, onConfirm }: PaymentModa
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-2xs transition-all hover:bg-slate-50 active:scale-95"
+            className="rounded-xl border border-slate-200 bg-card px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-2xs transition-all hover:bg-slate-50 active:scale-95"
           >
             Cancel
           </button>

@@ -27,7 +27,7 @@ export function Sidebar({ user }: { user: User }) {
 
   return (
     <>
-      <aside className="fixed inset-y-0 left-0 z-20 flex w-60 flex-col justify-between border-r border-slate-100 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
+      <aside className="fixed inset-y-0 left-0 z-20 flex w-60 flex-col justify-between border-r border-slate-100 bg-card shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
         <div>
           {/* Brand & Law 22-23 header */}
           <div className="flex h-16 items-center px-4">
@@ -58,7 +58,7 @@ export function Sidebar({ user }: { user: User }) {
                       className={cn(
                         "flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                         active
-                          ? "bg-mint font-semibold text-[#154b46] shadow-sm shadow-black/5"
+                          ? "bg-mint font-semibold text-mint-ink shadow-sm shadow-black/5"
                           : "text-body hover:bg-surface-low hover:text-ink",
                       )}
                     >
@@ -79,7 +79,7 @@ export function Sidebar({ user }: { user: User }) {
             onClick={() => setShowTour(true)}
             className="flex items-center justify-center gap-2 rounded-xl border border-slate-200/70 bg-surface-low p-2 text-xs font-medium tracking-[0.02em] text-ink transition-colors hover:bg-surface hover:border-slate-300"
           >
-            <CircleHelp className="size-4 text-primary" />
+            <CircleHelp className="size-4 text-accent" />
             How Moukawil Works
           </button>
           <Link

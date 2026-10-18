@@ -38,7 +38,7 @@ export function InvoiceBuilder({ user, draft: initialDraft }: { user: User; draf
 
       {/* Save Draft Toast */}
       {toast && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-3.5 shadow-2xl animate-in slide-in-from-bottom-2">
+        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-2xl border border-slate-200 bg-card p-3.5 shadow-2xl animate-in slide-in-from-bottom-2">
           <span className="flex size-7 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
             <Check className="size-4" strokeWidth={2.5} />
           </span>

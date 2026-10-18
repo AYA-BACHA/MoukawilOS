@@ -25,10 +25,10 @@ export function ReferenceVault({ statutes, cited, user, stats }: ReferenceVaultP
   return (
     <div className="col-span-12 lg:col-span-4 flex flex-col gap-5">
       {/* Real-time Ceiling & Tax Monitor Card */}
-      <section className="flex flex-col gap-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs">
+      <section className="flex flex-col gap-4 rounded-2xl border border-slate-200/80 bg-card p-5 shadow-xs">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="grid size-7 place-items-center rounded-lg bg-mint text-primary">
+            <span className="grid size-7 place-items-center rounded-lg bg-mint text-accent">
               <Gauge className="size-3.5" />
             </span>
             <h2 className="text-xs font-bold uppercase tracking-wider text-muted">Fiscal Monitor</h2>
@@ -70,10 +70,10 @@ export function ReferenceVault({ statutes, cited, user, stats }: ReferenceVaultP
       </section>
 
       {/* Statutory Reference Vault Card */}
-      <section className="flex flex-col gap-3 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs">
+      <section className="flex flex-col gap-3 rounded-2xl border border-slate-200/80 bg-card p-5 shadow-xs">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="grid size-7 place-items-center rounded-lg bg-mint text-primary">
+            <span className="grid size-7 place-items-center rounded-lg bg-mint text-accent">
               <Scale className="size-3.5" />
             </span>
             <h2 className="text-sm font-bold tracking-tight text-ink">Legal Vault</h2>
@@ -90,7 +90,7 @@ export function ReferenceVault({ statutes, cited, user, stats }: ReferenceVaultP
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search Law 22-23, decrees..."
-            className="w-full rounded-lg border border-slate-200 bg-slate-50/70 py-1.5 pl-7 pr-3 text-xs text-ink placeholder:text-muted/70 outline-none transition-all focus:border-primary focus:bg-white"
+            className="w-full rounded-lg border border-slate-200 bg-slate-50/70 py-1.5 pl-7 pr-3 text-xs text-ink placeholder:text-muted/70 outline-none transition-all focus:border-primary focus:bg-card"
           />
         </div>
 
@@ -112,7 +112,7 @@ export function ReferenceVault({ statutes, cited, user, stats }: ReferenceVaultP
                   <span className="font-num text-[11px] font-bold text-teal">{statute.code}</span>
                   {isCited && (
                     <span className="inline-flex items-center gap-1 rounded-full bg-primary px-2 py-0.5 text-[9px] font-bold text-white shadow-2xs">
-                      <span className="size-1 rounded-full bg-white animate-pulse" />
+                      <span className="size-1 rounded-full bg-card animate-pulse" />
                       Cited
                     </span>
                   )}

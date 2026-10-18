@@ -85,7 +85,7 @@ export function InvoicesLedger({ user, invoices: initialInvoices, initialQuery =
             onClick={() => downloadLedgerCsv(filtered)}
             className="flex items-center gap-1.5 rounded-lg border border-slate-200/80 bg-surface-low hover:bg-surface px-3.5 py-2 text-xs font-semibold text-ink shadow-xs transition-all hover:border-slate-300 active:scale-[0.98]"
           >
-            <Download className="size-3.5 text-primary" />
+            <Download className="size-3.5 text-accent" />
             Export Ledger (CSV)
           </button>
           <Link
@@ -110,7 +110,7 @@ export function InvoicesLedger({ user, invoices: initialInvoices, initialQuery =
         onClientTypeChange={changeFilter(setClientType)}
       />
 
-      <section className="overflow-hidden rounded-lg bg-white shadow-[0_1px_2px_rgba(0,0,0,0.05)]">
+      <section className="overflow-hidden rounded-lg bg-card shadow-[0_1px_2px_rgba(0,0,0,0.05)]">
         <LedgerTable invoices={visible} activeId={payingId} onMarkPaid={setPayingId} onDeleteDraft={deleteDraft} />
         <div className="flex items-center justify-between bg-surface-low px-3 py-2 text-xs tracking-[0.02em]">
           <p className="flex items-center gap-2 font-medium text-body">
@@ -122,7 +122,7 @@ export function InvoicesLedger({ user, invoices: initialInvoices, initialQuery =
             <button
               disabled={currentPage === 1}
               onClick={() => setPage(currentPage - 1)}
-              className="rounded-sm bg-white px-2.5 py-1 text-body disabled:opacity-50"
+              className="rounded-sm bg-card px-2.5 py-1 text-body disabled:opacity-50"
             >
               Previous
             </button>
@@ -138,7 +138,7 @@ export function InvoicesLedger({ user, invoices: initialInvoices, initialQuery =
             <button
               disabled={currentPage === totalPages}
               onClick={() => setPage(currentPage + 1)}
-              className="rounded-sm bg-white px-2.5 py-1 text-ink disabled:opacity-50"
+              className="rounded-sm bg-card px-2.5 py-1 text-ink disabled:opacity-50"
             >
               Next
             </button>
@@ -148,7 +148,7 @@ export function InvoicesLedger({ user, invoices: initialInvoices, initialQuery =
 
       {payingInvoice && <PaymentModal invoice={payingInvoice} stats={stats} onClose={() => setPayingId(null)} onConfirm={confirmPayment} />}
       {settledToast && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-2xl animate-in slide-in-from-bottom-3 duration-300">
+        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-2xl border border-slate-200 bg-card p-4 shadow-2xl animate-in slide-in-from-bottom-3 duration-300">
           <span className="flex size-8 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
             <Check className="size-4" strokeWidth={2.5} />
           </span>

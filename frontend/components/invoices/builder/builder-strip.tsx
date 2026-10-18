@@ -11,7 +11,7 @@ interface BuilderStripProps {
 
 export function BuilderStrip({ number, saved, onSave, onIssue }: BuilderStripProps) {
   return (
-    <div className="flex items-center justify-between bg-white px-6 py-3 shadow-[0_1px_1px_rgba(0,0,0,0.05)]">
+    <div className="flex items-center justify-between bg-card px-6 py-3 shadow-[0_1px_1px_rgba(0,0,0,0.05)]">
       <div className="flex flex-col gap-1.5">
         <div className="flex items-center gap-3">
           <nav className="flex items-center gap-1 text-sm">
@@ -34,7 +34,7 @@ export function BuilderStrip({ number, saved, onSave, onIssue }: BuilderStripPro
           onClick={onSave}
           className={buttonClass("soft", "rounded-lg border border-slate-200/80 bg-surface-low hover:bg-surface px-3 py-2 text-xs font-semibold tracking-normal transition-all")}
         >
-          <Bookmark className="size-3.5 text-primary" />
+          <Bookmark className="size-3.5 text-accent" />
           {saved ? "Draft Saved" : "Save Draft"}
         </button>
         <button

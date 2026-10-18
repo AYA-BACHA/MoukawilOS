@@ -58,11 +58,11 @@ export function ChatPanel({ messages, statutes, pending, onAsk }: ChatPanelProps
   const titleOf = (id: string) => statutes.find((statute) => statute.id === id)?.title ?? "";
 
   return (
-    <section className="col-span-12 lg:col-span-8 flex h-[680px] flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xs">
+    <section className="col-span-12 lg:col-span-8 flex h-[680px] flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-card shadow-xs">
       {/* Copilot Header */}
       <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/70 px-5 py-3">
         <div className="flex items-center gap-2.5">
-          <div className="flex size-7 items-center justify-center rounded-lg bg-mint text-primary">
+          <div className="flex size-7 items-center justify-center rounded-lg bg-mint text-accent">
             <Sparkles className="size-3.5" />
           </div>
           <div>
@@ -81,7 +81,7 @@ export function ChatPanel({ messages, statutes, pending, onAsk }: ChatPanelProps
         {messages.map((message) =>
           message.role === "user" ? (
             <div key={message.id} className="ml-auto flex max-w-[82%] items-end gap-2">
-              <div className="rounded-2xl rounded-tr-xs bg-[#154b46] px-4 py-2.5 text-xs sm:text-sm leading-relaxed text-white shadow-xs">
+              <div className="rounded-2xl rounded-tr-xs bg-primary px-4 py-2.5 text-xs sm:text-sm leading-relaxed text-white shadow-xs">
                 {message.content}
               </div>
               <span className="grid size-6 shrink-0 place-items-center rounded-full bg-slate-200 text-slate-600 mb-0.5">
@@ -90,7 +90,7 @@ export function ChatPanel({ messages, statutes, pending, onAsk }: ChatPanelProps
             </div>
           ) : (
             <div key={message.id} className="group relative flex max-w-[90%] items-start gap-3">
-              <span className="grid size-8 shrink-0 place-items-center rounded-xl bg-mint/80 text-primary shadow-xs">
+              <span className="grid size-8 shrink-0 place-items-center rounded-xl bg-mint/80 text-accent shadow-xs">
                 <Bot className="size-4" strokeWidth={2} />
               </span>
               <div className="flex flex-col gap-2">
@@ -116,7 +116,7 @@ export function ChatPanel({ messages, statutes, pending, onAsk }: ChatPanelProps
                 {message.citations.length > 0 && (
                   <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
                     <span className="text-[10px] font-semibold text-muted flex items-center gap-1">
-                      <BookOpen className="size-3 text-primary" />
+                      <BookOpen className="size-3 text-accent" />
                       Statutory Sources:
                     </span>
                     {message.citations.map((id) => (
@@ -137,11 +137,11 @@ export function ChatPanel({ messages, statutes, pending, onAsk }: ChatPanelProps
 
         {pending && (
           <div className="flex items-center gap-3">
-            <span className="grid size-8 shrink-0 place-items-center rounded-xl bg-mint/80 text-primary shadow-xs">
+            <span className="grid size-8 shrink-0 place-items-center rounded-xl bg-mint/80 text-accent shadow-xs">
               <Bot className="size-4" />
             </span>
             <div className="flex items-center gap-2 rounded-2xl rounded-tl-xs border border-slate-200/70 bg-slate-50 px-4 py-2.5 text-xs text-muted shadow-2xs">
-              <Loader2 className="size-3.5 animate-spin text-primary" />
+              <Loader2 className="size-3.5 animate-spin text-accent" />
               Cross-referencing Law 22-23 and Executive Decree 23-197...
             </div>
           </div>
@@ -152,7 +152,7 @@ export function ChatPanel({ messages, statutes, pending, onAsk }: ChatPanelProps
       {messages.length <= 2 && (
         <div className="border-t border-slate-100 bg-slate-50/50 px-5 pt-3 pb-2">
           <p className="flex items-center gap-1 text-[11px] font-medium text-muted mb-2">
-            <HelpCircle className="size-3 text-primary" /> Suggested Questions:
+            <HelpCircle className="size-3 text-accent" /> Suggested Questions:
           </p>
           <div className="flex flex-wrap gap-1.5">
             {suggestions.map((suggestion) => (
@@ -160,7 +160,7 @@ export function ChatPanel({ messages, statutes, pending, onAsk }: ChatPanelProps
                 key={suggestion}
                 type="button"
                 onClick={() => onAsk(suggestion)}
-                className="rounded-lg border border-slate-200/80 bg-white px-2.5 py-1 text-xs text-body transition-all hover:border-slate-300 hover:bg-surface hover:text-ink active:scale-[0.98]"
+                className="rounded-lg border border-slate-200/80 bg-card px-2.5 py-1 text-xs text-body transition-all hover:border-slate-300 hover:bg-surface hover:text-ink active:scale-[0.98]"
               >
                 {suggestion}
               </button>
@@ -170,8 +170,8 @@ export function ChatPanel({ messages, statutes, pending, onAsk }: ChatPanelProps
       )}
 
       {/* Input Form Bar */}
-      <div className="border-t border-slate-100 bg-white p-4">
-        <div className="flex items-center gap-2 rounded-xl border border-slate-300 bg-slate-50/70 p-1.5 transition-all focus-within:border-primary focus-within:bg-white focus-within:ring-2 focus-within:ring-primary/20">
+      <div className="border-t border-slate-100 bg-card p-4">
+        <div className="flex items-center gap-2 rounded-xl border border-slate-300 bg-slate-50/70 p-1.5 transition-all focus-within:border-primary focus-within:bg-card focus-within:ring-2 focus-within:ring-primary/20">
           <input
             value={draft}
             onChange={(event) => setDraft(event.target.value)}

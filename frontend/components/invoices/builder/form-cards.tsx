@@ -6,7 +6,7 @@ import { formatAmount, formatLongDate } from "@/lib/format";
 import { addDays, lineTotal, paymentTerms, subtotal } from "@/lib/invoice-math";
 import type { ClientType, DraftClient, InvoiceDraft, InvoiceItem } from "@/types/models";
 
-const cardClass = "flex flex-col gap-3 rounded-lg bg-white p-4 shadow-[0_1px_1px_rgba(0,0,0,0.05)]";
+const cardClass = "flex flex-col gap-3 rounded-lg bg-card p-4 shadow-[0_1px_1px_rgba(0,0,0,0.05)]";
 
 function CardHeader({ icon: Icon, title, aside }: { icon: typeof Building2; title: string; aside: React.ReactNode }) {
   return (
@@ -45,7 +45,7 @@ export function ClientCard({ clientType, client, onTypeChange, onClientChange }:
             onClick={() => onTypeChange(value)}
             className={cn(
               "flex flex-1 items-center justify-center gap-1 rounded py-1.5 text-sm",
-              clientType === value ? "bg-mint font-semibold text-primary shadow-[0_1px_1px_rgba(0,0,0,0.05)]" : "font-medium text-body",
+              clientType === value ? "bg-mint font-semibold text-accent shadow-[0_1px_1px_rgba(0,0,0,0.05)]" : "font-medium text-body",
             )}
           >
             <Icon className="size-3.5" />
@@ -114,7 +114,7 @@ export function MetadataCard({ number, issueDate, paymentTermsDays, onChange }: 
             }))}
             onChange={(val) => onChange({ paymentTermsDays: Number(val) })}
             className="w-full"
-            buttonClassName="w-full justify-between h-10 border-slate-300 bg-slate-50/70 hover:bg-white text-xs font-medium"
+            buttonClassName="w-full justify-between h-10 border-slate-300 bg-slate-50/70 hover:bg-card text-xs font-medium"
             icon={<Clock className="size-3.5 text-muted" />}
           />
         </Field>
@@ -178,7 +178,7 @@ export function ItemsCard({ items, onChange }: ItemsCardProps) {
           </div>
         ))}
       </div>
-      <button onClick={add} className="flex items-center justify-center gap-1 rounded bg-surface-low py-2.5 text-sm font-semibold text-primary">
+      <button onClick={add} className="flex items-center justify-center gap-1 rounded bg-surface-low py-2.5 text-sm font-semibold text-accent">
         <CirclePlus className="size-[15px]" />+ Add Item
       </button>
     </section>
@@ -205,11 +205,11 @@ export function SummaryCard({ items }: { items: InvoiceItem[] }) {
         </div>
         <div className="mt-1 flex items-center justify-between rounded bg-mint/40 p-3">
           <span className="text-sm font-semibold text-primary-ink">Total Payable (TTC)</span>
-          <span className="font-num text-[28px] font-bold leading-9 tracking-[-0.02em] text-primary">{formatAmount(total)} DZD</span>
+          <span className="font-num text-[28px] font-bold leading-9 tracking-[-0.02em] text-accent">{formatAmount(total)} DZD</span>
         </div>
       </div>
       <div className="flex gap-2 rounded bg-surface-low px-3 pb-3 pt-4">
-        <ShieldCheck className="mt-0.5 size-4 shrink-0 text-primary" />
+        <ShieldCheck className="mt-0.5 size-4 shrink-0 text-accent" />
         <div>
           <p className="text-xs font-semibold tracking-[0.02em] text-primary-ink">Statutory Exemption Clause</p>
           <p className="pt-0.5 text-xs leading-4 tracking-[0.01em] text-body">

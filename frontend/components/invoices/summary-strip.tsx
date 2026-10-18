@@ -2,7 +2,7 @@ import { ClipboardClock, Info, ReceiptText, Wallet } from "lucide-react";
 import { formatAmount } from "@/lib/format";
 import type { TurnoverStats } from "@/types/models";
 
-const cardClass = "flex flex-1 flex-col gap-3 overflow-hidden rounded-lg bg-white p-4 shadow-[0_1px_2px_rgba(0,0,0,0.05)]";
+const cardClass = "flex flex-1 flex-col gap-3 overflow-hidden rounded-lg bg-card p-4 shadow-[0_1px_2px_rgba(0,0,0,0.05)]";
 const labelClass = "text-xs font-semibold uppercase tracking-[0.05em]";
 const unitClass = "text-xs font-semibold tracking-[0.02em]";
 const amountClass = "font-num text-[28px] font-bold leading-9 tracking-[-0.02em]";
@@ -48,7 +48,7 @@ export function SummaryStrip({ stats }: SummaryStripProps) {
             </div>
             <p className="pt-0.5 text-xs tracking-[0.01em] text-body">{counts.paid} paid invoices settled via bank/CCP</p>
           </div>
-          <span className="grid size-8 place-items-center rounded bg-mint text-primary">
+          <span className="grid size-8 place-items-center rounded bg-mint text-accent">
             <Wallet className="size-4" />
           </span>
         </div>
@@ -77,7 +77,7 @@ export function SummaryStrip({ stats }: SummaryStripProps) {
             <h3 className={`${labelClass} text-muted`}>Pending Inflow</h3>
             <p className="pt-0.5 text-xs tracking-[0.01em] text-body">{counts.pending} issued invoices awaiting settlement</p>
           </div>
-          <span className="grid size-8 place-items-center rounded bg-surface-high text-primary">
+          <span className="grid size-8 place-items-center rounded bg-surface-high text-accent">
             <ClipboardClock className="size-4" />
           </span>
         </div>

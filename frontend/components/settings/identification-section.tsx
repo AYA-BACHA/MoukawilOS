@@ -76,7 +76,7 @@ export function IdentificationSection({ user }: { user: User }) {
           <ReadOnly className="bg-mint">
             <ShieldCheck className="size-[15px] text-mint-ink" />
             <span className="font-semibold text-mint-ink">Active &amp; Compliant</span>
-            <span className="pl-6 text-xs tracking-[0.01em] text-primary">Valid through {formatDate(user.cardValidUntil)}</span>
+            <span className="pl-6 text-xs tracking-[0.01em] text-accent">Valid through {formatDate(user.cardValidUntil)}</span>
           </ReadOnly>
         </SettingField>
       </div>

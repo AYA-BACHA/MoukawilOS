@@ -293,7 +293,7 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
       {/* Popover Card (matching user screenshot) */}
       <div
         style={tooltipStyle}
-        className="pointer-events-auto w-[340px] rounded-2xl border border-slate-100 bg-white p-5 shadow-2xl animate-in fade-in zoom-in-95 duration-200"
+        className="pointer-events-auto w-[340px] rounded-2xl border border-slate-100 bg-card p-5 shadow-2xl animate-in fade-in zoom-in-95 duration-200"
       >
         {/* Caret Arrow pointing to target */}
         {targetRect && (
@@ -301,25 +301,25 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
             {arrowPlacement === "top" && (
               <div
                 style={{ left: arrowOffset - 6, transition: "left 400ms cubic-bezier(0.16, 1, 0.3, 1)" }}
-                className="absolute -top-2 size-3 rotate-45 border-l border-t border-slate-100 bg-white"
+                className="absolute -top-2 size-3 rotate-45 border-l border-t border-slate-100 bg-card"
               />
             )}
             {arrowPlacement === "bottom" && (
               <div
                 style={{ left: arrowOffset - 6, transition: "left 400ms cubic-bezier(0.16, 1, 0.3, 1)" }}
-                className="absolute -bottom-2 size-3 rotate-45 border-b border-r border-slate-100 bg-white"
+                className="absolute -bottom-2 size-3 rotate-45 border-b border-r border-slate-100 bg-card"
               />
             )}
             {arrowPlacement === "left" && (
               <div
                 style={{ top: arrowOffset - 6, transition: "top 400ms cubic-bezier(0.16, 1, 0.3, 1)" }}
-                className="absolute -left-2 size-3 rotate-45 border-b border-l border-slate-100 bg-white"
+                className="absolute -left-2 size-3 rotate-45 border-b border-l border-slate-100 bg-card"
               />
             )}
             {arrowPlacement === "right" && (
               <div
                 style={{ top: arrowOffset - 6, transition: "top 400ms cubic-bezier(0.16, 1, 0.3, 1)" }}
-                className="absolute -right-2 size-3 rotate-45 border-r border-t border-slate-100 bg-white"
+                className="absolute -right-2 size-3 rotate-45 border-r border-t border-slate-100 bg-card"
               />
             )}
           </>
@@ -353,7 +353,7 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
               <button
                 type="button"
                 onClick={handleBack}
-                className="rounded-full border border-slate-200 bg-white px-3.5 py-1 text-xs font-semibold text-slate-700 shadow-2xs transition-all hover:bg-slate-50 active:scale-95"
+                className="rounded-full border border-slate-200 bg-card px-3.5 py-1 text-xs font-semibold text-slate-700 shadow-2xs transition-all hover:bg-slate-50 active:scale-95"
               >
                 Back
               </button>

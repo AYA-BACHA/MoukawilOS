@@ -7,7 +7,7 @@ import type { ClientRow } from "@/lib/clients";
 
 function Box({ label, value, className }: { label: string; value: string; className?: string }) {
   return (
-    <div className={cn("rounded-sm bg-white p-2", className)}>
+    <div className={cn("rounded-sm bg-card p-2", className)}>
       <p className="text-[10px] uppercase leading-4 text-muted">{label}</p>
       <p className="font-num text-xs font-bold leading-4 text-ink">{value}</p>
     </div>
@@ -20,7 +20,7 @@ export function ClientDossier({ row, onEdit }: { row: ClientRow; onEdit: () => v
 
   return (
     <div className="col-span-4 flex flex-col gap-3">
-      <section className="flex flex-col gap-3 overflow-hidden rounded-lg bg-white pb-4 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
+      <section className="flex flex-col gap-3 overflow-hidden rounded-lg bg-card pb-4 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
         <div className="flex items-center justify-between gap-2 bg-surface-low px-4 pb-2 pt-3">
           <h2 className="flex items-center gap-1 text-xs font-semibold uppercase leading-4 tracking-[0.05em] text-primary-ink">
             <IdCard className="size-[15px] shrink-0" />
@@ -48,7 +48,7 @@ export function ClientDossier({ row, onEdit }: { row: ClientRow; onEdit: () => v
                   <Box className="flex-1" label="Tax number (NIF)" value={client.nif ?? "—"} />
                   <Box className="flex-1" label="Trade register (RC)" value={client.rc ?? "—"} />
                 </div>
-                <div className="flex items-center justify-between rounded-sm bg-white p-2">
+                <div className="flex items-center justify-between rounded-sm bg-card p-2">
                   <p className="text-[10px] uppercase text-muted">Statistical number (NIS)</p>
                   <p className="font-num text-xs text-ink">{client.nis ?? "—"}</p>
                 </div>
@@ -91,8 +91,8 @@ export function ClientDossier({ row, onEdit }: { row: ClientRow; onEdit: () => v
         </div>
       </section>
 
-      <section className="flex gap-3 rounded-lg bg-white p-3 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
-        <span className="grid size-8 shrink-0 place-items-center rounded bg-mint text-primary">
+      <section className="flex gap-3 rounded-lg bg-card p-3 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
+        <span className="grid size-8 shrink-0 place-items-center rounded bg-mint text-accent">
           <Gavel className="size-4" strokeWidth={1.75} />
         </span>
         <div>
