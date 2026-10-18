@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Check, Download, FileDown, Printer, Trash2, X } from "lucide-react";
+import { Check, Download, FileDown, FileText, Plus, Printer, Trash2, X } from "lucide-react";
 import { clientDetail, formatAmount, formatDate } from "@/lib/format";
 import { cn } from "@/lib/cn";
 import type { InvoiceStatus, InvoiceWithClient } from "@/types/models";
@@ -42,7 +42,29 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {invoices.map((invoice) => {
+            {invoices.length === 0 ? (
+              <tr>
+                <td colSpan={7} className="py-12 text-center">
+                  <div className="flex flex-col items-center justify-center gap-2">
+                    <div className="flex size-10 items-center justify-center rounded-full bg-mint text-primary">
+                      <FileText className="size-5" />
+                    </div>
+                    <p className="text-sm font-semibold text-ink">No commercial records found</p>
+                    <p className="max-w-xs text-xs text-muted">
+                      No invoices match the current filter. Create your first compliant 0% VAT invoice.
+                    </p>
+                    <Link
+                      href="/invoices/new"
+                      className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-primary px-3.5 py-1.5 text-xs font-semibold text-white shadow-xs hover:bg-primary-ink transition-colors"
+                    >
+                      <Plus className="size-3.5" />
+                      Create New Invoice
+                    </Link>
+                  </div>
+                </td>
+              </tr>
+            ) : (
+              invoices.map((invoice) => {
               const status = statusStyles[invoice.status];
               const isDraft = invoice.status === "draft";
               const isActive = invoice.id === activeId;
@@ -173,7 +195,7 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
                   </td>
                 </tr>
               );
-            })}
+            }))}
           </tbody>
         </table>
       </div>

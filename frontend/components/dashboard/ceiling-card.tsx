@@ -74,10 +74,10 @@ export function CeilingCard({ stats }: { stats: TurnoverStats }) {
                 dot="size-2 bg-primary"
                 className="bg-mint px-3 py-1.5 text-xs font-bold text-primary shadow-xs ring-1 ring-emerald-600/10"
               >
-                {percent}% of ceiling utilized
+                {percent}% utilized • Safe &amp; In Compliance
               </Pill>
               <p className="text-xs text-body">
-                <span className="font-num font-bold text-ink">{formatAmount(remaining)} DZD</span> remaining before legal ceiling
+                <span className="font-num font-bold text-ink">{formatAmount(remaining)} DZD</span> remaining under your 5M DZD statutory limit
               </p>
             </div>
             <button

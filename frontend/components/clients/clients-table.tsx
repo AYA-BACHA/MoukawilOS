@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BadgeCheck, ChevronLeft, ChevronRight, EllipsisVertical } from "lucide-react";
+import { BadgeCheck, ChevronLeft, ChevronRight, EllipsisVertical, Users } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { formatAmount, formatDate, initials } from "@/lib/format";
 import type { ClientRow } from "@/lib/clients";
@@ -65,7 +65,22 @@ export function ClientsTable({ rows, total, selectedId, onSelect, page, pageCoun
             </tr>
           </thead>
           <tbody>
-            {rows.map((row) => {
+            {rows.length === 0 ? (
+              <tr>
+                <td colSpan={5} className="py-12 text-center">
+                  <div className="flex flex-col items-center justify-center gap-2">
+                    <div className="flex size-10 items-center justify-center rounded-full bg-mint text-primary">
+                      <Users className="size-5" />
+                    </div>
+                    <p className="text-sm font-semibold text-ink">No client records found</p>
+                    <p className="max-w-xs text-xs text-muted">
+                      No registered client entities match your current search query.
+                    </p>
+                  </div>
+                </td>
+              </tr>
+            ) : (
+              rows.map((row) => {
               const { client } = row;
               const business = client.type === "B2B";
               const active = row.standing === "active";
@@ -124,7 +139,7 @@ export function ClientsTable({ rows, total, selectedId, onSelect, page, pageCoun
                   </td>
                 </tr>
               );
-            })}
+            }))}
           </tbody>
         </table>
       </div>

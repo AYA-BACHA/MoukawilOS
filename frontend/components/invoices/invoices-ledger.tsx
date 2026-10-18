@@ -2,12 +2,13 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Download, Plus } from "lucide-react";
+import { Check, Download, Plus, X } from "lucide-react";
 import { Filters, type ClientFilter, type StatusFilter } from "@/components/invoices/filters";
 import { LedgerTable } from "@/components/invoices/ledger-table";
 import { PaymentModal } from "@/components/invoices/payment-modal";
 import { SummaryStrip } from "@/components/invoices/summary-strip";
 import { downloadLedgerCsv } from "@/lib/csv";
+import { formatAmount } from "@/lib/format";
 import { computeStats } from "@/lib/stats";
 import type { InvoiceWithClient, PaymentConfirmation, User } from "@/types/models";
 
@@ -42,12 +43,17 @@ export function InvoicesLedger({ user, invoices: initialInvoices, initialQuery =
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
   const visible = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+  const [settledToast, setSettledToast] = useState<{ number: string; amount: number } | null>(null);
   const payingInvoice = invoices.find((invoice) => invoice.id === payingId) ?? null;
 
   const confirmPayment = ({ invoiceId, settlementDate, rail }: PaymentConfirmation) => {
+    const target = invoices.find((inv) => inv.id === invoiceId);
     setInvoices((current) =>
       current.map((invoice) => (invoice.id === invoiceId ? { ...invoice, status: "paid", paidAt: settlementDate, paymentRail: rail } : invoice)),
     );
+    if (target) {
+      setSettledToast({ number: target.number, amount: target.amount });
+    }
     setPayingId(null);
   };
 
@@ -141,6 +147,25 @@ export function InvoicesLedger({ user, invoices: initialInvoices, initialQuery =
       </section>
 
       {payingInvoice && <PaymentModal invoice={payingInvoice} stats={stats} onClose={() => setPayingId(null)} onConfirm={confirmPayment} />}
+      {settledToast && (
+        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-2xl animate-in slide-in-from-bottom-3 duration-300">
+          <span className="flex size-8 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+            <Check className="size-4" strokeWidth={2.5} />
+          </span>
+          <div>
+            <p className="text-xs font-bold text-ink">🎉 Payment Recorded for {settledToast.number}!</p>
+            <p className="text-[11px] text-body">
+              <strong className="font-num text-ink">{formatAmount(settledToast.amount)} DZD</strong> cleared &amp; realized under FY 2026 cash-basis turnover.
+            </p>
+          </div>
+          <button
+            onClick={() => setSettledToast(null)}
+            className="ml-2 rounded-lg p-1 text-muted hover:bg-slate-100 hover:text-ink"
+          >
+            <X className="size-4" />
+          </button>
+        </div>
+      )}
     </div>
   );
 }

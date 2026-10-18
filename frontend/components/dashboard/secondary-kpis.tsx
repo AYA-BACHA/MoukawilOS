@@ -31,7 +31,9 @@ export function SecondaryKpis({ deadline, stats }: { deadline: Deadline; stats: 
               <p className="font-num text-2xl font-bold tracking-tight text-ink">
                 {formatLongDate(deadline.dueDate)}
               </p>
-              <p className="mt-1 text-xs text-body leading-relaxed">{deadline.description}</p>
+              <p className="mt-1 text-xs text-body leading-relaxed">
+                Annual G50-A filing (0.5% flat IFU tax obligation) • No unexpected audits.
+              </p>
             </div>
           </div>
           <div className="flex items-center justify-between border-t border-slate-100 pt-4 mt-3">
@@ -66,7 +68,7 @@ export function SecondaryKpis({ deadline, stats }: { deadline: Deadline; stats: 
               </p>
               <div className="mt-2">
                 <Pill dot="bg-teal" className="bg-surface-low px-2.5 py-1 text-xs text-body">
-                  {stats.counts.pending} pending invoices awaiting client clearance
+                  {stats.counts.pending} invoices awaiting clearance • 0 DZD taxed until money clears
                 </Pill>
               </div>
             </div>
