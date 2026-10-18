@@ -1,5 +1,9 @@
-import { CalendarDays, ChevronDown, Search } from "lucide-react";
+"use client";
+
+import { useState } from "react";
+import { CalendarDays, Search } from "lucide-react";
 import { cn } from "@/lib/cn";
+import { SelectDropdown, type Option } from "@/components/ui/select-dropdown";
 import type { ClientType } from "@/types/models";
 
 export type StatusFilter = "all" | "paid" | "pending" | "draft";
@@ -22,54 +26,84 @@ const tabs: { value: StatusFilter; label: string }[] = [
   { value: "draft", label: "Drafts" },
 ];
 
-const fieldClass = "h-10 rounded bg-surface-low shadow-[inset_0_2px_4px_rgba(0,0,0,0.05)]";
+const clientOptions: Option<ClientFilter>[] = [
+  { value: "all", label: "All Types" },
+  { value: "B2B", label: "B2B", badge: "Corporate" },
+  { value: "B2C", label: "B2C", badge: "Individual" },
+];
 
-export function Filters({ status, onStatusChange, counts, query, onQueryChange, clientType, onClientTypeChange }: FiltersProps) {
+const yearOptions: Option<string>[] = [
+  { value: "2026", label: "FY 2026" },
+  { value: "2025", label: "FY 2025" },
+];
+
+export function Filters({
+  status,
+  onStatusChange,
+  counts,
+  query,
+  onQueryChange,
+  clientType,
+  onClientTypeChange,
+}: FiltersProps) {
+  const [fiscalYear, setFiscalYear] = useState("2026");
+
   return (
-    <div className="flex items-center gap-3 rounded-lg bg-white p-3 shadow-[0_1px_1px_rgba(0,0,0,0.05)]">
-      <div className="flex rounded bg-surface-low p-1">
+    <div className="flex flex-wrap items-center gap-3 rounded-xl border border-slate-100 bg-white p-3 shadow-xs">
+      {/* Status Filter Tabs */}
+      <div className="flex rounded-lg bg-surface-low p-1">
         {tabs.map(({ value, label }) => (
           <button
             key={value}
+            type="button"
             onClick={() => onStatusChange(value)}
             className={cn(
-              "flex items-center gap-1 rounded-md px-3 py-1.5 text-xs tracking-[0.02em]",
-              status === value ? "bg-white font-semibold text-ink shadow-[0_1px_1px_rgba(0,0,0,0.05)]" : "font-medium text-body",
+              "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-all",
+              status === value
+                ? "bg-white font-bold text-ink shadow-xs"
+                : "text-body hover:text-ink",
             )}
           >
             {label}
-            <span className="font-num font-normal text-muted">{counts[value]}</span>
+            <span
+              className={cn(
+                "rounded-full px-1.5 py-0.2 font-num text-[11px]",
+                status === value ? "bg-slate-100 text-ink font-semibold" : "text-muted",
+              )}
+            >
+              {counts[value]}
+            </span>
           </button>
         ))}
       </div>
-      <div className="flex flex-1 items-center justify-end gap-2">
-        <label className="relative min-w-60 flex-1">
-          <Search className="absolute left-3 top-1/2 size-[14px] -translate-y-1/2 text-body" />
+
+      {/* Search & Custom Dropdowns */}
+      <div className="flex flex-1 flex-wrap items-center justify-end gap-2.5">
+        <label className="relative min-w-56 flex-1 max-w-md">
+          <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted" />
           <input
             value={query}
             onChange={(event) => onQueryChange(event.target.value)}
-            placeholder="Search client or invoice ref"
-            className={cn(fieldClass, "w-full pl-9 pr-3 text-sm text-ink outline-none placeholder:text-muted focus:ring-2 focus:ring-primary/30")}
+            placeholder="Search client or invoice ref..."
+            className="h-10 w-full rounded-lg border border-slate-200/80 bg-surface-low pl-9 pr-3 text-xs text-ink placeholder:text-muted transition-all focus:border-primary/40 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
         </label>
-        <label className={cn(fieldClass, "relative flex items-center gap-1 pl-3 pr-8 text-sm")}>
-          <span className="font-medium text-muted">Client:</span>
-          <select
-            value={clientType}
-            onChange={(event) => onClientTypeChange(event.target.value as ClientFilter)}
-            className="appearance-none bg-transparent font-semibold text-ink outline-none"
-          >
-            <option value="all">All Types</option>
-            <option value="B2B">B2B</option>
-            <option value="B2C">B2C</option>
-          </select>
-          <ChevronDown className="pointer-events-none absolute right-3 size-3 text-body" />
-        </label>
-        <div className={cn(fieldClass, "flex items-center gap-1.5 px-3 text-sm font-semibold text-ink")}>
-          <CalendarDays className="size-3.5 text-body" />
-          FY 2026
-          <ChevronDown className="size-3 text-body" />
-        </div>
+
+        {/* Custom Client Type Dropdown - Replaces ugly native select */}
+        <SelectDropdown<ClientFilter>
+          label="Client:"
+          value={clientType}
+          options={clientOptions}
+          onChange={onClientTypeChange}
+        />
+
+        {/* Fiscal Year Filter */}
+        <SelectDropdown<string>
+          value={fiscalYear}
+          options={yearOptions}
+          onChange={setFiscalYear}
+          icon={<CalendarDays className="size-3.5 text-primary" />}
+        />
       </div>
     </div>
   );
