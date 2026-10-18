@@ -242,45 +242,32 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden">
-      {/* SVG Mask Spotlight Cutout */}
-      <svg className="fixed inset-0 h-full w-full pointer-events-none transition-all duration-300">
-        <defs>
-          <mask id="tour-spotlight-mask">
-            <rect x="0" y="0" width="100%" height="100%" fill="white" />
-            {targetRect && (
-              <rect
-                x={targetRect.left - PADDING}
-                y={targetRect.top - PADDING}
-                width={targetRect.width + PADDING * 2}
-                height={targetRect.height + PADDING * 2}
-                rx="18"
-                fill="black"
-              />
-            )}
-          </mask>
-        </defs>
-        <rect
-          x="0"
-          y="0"
-          width="100%"
-          height="100%"
-          fill="rgba(15, 23, 42, 0.65)"
-          mask="url(#tour-spotlight-mask)"
-          className="backdrop-blur-xs"
-        />
-      </svg>
+    <div className="fixed inset-0 z-50 overflow-hidden pointer-events-none">
+      {/* Invisible backdrop click-listener to close when clicking the dark area */}
+      <div
+        className="fixed inset-0 z-40 pointer-events-auto"
+        onClick={onClose}
+      />
 
-      {/* Spotlight Ring Border */}
+      {/* Fallback dark overlay when targetRect is calculating */}
+      {!targetRect && (
+        <div className="fixed inset-0 z-45 bg-slate-950/65 transition-opacity duration-300" />
+      )}
+
+      {/* Crystal-Clear Spotlight Hole with Outward-Only Dark Overlay & Crisp White Ring */}
       {targetRect && (
         <div
-          className="fixed pointer-events-none rounded-2xl ring-4 ring-white shadow-2xl transition-all duration-300 ease-out"
+          className="fixed rounded-2xl transition-all duration-300 ease-out pointer-events-none"
           style={{
             left: targetRect.left - PADDING,
             top: targetRect.top - PADDING,
             width: targetRect.width + PADDING * 2,
             height: targetRect.height + PADDING * 2,
-            zIndex: 55,
+            borderRadius: "18px",
+            // The box shadow spreads 9999px outwards to darken the rest of the screen,
+            // while leaving the interior completely transparent, bright, and 100% readable.
+            boxShadow: "0 0 0 3.5px #ffffff, 0 0 0 9999px rgba(15, 23, 42, 0.68), 0 12px 35px -8px rgba(0, 0, 0, 0.45)",
+            zIndex: 50,
           }}
         />
       )}
@@ -288,7 +275,7 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
       {/* Popover Card (matching user screenshot) */}
       <div
         style={tooltipStyle}
-        className="w-[340px] rounded-2xl border border-slate-100 bg-white p-5 shadow-2xl animate-in fade-in zoom-in-95 duration-200"
+        className="pointer-events-auto w-[340px] rounded-2xl border border-slate-100 bg-white p-5 shadow-2xl animate-in fade-in zoom-in-95 duration-200"
       >
         {/* Caret Arrow pointing to target */}
         {targetRect && (
