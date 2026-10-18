@@ -65,12 +65,14 @@ export function Topbar({ utilization }: { utilization: number }) {
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-slate-100 bg-card/95 px-6 shadow-xs backdrop-blur-md">
       <div className="flex items-center gap-3">
-        <SelectDropdown
-          value={fiscalYear}
-          options={yearOptions}
-          onChange={setFiscalYear}
-          icon={<CalendarDays className="size-3.5 text-accent" />}
-        />
+        <div id="tour-fiscal-year">
+          <SelectDropdown
+            value={fiscalYear}
+            options={yearOptions}
+            onChange={setFiscalYear}
+            icon={<CalendarDays className="size-3.5 text-accent" />}
+          />
+        </div>
         <Pill dot="size-2 bg-primary" className="bg-mint px-3 py-1 text-mint-ink shadow-xs">
           Status: {Math.round(utilization * 100)}% Utilized • In Compliance
         </Pill>
@@ -80,7 +82,7 @@ export function Topbar({ utilization }: { utilization: number }) {
         <ThemeToggle />
 
         {/* Notifications Popover */}
-        <div ref={notifRef} className="relative">
+        <div id="tour-notifications" ref={notifRef} className="relative">
           <button
             type="button"
             aria-label="Notifications"

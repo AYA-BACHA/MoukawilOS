@@ -29,7 +29,7 @@ export function OperationalIndicators({ user, stats }: { user: User; stats: Turn
   const ifuPercent = user.ifuRate * 100;
 
   return (
-    <div className="flex items-start gap-3 pb-8">
+    <div id="tour-operational-indicators" className="flex items-start gap-3 pb-8">
       <Indicator
         icon={Percent}
         label="TVA Exemption Status"

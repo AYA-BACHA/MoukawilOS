@@ -59,7 +59,7 @@ export function RecentInvoices({
 
   return (
     <>
-      <section className="overflow-hidden rounded-xl border border-slate-200/80 bg-card shadow-xs hover:shadow-md transition-all duration-200">
+      <section id="tour-recent-invoices" className="overflow-hidden rounded-xl border border-slate-200/80 bg-card shadow-xs hover:shadow-md transition-all duration-200">
         <div className="flex items-center justify-between border-b border-slate-100 p-4">
           <div className="flex items-center gap-2.5">
             <h2 className="text-lg font-bold tracking-tight text-ink">Recent Invoices</h2>
