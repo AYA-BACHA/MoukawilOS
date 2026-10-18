@@ -28,21 +28,7 @@ const standingOptions: { value: StandingFilter; label: string }[] = [
   { value: "pending", label: "Pending" },
 ];
 
-function Dropdown<T extends string>({ label, value, options, onChange }: { label: string; value: T; options: { value: T; label: string }[]; onChange: (value: T) => void }) {
-  return (
-    <label className="relative flex items-center gap-1 rounded bg-surface-low py-2 pl-3 pr-7 text-xs font-medium tracking-[0.02em] text-body">
-      {label}
-      <select value={value} onChange={(event) => onChange(event.target.value as T)} className="appearance-none bg-transparent font-semibold text-ink outline-none">
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-      <ChevronDown className="pointer-events-none absolute right-2.5 size-2 text-body" />
-    </label>
-  );
-}
+import { SelectDropdown } from "@/components/ui/select-dropdown";
 
 export function ClientsDirectory({ clients: initialClients, invoices }: { clients: Client[]; invoices: InvoiceWithClient[] }) {
   const [clients, setClients] = useState(initialClients);
@@ -146,8 +132,8 @@ export function ClientsDirectory({ clients: initialClients, invoices }: { client
               className="h-10 w-full rounded bg-surface-low pl-9 pr-3 text-sm text-ink outline-none placeholder:text-muted focus:ring-2 focus:ring-primary/30"
             />
           </label>
-          <Dropdown label="Sort:" value={sort} options={sortOptions} onChange={reset(setSort)} />
-          <Dropdown label="Status:" value={standing} options={standingOptions} onChange={reset(setStanding)} />
+          <SelectDropdown label="Sort:" value={sort} options={sortOptions} onChange={reset(setSort)} />
+          <SelectDropdown label="Status:" value={standing} options={standingOptions} onChange={reset(setStanding)} />
         </div>
       </div>
 

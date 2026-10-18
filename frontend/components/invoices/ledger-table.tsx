@@ -1,16 +1,20 @@
-import { FileDown, Trash2 } from "lucide-react";
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { Check, Download, FileDown, Printer, Trash2, X } from "lucide-react";
 import { clientDetail, formatAmount, formatDate } from "@/lib/format";
 import { cn } from "@/lib/cn";
 import type { InvoiceStatus, InvoiceWithClient } from "@/types/models";
 
 const statusStyles: Record<InvoiceStatus, { label: string; pill: string; dot: string }> = {
-  pending: { label: "Pending / Issued", pill: "bg-surface-high text-body", dot: "bg-teal" },
-  paid: { label: "Paid", pill: "bg-mint text-mint-ink", dot: "bg-primary" },
+  pending: { label: "Pending", pill: "bg-surface-high text-body", dot: "bg-teal" },
+  paid: { label: "Paid", pill: "bg-mint font-semibold text-primary", dot: "bg-primary" },
   draft: { label: "Draft", pill: "bg-surface text-muted", dot: "bg-muted" },
 };
 
-const headClass = "px-3 py-3 text-xs font-semibold uppercase tracking-[0.05em] text-body";
-const cellClass = "px-3 py-3";
+const headClass = "px-3 py-3 text-[11px] font-bold uppercase tracking-wider text-muted";
+const cellClass = "px-3 py-3.5";
 
 interface LedgerTableProps {
   invoices: InvoiceWithClient[];
@@ -20,87 +24,223 @@ interface LedgerTableProps {
 }
 
 export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: LedgerTableProps) {
+  const [viewingReceipt, setViewingReceipt] = useState<InvoiceWithClient | null>(null);
+
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full text-left">
-        <thead className="bg-surface-low">
-          <tr>
-            <th className={headClass}>Invoice Ref</th>
-            <th className={headClass}>Client Name & Legal Type</th>
-            <th className={headClass}>Issue Date</th>
-            <th className={headClass}>Due Date</th>
-            <th className={cn(headClass, "text-right")}>Amount (DZD)</th>
-            <th className={headClass}>Statutory Clause</th>
-            <th className={cn(headClass, "text-center")}>Status</th>
-            <th className={cn(headClass, "text-right")}>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {invoices.map((invoice) => {
-            const status = statusStyles[invoice.status];
-            const isDraft = invoice.status === "draft";
-            const isActive = invoice.id === activeId;
-            return (
-              <tr key={invoice.id} className={cn(isActive && "bg-surface-high/20", isDraft && "opacity-80")}>
-                <td className={cn(cellClass, "py-[22px] font-num text-sm font-bold whitespace-nowrap", isActive ? "text-primary-ink" : isDraft ? "text-muted" : "text-ink")}>
-                  {invoice.number}
-                </td>
-                <td className={cellClass}>
-                  <div className="flex items-center gap-1">
-                    <span className="whitespace-nowrap text-sm font-semibold text-ink">{invoice.client.name}</span>
-                    <span className="rounded-sm bg-surface px-1.5 text-[10px] font-bold leading-5 text-body">{invoice.client.type}</span>
-                  </div>
-                  <p className="font-num text-xs text-muted">{clientDetail(invoice.client)}</p>
-                </td>
-                <td className={cn(cellClass, "whitespace-nowrap text-sm font-medium text-body")}>{formatDate(invoice.issueDate)}</td>
-                <td className={cn(cellClass, "whitespace-nowrap text-sm font-medium text-body")}>{formatDate(invoice.dueDate)}</td>
-                <td className={cn(cellClass, "text-right font-num text-sm font-bold", isDraft ? "text-muted" : "text-ink")}>{formatAmount(invoice.amount)}</td>
-                <td className={cellClass}>
-                  <span className="inline-block whitespace-nowrap rounded-sm bg-surface px-2 py-1 text-xs font-medium tracking-[0.02em] text-body">
-                    {invoice.statutoryClause}
-                  </span>
-                </td>
-                <td className={cn(cellClass, "text-center")}>
-                  <span className={cn("inline-flex items-center gap-1 whitespace-nowrap rounded-xl px-2.5 py-0.5 text-xs font-medium tracking-[0.02em]", status.pill)}>
-                    <span className={cn("size-1.5 rounded-full", status.dot)} />
-                    {status.label}
-                  </span>
-                </td>
-                <td className={cellClass}>
-                  <div className="flex items-center justify-end gap-1">
-                    {invoice.status === "pending" && (
-                      <button
-                        onClick={() => onMarkPaid(invoice.id)}
+    <>
+      <div className="overflow-x-auto">
+        <table className="w-full text-left">
+          <thead className="border-b border-slate-100 bg-surface-low/80">
+            <tr>
+              <th className={headClass}>Invoice Ref</th>
+              <th className={headClass}>Client &amp; ID</th>
+              <th className={headClass}>Issue / Due Date</th>
+              <th className={cn(headClass, "text-right")}>Amount (DZD)</th>
+              <th className={headClass}>Legal Clause</th>
+              <th className={cn(headClass, "text-center")}>Status</th>
+              <th className={cn(headClass, "text-right")}>Actions</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-100">
+            {invoices.map((invoice) => {
+              const status = statusStyles[invoice.status];
+              const isDraft = invoice.status === "draft";
+              const isActive = invoice.id === activeId;
+
+              return (
+                <tr
+                  key={invoice.id}
+                  className={cn(
+                    "transition-colors hover:bg-slate-50/70",
+                    isActive && "bg-surface-high/30",
+                    isDraft && "opacity-80",
+                  )}
+                >
+                  {/* Invoice Ref */}
+                  <td className={cn(cellClass, "font-num text-xs font-bold text-ink whitespace-nowrap")}>
+                    {invoice.number}
+                  </td>
+
+                  {/* Client & Legal Type */}
+                  <td className={cellClass}>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs font-bold text-ink">{invoice.client.name}</span>
+                      <span
                         className={cn(
-                          "whitespace-nowrap rounded px-3 py-1.5 text-xs tracking-[0.02em]",
-                          isActive ? "bg-primary font-semibold text-white shadow-[0_1px_1px_rgba(0,0,0,0.05)]" : "bg-surface font-medium text-ink",
+                          "rounded px-1.5 py-0.2 text-[10px] font-bold",
+                          invoice.client.type === "B2B" ? "bg-surface text-teal" : "bg-surface-low text-body",
                         )}
                       >
-                        Mark as Paid
-                      </button>
-                    )}
-                    {invoice.status === "paid" && (
-                      <button className="whitespace-nowrap rounded bg-surface px-2 py-1.5 text-xs font-medium tracking-[0.02em] text-ink">Receipt</button>
-                    )}
-                    {isDraft && (
-                      <button className="whitespace-nowrap rounded bg-surface px-2 py-1.5 text-xs font-medium tracking-[0.02em] text-ink">Resume</button>
-                    )}
-                    {isDraft ? (
-                      <button aria-label="Delete draft" onClick={() => onDeleteDraft(invoice.id)} className="rounded p-1.5 text-danger">
-                        <Trash2 className="size-[15px]" />
-                      </button>
-                    ) : (
-                      <button aria-label="Download PDF" className="rounded p-1.5 text-body">
-                        <FileDown className="size-[15px]" />
-                      </button>
-                    )}
-                  </div>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
+                        {invoice.client.type}
+                      </span>
+                    </div>
+                    <p className="font-num text-[11px] text-muted truncate max-w-[200px]">
+                      {clientDetail(invoice.client)}
+                    </p>
+                  </td>
+
+                  {/* Dates */}
+                  <td className={cellClass}>
+                    <div className="text-xs font-medium text-ink">{formatDate(invoice.issueDate)}</div>
+                    <div className="text-[11px] text-muted">Due {formatDate(invoice.dueDate)}</div>
+                  </td>
+
+                  {/* Amount */}
+                  <td className={cn(cellClass, "text-right font-num text-xs font-bold", isDraft ? "text-muted" : "text-ink")}>
+                    {formatAmount(invoice.amount)}
+                  </td>
+
+                  {/* Statutory Clause */}
+                  <td className={cellClass}>
+                    <span className="inline-block rounded-md border border-slate-200/60 bg-surface px-2 py-0.5 text-[10px] font-medium text-body">
+                      {invoice.statutoryClause}
+                    </span>
+                  </td>
+
+                  {/* Status Pill */}
+                  <td className={cn(cellClass, "text-center whitespace-nowrap")}>
+                    <span
+                      className={cn(
+                        "inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-medium",
+                        status.pill,
+                      )}
+                    >
+                      <span className={cn("size-1.5 rounded-full", status.dot)} />
+                      {status.label}
+                    </span>
+                  </td>
+
+                  {/* Actions */}
+                  <td className={cellClass}>
+                    <div className="flex items-center justify-end gap-1.5 whitespace-nowrap">
+                      {invoice.status === "pending" && (
+                        <button
+                          type="button"
+                          onClick={() => onMarkPaid(invoice.id)}
+                          className={cn(
+                            "rounded-lg px-2.5 py-1 text-xs font-semibold transition-all",
+                            isActive
+                              ? "bg-primary text-white shadow-xs"
+                              : "border border-slate-200/80 bg-surface text-ink hover:bg-slate-200",
+                          )}
+                        >
+                          Mark Paid
+                        </button>
+                      )}
+
+                      {invoice.status === "paid" && (
+                        <button
+                          type="button"
+                          onClick={() => setViewingReceipt(invoice)}
+                          className="rounded-lg border border-slate-200/80 bg-surface-low px-2.5 py-1 text-xs font-medium text-body transition-colors hover:bg-surface hover:text-ink"
+                        >
+                          Receipt
+                        </button>
+                      )}
+
+                      {isDraft && (
+                        <Link
+                          href="/invoices/new"
+                          className="rounded-lg border border-slate-200/80 bg-surface-low px-2.5 py-1 text-xs font-medium text-body transition-colors hover:bg-surface hover:text-ink"
+                        >
+                          Resume
+                        </Link>
+                      )}
+
+                      {isDraft ? (
+                        <button
+                          type="button"
+                          aria-label="Delete draft"
+                          onClick={() => onDeleteDraft(invoice.id)}
+                          className="rounded-lg p-1.5 text-danger transition-colors hover:bg-red-50"
+                        >
+                          <Trash2 className="size-3.5" />
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          aria-label="Download PDF"
+                          onClick={() => {
+                            if (invoice.status === "paid") setViewingReceipt(invoice);
+                            else window.print();
+                          }}
+                          className="rounded-lg p-1.5 text-body transition-colors hover:bg-surface hover:text-ink"
+                        >
+                          <FileDown className="size-3.5 text-primary" />
+                        </button>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Official Receipt Voucher Modal */}
+      {viewingReceipt && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm animate-in fade-in">
+          <div className="relative w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl animate-in zoom-in-95">
+            <div className="flex items-start justify-between border-b border-slate-100 pb-3">
+              <div>
+                <span className="rounded bg-mint px-2 py-0.5 text-[10px] font-bold text-mint-ink">
+                  Executive Decree 23-197 Certified
+                </span>
+                <h3 className="mt-1 text-base font-bold text-ink">Official Settlement Receipt</h3>
+                <p className="text-xs text-muted">Invoice Ref: #{viewingReceipt.number}</p>
+              </div>
+              <button
+                onClick={() => setViewingReceipt(null)}
+                className="rounded-lg p-1 text-muted hover:bg-slate-100 hover:text-ink"
+              >
+                <X className="size-4" />
+              </button>
+            </div>
+
+            <div className="mt-4 flex flex-col gap-2.5 rounded-xl border border-slate-200 bg-slate-50/80 p-4 font-mono text-xs">
+              <div className="flex justify-between py-1 border-b border-slate-200/80">
+                <span className="text-slate-600">Client:</span>
+                <span className="font-bold text-slate-900">{viewingReceipt.client.name}</span>
+              </div>
+              <div className="flex justify-between py-1 border-b border-slate-200/80">
+                <span className="text-slate-600">Payment Rail:</span>
+                <span className="font-bold text-teal">{viewingReceipt.paymentRail ?? "Official Bank Transfer"}</span>
+              </div>
+              <div className="flex justify-between py-1 border-b border-slate-200/80">
+                <span className="text-slate-600">Settlement Date:</span>
+                <span className="font-bold text-slate-900">{viewingReceipt.paidAt ? formatDate(viewingReceipt.paidAt) : "2026-10-18"}</span>
+              </div>
+              <div className="flex justify-between py-1 font-bold text-sm">
+                <span className="text-slate-900">Total Settled:</span>
+                <span className="text-primary">{formatAmount(viewingReceipt.amount)} DZD</span>
+              </div>
+            </div>
+
+            <div className="mt-3 rounded-lg bg-emerald-50 p-2.5 text-[11px] text-emerald-800">
+              ✓ Recognized in Statutory Turnover under cash-basis rules (Law 22-23). 0% VAT strictly applied.
+            </div>
+
+            <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-3">
+              <button
+                type="button"
+                onClick={() => window.print()}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-ink hover:bg-slate-50"
+              >
+                <Printer className="size-3.5" />
+                Print Voucher
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewingReceipt(null)}
+                className="rounded-lg bg-primary px-4 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-primary-ink"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

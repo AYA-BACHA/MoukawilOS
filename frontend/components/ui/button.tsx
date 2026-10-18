@@ -7,10 +7,10 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variants: Record<Variant, string> = {
-  primary: "bg-primary text-white shadow-[0_1px_1px_rgba(0,0,0,0.05)] rounded-lg px-4 py-2.5 text-sm font-medium",
-  outline: "bg-white text-ink shadow-[0_1px_1px_rgba(0,0,0,0.05)] rounded-lg px-3 py-2.5 text-sm font-medium",
-  soft: "bg-surface-low text-ink rounded-xl px-3 py-1.5 text-xs font-medium tracking-[0.02em]",
-  ghost: "text-primary-ink rounded-xl px-3 py-1 text-sm font-medium",
+  primary: "bg-primary hover:bg-[#0c312d] text-white shadow-xs rounded-lg px-4 py-2 text-xs font-semibold transition-all duration-150 active:scale-[0.98]",
+  outline: "bg-white hover:bg-slate-50 text-ink border border-slate-200/80 shadow-xs rounded-lg px-3.5 py-2 text-xs font-semibold transition-all duration-150 hover:border-slate-300 active:scale-[0.98]",
+  soft: "bg-surface-low hover:bg-surface text-ink rounded-lg px-3 py-1.5 text-xs font-medium border border-slate-200/60 transition-all duration-150",
+  ghost: "text-primary hover:bg-mint/40 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all duration-150",
 };
 
 export function Button({ variant = "primary", className, ...props }: ButtonProps) {

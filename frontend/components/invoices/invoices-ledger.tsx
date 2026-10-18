@@ -74,16 +74,19 @@ export function InvoicesLedger({ user, invoices: initialInvoices, initialQuery =
             Manage commercial invoices, record client payments, and track statutory cash-basis turnover under Law 22-23.
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           <button
             onClick={() => downloadLedgerCsv(filtered)}
-            className="flex items-center gap-1 rounded bg-surface px-3 py-2 text-sm font-medium text-ink shadow-[0_1px_1px_rgba(0,0,0,0.05)]"
+            className="flex items-center gap-1.5 rounded-lg border border-slate-200/80 bg-surface-low hover:bg-surface px-3.5 py-2 text-xs font-semibold text-ink shadow-xs transition-all hover:border-slate-300 active:scale-[0.98]"
           >
-            <Download className="size-3" />
+            <Download className="size-3.5 text-primary" />
             Export Ledger (CSV)
           </button>
-          <Link href="/invoices/new" className="flex items-center gap-1 rounded bg-primary px-3 py-2 text-sm font-medium text-white shadow-[0_1px_1px_rgba(0,0,0,0.05)]">
-            <Plus className="size-3" />
+          <Link
+            href="/invoices/new"
+            className="flex items-center gap-1.5 rounded-lg bg-primary hover:bg-primary-ink px-3.5 py-2 text-xs font-semibold text-white shadow-xs transition-all active:scale-[0.98]"
+          >
+            <Plus className="size-3.5" />
             New Invoice
           </Link>
         </div>

@@ -18,14 +18,19 @@ export function DashboardHeader({ user }: { user: User }) {
           </Pill>
         </div>
       </div>
-      <div className="flex items-center gap-3">
-        <Button variant="outline">
-          Fiscal Year 2026
-          <ChevronDown className="size-3" />
-        </Button>
-        <Link href="/invoices/new" className={buttonClass("primary")}>
-          <Plus className="size-3" />
-          New Invoice
+      <div className="flex items-center gap-2.5">
+        <Link
+          href="/invoices"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200/80 bg-white px-3.5 py-2 text-xs font-semibold text-ink shadow-xs transition-all hover:bg-slate-50 hover:border-slate-300"
+        >
+          View Full Ledger
+        </Link>
+        <Link
+          href="/invoices/new"
+          className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3.5 py-2 text-xs font-semibold text-white shadow-xs transition-all hover:bg-primary-ink"
+        >
+          <Plus className="size-3.5" />
+          Create Invoice
         </Link>
       </div>
     </div>
