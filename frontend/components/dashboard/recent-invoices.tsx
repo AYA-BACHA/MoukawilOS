@@ -250,8 +250,9 @@ export function RecentInvoices({
               </div>
             </div>
 
-            <div className="mt-3 rounded-lg bg-emerald-50 p-2.5 text-[11px] text-emerald-800">
-              ✓ Recognized in Statutory Turnover under cash-basis rules (Law 22-23). 0% VAT strictly applied.
+            <div className="mt-3 flex items-center gap-2 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 p-2.5 text-[11px] text-emerald-800 dark:text-emerald-300">
+              <Check className="size-3.5 shrink-0 text-emerald-600 dark:text-emerald-400" strokeWidth={2.5} />
+              <span>Recognized in Statutory Turnover under cash-basis rules (Law 22-23). 0% VAT strictly applied.</span>
             </div>
 
             <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-3">
@@ -275,14 +276,14 @@ export function RecentInvoices({
         </div>
       )}
 
-      {/* Celebratory Payment Confirmation Toast */}
+      {/* Payment Confirmation Toast */}
       {settledInvoice && (
         <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3.5 rounded-2xl border border-slate-200 bg-card p-4 shadow-2xl animate-in slide-in-from-bottom-3 duration-300">
           <span className="flex size-8 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 shadow-xs">
             <Check className="size-4" strokeWidth={2.5} />
           </span>
           <div>
-            <p className="text-xs font-bold text-ink">🎉 Payment Recorded for {settledInvoice.number}!</p>
+            <p className="text-xs font-bold text-ink">Payment Recorded for {settledInvoice.number}</p>
             <p className="text-[11px] text-body">
               <strong className="font-num text-ink">{formatAmount(settledInvoice.amount)} DZD</strong> realized under cash-basis turnover.
             </p>

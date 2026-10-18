@@ -153,7 +153,7 @@ export function InvoicesLedger({ user, invoices: initialInvoices, initialQuery =
             <Check className="size-4" strokeWidth={2.5} />
           </span>
           <div>
-            <p className="text-xs font-bold text-ink">🎉 Payment Recorded for {settledToast.number}!</p>
+            <p className="text-xs font-bold text-ink">Payment Recorded for {settledToast.number}</p>
             <p className="text-[11px] text-body">
               <strong className="font-num text-ink">{formatAmount(settledToast.amount)} DZD</strong> cleared &amp; realized under FY 2026 cash-basis turnover.
             </p>
