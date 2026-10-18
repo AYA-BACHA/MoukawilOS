@@ -46,7 +46,7 @@ interface ClientsTableProps {
 
 export function ClientsTable({ rows, total, selectedId, onSelect, page, pageCount, onPageChange }: ClientsTableProps) {
   return (
-    <section className="col-span-8 flex flex-col overflow-hidden rounded-lg bg-white shadow-[0_1px_4px_rgba(0,0,0,0.02)]">
+    <section className="col-span-8 flex flex-col overflow-hidden rounded-lg bg-card shadow-[0_1px_4px_rgba(0,0,0,0.02)]">
       <div className="flex items-center justify-between bg-surface-low px-4 py-3">
         <h2 className="text-xs font-semibold uppercase tracking-[0.05em] text-body">Registered client entities (Algerian jurisdiction)</h2>
         <p className="text-xs font-medium tracking-[0.02em] text-teal">
@@ -69,7 +69,7 @@ export function ClientsTable({ rows, total, selectedId, onSelect, page, pageCoun
               <tr>
                 <td colSpan={5} className="py-12 text-center">
                   <div className="flex flex-col items-center justify-center gap-2">
-                    <div className="flex size-10 items-center justify-center rounded-full bg-mint text-primary">
+                    <div className="flex size-10 items-center justify-center rounded-full bg-mint text-accent">
                       <Users className="size-5" />
                     </div>
                     <p className="text-sm font-semibold text-ink">No client records found</p>

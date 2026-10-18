@@ -1,19 +1,111 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Light palette (default). The invoice sheet always stays "paper" light. */
+:root,
+.dark #invoice-sheet {
+  color-scheme: light;
+  --canvas: #f8fafc;
+  --card: #ffffff;
+  --ink: #0f172a;
+  --body: #334155;
+  --muted: #64748b;
+  --primary: #154b46;
+  --primary-ink: #00342f;
+  --accent: #154b46;
+  --mint: #c5eae2;
+  --mint-ink: #164e46;
+  --teal: #2d6a60;
+  --surface: #e9f0f6;
+  --surface-low: #f1f5f9;
+  --surface-high: #e2e8f0;
+  --hairline: #cbd5e1;
+  --color-slate-50: #f8fafc;
+  --color-slate-100: #f1f5f9;
+  --color-slate-200: #e2e8f0;
+  --color-slate-300: #cbd5e1;
+  --color-slate-400: #94a3b8;
+  --color-slate-500: #64748b;
+  --color-slate-600: #475569;
+  --color-slate-700: #334155;
+  --color-slate-800: #1e293b;
+  --color-slate-900: #0f172a;
+  --color-emerald-50: #ecfdf5;
+  --color-emerald-100: #d1fae5;
+  --color-emerald-200: #a7f3d0;
+  --color-emerald-600: #059669;
+  --color-emerald-700: #047857;
+  --color-emerald-800: #065f46;
+  --color-emerald-900: #064e3b;
+  --color-amber-50: #fffbeb;
+  --color-amber-200: #fde68a;
+  --color-amber-600: #d97706;
+  --color-amber-700: #b45309;
+  --color-amber-800: #92400e;
+  --color-amber-900: #78350f;
+  --color-red-50: #fef2f2;
+}
+
+.dark {
+  color-scheme: dark;
+  --canvas: #0b1117;
+  --card: #131b24;
+  --ink: #e6edf3;
+  --body: #b6c2cf;
+  --muted: #8b9aab;
+  --primary: #23796d;
+  --primary-ink: #1a5f56;
+  --accent: #5fc9b8;
+  --mint: #17352f;
+  --mint-ink: #a6e3d6;
+  --teal: #5fc9b8;
+  --surface: #1a2530;
+  --surface-low: #16202a;
+  --surface-high: #223040;
+  --hairline: #2c3b4a;
+  --color-slate-50: #16202a;
+  --color-slate-100: #1d2935;
+  --color-slate-200: #263544;
+  --color-slate-300: #34465a;
+  --color-slate-400: #6b7c8f;
+  --color-slate-500: #8b9aab;
+  --color-slate-600: #a3b1c0;
+  --color-slate-700: #b6c2cf;
+  --color-slate-800: #d3dce5;
+  --color-slate-900: #e6edf3;
+  --color-emerald-50: #0f2a22;
+  --color-emerald-100: #134034;
+  --color-emerald-200: #1d5a49;
+  --color-emerald-600: #34d399;
+  --color-emerald-700: #4ade80;
+  --color-emerald-800: #6ee7b7;
+  --color-emerald-900: #a7f3d0;
+  --color-amber-50: #2b210c;
+  --color-amber-200: #5a4410;
+  --color-amber-600: #fbbf24;
+  --color-amber-700: #fbbf24;
+  --color-amber-800: #fcd34d;
+  --color-amber-900: #fde68a;
+  --color-red-50: #2d1416;
+}
+
 @theme inline {
-  --color-canvas: #f8fafc;
-  --color-ink: #0f172a;
-  --color-body: #334155;
-  --color-muted: #64748b;
-  --color-primary: #154b46;
-  --color-primary-ink: #00342f;
-  --color-mint: #c5eae2;
-  --color-mint-ink: #164e46;
-  --color-teal: #2d6a60;
-  --color-surface: #e9f0f6;
-  --color-surface-low: #f1f5f9;
-  --color-surface-high: #e2e8f0;
-  --color-hairline: #cbd5e1;
+  --color-canvas: var(--canvas);
+  --color-card: var(--card);
+  --color-ink: var(--ink);
+  --color-body: var(--body);
+  --color-muted: var(--muted);
+  --color-primary: var(--primary);
+  --color-primary-ink: var(--primary-ink);
+  --color-accent: var(--accent);
+  --color-mint: var(--mint);
+  --color-mint-ink: var(--mint-ink);
+  --color-teal: var(--teal);
+  --color-surface: var(--surface);
+  --color-surface-low: var(--surface-low);
+  --color-surface-high: var(--surface-high);
+  --color-hairline: var(--hairline);
   --color-success: #10b981;
   --color-danger: #ef4444;
   --font-sans: var(--font-geist), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;

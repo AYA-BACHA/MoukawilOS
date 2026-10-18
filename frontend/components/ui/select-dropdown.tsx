@@ -73,14 +73,14 @@ export function SelectDropdown<T extends string>({
           </span>
         )}
         <ChevronDown
-          className={cn("size-3.5 text-muted transition-transform duration-200", open && "rotate-180 text-primary")}
+          className={cn("size-3.5 text-muted transition-transform duration-200", open && "rotate-180 text-accent")}
         />
       </button>
 
       {open && (
         <div
           className={cn(
-            "absolute z-50 mt-1 min-w-[180px] origin-top rounded-xl border border-slate-200 bg-white p-1 shadow-xl shadow-black/8 backdrop-blur-sm animate-in fade-in zoom-in-95",
+            "absolute z-50 mt-1 min-w-[180px] origin-top rounded-xl border border-slate-200 bg-card p-1 shadow-xl shadow-black/8 backdrop-blur-sm animate-in fade-in zoom-in-95",
             className?.includes("w-full") ? "left-0 right-0 w-full" : "right-0",
           )}
         >
@@ -109,7 +109,7 @@ export function SelectDropdown<T extends string>({
                     </span>
                   )}
                 </div>
-                {isSelected && <Check className="size-3.5 text-primary" />}
+                {isSelected && <Check className="size-3.5 text-accent" />}
               </button>
             );
           })}

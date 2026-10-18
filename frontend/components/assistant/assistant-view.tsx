@@ -41,7 +41,7 @@ export function AssistantView({ user, stats, statutes, initialMessages }: Assist
   return (
     <div className="flex flex-col gap-5 py-3">
       {/* Sleek Copilot Command Header */}
-      <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs">
+      <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl border border-slate-200/80 bg-card p-5 shadow-xs">
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-mint px-2.5 py-0.5 text-[11px] font-bold text-mint-ink">

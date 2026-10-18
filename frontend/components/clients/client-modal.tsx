@@ -33,7 +33,7 @@ export function ClientModal({ client, onClose, onSubmit }: ClientModalProps) {
         aria-modal="true"
         aria-labelledby="client-modal-title"
         onClick={(event) => event.stopPropagation()}
-        className="w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl border border-slate-100 animate-in fade-in zoom-in-95 duration-200"
+        className="w-full max-w-lg overflow-hidden rounded-2xl bg-card shadow-2xl border border-slate-100 animate-in fade-in zoom-in-95 duration-200"
       >
         <div className="flex items-center justify-between bg-surface-low p-4">
           <h2 id="client-modal-title" className="text-xl font-semibold leading-7 tracking-[-0.025em] text-ink">
@@ -49,7 +49,7 @@ export function ClientModal({ client, onClose, onSubmit }: ClientModalProps) {
               <button
                 key={type}
                 onClick={() => setInput((current) => ({ ...current, type: type as ClientType }))}
-                className={cn("flex flex-1 items-center justify-center gap-1.5 rounded-md py-1.5 text-sm", input.type === type ? "bg-white font-semibold text-primary-ink shadow-[0_1px_1px_rgba(0,0,0,0.05)]" : "font-medium text-body")}
+                className={cn("flex flex-1 items-center justify-center gap-1.5 rounded-md py-1.5 text-sm", input.type === type ? "bg-card font-semibold text-primary-ink shadow-[0_1px_1px_rgba(0,0,0,0.05)]" : "font-medium text-body")}
               >
                 <Icon className="size-3.5" />
                 {label}
@@ -88,7 +88,7 @@ export function ClientModal({ client, onClose, onSubmit }: ClientModalProps) {
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-2xs transition-all hover:bg-slate-50 active:scale-95"
+            className="rounded-xl border border-slate-200 bg-card px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-2xs transition-all hover:bg-slate-50 active:scale-95"
           >
             Cancel
           </button>

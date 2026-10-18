@@ -110,13 +110,13 @@ export function ClientsDirectory({ clients: initialClients, invoices }: { client
 
       <ClientMetrics metrics={metrics} />
 
-      <div className="flex items-center gap-3 rounded-lg bg-white p-3 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
+      <div className="flex items-center gap-3 rounded-lg bg-card p-3 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
         <div className="flex rounded bg-surface-low p-1">
           {tabs.map(({ value, label, count }) => (
             <button
               key={value}
               onClick={() => reset(setType)(value)}
-              className={cn("whitespace-nowrap rounded px-3 py-1.5 text-sm", type === value ? "bg-white font-semibold text-primary-ink shadow-[0_1px_1px_rgba(0,0,0,0.05)]" : "font-medium text-body")}
+              className={cn("whitespace-nowrap rounded px-3 py-1.5 text-sm", type === value ? "bg-card font-semibold text-primary-ink shadow-[0_1px_1px_rgba(0,0,0,0.05)]" : "font-medium text-body")}
             >
               {label} ({count})
             </button>

@@ -21,7 +21,7 @@ export function DashboardHeader({ user }: { user: User }) {
       <div className="flex items-center gap-2.5">
         <Link
           href="/invoices"
-          className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200/80 bg-white px-3.5 py-2 text-xs font-semibold text-ink shadow-xs transition-all hover:bg-slate-50 hover:border-slate-300"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200/80 bg-card px-3.5 py-2 text-xs font-semibold text-ink shadow-xs transition-all hover:bg-slate-50 hover:border-slate-300"
         >
           View Full Ledger
         </Link>

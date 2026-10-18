@@ -20,7 +20,7 @@ export function CeilingCard({ stats }: { stats: TurnoverStats }) {
 
   return (
     <>
-      <section id="tour-ceiling-card" className="relative overflow-hidden rounded-xl border border-slate-200/80 bg-white p-7 shadow-xs transition-all">
+      <section id="tour-ceiling-card" className="relative overflow-hidden rounded-xl border border-slate-200/80 bg-card p-7 shadow-xs transition-all">
         <div className="flex flex-col gap-4">
           <div className="flex flex-wrap items-center justify-between gap-y-2">
             <div className="flex items-center gap-2">
@@ -54,9 +54,9 @@ export function CeilingCard({ stats }: { stats: TurnoverStats }) {
                 className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-teal to-primary transition-all duration-500"
                 style={{ width: `${Math.min(100, utilization * 100)}%` }}
               />
-              <div className="absolute inset-y-0 left-1/4 w-px bg-white/70" />
-              <div className="absolute inset-y-0 left-2/4 w-px bg-white/70" />
-              <div className="absolute inset-y-0 left-3/4 w-px bg-white/70" />
+              <div className="absolute inset-y-0 left-1/4 w-px bg-card/70" />
+              <div className="absolute inset-y-0 left-2/4 w-px bg-card/70" />
+              <div className="absolute inset-y-0 left-3/4 w-px bg-card/70" />
             </div>
             <div className="flex justify-between px-1 pt-1 font-num text-xs">
               {milestones.map(({ label, ratio }) => (
@@ -72,7 +72,7 @@ export function CeilingCard({ stats }: { stats: TurnoverStats }) {
             <div className="flex flex-wrap items-center gap-3">
               <Pill
                 dot="size-2 bg-primary"
-                className="bg-mint px-3 py-1.5 text-xs font-bold text-primary shadow-xs ring-1 ring-emerald-600/10"
+                className="bg-mint px-3 py-1.5 text-xs font-bold text-accent shadow-xs ring-1 ring-emerald-600/10"
               >
                 {percent}% utilized • Safe &amp; In Compliance
               </Pill>
@@ -83,7 +83,7 @@ export function CeilingCard({ stats }: { stats: TurnoverStats }) {
             <button
               type="button"
               onClick={() => setShowDetails(true)}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200/80 bg-surface-low px-3 py-1.5 text-xs font-semibold text-primary transition-all duration-150 hover:border-slate-300 hover:bg-surface active:scale-95 shadow-2xs hover:shadow-xs"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200/80 bg-surface-low px-3 py-1.5 text-xs font-semibold text-accent transition-all duration-150 hover:border-slate-300 hover:bg-surface active:scale-95 shadow-2xs hover:shadow-xs"
             >
               View calculation details
               <ArrowRight className="size-3" />
@@ -95,7 +95,7 @@ export function CeilingCard({ stats }: { stats: TurnoverStats }) {
       {/* Calculation Details Modal */}
       {showDetails && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm animate-in fade-in">
-          <div className="relative w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl animate-in zoom-in-95">
+          <div className="relative w-full max-w-lg rounded-2xl border border-slate-200 bg-card p-6 shadow-2xl animate-in zoom-in-95">
             <div className="flex items-start justify-between border-b border-slate-100 pb-3">
               <div>
                 <span className="rounded bg-mint px-1.5 py-0.5 text-[10px] font-bold text-mint-ink">
@@ -133,12 +133,12 @@ export function CeilingCard({ stats }: { stats: TurnoverStats }) {
               </div>
               <div className="flex items-center justify-between rounded-lg bg-surface-low p-3">
                 <span className="text-body font-medium">Available Headroom:</span>
-                <span className="font-num text-sm font-bold text-primary">{formatAmount(remaining)} DZD ({100 - percent}%)</span>
+                <span className="font-num text-sm font-bold text-accent">{formatAmount(remaining)} DZD ({100 - percent}%)</span>
               </div>
 
               <div className="rounded-xl border border-slate-200/80 bg-slate-50/50 p-3">
                 <div className="flex items-center gap-1.5 text-ink font-semibold">
-                  <Info className="size-3.5 text-primary" />
+                  <Info className="size-3.5 text-accent" />
                   Legal Recognition Principle
                 </div>
                 <p className="mt-1 text-[11px] leading-relaxed text-body">

@@ -6,7 +6,7 @@ import type { TurnoverStats, User } from "@/types/models";
 
 export function CeilingPanel({ user, stats }: { user: User; stats: TurnoverStats }) {
   return (
-    <section id="compliance-ceiling" className="flex flex-col gap-4 rounded-lg bg-white p-6 shadow-[0_1px_1px_rgba(0,0,0,0.05)]">
+    <section id="compliance-ceiling" className="flex flex-col gap-4 rounded-lg bg-card p-6 shadow-[0_1px_1px_rgba(0,0,0,0.05)]">
       <div className="flex items-center justify-between">
         <h2 className="text-xs font-semibold uppercase tracking-[0.05em] text-muted">Annual statutory ceiling</h2>
         <Pill className="bg-mint px-2 py-0.5 font-semibold text-mint-ink">Law 22-23</Pill>
@@ -83,7 +83,7 @@ export function AuditPanel({ user }: { user: User }) {
   ];
 
   return (
-    <section id="security" className="flex scroll-mt-24 flex-col gap-3 rounded-lg bg-white p-6 shadow-[0_1px_1px_rgba(0,0,0,0.05)]">
+    <section id="security" className="flex scroll-mt-24 flex-col gap-3 rounded-lg bg-card p-6 shadow-[0_1px_1px_rgba(0,0,0,0.05)]">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold leading-6 tracking-[-0.01em] text-ink">Compliance Auditing</h2>
         <Shield className="size-4 text-body" strokeWidth={1.75} />
@@ -92,7 +92,7 @@ export function AuditPanel({ user }: { user: User }) {
       <ul className="flex flex-col gap-2 pt-1">
         {items.map(({ icon: Icon, title, detail }) => (
           <li key={title} className="flex items-center gap-2 rounded bg-surface-low p-2 shadow-[inset_0_2px_4px_rgba(0,0,0,0.05)]">
-            <Icon className="size-4 shrink-0 text-primary" strokeWidth={1.75} />
+            <Icon className="size-4 shrink-0 text-accent" strokeWidth={1.75} />
             <div>
               <p className="text-xs font-semibold tracking-[0.02em] text-ink">{title}</p>
               <p className="font-num text-xs text-muted">{detail}</p>

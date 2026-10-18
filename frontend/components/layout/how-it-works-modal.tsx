@@ -114,7 +114,7 @@ export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
           </div>
           <div className="flex justify-between pt-2 text-sm font-bold">
             <span className="text-slate-900">Total Tax Due for FY 2026:</span>
-            <span className="text-primary font-num">10,000.00 DZD</span>
+            <span className="text-accent font-num">10,000.00 DZD</span>
           </div>
         </div>
       ),
@@ -128,7 +128,7 @@ export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
       description:
         "Auto-entrepreneurs are completely legally exempt from VAT. You do not collect TVA, and you do not file monthly tax returns. Every invoice you issue in MoukawilOS automatically embeds the statutory exemption clause for B2B enterprise clients.",
       demo: (
-        <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-xs">
+        <div className="rounded-xl border border-slate-200 bg-card p-3.5 shadow-xs">
           <p className="text-[11px] font-semibold text-slate-700 uppercase tracking-wider">Automated Invoice Clause:</p>
           <p className="mt-1.5 rounded-lg bg-surface-low p-2 text-xs font-medium text-slate-800 border border-slate-200/70">
             « Exonéré de la TVA conformément aux dispositions de l&apos;Article 6 de la Loi n° 22-23 portant statut de l&apos;auto-entrepreneur. »
@@ -147,15 +147,15 @@ export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
       demo: (
         <div className="grid grid-cols-3 gap-2 text-center text-xs">
           <div className="rounded-xl border border-slate-200 bg-slate-50 p-2.5">
-            <span className="block text-primary font-bold">Chifa Card</span>
+            <span className="block text-accent font-bold">Chifa Card</span>
             <span className="text-[10px] text-muted">100% Meds Coverage</span>
           </div>
           <div className="rounded-xl border border-slate-200 bg-slate-50 p-2.5">
-            <span className="block text-primary font-bold">Maternity</span>
+            <span className="block text-accent font-bold">Maternity</span>
             <span className="text-[10px] text-muted">Independent Rights</span>
           </div>
           <div className="rounded-xl border border-slate-200 bg-slate-50 p-2.5">
-            <span className="block text-primary font-bold">Retirement</span>
+            <span className="block text-accent font-bold">Retirement</span>
             <span className="text-[10px] text-muted">CASNOS Pension</span>
           </div>
         </div>
@@ -185,7 +185,7 @@ export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/75 p-4 backdrop-blur-xl animate-in fade-in duration-200">
-      <div className="relative w-full max-w-xl overflow-hidden rounded-3xl border border-white/20 bg-white p-7 shadow-2xl animate-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-xl overflow-hidden rounded-3xl border border-white/20 bg-card p-7 shadow-2xl animate-in zoom-in-95 duration-200">
         {/* Header Bar */}
         <div className="flex items-center justify-between border-b border-slate-100 pb-4">
           <div className="flex items-center gap-2">
@@ -209,7 +209,7 @@ export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
         {/* Step Content */}
         <div className="mt-6 flex flex-col gap-4">
           <div className="flex items-start gap-3.5">
-            <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-mint/80 text-primary shadow-xs">
+            <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-mint/80 text-accent shadow-xs">
               <Icon className="size-5" />
             </div>
             <div>
