@@ -1,1 +1,46 @@
 @import "tailwindcss";
+
+@theme inline {
+  --color-canvas: #f9f9ff;
+  --color-ink: #111c2d;
+  --color-body: #404847;
+  --color-muted: #707977;
+  --color-primary: #154b46;
+  --color-primary-ink: #00342f;
+  --color-mint: #c5eae2;
+  --color-mint-ink: #496b65;
+  --color-teal: #43655f;
+  --color-surface: #e7eeff;
+  --color-surface-low: #f0f3ff;
+  --color-surface-high: #dee8ff;
+  --color-hairline: #bfc8c6;
+  --color-success: #50c594;
+  --color-danger: #ba1a1a;
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-num: var(--font-tinos), "Times New Roman", serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #invoice-sheet,
+  #invoice-sheet * {
+    visibility: visible;
+  }
+  #invoice-sheet {
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 100%;
+    max-width: none;
+    zoom: 1 !important;
+    box-shadow: none !important;
+  }
+}

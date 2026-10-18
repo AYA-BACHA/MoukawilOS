@@ -1,0 +1,477 @@
+{
+  "users": [
+    {
+      "id": "usr_1",
+      "firstName": "Amine",
+      "displayName": "Amine B.",
+      "registration": "AE-16-0492",
+      "activity": "Digital & IT Consulting",
+      "ceiling": 5000000,
+      "ifuRate": 0.005,
+      "fullName": "Amine Boudiaf",
+      "profession": "Software Engineering Consultant",
+      "nif": "198816049200001",
+      "city": "Algiers",
+      "phone": "+213 550 12 34 56",
+      "email": "amine.boudiaf@saheltech.dz",
+      "address": "14 Boulevard Didouche Mourad",
+      "wilaya": "16",
+      "postalCode": "16000",
+      "nis": "0019160000123",
+      "statutoryActivity": "Software Engineering & Cloud Architecture Consulting",
+      "activityCode": "CODE-6201 (Digital & Technology)",
+      "registeredAt": "2024-01-14",
+      "cardValidUntil": "2026-12-31",
+      "fiscalAuthority": "ANAE / DGI Algiers",
+      "casnosVerifiedYear": 2026,
+      "certificateValidUntil": 2027,
+      "invoicePrefix": "2026-",
+      "nextInvoiceNumber": 44,
+      "paymentTermsDays": 30,
+      "appendExemptionClause": true,
+      "exemptionClause": "Invoice issued under the Algerian Auto-Entrepreneur statutory regime (Law 22-23) — Exempt from VAT pursuant to Executive Decree 23-197."
+    }
+  ],
+  "clients": [
+    {
+      "id": "cli_1",
+      "userId": "usr_1",
+      "name": "Sahel Tech SARL",
+      "type": "B2B",
+      "nif": "001916012345678",
+      "description": null,
+      "nis": "0019160000123",
+      "rc": "16/00-0987654B22",
+      "address": "14 Boulevard Didouche Mourad, Algiers, Algeria",
+      "email": "contact@saheltech.dz",
+      "phone": "+213 550 12 34 56",
+      "location": "14 Boulevard Didouche Mourad, Algiers",
+      "anaeVerified": true
+    },
+    {
+      "id": "cli_2",
+      "userId": "usr_1",
+      "name": "Amine Boudiaf",
+      "type": "B2C",
+      "nif": null,
+      "description": "Resident Consumer • Algiers",
+      "nis": null,
+      "rc": null,
+      "address": null,
+      "email": "amine.client@gmail.com",
+      "phone": "+213 661 40 28 15",
+      "location": "Algiers, Algeria",
+      "anaeVerified": false
+    },
+    {
+      "id": "cli_3",
+      "userId": "usr_1",
+      "name": "Atelier Nour",
+      "type": "B2B",
+      "nif": "099816098765432",
+      "description": null,
+      "nis": null,
+      "rc": "31/00-0876543B21",
+      "address": null,
+      "email": "finance@ateliernour.dz",
+      "phone": null,
+      "location": "Sidi Bel Abbès, Algeria",
+      "anaeVerified": false
+    },
+    {
+      "id": "cli_4",
+      "userId": "usr_1",
+      "name": "Numidia Digital Agency",
+      "type": "B2B",
+      "nif": "002016087654321",
+      "description": null,
+      "nis": "0020160000456",
+      "rc": "16/00-1123456B23",
+      "address": null,
+      "email": "billing@numidiadigital.dz",
+      "phone": "+213 555 98 76 54",
+      "location": "Bab Ezzouar Cyberpark, Algiers",
+      "anaeVerified": false
+    },
+    {
+      "id": "cli_5",
+      "userId": "usr_1",
+      "name": "Yacine Khelifi",
+      "type": "B2C",
+      "nif": null,
+      "description": "Software Consulting • Oran",
+      "nis": null,
+      "rc": null,
+      "address": null,
+      "email": "y.khelifi@gmail.com",
+      "phone": "+213 770 23 45 67",
+      "location": "Oran, Algeria",
+      "anaeVerified": false
+    },
+    {
+      "id": "cli_6",
+      "userId": "usr_1",
+      "name": "Algiers Logistics EURL",
+      "type": "B2B",
+      "nif": "001816045612345",
+      "description": null,
+      "nis": null,
+      "rc": "16/00-0543219B20",
+      "address": null,
+      "email": "compta@algierslogistics.com",
+      "phone": null,
+      "location": "Hydra, Algiers",
+      "anaeVerified": false
+    }
+  ],
+  "invoices": [
+    {
+      "id": "inv_0042",
+      "userId": "usr_1",
+      "clientId": "cli_1",
+      "number": "2026-0042",
+      "issueDate": "2026-10-08",
+      "dueDate": "2026-10-22",
+      "amount": 1250000,
+      "status": "pending",
+      "statutoryClause": "0% VAT (Art. 6 Law 22-23)",
+      "paidAt": null,
+      "paymentRail": null
+    },
+    {
+      "id": "inv_0041",
+      "userId": "usr_1",
+      "clientId": "cli_2",
+      "number": "2026-0041",
+      "issueDate": "2026-10-02",
+      "dueDate": "2026-10-02",
+      "amount": 80000,
+      "status": "paid",
+      "statutoryClause": "0% VAT (Art. 6 Law 22-23)",
+      "paidAt": "2026-10-02",
+      "paymentRail": "Bank Transfer (BNA / CPA / CCP)"
+    },
+    {
+      "id": "inv_0040",
+      "userId": "usr_1",
+      "clientId": "cli_3",
+      "number": "2026-0040",
+      "issueDate": "2026-09-28",
+      "dueDate": "2026-10-12",
+      "amount": 45000,
+      "status": "draft",
+      "statutoryClause": "0% VAT (Art. 6 Law 22-23)",
+      "paidAt": null,
+      "paymentRail": null
+    },
+    {
+      "id": "inv_0039",
+      "userId": "usr_1",
+      "clientId": "cli_4",
+      "number": "2026-0039",
+      "issueDate": "2026-09-15",
+      "dueDate": "2026-09-30",
+      "amount": 420000,
+      "status": "paid",
+      "statutoryClause": "0% VAT (Art. 6 Law 22-23)",
+      "paidAt": "2026-09-30",
+      "paymentRail": "Bank Transfer (BNA / CPA / CCP)"
+    },
+    {
+      "id": "inv_0038",
+      "userId": "usr_1",
+      "clientId": "cli_5",
+      "number": "2026-0038",
+      "issueDate": "2026-09-04",
+      "dueDate": "2026-09-04",
+      "amount": 150000,
+      "status": "paid",
+      "statutoryClause": "0% VAT (Art. 6 Law 22-23)",
+      "paidAt": "2026-09-04",
+      "paymentRail": "Bank Transfer (BNA / CPA / CCP)"
+    },
+    {
+      "id": "inv_0037",
+      "userId": "usr_1",
+      "clientId": "cli_6",
+      "number": "2026-0037",
+      "issueDate": "2026-08-21",
+      "dueDate": "2026-09-05",
+      "amount": 320000,
+      "status": "pending",
+      "statutoryClause": "0% VAT (Art. 6 Law 22-23)",
+      "paidAt": null,
+      "paymentRail": null
+    },
+    {
+      "id": "inv_0036",
+      "userId": "usr_1",
+      "clientId": "cli_1",
+      "number": "2026-0036",
+      "issueDate": "2026-08-10",
+      "dueDate": "2026-08-25",
+      "amount": 400000,
+      "status": "paid",
+      "statutoryClause": "0% VAT (Art. 6 Law 22-23)",
+      "paidAt": "2026-08-25",
+      "paymentRail": "Bank Transfer (BNA / CPA / CCP)"
+    },
+    {
+      "id": "inv_0035",
+      "userId": "usr_1",
+      "clientId": "cli_4",
+      "number": "2026-0035",
+      "issueDate": "2026-07-29",
+      "dueDate": "2026-08-13",
+      "amount": 250000,
+      "status": "paid",
+      "statutoryClause": "0% VAT (Art. 6 Law 22-23)",
+      "paidAt": "2026-08-13",
+      "paymentRail": "Bank Transfer (BNA / CPA / CCP)"
+    },
+    {
+      "id": "inv_0034",
+      "userId": "usr_1",
+      "clientId": "cli_2",
+      "number": "2026-0034",
+      "issueDate": "2026-07-18",
+      "dueDate": "2026-08-02",
+      "amount": 80000,
+      "status": "pending",
+      "statutoryClause": "0% VAT (Art. 6 Law 22-23)",
+      "paidAt": null,
+      "paymentRail": null
+    },
+    {
+      "id": "inv_0033",
+      "userId": "usr_1",
+      "clientId": "cli_6",
+      "number": "2026-0033",
+      "issueDate": "2026-07-07",
+      "dueDate": "2026-07-22",
+      "amount": 300000,
+      "status": "paid",
+      "statutoryClause": "0% VAT (Art. 6 Law 22-23)",
+      "paidAt": "2026-07-22",
+      "paymentRail": "Bank Transfer (BNA / CPA / CCP)"
+    },
+    {
+      "id": "inv_0032",
+      "userId": "usr_1",
+      "clientId": "cli_5",
+      "number": "2026-0032",
+      "issueDate": "2026-06-24",
+      "dueDate": "2026-06-24",
+      "amount": 200000,
+      "status": "paid",
+      "statutoryClause": "0% VAT (Art. 6 Law 22-23)",
+      "paidAt": "2026-06-24",
+      "paymentRail": "Bank Transfer (BNA / CPA / CCP)"
+    },
+    {
+      "id": "inv_0031",
+      "userId": "usr_1",
+      "clientId": "cli_4",
+      "number": "2026-0031",
+      "issueDate": "2026-06-10",
+      "dueDate": "2026-06-25",
+      "amount": 200000,
+      "status": "paid",
+      "statutoryClause": "0% VAT (Art. 6 Law 22-23)",
+      "paidAt": "2026-06-25",
+      "paymentRail": "Bank Transfer (BNA / CPA / CCP)"
+    }
+  ],
+  "deadlines": [
+    {
+      "id": "dl_1",
+      "userId": "usr_1",
+      "dueDate": "2026-06-30",
+      "description": "Annual G50-A Turnover Declaration (0.5% IFU flat tax obligation)"
+    }
+  ],
+  "invoiceDrafts": [
+    {
+      "id": "drf_1",
+      "userId": "usr_1",
+      "number": "2026-0043",
+      "clientType": "B2B",
+      "client": {
+        "name": "Sahel Tech SARL",
+        "nif": "001916012345678",
+        "nis": "0019160000123",
+        "rc": "16/00-0987654B22",
+        "address": "14 Boulevard Didouche Mourad, Algiers, Algeria"
+      },
+      "issueDate": "2026-10-12",
+      "paymentTermsDays": 30,
+      "items": [
+        {
+          "id": "itm_1",
+          "description": "Fullstack Web Application Architecture & Cloud API",
+          "details": "Statutory code deliverable compliant with Law 22-23 digital services",
+          "quantity": 1,
+          "unitPrice": 120000
+        },
+        {
+          "id": "itm_2",
+          "description": "Statutory Data Security & HTTPS Integration",
+          "details": "TLS certificate enforcement, CORS isolation & security hardening",
+          "quantity": 1,
+          "unitPrice": 30000
+        }
+      ],
+      "savedAt": "2026-10-12T09:58:00Z"
+    }
+  ],
+  "statutes": [
+    {
+      "id": "law-22-23",
+      "code": "Law 22-23",
+      "title": "Auto-Entrepreneur statutory regime",
+      "keywords": [
+        "auto-entrepreneur",
+        "regime",
+        "status",
+        "law",
+        "eligib",
+        "register",
+        "anae"
+      ],
+      "summary": "Defines the Auto-Entrepreneur status, its annual turnover ceiling and the flat-rate tax treatment of registered activities."
+    },
+    {
+      "id": "ceiling",
+      "code": "Law 22-23 · Ceiling",
+      "title": "Annual turnover ceiling",
+      "keywords": [
+        "ceiling",
+        "threshold",
+        "limit",
+        "maximum",
+        "exceed",
+        "5,000,000",
+        "5m",
+        "turnover"
+      ],
+      "summary": "Collected turnover is capped at 5,000,000 DZD per fiscal year. The ceiling is measured on cash actually received, not on invoices issued."
+    },
+    {
+      "id": "cash-basis",
+      "code": "Law 22-23 · Cash basis",
+      "title": "Cash-basis turnover recognition",
+      "keywords": [
+        "cash",
+        "collected",
+        "paid",
+        "payment",
+        "receipt",
+        "recognition",
+        "pending",
+        "realization"
+      ],
+      "summary": "An invoice counts toward the ceiling only once the payment is credited. Pending and draft invoices do not consume ceiling capacity."
+    },
+    {
+      "id": "vat-exemption",
+      "code": "Decree 23-197 · VAT",
+      "title": "0% VAT exemption clause",
+      "keywords": [
+        "vat",
+        "tva",
+        "exempt",
+        "exemption",
+        "clause",
+        "withholding",
+        "tax"
+      ],
+      "summary": "Invoices must carry the statutory exemption clause so that B2B clients do not apply withholding taxes."
+    },
+    {
+      "id": "dzd-invoicing",
+      "code": "Decree 23-197 · Currency",
+      "title": "Dinar invoicing obligation",
+      "keywords": [
+        "dzd",
+        "dinar",
+        "currency",
+        "euro",
+        "usd",
+        "foreign",
+        "invoice",
+        "invoicing"
+      ],
+      "summary": "All domestic transactions must be invoiced and recorded in Algerian Dinar."
+    },
+    {
+      "id": "ifu",
+      "code": "IFU · Flat tax",
+      "title": "Flat 0.5% IFU rate",
+      "keywords": [
+        "ifu",
+        "flat",
+        "rate",
+        "0.5",
+        "tax due",
+        "impot",
+        "percent"
+      ],
+      "summary": "Eligible activities are taxed at a flat 0.5% of collected turnover under the IFU regime."
+    },
+    {
+      "id": "g50-a",
+      "code": "G50-A · Declaration",
+      "title": "Annual turnover declaration",
+      "keywords": [
+        "g50",
+        "declaration",
+        "deadline",
+        "file",
+        "filing",
+        "annual",
+        "due"
+      ],
+      "summary": "The annual G50-A turnover declaration settles the flat IFU obligation and must be filed before the published deadline."
+    },
+    {
+      "id": "nif",
+      "code": "NIF · Identification",
+      "title": "Client tax identification",
+      "keywords": [
+        "nif",
+        "b2b",
+        "identification",
+        "client",
+        "corporate",
+        "15",
+        "digit",
+        "rc",
+        "nis"
+      ],
+      "summary": "Invoicing a corporate client requires a validated 15-digit NIF so the single-tax treatment and VAT exemption are preserved."
+    },
+    {
+      "id": "casnos",
+      "code": "CASNOS · Social security",
+      "title": "CASNOS regularization",
+      "keywords": [
+        "casnos",
+        "social",
+        "security",
+        "contribution",
+        "insurance"
+      ],
+      "summary": "Auto-entrepreneurs must keep their CASNOS social-security status regularized for the current year."
+    }
+  ],
+  "assistantMessages": [
+    {
+      "id": "msg_1",
+      "userId": "usr_1",
+      "role": "assistant",
+      "content": "Hello Amine. I answer questions about your auto-entrepreneur obligations and ground each answer in the statutory texts listed on the right. What would you like to check?",
+      "citations": [],
+      "createdAt": "2026-10-18T09:00:00.000Z"
+    }
+  ]
+}
