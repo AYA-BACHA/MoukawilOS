@@ -1,7 +1,7 @@
 import { cn } from "@/lib/cn";
 
 export const controlClass =
-  "h-10 w-full rounded bg-surface-low px-3 text-sm text-ink shadow-[inset_0_2px_4px_rgba(0,0,0,0.05)] outline-none placeholder:text-muted focus:ring-2 focus:ring-primary/30";
+  "h-10 w-full rounded-lg border border-slate-300 bg-slate-50/70 px-3.5 text-sm font-medium text-ink shadow-xs outline-none transition-all duration-150 placeholder:text-muted hover:border-slate-400 hover:bg-white focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20";
 
 interface SettingFieldProps {
   label: string;

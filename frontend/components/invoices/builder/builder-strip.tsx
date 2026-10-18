@@ -29,13 +29,21 @@ export function BuilderStrip({ number, saved, onSave, onIssue }: BuilderStripPro
         <span className="w-fit rounded bg-surface-low px-1 py-0.5 font-num text-xs uppercase text-muted">Law 22-23 Compliant</span>
       </div>
       <div className="flex items-center gap-2">
-        <button onClick={onSave} className={buttonClass("soft", "rounded px-3 py-2 text-sm tracking-normal")}>
-          <Bookmark className="size-3.5" />
-          Save Draft
+        <button
+          type="button"
+          onClick={onSave}
+          className={buttonClass("soft", "rounded-lg border border-slate-200/80 bg-surface-low hover:bg-surface px-3 py-2 text-xs font-semibold tracking-normal transition-all")}
+        >
+          <Bookmark className="size-3.5 text-primary" />
+          {saved ? "Draft Saved" : "Save Draft"}
         </button>
-        <button onClick={onIssue} className={buttonClass("primary", "rounded px-4 py-2 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_2px_4px_-2px_rgba(0,0,0,0.1)]")}>
+        <button
+          type="button"
+          onClick={onIssue}
+          className={buttonClass("primary", "rounded-lg px-4 py-2 text-xs font-semibold shadow-xs transition-all hover:bg-primary-ink active:scale-95")}
+        >
           <ShieldCheck className="size-3.5" />
-          Issue & Download PDF
+          Issue &amp; Download PDF
         </button>
       </div>
     </div>

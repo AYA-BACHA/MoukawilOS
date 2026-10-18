@@ -49,9 +49,7 @@ export function InvoicePreview({ user, draft }: { user: User; draft: InvoiceDraf
         </div>
       </div>
 
-      <div id="invoice-sheet" style={{ zoom: scale }} className="relative flex min-h-[1040px] max-w-[820px] flex-col justify-between rounded-lg bg-white p-12 shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_8px_10px_-6px_rgba(0,0,0,0.1)]">
-        <div className="absolute inset-x-0 top-0 h-2 rounded-t-lg bg-primary" />
-
+      <div id="invoice-sheet" style={{ zoom: scale }} className="relative flex min-h-[1040px] max-w-[820px] flex-col justify-between rounded-xl border border-slate-200/80 bg-white p-12 shadow-xl">
         <div className="flex flex-col gap-4 pb-6">
           <div className="flex items-start justify-between pb-4">
             <div className="flex w-56 flex-col gap-1">

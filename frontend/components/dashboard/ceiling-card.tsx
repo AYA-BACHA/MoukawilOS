@@ -20,9 +20,8 @@ export function CeilingCard({ stats }: { stats: TurnoverStats }) {
 
   return (
     <>
-      <section className="relative overflow-hidden rounded-xl border border-slate-100 bg-white p-7 shadow-sm transition-all">
-        <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-teal to-primary" />
-        <div className="flex flex-col gap-4 pt-1">
+      <section className="relative overflow-hidden rounded-xl border border-slate-200/80 bg-white p-7 shadow-xs transition-all">
+        <div className="flex flex-col gap-4">
           <div className="flex flex-wrap items-center justify-between gap-y-2">
             <div className="flex items-center gap-2">
               <h2 className="text-xs font-bold uppercase tracking-wider text-muted">Collected Turnover</h2>

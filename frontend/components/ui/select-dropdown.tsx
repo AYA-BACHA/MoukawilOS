@@ -78,7 +78,12 @@ export function SelectDropdown<T extends string>({
       </button>
 
       {open && (
-        <div className="absolute right-0 z-50 mt-1 min-w-[160px] origin-top-right overflow-hidden rounded-xl border border-slate-200 bg-white p-1 shadow-lg shadow-black/8 backdrop-blur-sm animate-in fade-in zoom-in-95">
+        <div
+          className={cn(
+            "absolute z-50 mt-1 min-w-[180px] origin-top rounded-xl border border-slate-200 bg-white p-1 shadow-xl shadow-black/8 backdrop-blur-sm animate-in fade-in zoom-in-95",
+            className?.includes("w-full") ? "left-0 right-0 w-full" : "right-0",
+          )}
+        >
           {options.map((option) => {
             const isSelected = option.value === value;
             return (

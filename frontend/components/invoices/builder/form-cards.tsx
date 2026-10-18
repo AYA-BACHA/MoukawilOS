@@ -1,5 +1,6 @@
 import { Building2, CalendarDays, CirclePlus, Clock, FileText, Info, ListChecks, Lock, ShieldCheck, User, WalletCards, X } from "lucide-react";
 import { Field, inputClass } from "@/components/ui/field";
+import { SelectDropdown } from "@/components/ui/select-dropdown";
 import { cn } from "@/lib/cn";
 import { formatAmount, formatLongDate } from "@/lib/format";
 import { addDays, lineTotal, paymentTerms, subtotal } from "@/lib/invoice-math";
@@ -101,20 +102,21 @@ export function MetadataCard({ number, issueDate, paymentTermsDays, onChange }: 
         <Field label="Issue Date">
           <span className="relative">
             <input type="date" className={cn(inputClass, "pr-10")} value={issueDate} onChange={(event) => onChange({ issueDate: event.target.value })} />
-            <CalendarDays className="pointer-events-none absolute right-3 top-2.5 size-[15px] bg-white text-body" />
+            <CalendarDays className="pointer-events-none absolute right-3 top-2.5 size-[15px] text-muted" />
           </span>
         </Field>
         <Field label="Payment Terms">
-          <span className="relative">
-            <select className={cn(inputClass, "appearance-none truncate pr-10")} value={paymentTermsDays} onChange={(event) => onChange({ paymentTermsDays: Number(event.target.value) })}>
-              {paymentTerms.map(({ days, label }) => (
-                <option key={days} value={days}>
-                  {label} (Due: {formatLongDate(addDays(issueDate, days))})
-                </option>
-              ))}
-            </select>
-            <Clock className="pointer-events-none absolute right-3 top-2.5 size-[15px] text-body" />
-          </span>
+          <SelectDropdown
+            value={String(paymentTermsDays)}
+            options={paymentTerms.map(({ days, label }) => ({
+              value: String(days),
+              label: `${label} (Due: ${formatLongDate(addDays(issueDate, days))})`,
+            }))}
+            onChange={(val) => onChange({ paymentTermsDays: Number(val) })}
+            className="w-full"
+            buttonClassName="w-full justify-between h-10 border-slate-300 bg-slate-50/70 hover:bg-white text-xs font-medium"
+            icon={<Clock className="size-3.5 text-muted" />}
+          />
         </Field>
       </div>
     </section>

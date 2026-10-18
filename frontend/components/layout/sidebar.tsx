@@ -25,11 +25,8 @@ export function Sidebar({ user }: { user: User }) {
                 <Image src="/brand/monogram.png" alt="MoukawilOS" width={28} height={28} priority />
               </div>
               <div className="flex flex-col">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-base font-bold leading-none tracking-tight text-ink">MoukawilOS</span>
-                  <span className="rounded bg-mint px-1.5 py-0.5 text-[10px] font-bold text-mint-ink">v2</span>
-                </div>
-                <span className="pt-1 text-[11px] font-medium leading-none text-muted">
+                <span className="text-base font-bold leading-none tracking-tight text-ink">MoukawilOS</span>
+                <span className="pt-1.5 text-[11px] font-medium leading-none text-muted">
                   Fiscal OS • Law 22-23
                 </span>
               </div>
