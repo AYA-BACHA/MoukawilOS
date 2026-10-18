@@ -19,7 +19,7 @@ export function SecondaryKpis({ deadline, stats }: { deadline: Deadline; stats: 
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <article className={cardClass}>
+        <article id="tour-statutory-deadline" className={cardClass}>
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
               <h3 className={labelClass}>Next Statutory Deadline</h3>
@@ -49,7 +49,7 @@ export function SecondaryKpis({ deadline, stats }: { deadline: Deadline; stats: 
           </div>
         </article>
 
-        <article className={cardClass}>
+        <article id="tour-pending-inflow" className={cardClass}>
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
               <h3 className={labelClass}>Pending Inflow</h3>

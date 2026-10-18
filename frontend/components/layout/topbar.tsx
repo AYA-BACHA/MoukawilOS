@@ -120,6 +120,7 @@ export function Topbar({ utilization }: { utilization: number }) {
 
         {/* New Invoice Button */}
         <Link
+          id="tour-new-invoice"
           href="/invoices/new"
           className={buttonClass("primary", "rounded-lg px-3.5 py-2 text-xs font-semibold shadow-xs hover:bg-primary-ink transition-colors")}
         >

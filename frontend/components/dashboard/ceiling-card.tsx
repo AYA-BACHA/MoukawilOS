@@ -20,7 +20,7 @@ export function CeilingCard({ stats }: { stats: TurnoverStats }) {
 
   return (
     <>
-      <section className="relative overflow-hidden rounded-xl border border-slate-200/80 bg-white p-7 shadow-xs transition-all">
+      <section id="tour-ceiling-card" className="relative overflow-hidden rounded-xl border border-slate-200/80 bg-white p-7 shadow-xs transition-all">
         <div className="flex flex-col gap-4">
           <div className="flex flex-wrap items-center justify-between gap-y-2">
             <div className="flex items-center gap-2">

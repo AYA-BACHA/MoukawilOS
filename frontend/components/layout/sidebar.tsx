@@ -1,18 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CircleHelp } from "lucide-react";
 import { navItems } from "@/lib/nav";
 import { cn } from "@/lib/cn";
-import { HowItWorksModal } from "@/components/layout/how-it-works-modal";
+import { SpotlightTour } from "@/components/layout/spotlight-tour";
 import type { User } from "@/types/models";
 
 export function Sidebar({ user }: { user: User }) {
   const pathname = usePathname();
-  const [showHowItWorks, setShowHowItWorks] = useState(false);
+  const [showTour, setShowTour] = useState(false);
+
+  // Auto-launch spotlight tour on first visit
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const tourDone = localStorage.getItem("moukawil_spotlight_tour_done");
+      if (!tourDone) {
+        const timer = setTimeout(() => setShowTour(true), 900);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, []);
 
   return (
     <>
@@ -33,7 +44,7 @@ export function Sidebar({ user }: { user: User }) {
             </div>
           </div>
 
-          <nav className="px-3 py-3">
+          <nav id="tour-sidebar-nav" className="px-3 py-3">
             <p className="px-2 pb-2 text-[11px] font-semibold uppercase tracking-wider text-muted">
               Operational Core
             </p>
@@ -63,8 +74,9 @@ export function Sidebar({ user }: { user: User }) {
 
         <div className="flex flex-col gap-2 p-3 border-t border-slate-100">
           <button
+            id="tour-how-it-works"
             type="button"
-            onClick={() => setShowHowItWorks(true)}
+            onClick={() => setShowTour(true)}
             className="flex items-center justify-center gap-2 rounded-xl border border-slate-200/70 bg-surface-low p-2 text-xs font-medium tracking-[0.02em] text-ink transition-colors hover:bg-surface hover:border-slate-300"
           >
             <CircleHelp className="size-4 text-primary" />
@@ -84,7 +96,7 @@ export function Sidebar({ user }: { user: User }) {
         </div>
       </aside>
 
-      <HowItWorksModal isOpen={showHowItWorks} onClose={() => setShowHowItWorks(false)} />
+      <SpotlightTour isOpen={showTour} onClose={() => setShowTour(false)} />
     </>
   );
 }
