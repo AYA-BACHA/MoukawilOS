@@ -7,7 +7,12 @@ import { getCurrentUser, getInvoices, getNextDeadline } from "@/lib/api";
 import { computeStats } from "@/lib/stats";
 
 export default async function DashboardPage() {
-  const [user, invoices, deadline] = await Promise.all([getCurrentUser(), getInvoices(), getNextDeadline()]);
+  const [user, invoices, deadline] = await Promise.all([
+    getCurrentUser(),
+    getInvoices(),
+    getNextDeadline(),
+    new Promise((resolve) => setTimeout(resolve, 400)),
+  ]);
   const stats = computeStats(user, invoices);
 
   return (

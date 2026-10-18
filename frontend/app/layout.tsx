@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, JetBrains_Mono, Tinos } from "next/font/google";
+import { NavigationProgress } from "@/components/layout/navigation-progress";
 import "./globals.css";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
@@ -19,7 +20,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
       </head>
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <NavigationProgress />
+        {children}
+      </body>
     </html>
   );
 }
