@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { BadgeCheck, ShieldCheck } from "lucide-react";
+import { RotateCcw } from "lucide-react";
 import { ChatPanel } from "@/components/assistant/chat-panel";
 import { ReferenceVault } from "@/components/assistant/reference-vault";
 import { askAssistant } from "@/lib/api";
@@ -19,7 +19,17 @@ export function AssistantView({ user, stats, statutes, initialMessages }: Assist
   const [pending, setPending] = useState(false);
 
   const ask = async (question: string) => {
-    setMessages((current) => [...current, { id: `msg_u_${current.length}`, userId: user.id, role: "user", content: question, citations: [], createdAt: new Date().toISOString() }]);
+    setMessages((current) => [
+      ...current,
+      {
+        id: `msg_u_${current.length}`,
+        userId: user.id,
+        role: "user",
+        content: question,
+        citations: [],
+        createdAt: new Date().toISOString(),
+      },
+    ]);
     setPending(true);
     const reply = await askAssistant(question);
     setMessages((current) => [...current, reply]);
@@ -29,41 +39,37 @@ export function AssistantView({ user, stats, statutes, initialMessages }: Assist
   const cited = [...messages].reverse().find((message) => message.role === "assistant")?.citations ?? [];
 
   return (
-    <div className="flex flex-col gap-6 px-6 py-6">
-      <header className="flex items-end justify-between rounded-lg bg-white p-6 shadow-[0_1px_1px_rgba(0,0,0,0.05)]">
-        <div className="flex flex-col gap-1">
-          <p className="text-xs font-medium uppercase tracking-[0.05em] text-teal">Fiscal OS / Regulatory Intelligence</p>
-          <h1 className="text-[32px] font-semibold leading-10 tracking-[-0.025em] text-ink">Al-Moukawil AI</h1>
-          <p className="max-w-xl text-sm text-body">Ask about your auto-entrepreneur obligations. Every answer cites the statutory texts it relies on.</p>
+    <div className="flex flex-col gap-5 py-3">
+      {/* Sleek Copilot Command Header */}
+      <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs">
+        <div className="flex flex-col gap-1.5">
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-mint px-2.5 py-0.5 text-[11px] font-bold text-mint-ink">
+              <span className="size-1.5 animate-pulse rounded-full bg-primary" />
+              Audited AI Copilot
+            </span>
+            <span className="text-[11px] font-medium text-muted">• Algerian Law 22-23 & Executive Decree 23-197</span>
+          </div>
+          <h1 className="text-2xl font-bold tracking-tight text-ink">Al-Moukawil Legal AI</h1>
+          <p className="max-w-2xl text-xs leading-relaxed text-body">
+            Ask any question regarding your turnover ceiling, B2B/B2C invoicing rules, or 0.5% IFU tax obligations. Every answer is legally grounded in official statutory codifications.
+          </p>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 rounded-xl bg-mint px-3 py-1 text-xs font-medium tracking-[0.02em] text-mint-ink">
-            <span className="size-1.5 rounded-full bg-primary" />
-            Grounded in Law 22-23
-          </span>
-          <button onClick={() => setMessages(initialMessages)} className="rounded bg-surface px-3 py-2 text-sm font-medium text-ink">
+
+        <div className="flex items-center gap-2.5 shrink-0">
+          <button
+            type="button"
+            onClick={() => setMessages(initialMessages)}
+            className="flex items-center gap-1.5 rounded-xl border border-slate-200/80 bg-surface-low px-3.5 py-2 text-xs font-semibold text-ink shadow-2xs transition-all hover:bg-surface hover:border-slate-300 active:scale-95"
+          >
+            <RotateCcw className="size-3.5 text-muted" />
             New conversation
           </button>
         </div>
       </header>
 
-      <aside className="flex items-start justify-between gap-6 rounded-lg bg-surface-low p-4">
-        <div className="flex items-start gap-3">
-          <ShieldCheck className="mt-0.5 size-5 shrink-0 text-primary" strokeWidth={1.75} />
-          <div>
-            <h2 className="text-sm font-semibold text-ink">Statutory scope &amp; verification notice</h2>
-            <p className="max-w-2xl pt-0.5 text-xs leading-[19.5px] tracking-[0.01em] text-body">
-              Answers are informational and limited to the texts in the reference vault. Confirm any figure with the tax administration or a certified accountant before filing.
-            </p>
-          </div>
-        </div>
-        <span className="inline-flex shrink-0 items-center gap-1 rounded bg-mint px-2 py-1 text-xs font-medium tracking-[0.02em] text-mint-ink">
-          <BadgeCheck className="size-3" />
-          Sources verified
-        </span>
-      </aside>
-
-      <div className="grid grid-cols-12 items-start gap-6">
+      {/* Main Grid: ChatPanel (8 cols) + ReferenceVault (4 cols) */}
+      <div className="grid grid-cols-12 items-start gap-5">
         <ChatPanel messages={messages} statutes={statutes} pending={pending} onAsk={ask} />
         <ReferenceVault statutes={statutes} cited={cited} user={user} stats={stats} />
       </div>

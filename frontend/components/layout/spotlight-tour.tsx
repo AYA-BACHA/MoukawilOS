@@ -73,6 +73,17 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
 
   const step = TOUR_STEPS[currentStep];
 
+  // Helper to check if element is already comfortably in view
+  const isElementInViewport = (el: HTMLElement) => {
+    const rect = el.getBoundingClientRect();
+    return (
+      rect.top >= 70 &&
+      rect.left >= 0 &&
+      rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) - 70 &&
+      rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+    );
+  };
+
   // Update target bounding rect
   const updateRect = useCallback(() => {
     if (!isOpen || !step) return;
@@ -93,7 +104,7 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
     }
   }, [isOpen]);
 
-  // Navigate if step requires specific path
+  // Navigate if step requires specific path & smooth-scroll only if needed
   useEffect(() => {
     if (!isOpen || !step) return;
 
@@ -101,38 +112,44 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
       router.push(step.path);
     }
 
-    // Immediate measurement if element is already present
-    updateRect();
-
-    // Scroll element smoothly into view
-    const el = document.getElementById(step.targetId);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
-    }
-
-    // Keep measuring smoothly during scroll animation
-    const interval = setInterval(updateRect, 30);
-    const stopTimer = setTimeout(() => {
-      clearInterval(interval);
-      updateRect();
-    }, 600);
-
-    return () => {
-      clearInterval(interval);
-      clearTimeout(stopTimer);
+    // Measure target element
+    const checkAndMeasure = () => {
+      const el = document.getElementById(step.targetId);
+      if (el) {
+        if (!isElementInViewport(el)) {
+          el.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
+          const scrollTimer = setTimeout(updateRect, 400);
+          return () => clearTimeout(scrollTimer);
+        } else {
+          updateRect();
+        }
+      }
     };
+
+    // Run measurement immediately and after a short mount tick
+    checkAndMeasure();
+    const timer = setTimeout(checkAndMeasure, 120);
+
+    return () => clearTimeout(timer);
   }, [isOpen, currentStep, step, pathname, router, updateRect]);
 
-  // Listen to window scroll & resize
+  // RAF-throttled scroll & resize listener for 60/120fps smoothness
   useEffect(() => {
     if (!isOpen) return;
 
-    window.addEventListener("resize", updateRect);
-    window.addEventListener("scroll", updateRect, true);
+    let rafId: number | null = null;
+    const handleScrollOrResize = () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(updateRect);
+    };
+
+    window.addEventListener("resize", handleScrollOrResize, { passive: true });
+    window.addEventListener("scroll", handleScrollOrResize, { passive: true });
 
     return () => {
-      window.removeEventListener("resize", updateRect);
-      window.removeEventListener("scroll", updateRect, true);
+      if (rafId) cancelAnimationFrame(rafId);
+      window.removeEventListener("resize", handleScrollOrResize);
+      window.removeEventListener("scroll", handleScrollOrResize);
     };
   }, [isOpen, updateRect]);
 
@@ -169,6 +186,7 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
   let tooltipStyle: React.CSSProperties = {
     position: "fixed",
     zIndex: 60,
+    transition: "top 400ms cubic-bezier(0.16, 1, 0.3, 1), left 400ms cubic-bezier(0.16, 1, 0.3, 1), opacity 200ms ease",
   };
 
   let arrowPlacement: "top" | "bottom" | "left" | "right" = "top";
@@ -221,6 +239,7 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
       left: "50%",
       transform: "translate(-50%, -50%)",
       zIndex: 60,
+      transition: "top 400ms cubic-bezier(0.16, 1, 0.3, 1), left 400ms cubic-bezier(0.16, 1, 0.3, 1), opacity 200ms ease",
     };
   }
 
@@ -257,17 +276,16 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
       {/* Crystal-Clear Spotlight Hole with Outward-Only Dark Overlay & Crisp White Ring */}
       {targetRect && (
         <div
-          className="fixed rounded-2xl transition-all duration-300 ease-out pointer-events-none"
+          className="fixed rounded-2xl pointer-events-none"
           style={{
             left: targetRect.left - PADDING,
             top: targetRect.top - PADDING,
             width: targetRect.width + PADDING * 2,
             height: targetRect.height + PADDING * 2,
             borderRadius: "18px",
-            // The box shadow spreads 9999px outwards to darken the rest of the screen,
-            // while leaving the interior completely transparent, bright, and 100% readable.
             boxShadow: "0 0 0 3.5px #ffffff, 0 0 0 9999px rgba(15, 23, 42, 0.68), 0 12px 35px -8px rgba(0, 0, 0, 0.45)",
             zIndex: 50,
+            transition: "top 400ms cubic-bezier(0.16, 1, 0.3, 1), left 400ms cubic-bezier(0.16, 1, 0.3, 1), width 400ms cubic-bezier(0.16, 1, 0.3, 1), height 400ms cubic-bezier(0.16, 1, 0.3, 1)",
           }}
         />
       )}
@@ -282,45 +300,47 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
           <>
             {arrowPlacement === "top" && (
               <div
-                style={{ left: arrowOffset - 6 }}
+                style={{ left: arrowOffset - 6, transition: "left 400ms cubic-bezier(0.16, 1, 0.3, 1)" }}
                 className="absolute -top-2 size-3 rotate-45 border-l border-t border-slate-100 bg-white"
               />
             )}
             {arrowPlacement === "bottom" && (
               <div
-                style={{ left: arrowOffset - 6 }}
+                style={{ left: arrowOffset - 6, transition: "left 400ms cubic-bezier(0.16, 1, 0.3, 1)" }}
                 className="absolute -bottom-2 size-3 rotate-45 border-b border-r border-slate-100 bg-white"
               />
             )}
             {arrowPlacement === "left" && (
               <div
-                style={{ top: arrowOffset - 6 }}
+                style={{ top: arrowOffset - 6, transition: "top 400ms cubic-bezier(0.16, 1, 0.3, 1)" }}
                 className="absolute -left-2 size-3 rotate-45 border-b border-l border-slate-100 bg-white"
               />
             )}
             {arrowPlacement === "right" && (
               <div
-                style={{ top: arrowOffset - 6 }}
+                style={{ top: arrowOffset - 6, transition: "top 400ms cubic-bezier(0.16, 1, 0.3, 1)" }}
                 className="absolute -right-2 size-3 rotate-45 border-r border-t border-slate-100 bg-white"
               />
             )}
           </>
         )}
 
-        {/* Card Content */}
-        <div className="flex items-start justify-between">
-          <h4 className="text-sm font-bold tracking-tight text-slate-900">{step.title}</h4>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close walkthrough"
-            className="rounded-full p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
-          >
-            <X className="size-4" />
-          </button>
-        </div>
+        {/* Card Content with crossfade */}
+        <div key={currentStep} className="animate-in fade-in duration-200">
+          <div className="flex items-start justify-between">
+            <h4 className="text-sm font-bold tracking-tight text-slate-900">{step.title}</h4>
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Close walkthrough"
+              className="rounded-full p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
+            >
+              <X className="size-4" />
+            </button>
+          </div>
 
-        <p className="mt-1.5 text-xs leading-relaxed text-slate-600">{step.description}</p>
+          <p className="mt-1.5 text-xs leading-relaxed text-slate-600">{step.description}</p>
+        </div>
 
         {/* Card Footer: Step Counter + Pill Buttons */}
         <div className="mt-4 flex items-center justify-between pt-1">

@@ -7,8 +7,9 @@ import type { InvoiceWithClient, PaymentConfirmation, TurnoverStats } from "@/ty
 
 const rails = ["Bank Transfer (BNA / CPA / CCP)", "Cheque"];
 
-const fieldClass = "relative flex h-10 items-center rounded bg-surface-low shadow-[inset_0_2px_4px_rgba(0,0,0,0.05)]";
-const labelClass = "text-sm font-semibold text-ink";
+const fieldClass =
+  "relative flex h-10 items-center rounded-xl border border-slate-300 bg-slate-50/70 hover:border-slate-400 focus-within:border-primary focus-within:bg-white focus-within:ring-2 focus-within:ring-primary/20 transition-all";
+const labelClass = "text-xs font-semibold text-ink";
 
 interface PaymentModalProps {
   invoice: InvoiceWithClient;
@@ -28,13 +29,13 @@ export function PaymentModal({ invoice, stats, onClose, onConfirm }: PaymentModa
   const percent = (value: number) => Math.round((value / ceiling) * 100);
 
   return (
-    <div className="fixed inset-0 z-30 grid place-items-center bg-ink/40 p-4 backdrop-blur-[2px]" onClick={onClose}>
+    <div className="fixed inset-0 z-30 grid place-items-center bg-slate-900/40 p-4 backdrop-blur-xs" onClick={onClose}>
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="payment-modal-title"
         onClick={(event) => event.stopPropagation()}
-        className="w-full max-w-lg overflow-hidden rounded-lg bg-white shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)]"
+        className="w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl border border-slate-100 animate-in fade-in zoom-in-95 duration-200"
       >
         <div className="flex items-start gap-3 bg-surface-low p-4">
           <span className="grid size-10 place-items-center rounded-xl bg-mint text-primary">
@@ -122,15 +123,20 @@ export function PaymentModal({ invoice, stats, onClose, onConfirm }: PaymentModa
           </div>
         </div>
 
-        <div className="flex items-center justify-end gap-2 bg-surface-low p-4">
-          <button onClick={onClose} className="rounded bg-white px-3 py-2 text-sm font-medium text-ink shadow-[0_1px_1px_rgba(0,0,0,0.05)]">
+        <div className="flex items-center justify-end gap-2.5 bg-surface-low/80 p-4 border-t border-slate-100">
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-2xs transition-all hover:bg-slate-50 active:scale-95"
+          >
             Cancel
           </button>
           <button
+            type="button"
             onClick={() => onConfirm({ invoiceId: invoice.id, settlementDate, rail })}
-            className="flex items-center gap-1.5 rounded bg-primary px-4 py-2 text-sm font-semibold text-white shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_2px_4px_-2px_rgba(0,0,0,0.1)]"
+            className="flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs transition-all hover:bg-primary-ink active:scale-95"
           >
-            <BadgeCheck className="size-[15px]" />
+            <BadgeCheck className="size-4" />
             Confirm & Record Payment
           </button>
         </div>

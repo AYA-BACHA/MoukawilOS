@@ -27,8 +27,14 @@ export function ClientModal({ client, onClose, onSubmit }: ClientModalProps) {
   const valid = input.name.trim().length > 0 && (!business || (input.nif ?? "").length === 15);
 
   return (
-    <div className="fixed inset-0 z-30 grid place-items-center bg-ink/40 p-4 backdrop-blur-[2px]" onClick={onClose}>
-      <div role="dialog" aria-modal="true" aria-labelledby="client-modal-title" onClick={(event) => event.stopPropagation()} className="w-full max-w-lg overflow-hidden rounded-lg bg-white shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)]">
+    <div className="fixed inset-0 z-30 grid place-items-center bg-slate-900/40 p-4 backdrop-blur-xs" onClick={onClose}>
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="client-modal-title"
+        onClick={(event) => event.stopPropagation()}
+        className="w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl border border-slate-100 animate-in fade-in zoom-in-95 duration-200"
+      >
         <div className="flex items-center justify-between bg-surface-low p-4">
           <h2 id="client-modal-title" className="text-xl font-semibold leading-7 tracking-[-0.025em] text-ink">
             {client ? "Edit Client Record" : "Add New Client"}
@@ -78,11 +84,20 @@ export function ClientModal({ client, onClose, onSubmit }: ClientModalProps) {
             <input {...text("address")} />
           </Field>
         </div>
-        <div className="flex justify-end gap-2 bg-surface-low p-4">
-          <button onClick={onClose} className="rounded bg-white px-3 py-2 text-sm font-medium text-ink shadow-[0_1px_1px_rgba(0,0,0,0.05)]">
+        <div className="flex justify-end gap-2.5 bg-surface-low/80 p-4 border-t border-slate-100">
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-2xs transition-all hover:bg-slate-50 active:scale-95"
+          >
             Cancel
           </button>
-          <button disabled={!valid} onClick={() => onSubmit(input)} className="rounded bg-primary px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">
+          <button
+            type="button"
+            disabled={!valid}
+            onClick={() => onSubmit(input)}
+            className="rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs transition-all hover:bg-primary-ink disabled:opacity-40 active:scale-95"
+          >
             {client ? "Save Record" : "Add Client"}
           </button>
         </div>
