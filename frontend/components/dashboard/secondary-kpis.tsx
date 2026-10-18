@@ -7,9 +7,9 @@ import { Pill } from "@/components/ui/pill";
 import { formatAmount, formatLongDate } from "@/lib/format";
 import type { Deadline, TurnoverStats } from "@/types/models";
 
-const cardClass = "flex flex-1 flex-col justify-between rounded-xl border border-slate-100 bg-white p-6 shadow-sm transition-all hover:border-slate-200";
+const cardClass = "flex flex-1 flex-col justify-between rounded-xl border border-slate-200/80 bg-white p-6 shadow-xs transition-all duration-200 hover:shadow-md hover:border-slate-300";
 const labelClass = "text-xs font-bold uppercase tracking-wider text-muted";
-const linkClass = "inline-flex items-center gap-1.5 rounded-lg border border-slate-200/80 bg-surface-low px-3 py-1.5 text-xs font-semibold text-primary transition-all hover:border-slate-300 hover:bg-surface";
+const linkClass = "inline-flex items-center gap-1.5 rounded-lg border border-slate-200/80 bg-surface-low px-3 py-1.5 text-xs font-semibold text-primary transition-all duration-150 hover:border-slate-300 hover:bg-surface active:scale-95 shadow-2xs hover:shadow-xs";
 
 export function SecondaryKpis({ deadline, stats }: { deadline: Deadline; stats: TurnoverStats }) {
   const [showDeclaration, setShowDeclaration] = useState(false);

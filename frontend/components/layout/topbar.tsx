@@ -82,7 +82,7 @@ export function Topbar({ utilization }: { utilization: number }) {
             type="button"
             aria-label="Notifications"
             onClick={() => setShowNotifications(!showNotifications)}
-            className="relative rounded-lg p-2 text-body transition-colors hover:bg-surface hover:text-ink"
+            className="relative rounded-lg p-2 text-body transition-all duration-150 hover:bg-surface hover:text-ink active:scale-95"
           >
             <Bell className="size-[18px]" />
             <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-emerald-500 ring-2 ring-white" />
@@ -100,7 +100,7 @@ export function Topbar({ utilization }: { utilization: number }) {
                   return (
                     <div
                       key={n.id}
-                      className="flex items-start gap-2.5 rounded-xl p-2 transition-colors hover:bg-slate-50"
+                      className="flex items-start gap-2.5 rounded-xl p-2 transition-colors hover:bg-slate-50 cursor-pointer"
                     >
                       <div className={`flex size-7 shrink-0 items-center justify-center rounded-lg ${n.color}`}>
                         <Icon className="size-3.5" />
@@ -122,7 +122,7 @@ export function Topbar({ utilization }: { utilization: number }) {
         <Link
           id="tour-new-invoice"
           href="/invoices/new"
-          className={buttonClass("primary", "rounded-lg px-3.5 py-2 text-xs font-semibold shadow-xs hover:bg-primary-ink transition-colors")}
+          className={buttonClass("primary", "rounded-lg px-3.5 py-2 text-xs font-semibold shadow-xs hover:bg-primary-ink active:scale-95 transition-all duration-150")}
         >
           <Plus className="size-3.5" />
           New Invoice
@@ -133,7 +133,7 @@ export function Topbar({ utilization }: { utilization: number }) {
           <button
             type="button"
             onClick={() => setShowUserMenu(!showUserMenu)}
-            className="flex items-center gap-1.5 rounded-xl p-1 transition-all hover:bg-surface"
+            className="flex items-center gap-1.5 rounded-xl p-1 transition-all duration-150 hover:bg-surface active:scale-95"
           >
             <Image src="/brand/avatar.png" alt="Profile" width={32} height={32} className="rounded-xl shadow-xs" />
             <ChevronDown className="size-3 text-muted" />

@@ -56,10 +56,10 @@ export function Sidebar({ user }: { user: User }) {
                     <Link
                       href={href}
                       className={cn(
-                        "flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                        "flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-150 active:scale-[0.98]",
                         active
-                          ? "bg-mint font-semibold text-[#154b46] shadow-sm shadow-black/5"
-                          : "text-body hover:bg-surface-low hover:text-ink",
+                          ? "bg-mint font-semibold text-[#154b46] shadow-2xs"
+                          : "text-body hover:bg-surface-low hover:text-ink hover:translate-x-0.5",
                       )}
                     >
                       <Icon className="size-[18px]" strokeWidth={active ? 2.25 : 1.75} />
@@ -77,9 +77,9 @@ export function Sidebar({ user }: { user: User }) {
             id="tour-how-it-works"
             type="button"
             onClick={() => setShowTour(true)}
-            className="flex items-center justify-center gap-2 rounded-xl border border-slate-200/70 bg-surface-low p-2 text-xs font-medium tracking-[0.02em] text-ink transition-colors hover:bg-surface hover:border-slate-300"
+            className="group flex items-center justify-center gap-2 rounded-xl border border-slate-200/80 bg-surface-low p-2.5 text-xs font-semibold tracking-[0.02em] text-ink transition-all duration-150 hover:bg-surface hover:border-slate-300 active:scale-95 shadow-2xs hover:shadow-xs"
           >
-            <CircleHelp className="size-4 text-primary" />
+            <CircleHelp className="size-4 text-primary transition-transform duration-150 group-hover:scale-110" />
             How Moukawil Works
           </button>
           <Link

@@ -15,7 +15,7 @@ export default async function DashboardPage() {
       <DashboardHeader user={user} />
       <CeilingCard stats={stats} />
       <SecondaryKpis deadline={deadline} stats={stats} />
-      <RecentInvoices invoices={invoices.slice(0, 3)} />
+      <RecentInvoices invoices={invoices.slice(0, 3)} stats={stats} />
       <OperationalIndicators user={user} stats={stats} />
     </div>
   );
