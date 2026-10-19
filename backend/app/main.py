@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import health, me, onboarding
+from app.api import clients, health, me, onboarding
 from app.core.config import settings
 from app.core.db import pool
 
@@ -28,3 +28,4 @@ app.add_middleware(
 app.include_router(health.router)
 app.include_router(me.router)
 app.include_router(onboarding.router)
+app.include_router(clients.router)
