@@ -5,3 +5,4 @@ pydantic-settings
 psycopg[binary,pool]
 PyJWT
 httpx
+PyJWT[crypto]
