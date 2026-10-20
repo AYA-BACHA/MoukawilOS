@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { X } from "lucide-react";
+import { useI18n } from "@/lib/i18n/provider";
 
 export interface TourStep {
   targetId: string;
@@ -66,6 +67,7 @@ interface SpotlightTourProps {
 }
 
 export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
+  const { t } = useI18n();
   const [currentStep, setCurrentStep] = useState(0);
   const [targetRect, setTargetRect] = useState<DOMRect | null>(null);
   const router = useRouter();
@@ -301,25 +303,25 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
             {arrowPlacement === "top" && (
               <div
                 style={{ left: arrowOffset - 6, transition: "left 400ms cubic-bezier(0.16, 1, 0.3, 1)" }}
-                className="absolute -top-2 size-3 rotate-45 border-l border-t border-slate-100 bg-card"
+                className="absolute -top-2 size-3 rotate-45 border-s border-t border-slate-100 bg-card"
               />
             )}
             {arrowPlacement === "bottom" && (
               <div
                 style={{ left: arrowOffset - 6, transition: "left 400ms cubic-bezier(0.16, 1, 0.3, 1)" }}
-                className="absolute -bottom-2 size-3 rotate-45 border-b border-r border-slate-100 bg-card"
+                className="absolute -bottom-2 size-3 rotate-45 border-b border-e border-slate-100 bg-card"
               />
             )}
             {arrowPlacement === "left" && (
               <div
                 style={{ top: arrowOffset - 6, transition: "top 400ms cubic-bezier(0.16, 1, 0.3, 1)" }}
-                className="absolute -left-2 size-3 rotate-45 border-b border-l border-slate-100 bg-card"
+                className="absolute -start-2 size-3 rotate-45 border-b border-s border-slate-100 bg-card"
               />
             )}
             {arrowPlacement === "right" && (
               <div
                 style={{ top: arrowOffset - 6, transition: "top 400ms cubic-bezier(0.16, 1, 0.3, 1)" }}
-                className="absolute -right-2 size-3 rotate-45 border-r border-t border-slate-100 bg-card"
+                className="absolute -end-2 size-3 rotate-45 border-e border-t border-slate-100 bg-card"
               />
             )}
           </>
@@ -328,24 +330,24 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
         {/* Card Content with crossfade */}
         <div key={currentStep} className="animate-in fade-in duration-200">
           <div className="flex items-start justify-between">
-            <h4 className="text-sm font-bold tracking-tight text-slate-900">{step.title}</h4>
+            <h4 className="text-sm font-bold tracking-tight text-slate-900">{t(step.title)}</h4>
             <button
               type="button"
               onClick={onClose}
-              aria-label="Close walkthrough"
+              aria-label={t("Close walkthrough")}
               className="rounded-full p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
             >
               <X className="size-4" />
             </button>
           </div>
 
-          <p className="mt-1.5 text-xs leading-relaxed text-slate-600">{step.description}</p>
+          <p className="mt-1.5 text-xs leading-relaxed text-slate-600">{t(step.description)}</p>
         </div>
 
         {/* Card Footer: Step Counter + Pill Buttons */}
         <div className="mt-4 flex items-center justify-between pt-1">
           <span className="text-xs font-semibold text-slate-500">
-            {currentStep + 1} of {TOUR_STEPS.length}
+            {t("{v1} of {length}", { v1: currentStep + 1, length: TOUR_STEPS.length })}
           </span>
 
           <div className="flex items-center gap-2">
@@ -355,7 +357,7 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
                 onClick={handleBack}
                 className="rounded-full border border-slate-200 bg-card px-3.5 py-1 text-xs font-semibold text-slate-700 shadow-2xs transition-all hover:bg-slate-50 active:scale-95"
               >
-                Back
+                {t("Back")}
               </button>
             )}
             <button
@@ -363,7 +365,7 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
               onClick={handleNext}
               className="rounded-full bg-slate-950 px-4 py-1.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-slate-800 active:scale-95"
             >
-              {currentStep === TOUR_STEPS.length - 1 ? "Got it" : "Next"}
+              {currentStep === TOUR_STEPS.length - 1 ? t("Got it") : t("Next")}
             </button>
           </div>
         </div>

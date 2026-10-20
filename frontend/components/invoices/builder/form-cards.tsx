@@ -1,10 +1,13 @@
+"use client";
+
 import { Building2, CalendarDays, CirclePlus, Clock, FileText, Info, ListChecks, Lock, ShieldCheck, User, WalletCards, X } from "lucide-react";
 import { Field, inputClass } from "@/components/ui/field";
 import { SelectDropdown } from "@/components/ui/select-dropdown";
 import { cn } from "@/lib/cn";
-import { formatAmount, formatLongDate } from "@/lib/format";
+
 import { addDays, lineTotal, paymentTerms, subtotal } from "@/lib/invoice-math";
 import type { ClientType, DraftClient, InvoiceDraft, InvoiceItem } from "@/types/models";
+import { useI18n } from "@/lib/i18n/provider";
 
 const cardClass = "flex flex-col gap-3 rounded-lg bg-card p-4 shadow-[0_1px_1px_rgba(0,0,0,0.05)]";
 
@@ -33,11 +36,12 @@ const clientTypes: { value: ClientType; label: string; icon: typeof Building2 }[
 ];
 
 export function ClientCard({ clientType, client, onTypeChange, onClientChange }: ClientCardProps) {
+  const { t } = useI18n();
   const isCompany = clientType === "B2B";
 
   return (
     <section className={cardClass}>
-      <CardHeader icon={Building2} title="Client Classification" aside={<span className="rounded bg-surface-low px-1 py-0.5 text-xs font-medium tracking-[0.02em] text-body">Step 01</span>} />
+      <CardHeader icon={Building2} title={t("Client Classification")} aside={<span className="rounded bg-surface-low px-1 py-0.5 text-xs font-medium tracking-[0.02em] text-body">{t("Step 01")}</span>} />
       <div className="flex gap-1 rounded bg-surface-low p-1">
         {clientTypes.map(({ value, label, icon: Icon }) => (
           <button
@@ -49,28 +53,28 @@ export function ClientCard({ clientType, client, onTypeChange, onClientChange }:
             )}
           >
             <Icon className="size-3.5" />
-            {label}
+            {t(label)}
           </button>
         ))}
       </div>
       <div className="flex flex-col gap-3 pt-1">
-        <Field label={isCompany ? "Company Legal Name (Raison Sociale)" : "Full Name"}>
+        <Field label={isCompany ? t("Company Legal Name (Raison Sociale)") : t("Full Name")}>
           <input className={inputClass} value={client.name} onChange={(event) => onClientChange({ name: event.target.value })} />
         </Field>
         {isCompany && (
           <div className="grid grid-cols-3 gap-2">
-            <Field label="NIF" hint="15 Digits">
+            <Field label={t("NIF")} hint={t("15 Digits")}>
               <input className={cn(inputClass, "h-9 px-2 font-num text-xs tracking-[0.05em]")} inputMode="numeric" maxLength={15} value={client.nif} onChange={(event) => onClientChange({ nif: event.target.value })} />
             </Field>
-            <Field label="NIS" hint="13 Digits">
+            <Field label={t("NIS")} hint={t("13 Digits")}>
               <input className={cn(inputClass, "h-9 px-2 font-num text-xs tracking-[0.05em]")} inputMode="numeric" maxLength={13} value={client.nis} onChange={(event) => onClientChange({ nis: event.target.value })} />
             </Field>
-            <Field label="RC Number" hint="Wilaya/Num">
+            <Field label={t("RC Number")} hint={t("Wilaya/Num")}>
               <input className={cn(inputClass, "h-9 px-2 font-num text-xs tracking-[0.05em]")} value={client.rc} onChange={(event) => onClientChange({ rc: event.target.value })} />
             </Field>
           </div>
         )}
-        <Field label={isCompany ? "Statutory Business Address" : "Address"}>
+        <Field label={isCompany ? t("Statutory Business Address") : t("Address")}>
           <input className={inputClass} value={client.address} onChange={(event) => onClientChange({ address: event.target.value })} />
         </Field>
       </div>
@@ -86,11 +90,12 @@ interface MetadataCardProps {
 }
 
 export function MetadataCard({ number, issueDate, paymentTermsDays, onChange }: MetadataCardProps) {
+  const { t, formatLongDate } = useI18n();
   return (
     <section className={cardClass}>
       <CardHeader
         icon={FileText}
-        title="Invoice Metadata"
+        title={t("Invoice Metadata")}
         aside={
           <span className="flex items-center gap-1 rounded bg-surface-low px-1 py-0.5 font-num text-xs font-bold text-body">
             <Lock className="size-2.5" />
@@ -99,18 +104,18 @@ export function MetadataCard({ number, issueDate, paymentTermsDays, onChange }: 
         }
       />
       <div className="grid grid-cols-2 gap-3">
-        <Field label="Issue Date">
+        <Field label={t("Issue Date")}>
           <span className="relative">
-            <input type="date" className={cn(inputClass, "pr-10")} value={issueDate} onChange={(event) => onChange({ issueDate: event.target.value })} />
-            <CalendarDays className="pointer-events-none absolute right-3 top-2.5 size-[15px] text-muted" />
+            <input type="date" className={cn(inputClass, "pe-10")} value={issueDate} onChange={(event) => onChange({ issueDate: event.target.value })} />
+            <CalendarDays className="pointer-events-none absolute end-3 top-2.5 size-[15px] text-muted" />
           </span>
         </Field>
-        <Field label="Payment Terms">
+        <Field label={t("Payment Terms")}>
           <SelectDropdown
             value={String(paymentTermsDays)}
             options={paymentTerms.map(({ days, label }) => ({
               value: String(days),
-              label: `${label} (Due: ${formatLongDate(addDays(issueDate, days))})`,
+              label: t("{label} (Due: {date})", { label: t(label), date: formatLongDate(addDays(issueDate, days)) }),
             }))}
             onChange={(val) => onChange({ paymentTermsDays: Number(val) })}
             className="w-full"
@@ -129,29 +134,30 @@ interface ItemsCardProps {
 }
 
 export function ItemsCard({ items, onChange }: ItemsCardProps) {
+  const { t, formatAmount } = useI18n();
   const update = (id: string, patch: Partial<InvoiceItem>) => onChange(items.map((item) => (item.id === id ? { ...item, ...patch } : item)));
   const remove = (id: string) => onChange(items.filter((item) => item.id !== id));
   const add = () => onChange([...items, { id: crypto.randomUUID(), description: "", details: null, quantity: 1, unitPrice: 0 }]);
 
   return (
     <section className={cardClass}>
-      <CardHeader icon={ListChecks} title="Itemized Deliverables" aside={<span className="text-xs font-medium tracking-[0.02em] text-muted">DZD Denominated</span>} />
+      <CardHeader icon={ListChecks} title={t("Itemized Deliverables")} aside={<span className="text-xs font-medium tracking-[0.02em] text-muted">{t("DZD Denominated")}</span>} />
       <div className="flex flex-col gap-3">
         {items.map((item) => (
           <div key={item.id} className="flex flex-col gap-2 rounded bg-surface-low p-3">
             <div className="flex items-center gap-2">
               <input
                 className={cn(inputClass, "h-9 px-2")}
-                placeholder="Deliverable description"
+                placeholder={t("Deliverable description")}
                 value={item.description}
                 onChange={(event) => update(item.id, { description: event.target.value })}
               />
-              <button aria-label="Remove item" onClick={() => remove(item.id)} disabled={items.length === 1} className="p-1 text-body disabled:opacity-40">
+              <button aria-label={t("Remove item")} onClick={() => remove(item.id)} disabled={items.length === 1} className="p-1 text-body disabled:opacity-40">
                 <X className="size-3.5" />
               </button>
             </div>
             <div className="grid grid-cols-12 items-end gap-2">
-              <Field label={<span className="text-muted">Qty</span>} className="col-span-3">
+              <Field label={<span className="text-muted">{t("Qty")}</span>} className="col-span-3">
                 <input
                   type="number"
                   min={1}
@@ -160,60 +166,61 @@ export function ItemsCard({ items, onChange }: ItemsCardProps) {
                   onChange={(event) => update(item.id, { quantity: Math.max(0, Number(event.target.value)) })}
                 />
               </Field>
-              <Field label={<span className="text-muted">Rate (DZD)</span>} className="col-span-5">
+              <Field label={<span className="text-muted">{t("Rate (DZD)")}</span>} className="col-span-5">
                 <input
                   type="number"
                   min={0}
                   step="0.01"
-                  className={cn(inputClass, "h-8 px-2 text-right font-num text-xs")}
+                  className={cn(inputClass, "h-8 px-2 text-end font-num text-xs")}
                   value={item.unitPrice}
                   onChange={(event) => update(item.id, { unitPrice: Math.max(0, Number(event.target.value)) })}
                 />
               </Field>
               <div className="col-span-4 flex flex-col items-end gap-1 pb-0.5">
-                <span className="text-xs font-medium tracking-[0.02em] text-muted">Line Total</span>
-                <span className="font-num text-sm font-bold text-primary-ink">{formatAmount(lineTotal(item))} DZD</span>
+                <span className="text-xs font-medium tracking-[0.02em] text-muted">{t("Line Total")}</span>
+                <span className="font-num text-sm font-bold text-primary-ink">{t("{v1} DZD", { v1: formatAmount(lineTotal(item)) })}</span>
               </div>
             </div>
           </div>
         ))}
       </div>
       <button onClick={add} className="flex items-center justify-center gap-1 rounded bg-surface-low py-2.5 text-sm font-semibold text-accent">
-        <CirclePlus className="size-[15px]" />+ Add Item
+        <CirclePlus className="size-[15px]" />{t("+ Add Item")}
       </button>
     </section>
   );
 }
 
 export function SummaryCard({ items }: { items: InvoiceItem[] }) {
+  const { t, formatAmount } = useI18n();
   const total = subtotal(items);
 
   return (
     <section className={cardClass}>
-      <CardHeader icon={WalletCards} title="Tax Exemption & Summary" aside={<span className="text-xs font-medium tracking-[0.02em] text-teal">TVA Non Applicable</span>} />
+      <CardHeader icon={WalletCards} title={t("Tax Exemption & Summary")} aside={<span className="text-xs font-medium tracking-[0.02em] text-teal">{t("TVA Non Applicable")}</span>} />
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between py-1 text-sm">
-          <span className="text-body">Subtotal (Montant HT)</span>
-          <span className="font-num font-bold text-ink">{formatAmount(total)} DZD</span>
+          <span className="text-body">{t("Subtotal (Montant HT)")}</span>
+          <span className="font-num font-bold text-ink">{t("{v1} DZD", { v1: formatAmount(total) })}</span>
         </div>
         <div className="flex items-center justify-between gap-4 py-1 text-sm">
           <span className="flex items-center gap-1 text-body">
-            Value Added Tax (VAT / TVA)
+            {t("Value Added Tax (VAT / TVA)")}
             <Info className="size-3.5 text-muted" />
           </span>
-          <span className="text-right font-num text-xs text-muted">0.00 DZD (0% Statutory Exemption)</span>
+          <span className="text-end font-num text-xs text-muted">{t("0.00 DZD (0% Statutory Exemption)")}</span>
         </div>
         <div className="mt-1 flex items-center justify-between rounded bg-mint/40 p-3">
-          <span className="text-sm font-semibold text-primary-ink">Total Payable (TTC)</span>
-          <span className="font-num text-[28px] font-bold leading-9 tracking-[-0.02em] text-accent">{formatAmount(total)} DZD</span>
+          <span className="text-sm font-semibold text-primary-ink">{t("Total Payable (TTC)")}</span>
+          <span className="font-num text-[28px] font-bold leading-9 tracking-[-0.02em] text-accent">{t("{v1} DZD", { v1: formatAmount(total) })}</span>
         </div>
       </div>
       <div className="flex gap-2 rounded bg-surface-low px-3 pb-3 pt-4">
         <ShieldCheck className="mt-0.5 size-4 shrink-0 text-accent" />
         <div>
-          <p className="text-xs font-semibold tracking-[0.02em] text-primary-ink">Statutory Exemption Clause</p>
+          <p className="text-xs font-semibold tracking-[0.02em] text-primary-ink">{t("Statutory Exemption Clause")}</p>
           <p className="pt-0.5 text-xs leading-4 tracking-[0.01em] text-body">
-            Exempt from VAT pursuant to Algerian Law 22-23 and Executive Decree 23-197. Fiscal registration verified with ANAE.
+            {t("Exempt from VAT pursuant to Algerian Law 22-23 and Executive Decree 23-197. Fiscal registration verified with ANAE.")}
           </p>
         </div>
       </div>

@@ -42,8 +42,8 @@ export function ReadOnly({ className, children, trailing }: ReadOnlyProps) {
 export function IconInput({ icon, className, ...props }: React.InputHTMLAttributes<HTMLInputElement> & { icon: React.ReactNode }) {
   return (
     <span className="relative flex items-center">
-      <span className="pointer-events-none absolute left-3 text-body">{icon}</span>
-      <input className={cn(controlClass, "pl-9", className)} {...props} />
+      <span className="pointer-events-none absolute start-3 text-body">{icon}</span>
+      <input className={cn(controlClass, "ps-9", className)} {...props} />
     </span>
   );
 }

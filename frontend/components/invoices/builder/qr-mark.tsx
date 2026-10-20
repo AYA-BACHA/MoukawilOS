@@ -1,4 +1,7 @@
+"use client";
+
 import { hashSeed } from "@/lib/hash";
+import { useI18n } from "@/lib/i18n/provider";
 
 const SIZE = 21;
 
@@ -12,6 +15,7 @@ function finderCell(x: number, y: number) {
 }
 
 export function QrMark({ seed }: { seed: string }) {
+  const { t } = useI18n();
   let state = hashSeed(seed) || 1;
   const next = () => {
     state ^= state << 13;
@@ -29,7 +33,7 @@ export function QrMark({ seed }: { seed: string }) {
   }
 
   return (
-    <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="size-full fill-primary-ink" shapeRendering="crispEdges" role="img" aria-label="Authenticity code">
+    <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="size-full fill-primary-ink" shapeRendering="crispEdges" role="img" aria-label={t("Authenticity code")}>
       {cells}
     </svg>
   );

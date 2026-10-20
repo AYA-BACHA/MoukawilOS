@@ -6,6 +6,7 @@ import { ChatPanel } from "@/components/assistant/chat-panel";
 import { ReferenceVault } from "@/components/assistant/reference-vault";
 import { askAssistant } from "@/lib/api";
 import type { AssistantMessage, Statute, TurnoverStats, User } from "@/types/models";
+import { useI18n } from "@/lib/i18n/provider";
 
 interface AssistantViewProps {
   user: User;
@@ -15,6 +16,7 @@ interface AssistantViewProps {
 }
 
 export function AssistantView({ user, stats, statutes, initialMessages }: AssistantViewProps) {
+  const { t } = useI18n();
   const [messages, setMessages] = useState(initialMessages);
   const [pending, setPending] = useState(false);
 
@@ -46,13 +48,13 @@ export function AssistantView({ user, stats, statutes, initialMessages }: Assist
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-mint px-2.5 py-0.5 text-[11px] font-bold text-mint-ink">
               <span className="size-1.5 animate-pulse rounded-full bg-primary" />
-              Audited AI Copilot
+              {t("Audited AI Copilot")}
             </span>
-            <span className="text-[11px] font-medium text-muted">• Algerian Law 22-23 & Executive Decree 23-197</span>
+            <span className="text-[11px] font-medium text-muted">{t("• Algerian Law 22-23 & Executive Decree 23-197")}</span>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-ink">Al-Moukawil Legal AI</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-ink">{t("Al-Moukawil Legal AI")}</h1>
           <p className="max-w-2xl text-xs leading-relaxed text-body">
-            Ask any question regarding your turnover ceiling, B2B/B2C invoicing rules, or 0.5% IFU tax obligations. Every answer is legally grounded in official statutory codifications.
+            {t("Ask any question regarding your turnover ceiling, B2B/B2C invoicing rules, or 0.5% IFU tax obligations. Every answer is legally grounded in official statutory codifications.")}
           </p>
         </div>
 
@@ -63,7 +65,7 @@ export function AssistantView({ user, stats, statutes, initialMessages }: Assist
             className="flex items-center gap-1.5 rounded-xl border border-slate-200/80 bg-surface-low px-3.5 py-2 text-xs font-semibold text-ink shadow-2xs transition-all hover:bg-surface hover:border-slate-300 active:scale-95"
           >
             <RotateCcw className="size-3.5 text-muted" />
-            New conversation
+            {t("New conversation")}
           </button>
         </div>
       </header>

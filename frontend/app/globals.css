@@ -108,8 +108,8 @@
   --color-hairline: var(--hairline);
   --color-success: #10b981;
   --color-danger: #ef4444;
-  --font-sans: var(--font-geist), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-num: var(--font-geist), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-sans: var(--font-geist), var(--font-arabic), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-num: var(--font-geist), var(--font-arabic), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
 }
 
@@ -141,4 +141,9 @@ body {
     zoom: 1 !important;
     box-shadow: none !important;
   }
+}
+
+/* Arabic is a connected script: letter-spacing would break the joins between letters. */
+:lang(ar) * {
+  letter-spacing: 0;
 }

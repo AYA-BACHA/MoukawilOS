@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { Gauge, Scale, Search, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/cn";
-import { formatAmount, formatWhole } from "@/lib/format";
+
 import type { Statute, TurnoverStats, User } from "@/types/models";
+import { useI18n } from "@/lib/i18n/provider";
 
 interface ReferenceVaultProps {
   statutes: Statute[];
@@ -14,6 +15,7 @@ interface ReferenceVaultProps {
 }
 
 export function ReferenceVault({ statutes, cited, user, stats }: ReferenceVaultProps) {
+  const { t, formatAmount, formatWhole } = useI18n();
   const [search, setSearch] = useState("");
 
   const filteredStatutes = statutes.filter((s) => {
@@ -31,10 +33,10 @@ export function ReferenceVault({ statutes, cited, user, stats }: ReferenceVaultP
             <span className="grid size-7 place-items-center rounded-lg bg-mint text-accent">
               <Gauge className="size-3.5" />
             </span>
-            <h2 className="text-xs font-bold uppercase tracking-wider text-muted">Fiscal Monitor</h2>
+            <h2 className="text-xs font-bold uppercase tracking-wider text-muted">{t("Fiscal Monitor")}</h2>
           </div>
           <span className="rounded-full bg-mint px-2 py-0.5 text-[10px] font-bold text-mint-ink">
-            {Math.round(stats.utilization * 100)}% Utilized
+            {t("{v1}% Utilized", { v1: Math.round(stats.utilization * 100) })}
           </span>
         </div>
 
@@ -42,9 +44,9 @@ export function ReferenceVault({ statutes, cited, user, stats }: ReferenceVaultP
           <div className="flex items-baseline justify-between font-num">
             <span className="text-xl font-bold tracking-tight text-ink">
               {formatWhole(stats.collected)}{" "}
-              <span className="text-xs font-normal text-muted">DZD</span>
+              <span className="text-xs font-normal text-muted">{t("DZD")}</span>
             </span>
-            <span className="text-xs text-muted">/ 5,000,000 DZD</span>
+            <span className="text-xs text-muted">{t("/ 5,000,000 DZD")}</span>
           </div>
 
           <div className="mt-2.5 h-2 w-full overflow-hidden rounded-full bg-slate-100">
@@ -57,13 +59,13 @@ export function ReferenceVault({ statutes, cited, user, stats }: ReferenceVaultP
 
         <div className="grid grid-cols-2 gap-2 pt-1 border-t border-slate-100 text-xs">
           <div className="rounded-xl bg-slate-50/80 p-2.5 border border-slate-100">
-            <span className="text-[10px] text-muted block mb-0.5 font-medium">Remaining</span>
-            <span className="font-num font-bold text-ink block truncate">{formatWhole(stats.remaining)} DZD</span>
+            <span className="text-[10px] text-muted block mb-0.5 font-medium">{t("Remaining")}</span>
+            <span className="font-num font-bold text-ink block truncate">{t("{v1} DZD", { v1: formatWhole(stats.remaining) })}</span>
           </div>
           <div className="rounded-xl bg-slate-50/80 p-2.5 border border-slate-100">
-            <span className="text-[10px] text-muted block mb-0.5 font-medium">0.5% IFU Tax</span>
+            <span className="text-[10px] text-muted block mb-0.5 font-medium">{t("0.5% IFU Tax")}</span>
             <span className="font-num font-bold text-teal block truncate">
-              {formatAmount(stats.collected * user.ifuRate)} DZD
+              {t("{v1} DZD", { v1: formatAmount(stats.collected * user.ifuRate) })}
             </span>
           </div>
         </div>
@@ -76,26 +78,26 @@ export function ReferenceVault({ statutes, cited, user, stats }: ReferenceVaultP
             <span className="grid size-7 place-items-center rounded-lg bg-mint text-accent">
               <Scale className="size-3.5" />
             </span>
-            <h2 className="text-sm font-bold tracking-tight text-ink">Legal Vault</h2>
+            <h2 className="text-sm font-bold tracking-tight text-ink">{t("Legal Vault")}</h2>
           </div>
           <span className="rounded-full border border-slate-200 bg-surface-low px-2 py-0.5 text-[10px] font-semibold text-muted">
-            {statutes.length} Texts
+            {t("{length} Texts", { length: statutes.length })}
           </span>
         </div>
 
         {/* Quick Search */}
         <div className="relative">
-          <Search className="absolute left-2.5 top-2.5 size-3 text-muted" />
+          <Search className="absolute start-2.5 top-2.5 size-3 text-muted" />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search Law 22-23, decrees..."
-            className="w-full rounded-lg border border-slate-200 bg-slate-50/70 py-1.5 pl-7 pr-3 text-xs text-ink placeholder:text-muted/70 outline-none transition-all focus:border-primary focus:bg-card"
+            placeholder={t("Search Law 22-23, decrees...")}
+            className="w-full rounded-lg border border-slate-200 bg-slate-50/70 py-1.5 ps-7 pe-3 text-xs text-ink placeholder:text-muted/70 outline-none transition-all focus:border-primary focus:bg-card"
           />
         </div>
 
         {/* Statutes List */}
-        <ul className="flex max-h-[400px] flex-col gap-2.5 overflow-y-auto pr-1">
+        <ul className="flex max-h-[400px] flex-col gap-2.5 overflow-y-auto pe-1">
           {filteredStatutes.map((statute) => {
             const isCited = cited.includes(statute.id);
             return (
@@ -113,12 +115,12 @@ export function ReferenceVault({ statutes, cited, user, stats }: ReferenceVaultP
                   {isCited && (
                     <span className="inline-flex items-center gap-1 rounded-full bg-primary px-2 py-0.5 text-[9px] font-bold text-white shadow-2xs">
                       <span className="size-1 rounded-full bg-card animate-pulse" />
-                      Cited
+                      {t("Cited")}
                     </span>
                   )}
                 </div>
-                <h4 className="text-xs font-bold text-ink leading-tight">{statute.title}</h4>
-                <p className="mt-1 text-[11px] leading-relaxed text-muted">{statute.summary}</p>
+                <h4 className="text-xs font-bold text-ink leading-tight">{t(statute.title)}</h4>
+                <p className="mt-1 text-[11px] leading-relaxed text-muted">{t(statute.summary)}</p>
               </li>
             );
           })}

@@ -8,6 +8,8 @@ import { buttonClass } from "@/components/ui/button";
 import { Pill } from "@/components/ui/pill";
 import { SelectDropdown } from "@/components/ui/select-dropdown";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
+import { LanguageSwitcher } from "@/components/layout/language-switcher";
+import { useI18n } from "@/lib/i18n/provider";
 
 const yearOptions = [
   { value: "2026", label: "FY 2026", badge: "Active" },
@@ -16,6 +18,7 @@ const yearOptions = [
 ];
 
 export function Topbar({ utilization }: { utilization: number }) {
+  const { t } = useI18n();
   const [fiscalYear, setFiscalYear] = useState("2026");
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -47,7 +50,7 @@ export function Topbar({ utilization }: { utilization: number }) {
     {
       id: "2",
       title: "Turnover Cap Safe",
-      desc: `Current utilization is ${Math.round(utilization * 100)}% of 5,000,000 DZD cap.`,
+      desc: t("Current utilization is {pct}% of 5,000,000 DZD cap.", { pct: Math.round(utilization * 100) }),
       time: "Today",
       icon: CheckCircle2,
       color: "text-emerald-600 bg-emerald-50",
@@ -72,30 +75,31 @@ export function Topbar({ utilization }: { utilization: number }) {
           icon={<CalendarDays className="size-3.5 text-accent" />}
         />
         <Pill dot="size-2 bg-primary" className="bg-mint px-3 py-1 text-mint-ink shadow-xs">
-          Status: {Math.round(utilization * 100)}% Utilized • In Compliance
+          {t("Status: {v1}% Utilized • In Compliance", { v1: Math.round(utilization * 100) })}
         </Pill>
       </div>
 
       <div className="flex items-center gap-3">
+        <LanguageSwitcher />
         <ThemeToggle />
 
         {/* Notifications Popover */}
         <div ref={notifRef} className="relative">
           <button
             type="button"
-            aria-label="Notifications"
+            aria-label={t("Notifications")}
             onClick={() => setShowNotifications(!showNotifications)}
             className="relative rounded-lg p-2 text-body transition-colors hover:bg-surface hover:text-ink"
           >
             <Bell className="size-[18px]" />
-            <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-emerald-500 ring-2 ring-card" />
+            <span className="absolute end-1.5 top-1.5 size-2 rounded-full bg-emerald-500 ring-2 ring-card" />
           </button>
 
           {showNotifications && (
-            <div className="absolute right-0 z-50 mt-2 w-80 origin-top-right rounded-2xl border border-slate-200 bg-card p-3 shadow-xl shadow-black/8 animate-in fade-in zoom-in-95">
+            <div className="absolute end-0 z-50 mt-2 w-80 ltr:origin-top-right rtl:origin-top-left rounded-2xl border border-slate-200 bg-card p-3 shadow-xl shadow-black/8 animate-in fade-in zoom-in-95">
               <div className="flex items-center justify-between border-b border-slate-100 pb-2 px-1">
-                <span className="text-xs font-bold text-ink">Statutory Notifications</span>
-                <span className="rounded bg-mint px-1.5 py-0.5 text-[10px] font-semibold text-mint-ink">3 alerts</span>
+                <span className="text-xs font-bold text-ink">{t("Statutory Notifications")}</span>
+                <span className="rounded bg-mint px-1.5 py-0.5 text-[10px] font-semibold text-mint-ink">{t("3 alerts")}</span>
               </div>
               <div className="mt-2 flex flex-col gap-1.5">
                 {notifications.map((n) => {
@@ -109,9 +113,9 @@ export function Topbar({ utilization }: { utilization: number }) {
                         <Icon className="size-3.5" />
                       </div>
                       <div className="flex-1">
-                        <p className="text-xs font-semibold text-ink">{n.title}</p>
-                        <p className="text-[11px] text-body leading-snug">{n.desc}</p>
-                        <span className="mt-1 block text-[10px] font-medium text-muted">{n.time}</span>
+                        <p className="text-xs font-semibold text-ink">{t(n.title)}</p>
+                        <p className="text-[11px] text-body leading-snug">{t(n.desc)}</p>
+                        <span className="mt-1 block text-[10px] font-medium text-muted">{t(n.time)}</span>
                       </div>
                     </div>
                   );
@@ -128,7 +132,7 @@ export function Topbar({ utilization }: { utilization: number }) {
           className={buttonClass("primary", "rounded-lg px-3.5 py-2 text-xs font-semibold shadow-xs hover:bg-primary-ink transition-colors")}
         >
           <Plus className="size-3.5" />
-          New Invoice
+          {t("New Invoice")}
         </Link>
 
         {/* User Menu */}
@@ -138,23 +142,23 @@ export function Topbar({ utilization }: { utilization: number }) {
             onClick={() => setShowUserMenu(!showUserMenu)}
             className="flex items-center gap-1.5 rounded-xl p-1 transition-all hover:bg-surface"
           >
-            <Image src="/brand/avatar.png" alt="Profile" width={32} height={32} className="rounded-xl shadow-xs" />
+            <Image src="/brand/avatar.png" alt={t("Profile")} width={32} height={32} className="rounded-xl shadow-xs" />
             <ChevronDown className="size-3 text-muted" />
           </button>
 
           {showUserMenu && (
-            <div className="absolute right-0 z-50 mt-2 w-48 origin-top-right rounded-xl border border-slate-200 bg-card p-1.5 shadow-xl shadow-black/8 animate-in fade-in zoom-in-95">
+            <div className="absolute end-0 z-50 mt-2 w-48 ltr:origin-top-right rtl:origin-top-left rounded-xl border border-slate-200 bg-card p-1.5 shadow-xl shadow-black/8 animate-in fade-in zoom-in-95">
               <Link
                 href="/settings"
                 onClick={() => setShowUserMenu(false)}
                 className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium text-body transition-colors hover:bg-surface-low hover:text-ink"
               >
                 <UserIcon className="size-3.5 text-muted" />
-                Profile &amp; Settings
+                {t("Profile & Settings")}
               </Link>
               <div className="my-1 border-t border-slate-100" />
               <div className="px-3 py-1.5 text-[11px] text-muted">
-                Statute: <span className="font-semibold text-teal">Auto-Entrepreneur</span>
+                {t("Statute:")} <span className="font-semibold text-teal">{t("Auto-Entrepreneur")}</span>
               </div>
             </div>
           )}

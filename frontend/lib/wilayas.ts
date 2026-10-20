@@ -9,5 +9,5 @@ const names = [
 
 export const wilayas = names.map((name, index) => {
   const code = String(index + 1).padStart(2, "0");
-  return { code, label: `${code} - ${name}` };
+  return { code, name, label: `${code} - ${name}` };
 });

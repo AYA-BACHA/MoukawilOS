@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Check, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/cn";
+import { useI18n } from "@/lib/i18n/provider";
 
 export interface Option<T extends string> {
   value: T;
@@ -29,6 +30,7 @@ export function SelectDropdown<T extends string>({
   buttonClassName,
   icon,
 }: SelectDropdownProps<T>) {
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -54,7 +56,7 @@ export function SelectDropdown<T extends string>({
   }, [open]);
 
   return (
-    <div ref={containerRef} className={cn("relative inline-block text-left", className)}>
+    <div ref={containerRef} className={cn("relative inline-block text-start", className)}>
       <button
         type="button"
         onClick={() => setOpen(!open)}
@@ -66,10 +68,10 @@ export function SelectDropdown<T extends string>({
       >
         {icon}
         {label && <span className="font-normal text-muted">{label}</span>}
-        <span className="font-semibold text-ink">{selected?.label ?? value}</span>
+        <span className="font-semibold text-ink">{t(selected?.label ?? value)}</span>
         {selected?.badge && (
           <span className="rounded bg-mint px-1.5 py-0.5 text-[10px] font-semibold text-mint-ink">
-            {selected.badge}
+            {t(selected.badge)}
           </span>
         )}
         <ChevronDown
@@ -81,7 +83,7 @@ export function SelectDropdown<T extends string>({
         <div
           className={cn(
             "absolute z-50 mt-1 min-w-[180px] origin-top rounded-xl border border-slate-200 bg-card p-1 shadow-xl shadow-black/8 backdrop-blur-sm animate-in fade-in zoom-in-95",
-            className?.includes("w-full") ? "left-0 right-0 w-full" : "right-0",
+            className?.includes("w-full") ? "start-0 end-0 w-full" : "end-0",
           )}
         >
           {options.map((option) => {
@@ -95,17 +97,17 @@ export function SelectDropdown<T extends string>({
                   setOpen(false);
                 }}
                 className={cn(
-                  "flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-xs font-medium transition-colors",
+                  "flex w-full items-center justify-between rounded-lg px-3 py-2 text-start text-xs font-medium transition-colors",
                   isSelected
                     ? "bg-mint/50 font-semibold text-primary-ink"
                     : "text-body hover:bg-surface-low hover:text-ink",
                 )}
               >
                 <div className="flex items-center gap-2">
-                  <span>{option.label}</span>
+                  <span>{t(option.label)}</span>
                   {option.badge && (
                     <span className="rounded bg-mint px-1.5 py-0.5 text-[10px] font-semibold text-mint-ink">
-                      {option.badge}
+                      {t(option.badge)}
                     </span>
                   )}
                 </div>

@@ -1,8 +1,11 @@
+"use client";
+
 import Link from "next/link";
 import { BadgeCheck, ChevronLeft, ChevronRight, EllipsisVertical, Users } from "lucide-react";
 import { cn } from "@/lib/cn";
-import { formatAmount, formatDate, initials } from "@/lib/format";
+import { initials } from "@/lib/format";
 import type { ClientRow } from "@/lib/clients";
+import { useI18n } from "@/lib/i18n/provider";
 
 const headClass = "px-3 py-5 text-xs font-medium uppercase tracking-[0.05em] text-body";
 
@@ -16,20 +19,21 @@ function Identifier({ label, value, tone }: { label: string; value: string; tone
 }
 
 function TaxIdentifiers({ row }: { row: ClientRow }) {
+  const { t } = useI18n();
   const { client } = row;
   if (client.type === "B2C") {
     return (
       <>
-        <Identifier label="ID:" value="Resident Consumer" tone="text-body" />
-        <Identifier label="Tax:" value="Exempt (B2C Article 4)" tone="text-teal" />
+        <Identifier label={t("ID:")} value="Resident Consumer" tone="text-body" />
+        <Identifier label={t("Tax:")} value="Exempt (B2C Article 4)" tone="text-teal" />
       </>
     );
   }
   return (
     <>
-      {client.nif && <Identifier label="NIF:" value={client.nif} tone="text-ink" />}
-      {client.rc && <Identifier label="RC:" value={client.rc} tone="text-body" />}
-      {client.nis && <Identifier label="NIS:" value={client.nis} tone="text-muted" />}
+      {client.nif && <Identifier label={t("NIF:")} value={client.nif} tone="text-ink" />}
+      {client.rc && <Identifier label={t("RC:")} value={client.rc} tone="text-body" />}
+      {client.nis && <Identifier label={t("NIS:")} value={client.nis} tone="text-muted" />}
     </>
   );
 }
@@ -45,23 +49,24 @@ interface ClientsTableProps {
 }
 
 export function ClientsTable({ rows, total, selectedId, onSelect, page, pageCount, onPageChange }: ClientsTableProps) {
+  const { t, formatAmount, formatDate } = useI18n();
   return (
     <section className="col-span-8 flex flex-col overflow-hidden rounded-lg bg-card shadow-[0_1px_4px_rgba(0,0,0,0.02)]">
       <div className="flex items-center justify-between bg-surface-low px-4 py-3">
-        <h2 className="text-xs font-semibold uppercase tracking-[0.05em] text-body">Registered client entities (Algerian jurisdiction)</h2>
+        <h2 className="text-xs font-semibold uppercase tracking-[0.05em] text-body">{t("Registered client entities (Algerian jurisdiction)")}</h2>
         <p className="text-xs font-medium tracking-[0.02em] text-teal">
-          Showing {rows.length} of {total} records
+          {t("Showing {length} of {total} records", { length: rows.length, total })}
         </p>
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[800px] text-left">
+        <table className="w-full min-w-[800px] text-start">
           <thead>
             <tr>
-              <th className={cn(headClass, "px-4")}>Client / Corporate Profile</th>
-              <th className={headClass}>Tax Identifier</th>
-              <th className={cn(headClass, "text-right")}>Invoiced (DZD)</th>
-              <th className={headClass}>Compliance</th>
-              <th className={cn(headClass, "px-4 text-right")}>Action</th>
+              <th className={cn(headClass, "px-4")}>{t("Client / Corporate Profile")}</th>
+              <th className={headClass}>{t("Tax Identifier")}</th>
+              <th className={cn(headClass, "text-end")}>{t("Invoiced (DZD)")}</th>
+              <th className={headClass}>{t("Compliance")}</th>
+              <th className={cn(headClass, "px-4 text-end")}>{t("Action")}</th>
             </tr>
           </thead>
           <tbody>
@@ -72,9 +77,9 @@ export function ClientsTable({ rows, total, selectedId, onSelect, page, pageCoun
                     <div className="flex size-10 items-center justify-center rounded-full bg-mint text-accent">
                       <Users className="size-5" />
                     </div>
-                    <p className="text-sm font-semibold text-ink">No client records found</p>
+                    <p className="text-sm font-semibold text-ink">{t("No client records found")}</p>
                     <p className="max-w-xs text-xs text-muted">
-                      No registered client entities match your current search query.
+                      {t("No registered client entities match your current search query.")}
                     </p>
                   </div>
                 </td>
@@ -92,11 +97,11 @@ export function ClientsTable({ rows, total, selectedId, onSelect, page, pageCoun
                       <div className="min-w-0">
                         <div className="flex flex-wrap items-center gap-1">
                           <span className="text-lg font-semibold leading-6 tracking-[-0.01em] text-ink">{client.name}</span>
-                          <span className={cn("rounded px-2 py-0.5 text-xs font-medium tracking-[0.02em]", business ? "bg-mint text-mint-ink" : "bg-surface text-body")}>{business ? "B2B Corporate" : "B2C Individual"}</span>
+                          <span className={cn("rounded px-2 py-0.5 text-xs font-medium tracking-[0.02em]", business ? "bg-mint text-mint-ink" : "bg-surface text-body")}>{business ? t("B2B Corporate") : t("B2C Individual")}</span>
                           {client.anaeVerified && (
                             <span className="inline-flex items-center gap-0.5 rounded-sm bg-surface px-1.5 py-0.5 text-xs font-medium tracking-[0.02em] text-teal">
                               <BadgeCheck className="size-3" />
-                              ANAE
+                              {t("ANAE")}
                             </span>
                           )}
                         </div>
@@ -110,29 +115,29 @@ export function ClientsTable({ rows, total, selectedId, onSelect, page, pageCoun
                       <TaxIdentifiers row={row} />
                     </div>
                   </td>
-                  <td className="px-3 py-3 text-right">
+                  <td className="px-3 py-3 text-end">
                     <p className="font-num text-sm font-bold text-ink">{formatAmount(row.invoiced)}</p>
                     <p className={cn("text-xs tracking-[0.01em]", active ? "text-teal" : "text-muted")}>
-                      {active ? `${row.issued} ${row.issued === 1 ? "invoice" : "invoices"} issued` : `${row.drafts} ${row.drafts === 1 ? "draft" : "drafts"} / pending`}
+                      {active ? t(row.issued === 1 ? "{n} invoice issued" : "{n} invoices issued", { n: row.issued }) : t(row.drafts === 1 ? "{n} draft / pending" : "{n} drafts / pending", { n: row.drafts })}
                     </p>
                     {active && row.lastIssued ? (
                       <p className="pt-0.5 text-xs tracking-[0.01em] text-muted">{formatDate(row.lastIssued)}</p>
                     ) : (
-                      <p className="pt-0.5 text-xs tracking-[0.01em] text-danger">Unsettled</p>
+                      <p className="pt-0.5 text-xs tracking-[0.01em] text-danger">{t("Unsettled")}</p>
                     )}
                   </td>
                   <td className="px-3 py-3">
                     <span className={cn("inline-flex items-center gap-1 rounded-xl px-2 py-0.5 text-xs font-medium tracking-[0.02em]", active ? "bg-mint text-mint-ink" : "bg-surface-high text-body")}>
                       <span className={cn("size-1.5 rounded-full", active ? "bg-primary" : "bg-muted")} />
-                      {active ? "Active" : "Pending"}
+                      {active ? t("Active") : t("Pending")}
                     </span>
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-end gap-1">
                       <Link href={`/invoices/new?client=${client.id}`} onClick={(event) => event.stopPropagation()} className="rounded-sm bg-surface px-2 py-1 text-xs font-medium tracking-[0.02em] text-primary-ink">
-                        Invoice
+                        {t("Invoice")}
                       </Link>
-                      <button aria-label="More actions" className="rounded-sm p-1 text-body">
+                      <button aria-label={t("More actions")} className="rounded-sm p-1 text-body">
                         <EllipsisVertical className="size-3.5" />
                       </button>
                     </div>
@@ -145,14 +150,14 @@ export function ClientsTable({ rows, total, selectedId, onSelect, page, pageCoun
       </div>
       <div className="flex items-center justify-between bg-surface-low px-4 py-3">
         <p className="text-xs font-medium tracking-[0.02em] text-body">
-          Page {page} of {pageCount} • {total} verified fiscal records
+          {t("Page {page} of {pageCount} • {total} verified fiscal records", { page, pageCount, total })}
         </p>
         <div className="flex items-center gap-1">
-          <button aria-label="Previous page" disabled={page === 1} onClick={() => onPageChange(page - 1)} className="rounded-sm bg-surface p-1 text-ink disabled:opacity-50">
-            <ChevronLeft className="size-3.5" />
+          <button aria-label={t("Previous page")} disabled={page === 1} onClick={() => onPageChange(page - 1)} className="rounded-sm bg-surface p-1 text-ink disabled:opacity-50">
+            <ChevronLeft className="rtl:-scale-x-100 size-3.5" />
           </button>
-          <button aria-label="Next page" disabled={page === pageCount} onClick={() => onPageChange(page + 1)} className="rounded-sm bg-surface p-1 text-ink disabled:opacity-50">
-            <ChevronRight className="size-3.5" />
+          <button aria-label={t("Next page")} disabled={page === pageCount} onClick={() => onPageChange(page + 1)} className="rounded-sm bg-surface p-1 text-ink disabled:opacity-50">
+            <ChevronRight className="rtl:-scale-x-100 size-3.5" />
           </button>
         </div>
       </div>

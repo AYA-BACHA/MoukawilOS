@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { BadgeCheck, CalendarDays, ChevronDown, Landmark, ShieldCheck, X } from "lucide-react";
-import { formatAmount } from "@/lib/format";
+
 import type { InvoiceWithClient, PaymentConfirmation, TurnoverStats } from "@/types/models";
+import { useI18n } from "@/lib/i18n/provider";
 
 const rails = ["Bank Transfer (BNA / CPA / CCP)", "Cheque"];
 
@@ -21,6 +22,7 @@ interface PaymentModalProps {
 const today = () => new Date().toISOString().slice(0, 10);
 
 export function PaymentModal({ invoice, stats, onClose, onConfirm }: PaymentModalProps) {
+  const { t, tx, formatAmount } = useI18n();
   const [settlementDate, setSettlementDate] = useState(today);
   const [rail, setRail] = useState(rails[0]);
 
@@ -44,28 +46,28 @@ export function PaymentModal({ invoice, stats, onClose, onConfirm }: PaymentModa
           <div className="flex-1">
             <div className="flex items-center justify-between">
               <h2 id="payment-modal-title" className="text-xl font-semibold leading-7 tracking-[-0.025em] text-ink">
-                Confirm Payment Receipt
+                {t("Confirm Payment Receipt")}
               </h2>
-              <button aria-label="Close" onClick={onClose} className="rounded p-1 text-body">
+              <button aria-label={t("Close")} onClick={onClose} className="rounded p-1 text-body">
                 <X className="size-3.5" />
               </button>
             </div>
-            <p className="pt-0.5 text-xs font-medium tracking-[0.02em] text-body">Statutory Law 22-23 Cash-Basis Realization</p>
+            <p className="pt-0.5 text-xs font-medium tracking-[0.02em] text-body">{t("Statutory Law 22-23 Cash-Basis Realization")}</p>
           </div>
         </div>
 
         <div className="flex flex-col gap-4 p-4">
           <div className="flex flex-col gap-1 rounded bg-surface-low p-3 text-xs font-medium tracking-[0.02em] text-body">
             <p className="flex items-baseline justify-between">
-              Incoming Amount:
-              <span className="font-num text-xl font-bold leading-7 tracking-[-0.01em] text-primary-ink">{formatAmount(invoice.amount)} DZD</span>
+              {t("Incoming Amount:")}
+              <span className="font-num text-xl font-bold leading-7 tracking-[-0.01em] text-primary-ink">{t("{v1} DZD", { v1: formatAmount(invoice.amount) })}</span>
             </p>
             <p className="flex items-center justify-between">
-              Invoice Reference:
+              {t("Invoice Reference:")}
               <span className="font-num font-bold text-ink">{invoice.number}</span>
             </p>
             <p className="flex items-center justify-between">
-              Debtor:
+              {t("Debtor:")}
               <span className="text-ink">
                 {invoice.client.name} ({invoice.client.type})
               </span>
@@ -73,51 +75,55 @@ export function PaymentModal({ invoice, stats, onClose, onConfirm }: PaymentModa
             <div className="mt-2 flex flex-col gap-1 rounded bg-card/70 p-2 font-normal tracking-[0.01em]">
               <p className="flex items-center gap-1 font-semibold tracking-[0.02em] text-ink">
                 <ShieldCheck className="size-3.5" />
-                Ceiling Realization Impact:
+                {t("Ceiling Realization Impact:")}
               </p>
               <p>
-                Confirming this transaction transitions collected turnover from{" "}
-                <strong className="font-bold text-ink">
-                  {formatAmount(collected)} DZD ({percent(collected)}%)
-                </strong>{" "}
-                to{" "}
-                <span className="text-primary-ink">
-                  {formatAmount(after)} DZD ({percent(after)}%)
-                </span>{" "}
-                of your {ceiling / 1_000_000}M DZD annual ceiling.
+                {tx("Confirming this transaction transitions collected turnover from {from} to {to} of your {ceiling}M DZD annual ceiling.", {
+                  from: (
+                    <strong className="font-bold text-ink">
+                      {t("{v1} DZD ({v2}%)", { v1: formatAmount(collected), v2: percent(collected) })}
+                    </strong>
+                  ),
+                  to: (
+                    <span className="text-primary-ink">
+                      {t("{v1} DZD ({v2}%)", { v1: formatAmount(after), v2: percent(after) })}
+                    </span>
+                  ),
+                  ceiling: ceiling / 1_000_000,
+                })}
               </p>
             </div>
           </div>
 
           <div className="flex flex-col gap-3">
             <label className="flex flex-col gap-1">
-              <span className={labelClass}>Payment Settlement Date</span>
+              <span className={labelClass}>{t("Payment Settlement Date")}</span>
               <span className={fieldClass}>
-                <CalendarDays className="pointer-events-none absolute left-3 size-[14px] text-body" />
+                <CalendarDays className="pointer-events-none absolute start-3 size-[14px] text-body" />
                 <input
                   type="date"
                   value={settlementDate}
                   max={today()}
                   onChange={(event) => setSettlementDate(event.target.value)}
-                  className="h-full w-full bg-transparent pl-9 pr-3 text-sm font-medium text-ink outline-none"
+                  className="h-full w-full bg-transparent ps-9 pe-3 text-sm font-medium text-ink outline-none"
                 />
               </span>
-              <span className="text-xs tracking-[0.01em] text-muted">Date bank transfer or CCP check was credited.</span>
+              <span className="text-xs tracking-[0.01em] text-muted">{t("Date bank transfer or CCP check was credited.")}</span>
             </label>
             <label className="flex flex-col gap-1">
-              <span className={labelClass}>Settlement Rail</span>
+              <span className={labelClass}>{t("Settlement Rail")}</span>
               <span className={fieldClass}>
-                <Landmark className="pointer-events-none absolute left-3 size-[15px] text-body" />
+                <Landmark className="pointer-events-none absolute start-3 size-[15px] text-body" />
                 <select
                   value={rail}
                   onChange={(event) => setRail(event.target.value)}
-                  className="h-full w-full appearance-none bg-transparent pl-9 pr-8 text-sm font-medium text-ink outline-none"
+                  className="h-full w-full appearance-none bg-transparent ps-9 pe-8 text-sm font-medium text-ink outline-none"
                 >
                   {rails.map((option) => (
-                    <option key={option}>{option}</option>
+                    <option key={option} value={option}>{t(option)}</option>
                   ))}
                 </select>
-                <ChevronDown className="pointer-events-none absolute right-3 size-3 text-body" />
+                <ChevronDown className="pointer-events-none absolute end-3 size-3 text-body" />
               </span>
             </label>
           </div>
@@ -129,7 +135,7 @@ export function PaymentModal({ invoice, stats, onClose, onConfirm }: PaymentModa
             onClick={onClose}
             className="rounded-xl border border-slate-200 bg-card px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-2xs transition-all hover:bg-slate-50 active:scale-95"
           >
-            Cancel
+            {t("Cancel")}
           </button>
           <button
             type="button"
@@ -137,7 +143,7 @@ export function PaymentModal({ invoice, stats, onClose, onConfirm }: PaymentModa
             className="flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs transition-all hover:bg-primary-ink active:scale-95"
           >
             <BadgeCheck className="size-4" />
-            Confirm & Record Payment
+            {t("Confirm & Record Payment")}
           </button>
         </div>
       </div>

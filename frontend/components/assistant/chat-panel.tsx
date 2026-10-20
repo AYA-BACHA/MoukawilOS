@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import type { AssistantMessage, Statute } from "@/types/models";
+import { useI18n } from "@/lib/i18n/provider";
 
 const suggestions = [
   "What happens if I exceed the 5,000,000 DZD ceiling?",
@@ -30,6 +31,16 @@ interface ChatPanelProps {
 }
 
 export function ChatPanel({ messages, statutes, pending, onAsk }: ChatPanelProps) {
+  const { t } = useI18n();
+  // Assistant answers are "<statute code>: <summary>" blocks (or a fixed fallback); translate the summary part.
+  const answerText = (content: string) =>
+    content
+      .split("\n\n")
+      .map((part) => {
+        const match = /^([^:\n]{1,40}): ([\s\S]+)$/.exec(part);
+        return match ? `${match[1]}: ${t(match[2])}` : t(part);
+      })
+      .join("\n\n");
   const [draft, setDraft] = useState("");
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -66,13 +77,13 @@ export function ChatPanel({ messages, statutes, pending, onAsk }: ChatPanelProps
             <Sparkles className="size-3.5" />
           </div>
           <div>
-            <h3 className="text-xs font-bold text-ink">Al-Moukawil Statutory Copilot</h3>
-            <p className="text-[10px] text-muted">Audited with official JORADP Algerian legal codifications</p>
+            <h3 className="text-xs font-bold text-ink">{t("Al-Moukawil Statutory Copilot")}</h3>
+            <p className="text-[10px] text-muted">{t("Audited with official JORADP Algerian legal codifications")}</p>
           </div>
         </div>
         <div className="flex items-center gap-1.5 rounded-full border border-emerald-200/60 bg-emerald-50 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-700">
           <span className="size-1.5 animate-pulse rounded-full bg-emerald-500" />
-          Law 22-23 Active
+          {t("Law 22-23 Active")}
         </div>
       </div>
 
@@ -80,9 +91,9 @@ export function ChatPanel({ messages, statutes, pending, onAsk }: ChatPanelProps
       <div ref={containerRef} className="flex flex-1 flex-col gap-4 overflow-y-auto p-5 scroll-smooth">
         {messages.map((message) =>
           message.role === "user" ? (
-            <div key={message.id} className="ml-auto flex max-w-[82%] items-end gap-2">
-              <div className="rounded-2xl rounded-tr-xs bg-primary px-4 py-2.5 text-xs sm:text-sm leading-relaxed text-white shadow-xs">
-                {message.content}
+            <div key={message.id} className="ms-auto flex max-w-[82%] items-end gap-2">
+              <div className="rounded-2xl rounded-se-xs bg-primary px-4 py-2.5 text-xs sm:text-sm leading-relaxed text-white shadow-xs">
+                {t(message.content)}
               </div>
               <span className="grid size-6 shrink-0 place-items-center rounded-full bg-slate-200 text-slate-600 mb-0.5">
                 <UserIcon className="size-3.5" />
@@ -94,15 +105,15 @@ export function ChatPanel({ messages, statutes, pending, onAsk }: ChatPanelProps
                 <Bot className="size-4" strokeWidth={2} />
               </span>
               <div className="flex flex-col gap-2">
-                <div className="relative rounded-2xl rounded-tl-xs border border-slate-200/70 bg-slate-50/80 px-4 py-3 text-xs sm:text-sm leading-relaxed text-ink shadow-2xs">
-                  <p className="whitespace-pre-line">{message.content}</p>
+                <div className="relative rounded-2xl rounded-ss-xs border border-slate-200/70 bg-slate-50/80 px-4 py-3 text-xs sm:text-sm leading-relaxed text-ink shadow-2xs">
+                  <p className="whitespace-pre-line">{answerText(message.content)}</p>
 
                   {/* Copy Button */}
                   <button
                     type="button"
                     onClick={() => copyText(message.id, message.content)}
-                    title="Copy response"
-                    className="absolute right-2.5 top-2.5 rounded-md p-1 text-slate-400 opacity-0 transition-opacity hover:bg-slate-200/60 hover:text-slate-700 group-hover:opacity-100"
+                    title={t("Copy response")}
+                    className="absolute end-2.5 top-2.5 rounded-md p-1 text-slate-400 opacity-0 transition-opacity hover:bg-slate-200/60 hover:text-slate-700 group-hover:opacity-100"
                   >
                     {copiedId === message.id ? (
                       <Check className="size-3.5 text-emerald-600" />
@@ -117,7 +128,7 @@ export function ChatPanel({ messages, statutes, pending, onAsk }: ChatPanelProps
                   <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
                     <span className="text-[10px] font-semibold text-muted flex items-center gap-1">
                       <BookOpen className="size-3 text-accent" />
-                      Statutory Sources:
+                      {t("Statutory Sources:")}
                     </span>
                     {message.citations.map((id) => (
                       <span
@@ -140,9 +151,9 @@ export function ChatPanel({ messages, statutes, pending, onAsk }: ChatPanelProps
             <span className="grid size-8 shrink-0 place-items-center rounded-xl bg-mint/80 text-accent shadow-xs">
               <Bot className="size-4" />
             </span>
-            <div className="flex items-center gap-2 rounded-2xl rounded-tl-xs border border-slate-200/70 bg-slate-50 px-4 py-2.5 text-xs text-muted shadow-2xs">
+            <div className="flex items-center gap-2 rounded-2xl rounded-ss-xs border border-slate-200/70 bg-slate-50 px-4 py-2.5 text-xs text-muted shadow-2xs">
               <Loader2 className="size-3.5 animate-spin text-accent" />
-              Cross-referencing Law 22-23 and Executive Decree 23-197...
+              {t("Cross-referencing Law 22-23 and Executive Decree 23-197...")}
             </div>
           </div>
         )}
@@ -152,7 +163,7 @@ export function ChatPanel({ messages, statutes, pending, onAsk }: ChatPanelProps
       {messages.length <= 2 && (
         <div className="border-t border-slate-100 bg-slate-50/50 px-5 pt-3 pb-2">
           <p className="flex items-center gap-1 text-[11px] font-medium text-muted mb-2">
-            <HelpCircle className="size-3 text-accent" /> Suggested Questions:
+            <HelpCircle className="size-3 text-accent" /> {t("Suggested Questions:")}
           </p>
           <div className="flex flex-wrap gap-1.5">
             {suggestions.map((suggestion) => (
@@ -162,7 +173,7 @@ export function ChatPanel({ messages, statutes, pending, onAsk }: ChatPanelProps
                 onClick={() => onAsk(suggestion)}
                 className="rounded-lg border border-slate-200/80 bg-card px-2.5 py-1 text-xs text-body transition-all hover:border-slate-300 hover:bg-surface hover:text-ink active:scale-[0.98]"
               >
-                {suggestion}
+                {t(suggestion)}
               </button>
             ))}
           </div>
@@ -176,12 +187,12 @@ export function ChatPanel({ messages, statutes, pending, onAsk }: ChatPanelProps
             value={draft}
             onChange={(event) => setDraft(event.target.value)}
             onKeyDown={(event) => event.key === "Enter" && submit()}
-            placeholder="Ask about your ceiling, VAT exemption, IFU, declarations..."
+            placeholder={t("Ask about your ceiling, VAT exemption, IFU, declarations...")}
             className="flex-1 bg-transparent px-3 text-xs text-ink outline-none placeholder:text-muted/70"
           />
           <button
             type="button"
-            aria-label="Send question"
+            aria-label={t("Send question")}
             onClick={submit}
             disabled={!draft.trim() || pending}
             className="grid size-9 place-items-center rounded-lg bg-primary text-white shadow-xs transition-all hover:bg-primary-ink disabled:opacity-40 active:scale-95"
@@ -190,8 +201,8 @@ export function ChatPanel({ messages, statutes, pending, onAsk }: ChatPanelProps
           </button>
         </div>
         <div className="mt-1.5 flex items-center justify-between px-1 text-[10px] text-muted">
-          <span>Press Enter ↵ to send • Shift + Enter for new line</span>
-          <span>Official 0.5% IFU & Law 22-23 references</span>
+          <span>{t("Press Enter ↵ to send • Shift + Enter for new line")}</span>
+          <span>{t("Official 0.5% IFU & Law 22-23 references")}</span>
         </div>
       </div>
     </section>

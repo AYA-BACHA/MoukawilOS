@@ -1,6 +1,9 @@
+"use client";
+
 import { Building2, CircleCheck, ShieldCheck, WalletCards, type LucideIcon } from "lucide-react";
-import { formatAmount } from "@/lib/format";
+
 import type { computeClientMetrics } from "@/lib/clients";
+import { useI18n } from "@/lib/i18n/provider";
 
 type Metrics = ReturnType<typeof computeClientMetrics>;
 
@@ -29,54 +32,55 @@ function MetricCard({ label, icon: Icon, value, footer }: MetricCardProps) {
 }
 
 export function ClientMetrics({ metrics }: { metrics: Metrics }) {
+  const { t, formatAmount } = useI18n();
   return (
     <div className="flex gap-3">
       <MetricCard
-        label="Total active clients"
+        label={t("Total active clients")}
         icon={Building2}
         value={
           <p className="flex items-baseline gap-1">
             <span className="text-[32px] font-semibold leading-10 tracking-[-0.025em] text-ink">{metrics.total}</span>
-            <span className="text-xs font-medium tracking-[0.02em] text-teal">registered entities</span>
+            <span className="text-xs font-medium tracking-[0.02em] text-teal">{t("registered entities")}</span>
           </p>
         }
         footer={
           <span className="flex w-full items-center justify-between">
-            <span>{metrics.business} Corporate B2B</span>
+            <span>{t("{business} Corporate B2B", { business: metrics.business })}</span>
             <span className="text-muted">•</span>
-            <span>{metrics.individual} Individual B2C</span>
+            <span>{t("{individual} Individual B2C", { individual: metrics.individual })}</span>
           </span>
         }
       />
       <MetricCard
-        label="B2B invoiced revenue"
+        label={t("B2B invoiced revenue")}
         icon={WalletCards}
         value={
           <p className="flex items-baseline gap-1 font-num">
             <span className="text-[28px] font-bold leading-9 tracking-[-0.02em] text-ink">{formatAmount(metrics.businessRevenue)}</span>
-            <span className="text-xs text-teal">DZD</span>
+            <span className="text-xs text-teal">{t("DZD")}</span>
           </p>
         }
         footer={
           <span className="flex w-full items-center justify-between">
-            Average Deal Size:
-            <span className="font-num font-bold text-ink">{formatAmount(metrics.averageDeal)} DZD</span>
+            {t("Average Deal Size:")}
+            <span className="font-num font-bold text-ink">{t("{v1} DZD", { v1: formatAmount(metrics.averageDeal) })}</span>
           </span>
         }
       />
       <MetricCard
-        label="Statutory exemption audited"
+        label={t("Statutory exemption audited")}
         icon={ShieldCheck}
         value={
           <p className="flex items-center gap-2">
             <span className="text-[32px] font-semibold leading-10 tracking-[-0.025em] text-primary-ink">{metrics.compliance}%</span>
-            <span className="rounded bg-mint px-2 py-0.5 text-xs font-medium tracking-[0.02em] text-mint-ink">Compliant</span>
+            <span className="rounded bg-mint px-2 py-0.5 text-xs font-medium tracking-[0.02em] text-mint-ink">{t("Compliant")}</span>
           </p>
         }
         footer={
           <>
             <CircleCheck className="size-3.5 shrink-0" />
-            All entities verified under Law 22-23 0% VAT guidelines
+            {t("All entities verified under Law 22-23 0% VAT guidelines")}
           </>
         }
       />

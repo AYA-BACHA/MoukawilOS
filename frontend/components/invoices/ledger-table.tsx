@@ -3,9 +3,10 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Check, Download, FileDown, FileText, Plus, Printer, Trash2, X } from "lucide-react";
-import { clientDetail, formatAmount, formatDate } from "@/lib/format";
+import { clientDetail } from "@/lib/format";
 import { cn } from "@/lib/cn";
 import type { InvoiceStatus, InvoiceWithClient } from "@/types/models";
+import { useI18n } from "@/lib/i18n/provider";
 
 const statusStyles: Record<InvoiceStatus, { label: string; pill: string; dot: string }> = {
   pending: { label: "Pending", pill: "bg-surface-high text-body", dot: "bg-teal" },
@@ -24,21 +25,22 @@ interface LedgerTableProps {
 }
 
 export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: LedgerTableProps) {
+  const { t, formatAmount, formatDate } = useI18n();
   const [viewingReceipt, setViewingReceipt] = useState<InvoiceWithClient | null>(null);
 
   return (
     <>
       <div className="overflow-x-auto">
-        <table className="w-full text-left">
+        <table className="w-full text-start">
           <thead className="border-b border-slate-100 bg-surface-low/80">
             <tr>
-              <th className={headClass}>Invoice Ref</th>
-              <th className={headClass}>Client &amp; ID</th>
-              <th className={headClass}>Issue / Due Date</th>
-              <th className={cn(headClass, "text-right")}>Amount (DZD)</th>
-              <th className={headClass}>Legal Clause</th>
-              <th className={cn(headClass, "text-center")}>Status</th>
-              <th className={cn(headClass, "text-right")}>Actions</th>
+              <th className={headClass}>{t("Invoice Ref")}</th>
+              <th className={headClass}>{t("Client & ID")}</th>
+              <th className={headClass}>{t("Issue / Due Date")}</th>
+              <th className={cn(headClass, "text-end")}>{t("Amount (DZD)")}</th>
+              <th className={headClass}>{t("Legal Clause")}</th>
+              <th className={cn(headClass, "text-center")}>{t("Status")}</th>
+              <th className={cn(headClass, "text-end")}>{t("Actions")}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -49,16 +51,16 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
                     <div className="flex size-10 items-center justify-center rounded-full bg-mint text-accent">
                       <FileText className="size-5" />
                     </div>
-                    <p className="text-sm font-semibold text-ink">No commercial records found</p>
+                    <p className="text-sm font-semibold text-ink">{t("No commercial records found")}</p>
                     <p className="max-w-xs text-xs text-muted">
-                      No invoices match the current filter. Create your first compliant 0% VAT invoice.
+                      {t("No invoices match the current filter. Create your first compliant 0% VAT invoice.")}
                     </p>
                     <Link
                       href="/invoices/new"
                       className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-primary px-3.5 py-1.5 text-xs font-semibold text-white shadow-xs hover:bg-primary-ink transition-colors"
                     >
                       <Plus className="size-3.5" />
-                      Create New Invoice
+                      {t("Create New Invoice")}
                     </Link>
                   </div>
                 </td>
@@ -104,11 +106,11 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
                   {/* Dates */}
                   <td className={cellClass}>
                     <div className="text-xs font-medium text-ink">{formatDate(invoice.issueDate)}</div>
-                    <div className="text-[11px] text-muted">Due {formatDate(invoice.dueDate)}</div>
+                    <div className="text-[11px] text-muted">{t("Due {v1}", { v1: formatDate(invoice.dueDate) })}</div>
                   </td>
 
                   {/* Amount */}
-                  <td className={cn(cellClass, "text-right font-num text-xs font-bold", isDraft ? "text-muted" : "text-ink")}>
+                  <td className={cn(cellClass, "text-end font-num text-xs font-bold", isDraft ? "text-muted" : "text-ink")}>
                     {formatAmount(invoice.amount)}
                   </td>
 
@@ -128,7 +130,7 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
                       )}
                     >
                       <span className={cn("size-1.5 rounded-full", status.dot)} />
-                      {status.label}
+                      {t(status.label)}
                     </span>
                   </td>
 
@@ -146,7 +148,7 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
                               : "border border-slate-200/80 bg-surface text-ink hover:bg-slate-200",
                           )}
                         >
-                          Mark Paid
+                          {t("Mark Paid")}
                         </button>
                       )}
 
@@ -156,7 +158,7 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
                           onClick={() => setViewingReceipt(invoice)}
                           className="rounded-lg border border-slate-200/80 bg-surface-low px-2.5 py-1 text-xs font-medium text-body transition-colors hover:bg-surface hover:text-ink"
                         >
-                          Receipt
+                          {t("Receipt")}
                         </button>
                       )}
 
@@ -165,14 +167,14 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
                           href="/invoices/new"
                           className="rounded-lg border border-slate-200/80 bg-surface-low px-2.5 py-1 text-xs font-medium text-body transition-colors hover:bg-surface hover:text-ink"
                         >
-                          Resume
+                          {t("Resume")}
                         </Link>
                       )}
 
                       {isDraft ? (
                         <button
                           type="button"
-                          aria-label="Delete draft"
+                          aria-label={t("Delete draft")}
                           onClick={() => onDeleteDraft(invoice.id)}
                           className="rounded-lg p-1.5 text-danger transition-colors hover:bg-red-50"
                         >
@@ -181,7 +183,7 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
                       ) : (
                         <button
                           type="button"
-                          aria-label="Download PDF"
+                          aria-label={t("Download PDF")}
                           onClick={() => {
                             if (invoice.status === "paid") setViewingReceipt(invoice);
                             else window.print();
@@ -207,10 +209,10 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
             <div className="flex items-start justify-between border-b border-slate-100 pb-3">
               <div>
                 <span className="rounded bg-mint px-2 py-0.5 text-[10px] font-bold text-mint-ink">
-                  Executive Decree 23-197 Certified
+                  {t("Executive Decree 23-197 Certified")}
                 </span>
-                <h3 className="mt-1 text-base font-bold text-ink">Official Settlement Receipt</h3>
-                <p className="text-xs text-muted">Invoice Ref: #{viewingReceipt.number}</p>
+                <h3 className="mt-1 text-base font-bold text-ink">{t("Official Settlement Receipt")}</h3>
+                <p className="text-xs text-muted">{t("Invoice Ref: #{number}", { number: viewingReceipt.number })}</p>
               </div>
               <button
                 onClick={() => setViewingReceipt(null)}
@@ -222,25 +224,25 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
 
             <div className="mt-4 flex flex-col gap-2.5 rounded-xl border border-slate-200 bg-slate-50/80 p-4 font-mono text-xs">
               <div className="flex justify-between py-1 border-b border-slate-200/80">
-                <span className="text-slate-600">Client:</span>
+                <span className="text-slate-600">{t("Client:")}</span>
                 <span className="font-bold text-slate-900">{viewingReceipt.client.name}</span>
               </div>
               <div className="flex justify-between py-1 border-b border-slate-200/80">
-                <span className="text-slate-600">Payment Rail:</span>
-                <span className="font-bold text-teal">{viewingReceipt.paymentRail ?? "Official Bank Transfer"}</span>
+                <span className="text-slate-600">{t("Payment Rail:")}</span>
+                <span className="font-bold text-teal">{viewingReceipt.paymentRail ?? t("Official Bank Transfer")}</span>
               </div>
               <div className="flex justify-between py-1 border-b border-slate-200/80">
-                <span className="text-slate-600">Settlement Date:</span>
+                <span className="text-slate-600">{t("Settlement Date:")}</span>
                 <span className="font-bold text-slate-900">{viewingReceipt.paidAt ? formatDate(viewingReceipt.paidAt) : "2026-10-18"}</span>
               </div>
               <div className="flex justify-between py-1 font-bold text-sm">
-                <span className="text-slate-900">Total Settled:</span>
-                <span className="text-accent">{formatAmount(viewingReceipt.amount)} DZD</span>
+                <span className="text-slate-900">{t("Total Settled:")}</span>
+                <span className="text-accent">{t("{v1} DZD", { v1: formatAmount(viewingReceipt.amount) })}</span>
               </div>
             </div>
 
             <div className="mt-3 rounded-lg bg-emerald-50 p-2.5 text-[11px] text-emerald-800">
-              ✓ Recognized in Statutory Turnover under cash-basis rules (Law 22-23). 0% VAT strictly applied.
+              {t("✓ Recognized in Statutory Turnover under cash-basis rules (Law 22-23). 0% VAT strictly applied.")}
             </div>
 
             <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-3">
@@ -250,14 +252,14 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
                 className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-card px-3 py-1.5 text-xs font-semibold text-ink hover:bg-slate-50"
               >
                 <Printer className="size-3.5" />
-                Print Voucher
+                {t("Print Voucher")}
               </button>
               <button
                 type="button"
                 onClick={() => setViewingReceipt(null)}
                 className="rounded-lg bg-primary px-4 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-primary-ink"
               >
-                Close
+                {t("Close")}
               </button>
             </div>
           </div>

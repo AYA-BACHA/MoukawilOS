@@ -8,9 +8,10 @@ import { LedgerTable } from "@/components/invoices/ledger-table";
 import { PaymentModal } from "@/components/invoices/payment-modal";
 import { SummaryStrip } from "@/components/invoices/summary-strip";
 import { downloadLedgerCsv } from "@/lib/csv";
-import { formatAmount } from "@/lib/format";
+
 import { computeStats } from "@/lib/stats";
 import type { InvoiceWithClient, PaymentConfirmation, User } from "@/types/models";
+import { useI18n } from "@/lib/i18n/provider";
 
 const PAGE_SIZE = 6;
 
@@ -21,6 +22,7 @@ interface InvoicesLedgerProps {
 }
 
 export function InvoicesLedger({ user, invoices: initialInvoices, initialQuery = "" }: InvoicesLedgerProps) {
+  const { t, formatAmount } = useI18n();
   const [invoices, setInvoices] = useState(initialInvoices);
   const [status, setStatus] = useState<StatusFilter>("all");
   const [clientType, setClientType] = useState<ClientFilter>("all");
@@ -71,13 +73,13 @@ export function InvoicesLedger({ user, invoices: initialInvoices, initialQuery =
       <div className="flex items-center justify-between">
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-medium uppercase tracking-[0.05em] text-muted">Fiscal Ledger</span>
+            <span className="text-xs font-medium uppercase tracking-[0.05em] text-muted">{t("Fiscal Ledger")}</span>
             <span className="size-1.5 rounded-full bg-hairline" />
-            <span className="font-num text-xs text-teal">Decree 23-197 Compliant</span>
+            <span className="font-num text-xs text-teal">{t("Decree 23-197 Compliant")}</span>
           </div>
-          <h1 className="text-[32px] font-semibold leading-10 tracking-[-0.025em] text-ink">Invoices & Revenue</h1>
+          <h1 className="text-[32px] font-semibold leading-10 tracking-[-0.025em] text-ink">{t("Invoices & Revenue")}</h1>
           <p className="max-w-2xl text-sm text-body">
-            Manage commercial invoices, record client payments, and track statutory cash-basis turnover under Law 22-23.
+            {t("Manage commercial invoices, record client payments, and track statutory cash-basis turnover under Law 22-23.")}
           </p>
         </div>
         <div className="flex items-center gap-2.5">
@@ -86,14 +88,14 @@ export function InvoicesLedger({ user, invoices: initialInvoices, initialQuery =
             className="flex items-center gap-1.5 rounded-lg border border-slate-200/80 bg-surface-low hover:bg-surface px-3.5 py-2 text-xs font-semibold text-ink shadow-xs transition-all hover:border-slate-300 active:scale-[0.98]"
           >
             <Download className="size-3.5 text-accent" />
-            Export Ledger (CSV)
+            {t("Export Ledger (CSV)")}
           </button>
           <Link
             href="/invoices/new"
             className="flex items-center gap-1.5 rounded-lg bg-primary hover:bg-primary-ink px-3.5 py-2 text-xs font-semibold text-white shadow-xs transition-all active:scale-[0.98]"
           >
             <Plus className="size-3.5" />
-            New Invoice
+            {t("New Invoice")}
           </Link>
         </div>
       </div>
@@ -114,9 +116,9 @@ export function InvoicesLedger({ user, invoices: initialInvoices, initialQuery =
         <LedgerTable invoices={visible} activeId={payingId} onMarkPaid={setPayingId} onDeleteDraft={deleteDraft} />
         <div className="flex items-center justify-between bg-surface-low px-3 py-2 text-xs tracking-[0.02em]">
           <p className="flex items-center gap-2 font-medium text-body">
-            Showing {visible.length} of {filtered.length} commercial records
+            {t("Showing {length} of {length2} commercial records", { length: visible.length, length2: filtered.length })}
             <span className="size-1 rounded-full bg-hairline" />
-            <span className="font-num font-normal">Legal Turnover Archive: FY 2026</span>
+            <span className="font-num font-normal">{t("Legal Turnover Archive: FY 2026")}</span>
           </p>
           <div className="flex items-center gap-1 font-medium">
             <button
@@ -124,7 +126,7 @@ export function InvoicesLedger({ user, invoices: initialInvoices, initialQuery =
               onClick={() => setPage(currentPage - 1)}
               className="rounded-sm bg-card px-2.5 py-1 text-body disabled:opacity-50"
             >
-              Previous
+              {t("Previous")}
             </button>
             {Array.from({ length: totalPages }, (_, index) => index + 1).map((number) => (
               <button
@@ -140,7 +142,7 @@ export function InvoicesLedger({ user, invoices: initialInvoices, initialQuery =
               onClick={() => setPage(currentPage + 1)}
               className="rounded-sm bg-card px-2.5 py-1 text-ink disabled:opacity-50"
             >
-              Next
+              {t("Next")}
             </button>
           </div>
         </div>
@@ -148,19 +150,19 @@ export function InvoicesLedger({ user, invoices: initialInvoices, initialQuery =
 
       {payingInvoice && <PaymentModal invoice={payingInvoice} stats={stats} onClose={() => setPayingId(null)} onConfirm={confirmPayment} />}
       {settledToast && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-2xl border border-slate-200 bg-card p-4 shadow-2xl animate-in slide-in-from-bottom-3 duration-300">
+        <div className="fixed bottom-6 end-6 z-50 flex items-center gap-3 rounded-2xl border border-slate-200 bg-card p-4 shadow-2xl animate-in slide-in-from-bottom-3 duration-300">
           <span className="flex size-8 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
             <Check className="size-4" strokeWidth={2.5} />
           </span>
           <div>
-            <p className="text-xs font-bold text-ink">🎉 Payment Recorded for {settledToast.number}!</p>
+            <p className="text-xs font-bold text-ink">{t("🎉 Payment Recorded for {number}!", { number: settledToast.number })}</p>
             <p className="text-[11px] text-body">
-              <strong className="font-num text-ink">{formatAmount(settledToast.amount)} DZD</strong> cleared &amp; realized under FY 2026 cash-basis turnover.
+              <strong className="font-num text-ink">{t("{v1} DZD", { v1: formatAmount(settledToast.amount) })}</strong> {t("cleared & realized under FY 2026 cash-basis turnover.")}
             </p>
           </div>
           <button
             onClick={() => setSettledToast(null)}
-            className="ml-2 rounded-lg p-1 text-muted hover:bg-slate-100 hover:text-ink"
+            className="ms-2 rounded-lg p-1 text-muted hover:bg-slate-100 hover:text-ink"
           >
             <X className="size-4" />
           </button>

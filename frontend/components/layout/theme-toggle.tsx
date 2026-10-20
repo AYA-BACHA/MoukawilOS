@@ -2,6 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 import { Moon, Sun } from "lucide-react";
+import { useI18n } from "@/lib/i18n/provider";
 
 const STORAGE_KEY = "moukawil_theme";
 
@@ -12,6 +13,7 @@ function subscribe(callback: () => void) {
 }
 
 export function ThemeToggle() {
+  const { t } = useI18n();
   const isDark = useSyncExternalStore(
     subscribe,
     () => document.documentElement.classList.contains("dark"),
@@ -29,8 +31,8 @@ export function ThemeToggle() {
   return (
     <button
       type="button"
-      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-      title={isDark ? "Light mode" : "Dark mode"}
+      aria-label={isDark ? t("Switch to light mode") : t("Switch to dark mode")}
+      title={isDark ? t("Light mode") : t("Dark mode")}
       onClick={toggle}
       className="rounded-lg p-2 text-body transition-colors hover:bg-surface hover:text-ink"
     >

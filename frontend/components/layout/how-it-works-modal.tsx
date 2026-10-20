@@ -14,7 +14,8 @@ import {
   Sparkles,
   X,
 } from "lucide-react";
-import { formatAmount } from "@/lib/format";
+
+import { useI18n } from "@/lib/i18n/provider";
 
 interface HowItWorksModalProps {
   isOpen: boolean;
@@ -22,6 +23,7 @@ interface HowItWorksModalProps {
 }
 
 export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
+  const { t } = useI18n();
   const [currentStep, setCurrentStep] = useState(0);
 
   // Keyboard navigation
@@ -59,14 +61,14 @@ export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
       demo: (
         <div className="rounded-xl border border-slate-200/90 bg-slate-50 p-4">
           <div className="flex justify-between text-xs font-semibold text-slate-800">
-            <span>Collected: 2,000,000 DZD (40%)</span>
-            <span>Statutory Cap: 5,000,000 DZD</span>
+            <span>{t("Collected: 2,000,000 DZD (40%)")}</span>
+            <span>{t("Statutory Cap: 5,000,000 DZD")}</span>
           </div>
           <div className="mt-2 h-3 overflow-hidden rounded-full bg-slate-200">
             <div className="h-full w-[40%] rounded-full bg-primary" />
           </div>
           <p className="mt-2 text-[11px] text-muted">
-            ✓ 3,000,000 DZD remaining capacity. MoukawilOS alerts you before you approach 90%.
+            {t("✓ 3,000,000 DZD remaining capacity. MoukawilOS alerts you before you approach 90%.")}
           </p>
         </div>
       ),
@@ -82,14 +84,14 @@ export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
       demo: (
         <div className="grid grid-cols-2 gap-3 text-xs">
           <div className="rounded-xl border border-emerald-200 bg-emerald-50/70 p-3">
-            <span className="font-bold text-emerald-800">Cashed Receipts</span>
-            <p className="font-num text-sm font-extrabold text-emerald-900 mt-1">2,000,000 DZD</p>
-            <p className="text-[10px] text-emerald-700 mt-1">Counts toward ceiling &amp; IFU tax.</p>
+            <span className="font-bold text-emerald-800">{t("Cashed Receipts")}</span>
+            <p className="font-num text-sm font-extrabold text-emerald-900 mt-1">{t("2,000,000 DZD")}</p>
+            <p className="text-[10px] text-emerald-700 mt-1">{t("Counts toward ceiling & IFU tax.")}</p>
           </div>
           <div className="rounded-xl border border-amber-200 bg-amber-50/70 p-3">
-            <span className="font-bold text-amber-800">Pending Receivables</span>
-            <p className="font-num text-sm font-extrabold text-amber-900 mt-1">1,650,000 DZD</p>
-            <p className="text-[10px] text-amber-700 mt-1">Strictly exempt until cleared.</p>
+            <span className="font-bold text-amber-800">{t("Pending Receivables")}</span>
+            <p className="font-num text-sm font-extrabold text-amber-900 mt-1">{t("1,650,000 DZD")}</p>
+            <p className="text-[10px] text-amber-700 mt-1">{t("Strictly exempt until cleared.")}</p>
           </div>
         </div>
       ),
@@ -105,16 +107,16 @@ export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
       demo: (
         <div className="rounded-xl border border-slate-200/90 bg-slate-50 p-4 font-mono text-xs">
           <div className="flex justify-between py-1 border-b border-slate-200">
-            <span className="text-slate-600">Collected Turnover:</span>
-            <span className="font-bold text-slate-900 font-num">2,000,000.00 DZD</span>
+            <span className="text-slate-600">{t("Collected Turnover:")}</span>
+            <span className="font-bold text-slate-900 font-num">{t("2,000,000.00 DZD")}</span>
           </div>
           <div className="flex justify-between py-1 border-b border-slate-200">
-            <span className="text-slate-600">Flat IFU Rate:</span>
+            <span className="text-slate-600">{t("Flat IFU Rate:")}</span>
             <span className="font-bold text-emerald-700 font-num">× 0.5 %</span>
           </div>
           <div className="flex justify-between pt-2 text-sm font-bold">
-            <span className="text-slate-900">Total Tax Due for FY 2026:</span>
-            <span className="text-accent font-num">10,000.00 DZD</span>
+            <span className="text-slate-900">{t("Total Tax Due for FY 2026:")}</span>
+            <span className="text-accent font-num">{t("10,000.00 DZD")}</span>
           </div>
         </div>
       ),
@@ -129,9 +131,9 @@ export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
         "Auto-entrepreneurs are completely legally exempt from VAT. You do not collect TVA, and you do not file monthly tax returns. Every invoice you issue in MoukawilOS automatically embeds the statutory exemption clause for B2B enterprise clients.",
       demo: (
         <div className="rounded-xl border border-slate-200 bg-card p-3.5 shadow-xs">
-          <p className="text-[11px] font-semibold text-slate-700 uppercase tracking-wider">Automated Invoice Clause:</p>
+          <p className="text-[11px] font-semibold text-slate-700 uppercase tracking-wider">{t("Automated Invoice Clause:")}</p>
           <p className="mt-1.5 rounded-lg bg-surface-low p-2 text-xs font-medium text-slate-800 border border-slate-200/70">
-            « Exonéré de la TVA conformément aux dispositions de l&apos;Article 6 de la Loi n° 22-23 portant statut de l&apos;auto-entrepreneur. »
+            {t("« Exonéré de la TVA conformément aux dispositions de l'Article 6 de la Loi n° 22-23 portant statut de l'auto-entrepreneur. »")}
           </p>
         </div>
       ),
@@ -147,16 +149,16 @@ export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
       demo: (
         <div className="grid grid-cols-3 gap-2 text-center text-xs">
           <div className="rounded-xl border border-slate-200 bg-slate-50 p-2.5">
-            <span className="block text-accent font-bold">Chifa Card</span>
-            <span className="text-[10px] text-muted">100% Meds Coverage</span>
+            <span className="block text-accent font-bold">{t("Chifa Card")}</span>
+            <span className="text-[10px] text-muted">{t("100% Meds Coverage")}</span>
           </div>
           <div className="rounded-xl border border-slate-200 bg-slate-50 p-2.5">
-            <span className="block text-accent font-bold">Maternity</span>
-            <span className="text-[10px] text-muted">Independent Rights</span>
+            <span className="block text-accent font-bold">{t("Maternity")}</span>
+            <span className="text-[10px] text-muted">{t("Independent Rights")}</span>
           </div>
           <div className="rounded-xl border border-slate-200 bg-slate-50 p-2.5">
-            <span className="block text-accent font-bold">Retirement</span>
-            <span className="text-[10px] text-muted">CASNOS Pension</span>
+            <span className="block text-accent font-bold">{t("Retirement")}</span>
+            <span className="text-[10px] text-muted">{t("CASNOS Pension")}</span>
           </div>
         </div>
       ),
@@ -171,9 +173,9 @@ export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
         "Whenever you have a fiscal question about client contracts, B2B withholding, or deadline extensions, Al-Moukawil AI provides instant answers grounded directly in official Algerian legal texts.",
       demo: (
         <div className="rounded-xl border border-slate-200 bg-slate-50 p-3.5 text-xs text-slate-700">
-          <p className="font-semibold text-ink">Ready to explore MoukawilOS?</p>
+          <p className="font-semibold text-ink">{t("Ready to explore MoukawilOS?")}</p>
           <p className="mt-1 text-[11px] text-muted">
-            Your workspace is configured for FY 2026. Issue compliant invoices, track statutory milestones, and maintain 100% fiscal peace of mind.
+            {t("Your workspace is configured for FY 2026. Issue compliant invoices, track statutory milestones, and maintain 100% fiscal peace of mind.")}
           </p>
         </div>
       ),
@@ -190,16 +192,16 @@ export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
         <div className="flex items-center justify-between border-b border-slate-100 pb-4">
           <div className="flex items-center gap-2">
             <span className="rounded-full bg-mint px-2.5 py-0.5 text-xs font-bold text-mint-ink">
-              Interactive Guide
+              {t("Interactive Guide")}
             </span>
             <span className="text-xs font-semibold text-slate-500">
-              Step {currentStep + 1} of {steps.length}
+              {t("Step {v1} of {length}", { v1: currentStep + 1, length: steps.length })}
             </span>
           </div>
           <button
             type="button"
             onClick={onClose}
-            aria-label="Close guide"
+            aria-label={t("Close guide")}
             className="rounded-full p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
           >
             <X className="size-5" />
@@ -214,15 +216,15 @@ export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-teal">{step.tag}</span>
+                <span className="text-[11px] font-bold uppercase tracking-wider text-teal">{t(step.tag)}</span>
                 <span className="text-[11px] text-slate-400">•</span>
-                <span className="text-[11px] font-medium text-slate-500">{step.lawRef}</span>
+                <span className="text-[11px] font-medium text-slate-500">{t(step.lawRef)}</span>
               </div>
-              <h3 className="mt-1 text-lg font-bold tracking-tight text-ink">{step.title}</h3>
+              <h3 className="mt-1 text-lg font-bold tracking-tight text-ink">{t(step.title)}</h3>
             </div>
           </div>
 
-          <p className="text-xs leading-relaxed text-slate-600">{step.description}</p>
+          <p className="text-xs leading-relaxed text-slate-600">{t(step.description)}</p>
 
           {/* Step Demo Widget */}
           <div className="mt-1">{step.demo}</div>
@@ -253,8 +255,8 @@ export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
               onClick={() => setCurrentStep((prev) => prev - 1)}
               className="inline-flex items-center gap-1 rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 transition-all hover:bg-slate-50 disabled:opacity-30 disabled:pointer-events-none active:scale-95"
             >
-              <ArrowLeft className="size-3.5" />
-              Previous
+              <ArrowLeft className="rtl:-scale-x-100 size-3.5" />
+              {t("Previous")}
             </button>
 
             {currentStep < steps.length - 1 ? (
@@ -263,8 +265,8 @@ export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
                 onClick={() => setCurrentStep((prev) => prev + 1)}
                 className="inline-flex items-center gap-1 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs transition-all hover:bg-primary-ink active:scale-95"
               >
-                Next Step
-                <ArrowRight className="size-3.5" />
+                {t("Next Step")}
+                <ArrowRight className="rtl:-scale-x-100 size-3.5" />
               </button>
             ) : (
               <button
@@ -273,7 +275,7 @@ export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
                 className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs transition-all hover:bg-primary-ink active:scale-95"
               >
                 <CheckCircle2 className="size-3.5" />
-                Start Using MoukawilOS
+                {t("Start Using MoukawilOS")}
               </button>
             )}
           </div>

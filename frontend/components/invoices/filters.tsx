@@ -5,6 +5,7 @@ import { CalendarDays, Search } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { SelectDropdown, type Option } from "@/components/ui/select-dropdown";
 import type { ClientType } from "@/types/models";
+import { useI18n } from "@/lib/i18n/provider";
 
 export type StatusFilter = "all" | "paid" | "pending" | "draft";
 export type ClientFilter = ClientType | "all";
@@ -46,6 +47,7 @@ export function Filters({
   clientType,
   onClientTypeChange,
 }: FiltersProps) {
+  const { t } = useI18n();
   const [fiscalYear, setFiscalYear] = useState("2026");
 
   return (
@@ -64,7 +66,7 @@ export function Filters({
                 : "text-body hover:text-ink",
             )}
           >
-            {label}
+            {t(label)}
             <span
               className={cn(
                 "rounded-full px-1.5 py-0.2 font-num text-[11px]",
@@ -80,18 +82,18 @@ export function Filters({
       {/* Search & Custom Dropdowns */}
       <div className="flex flex-1 flex-wrap items-center justify-end gap-2.5">
         <label className="relative min-w-56 flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted" />
+          <Search className="absolute start-3 top-1/2 size-3.5 -translate-y-1/2 text-muted" />
           <input
             value={query}
             onChange={(event) => onQueryChange(event.target.value)}
-            placeholder="Search client or invoice ref..."
-            className="h-10 w-full rounded-lg border border-slate-200/80 bg-surface-low pl-9 pr-3 text-xs text-ink placeholder:text-muted transition-all focus:border-primary/40 focus:bg-card focus:outline-none focus:ring-2 focus:ring-primary/20"
+            placeholder={t("Search client or invoice ref...")}
+            className="h-10 w-full rounded-lg border border-slate-200/80 bg-surface-low ps-9 pe-3 text-xs text-ink placeholder:text-muted transition-all focus:border-primary/40 focus:bg-card focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
         </label>
 
         {/* Custom Client Type Dropdown - Replaces ugly native select */}
         <SelectDropdown<ClientFilter>
-          label="Client:"
+          label={t("Client:")}
           value={clientType}
           options={clientOptions}
           onChange={onClientTypeChange}
