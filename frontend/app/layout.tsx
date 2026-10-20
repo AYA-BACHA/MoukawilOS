@@ -1,13 +1,9 @@
 import type { Metadata } from "next";
-<<<<<<< HEAD
 import { cookies } from "next/headers";
 import { Geist, JetBrains_Mono, Noto_Sans_Arabic, Tinos } from "next/font/google";
+import { NavigationProgress } from "@/components/layout/navigation-progress";
 import { I18nProvider } from "@/lib/i18n/provider";
 import { DEFAULT_LANG, LANG_COOKIE, LANG_META, isLang } from "@/lib/i18n/config";
-=======
-import { Geist, JetBrains_Mono, Tinos } from "next/font/google";
-import { NavigationProgress } from "@/components/layout/navigation-progress";
->>>>>>> 54f30513d721fafffd7e3a42f0cb35710f3eeb15
 import "./globals.css";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
@@ -32,12 +28,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
       </head>
       <body className="antialiased">
-<<<<<<< HEAD
-        <I18nProvider initialLang={lang}>{children}</I18nProvider>
-=======
-        <NavigationProgress />
-        {children}
->>>>>>> 54f30513d721fafffd7e3a42f0cb35710f3eeb15
+        <I18nProvider initialLang={lang}>
+          <NavigationProgress />
+          {children}
+        </I18nProvider>
       </body>
     </html>
   );

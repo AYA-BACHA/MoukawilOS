@@ -81,13 +81,8 @@ export function Sidebar({ user }: { user: User }) {
             onClick={() => setShowTour(true)}
             className="group flex items-center justify-center gap-2 rounded-xl border border-slate-200/80 bg-surface-low p-2.5 text-xs font-semibold tracking-[0.02em] text-ink transition-all duration-150 hover:bg-surface hover:border-slate-300 active:scale-95 shadow-2xs hover:shadow-xs"
           >
-<<<<<<< HEAD
-            <CircleHelp className="size-4 text-accent" />
-            {t("How Moukawil Works")}
-=======
             <CircleHelp className="size-4 text-accent transition-transform duration-150 group-hover:scale-110" />
-            How Moukawil Works
->>>>>>> 54f30513d721fafffd7e3a42f0cb35710f3eeb15
+            {t("How Moukawil Works")}
           </button>
           <Link
             href="/settings"

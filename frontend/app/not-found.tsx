@@ -43,7 +43,7 @@ export default function NotFound() {
         </p>
 
         {/* Diagnostic Card */}
-        <div className="mt-6 w-full rounded-2xl border border-slate-200/80 bg-card p-4 text-left shadow-xs">
+        <div className="mt-6 w-full rounded-2xl border border-slate-200/80 bg-card p-4 text-start shadow-xs">
           <p className="text-[11px] font-bold uppercase tracking-wider text-muted">System Diagnostic</p>
           <div className="mt-2.5 flex flex-col gap-2 font-mono text-xs">
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-1.5">

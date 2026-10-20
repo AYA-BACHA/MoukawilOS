@@ -4,17 +4,11 @@ import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Check, Download, ExternalLink, FileDown, MoreHorizontal, Printer, X } from "lucide-react";
 import { Pill } from "@/components/ui/pill";
-<<<<<<< HEAD
+import { PaymentModal } from "@/components/invoices/payment-modal";
 
 import { cn } from "@/lib/cn";
-import type { InvoiceStatus, InvoiceWithClient } from "@/types/models";
-import { useI18n } from "@/lib/i18n/provider";
-=======
-import { PaymentModal } from "@/components/invoices/payment-modal";
-import { formatAmount, formatDate } from "@/lib/format";
-import { cn } from "@/lib/cn";
 import type { InvoiceStatus, InvoiceWithClient, PaymentConfirmation, TurnoverStats } from "@/types/models";
->>>>>>> 54f30513d721fafffd7e3a42f0cb35710f3eeb15
+import { useI18n } from "@/lib/i18n/provider";
 
 const statusStyles: Record<InvoiceStatus, { label: string; pill: string; dot: string }> = {
   pending: { label: "Pending / Issued", pill: "bg-surface text-ink", dot: "bg-teal" },
@@ -24,10 +18,6 @@ const statusStyles: Record<InvoiceStatus, { label: string; pill: string; dot: st
 
 const headClass = "px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted";
 
-<<<<<<< HEAD
-export function RecentInvoices({ invoices: initialInvoices }: { invoices: InvoiceWithClient[] }) {
-  const { t, formatAmount, formatDate } = useI18n();
-=======
 export function RecentInvoices({
   invoices: initialInvoices,
   stats,
@@ -35,7 +25,7 @@ export function RecentInvoices({
   invoices: InvoiceWithClient[];
   stats?: TurnoverStats;
 }) {
->>>>>>> 54f30513d721fafffd7e3a42f0cb35710f3eeb15
+  const { t, formatAmount, formatDate } = useI18n();
   const [invoices, setInvoices] = useState(initialInvoices);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const [payingInvoice, setPayingInvoice] = useState<InvoiceWithClient | null>(null);
@@ -138,12 +128,8 @@ export function RecentInvoices({
                             onClick={() => setPayingInvoice(invoice)}
                             className="group/btn inline-flex items-center gap-1.5 rounded-lg border border-emerald-200/90 bg-emerald-50/70 px-2.5 py-1 text-xs font-semibold text-emerald-800 transition-all duration-150 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 hover:shadow-xs active:scale-95 shadow-2xs"
                           >
-<<<<<<< HEAD
-                            {t("Mark as Paid")}
-=======
                             <Check className="size-3 text-emerald-600 transition-all duration-150 group-hover/btn:scale-110 group-hover/btn:text-white" strokeWidth={2.5} />
-                            <span>Mark as Paid</span>
->>>>>>> 54f30513d721fafffd7e3a42f0cb35710f3eeb15
+                            <span>{t("Mark as Paid")}</span>
                           </button>
                         )}
                         {invoice.status === "paid" && (
@@ -152,13 +138,8 @@ export function RecentInvoices({
                             onClick={() => setViewingReceipt(invoice)}
                             className="group/receipt inline-flex items-center gap-1.5 rounded-lg border border-slate-200/90 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 transition-all duration-150 hover:bg-primary hover:text-white hover:border-primary hover:shadow-xs active:scale-95 shadow-2xs"
                           >
-<<<<<<< HEAD
-                            <Download className="size-3 text-accent" />
-                            {t("PDF Receipt")}
-=======
                             <FileDown className="size-3 text-accent transition-all duration-150 group-hover/receipt:text-white group-hover/receipt:-translate-y-0.5" />
-                            <span>PDF Receipt</span>
->>>>>>> 54f30513d721fafffd7e3a42f0cb35710f3eeb15
+                            <span>{t("PDF Receipt")}</span>
                           </button>
                         )}
                         {invoice.status === "draft" && (
@@ -239,10 +220,10 @@ export function RecentInvoices({
             <div className="flex items-start justify-between border-b border-slate-100 pb-3">
               <div>
                 <span className="rounded bg-mint px-2 py-0.5 text-[10px] font-bold text-mint-ink">
-                  Executive Decree 23-197 Certified
+                  {t("Executive Decree 23-197 Certified")}
                 </span>
-                <h3 className="mt-1 text-base font-bold text-ink">Official Settlement Receipt</h3>
-                <p className="text-xs text-muted">Invoice Ref: #{viewingReceipt.number}</p>
+                <h3 className="mt-1 text-base font-bold text-ink">{t("Official Settlement Receipt")}</h3>
+                <p className="text-xs text-muted">{t("Invoice Ref: #{number}", { number: viewingReceipt.number })}</p>
               </div>
               <button
                 onClick={() => setViewingReceipt(null)}
@@ -254,26 +235,26 @@ export function RecentInvoices({
 
             <div className="mt-4 flex flex-col gap-2.5 rounded-xl border border-slate-200 bg-slate-50/80 p-4 font-mono text-xs">
               <div className="flex justify-between py-1 border-b border-slate-200/80">
-                <span className="text-slate-600">Client:</span>
+                <span className="text-slate-600">{t("Client:")}</span>
                 <span className="font-bold text-slate-900">{viewingReceipt.client.name}</span>
               </div>
               <div className="flex justify-between py-1 border-b border-slate-200/80">
-                <span className="text-slate-600">Payment Rail:</span>
-                <span className="font-bold text-teal">{viewingReceipt.paymentRail ?? "Official Bank Transfer"}</span>
+                <span className="text-slate-600">{t("Payment Rail:")}</span>
+                <span className="font-bold text-teal">{viewingReceipt.paymentRail ?? t("Official Bank Transfer")}</span>
               </div>
               <div className="flex justify-between py-1 border-b border-slate-200/80">
-                <span className="text-slate-600">Settlement Date:</span>
+                <span className="text-slate-600">{t("Settlement Date:")}</span>
                 <span className="font-bold text-slate-900">{viewingReceipt.paidAt ? formatDate(viewingReceipt.paidAt) : "2026-10-18"}</span>
               </div>
               <div className="flex justify-between py-1 font-bold text-sm">
-                <span className="text-slate-900">Total Settled:</span>
-                <span className="text-primary">{formatAmount(viewingReceipt.amount)} DZD</span>
+                <span className="text-slate-900">{t("Total Settled:")}</span>
+                <span className="text-primary">{t("{v1} DZD", { v1: formatAmount(viewingReceipt.amount) })}</span>
               </div>
             </div>
 
             <div className="mt-3 flex items-center gap-2 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 p-2.5 text-[11px] text-emerald-800 dark:text-emerald-300">
               <Check className="size-3.5 shrink-0 text-emerald-600 dark:text-emerald-400" strokeWidth={2.5} />
-              <span>Recognized in Statutory Turnover under cash-basis rules (Law 22-23). 0% VAT strictly applied.</span>
+              <span>{t("Recognized in Statutory Turnover under cash-basis rules (Law 22-23). 0% VAT strictly applied.")}</span>
             </div>
 
             <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-3">
@@ -282,7 +263,7 @@ export function RecentInvoices({
                 onClick={() => setViewingReceipt(null)}
                 className="rounded-xl border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 transition-all"
               >
-                Close
+                {t("Close")}
               </button>
               <button
                 type="button"
@@ -290,7 +271,7 @@ export function RecentInvoices({
                 className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-3.5 py-1.5 text-xs font-semibold text-white shadow-xs hover:bg-primary-ink active:scale-95 transition-all"
               >
                 <Printer className="size-3.5" />
-                Print Voucher
+                {t("Print Voucher")}
               </button>
             </div>
           </div>
@@ -299,33 +280,19 @@ export function RecentInvoices({
 
       {/* Payment Confirmation Toast */}
       {settledInvoice && (
-<<<<<<< HEAD
-        <div className="fixed bottom-6 end-6 z-50 flex items-center gap-3 rounded-xl border border-slate-200 bg-card px-4 py-3 shadow-xl animate-in slide-in-from-bottom-2">
-          <span className="flex size-7 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
-            <Check className="size-4" />
-          </span>
-          <div>
-            <p className="text-xs font-bold text-ink">{t("Invoice {number} Marked as Paid", { number: settledInvoice.number })}</p>
-            <p className="text-[11px] text-body">{t("Recorded under cash-basis accounting in FY 2026.")}</p>
-          </div>
-          <button
-            onClick={() => setSettledInvoice(null)}
-            className="ms-2 rounded-lg p-1 text-muted hover:bg-slate-100"
-=======
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3.5 rounded-2xl border border-slate-200 bg-card p-4 shadow-2xl animate-in slide-in-from-bottom-3 duration-300">
+        <div className="fixed bottom-6 end-6 z-50 flex items-center gap-3.5 rounded-2xl border border-slate-200 bg-card p-4 shadow-2xl animate-in slide-in-from-bottom-3 duration-300">
           <span className="flex size-8 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 shadow-xs">
             <Check className="size-4" strokeWidth={2.5} />
           </span>
           <div>
-            <p className="text-xs font-bold text-ink">Payment Recorded for {settledInvoice.number}</p>
+            <p className="text-xs font-bold text-ink">{t("Payment Recorded for {number}", { number: settledInvoice.number })}</p>
             <p className="text-[11px] text-body">
-              <strong className="font-num text-ink">{formatAmount(settledInvoice.amount)} DZD</strong> realized under cash-basis turnover.
+              <strong className="font-num text-ink">{t("{v1} DZD", { v1: formatAmount(settledInvoice.amount) })}</strong> {t("realized under cash-basis turnover.")}
             </p>
           </div>
           <button
             onClick={() => setSettledInvoice(null)}
-            className="ml-2 rounded-lg p-1 text-muted hover:bg-slate-100 hover:text-ink transition-colors"
->>>>>>> 54f30513d721fafffd7e3a42f0cb35710f3eeb15
+            className="ms-2 rounded-lg p-1 text-muted hover:bg-slate-100 hover:text-ink transition-colors"
           >
             <X className="size-4" />
           </button>

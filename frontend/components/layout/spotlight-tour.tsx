@@ -3,9 +3,9 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { X } from "lucide-react";
-import { useI18n } from "@/lib/i18n/provider";
 
 import { cn } from "@/lib/cn";
+import { useI18n } from "@/lib/i18n/provider";
 
 export interface TourStep {
   targetId: string;
@@ -376,18 +376,11 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
           <p className="mt-1.5 text-xs leading-relaxed text-slate-600">{t(step.description)}</p>
         </div>
 
-<<<<<<< HEAD
-        {/* Card Footer: Step Counter + Pill Buttons */}
-        <div className="mt-4 flex items-center justify-between pt-1">
-          <span className="text-xs font-semibold text-slate-500">
-            {t("{v1} of {length}", { v1: currentStep + 1, length: TOUR_STEPS.length })}
-          </span>
-=======
         {/* Card Footer: Step Counter + Progress Dots + Pill Buttons */}
         <div className="mt-4 flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-3">
           <div className="flex flex-col gap-1">
             <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400">
-              Step {currentStep + 1} of {TOUR_STEPS.length}
+              {t("Step {v1} of {length}", { v1: currentStep + 1, length: TOUR_STEPS.length })}
             </span>
             <div className="flex items-center gap-1">
               {TOUR_STEPS.map((_, idx) => (
@@ -401,7 +394,6 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
               ))}
             </div>
           </div>
->>>>>>> 54f30513d721fafffd7e3a42f0cb35710f3eeb15
 
           <div className="flex items-center gap-2">
             {currentStep > 0 && (
@@ -418,11 +410,7 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
               onClick={handleNext}
               className="rounded-full bg-primary px-3.5 py-1 text-xs font-semibold text-white shadow-xs transition-all hover:bg-primary-ink active:scale-95"
             >
-<<<<<<< HEAD
-              {currentStep === TOUR_STEPS.length - 1 ? t("Got it") : t("Next")}
-=======
-              {currentStep === TOUR_STEPS.length - 1 ? "Finish" : "Next"}
->>>>>>> 54f30513d721fafffd7e3a42f0cb35710f3eeb15
+              {currentStep === TOUR_STEPS.length - 1 ? t("Finish") : t("Next")}
             </button>
           </div>
         </div>

@@ -155,11 +155,7 @@ export function InvoicesLedger({ user, invoices: initialInvoices, initialQuery =
             <Check className="size-4" strokeWidth={2.5} />
           </span>
           <div>
-<<<<<<< HEAD
-            <p className="text-xs font-bold text-ink">{t("🎉 Payment Recorded for {number}!", { number: settledToast.number })}</p>
-=======
-            <p className="text-xs font-bold text-ink">Payment Recorded for {settledToast.number}</p>
->>>>>>> 54f30513d721fafffd7e3a42f0cb35710f3eeb15
+            <p className="text-xs font-bold text-ink">{t("Payment Recorded for {number}", { number: settledToast.number })}</p>
             <p className="text-[11px] text-body">
               <strong className="font-num text-ink">{t("{v1} DZD", { v1: formatAmount(settledToast.amount) })}</strong> {t("cleared & realized under FY 2026 cash-basis turnover.")}
             </p>
