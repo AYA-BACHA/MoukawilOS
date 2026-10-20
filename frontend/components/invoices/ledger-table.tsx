@@ -241,8 +241,14 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
               </div>
             </div>
 
+<<<<<<< HEAD
             <div className="mt-3 rounded-lg bg-emerald-50 p-2.5 text-[11px] text-emerald-800">
               {t("✓ Recognized in Statutory Turnover under cash-basis rules (Law 22-23). 0% VAT strictly applied.")}
+=======
+            <div className="mt-3 flex items-center gap-2 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 p-2.5 text-[11px] text-emerald-800 dark:text-emerald-300">
+              <Check className="size-3.5 shrink-0 text-emerald-600 dark:text-emerald-400" strokeWidth={2.5} />
+              <span>Recognized in Statutory Turnover under cash-basis rules (Law 22-23). 0% VAT strictly applied.</span>
+>>>>>>> 54f30513d721fafffd7e3a42f0cb35710f3eeb15
             </div>
 
             <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-3">

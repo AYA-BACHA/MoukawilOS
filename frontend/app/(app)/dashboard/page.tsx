@@ -7,7 +7,12 @@ import { getCurrentUser, getInvoices, getNextDeadline } from "@/lib/api";
 import { computeStats } from "@/lib/stats";
 
 export default async function DashboardPage() {
-  const [user, invoices, deadline] = await Promise.all([getCurrentUser(), getInvoices(), getNextDeadline()]);
+  const [user, invoices, deadline] = await Promise.all([
+    getCurrentUser(),
+    getInvoices(),
+    getNextDeadline(),
+    new Promise((resolve) => setTimeout(resolve, 400)),
+  ]);
   const stats = computeStats(user, invoices);
 
   return (
@@ -15,7 +20,7 @@ export default async function DashboardPage() {
       <DashboardHeader user={user} />
       <CeilingCard stats={stats} />
       <SecondaryKpis deadline={deadline} stats={stats} />
-      <RecentInvoices invoices={invoices.slice(0, 3)} />
+      <RecentInvoices invoices={invoices.slice(0, 3)} stats={stats} />
       <OperationalIndicators user={user} stats={stats} />
     </div>
   );

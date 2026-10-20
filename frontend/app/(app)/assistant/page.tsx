@@ -3,6 +3,12 @@ import { getAssistantMessages, getCurrentUser, getInvoices, getStatutes } from "
 import { computeStats } from "@/lib/stats";
 
 export default async function AssistantPage() {
-  const [user, invoices, statutes, messages] = await Promise.all([getCurrentUser(), getInvoices(), getStatutes(), getAssistantMessages()]);
+  const [user, invoices, statutes, messages] = await Promise.all([
+    getCurrentUser(),
+    getInvoices(),
+    getStatutes(),
+    getAssistantMessages(),
+    new Promise((resolve) => setTimeout(resolve, 400)),
+  ]);
   return <AssistantView user={user} stats={computeStats(user, invoices)} statutes={statutes} initialMessages={messages} />;
 }

@@ -85,7 +85,7 @@ export function CeilingCard({ stats }: { stats: TurnoverStats }) {
             <button
               type="button"
               onClick={() => setShowDetails(true)}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200/80 bg-surface-low px-3 py-1.5 text-xs font-semibold text-accent transition-all hover:border-slate-300 hover:bg-surface"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200/80 bg-surface-low px-3 py-1.5 text-xs font-semibold text-accent transition-all duration-150 hover:border-slate-300 hover:bg-surface active:scale-95 shadow-2xs hover:shadow-xs"
             >
               {t("View calculation details")}
               <ArrowRight className="rtl:-scale-x-100 size-3" />

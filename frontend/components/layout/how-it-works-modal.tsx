@@ -68,7 +68,11 @@ export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
             <div className="h-full w-[40%] rounded-full bg-primary" />
           </div>
           <p className="mt-2 text-[11px] text-muted">
+<<<<<<< HEAD
             {t("✓ 3,000,000 DZD remaining capacity. MoukawilOS alerts you before you approach 90%.")}
+=======
+            3,000,000 DZD remaining capacity. MoukawilOS alerts you before you approach 90%.
+>>>>>>> 54f30513d721fafffd7e3a42f0cb35710f3eeb15
           </p>
         </div>
       ),

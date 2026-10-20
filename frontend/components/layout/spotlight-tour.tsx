@@ -5,6 +5,8 @@ import { useRouter, usePathname } from "next/navigation";
 import { X } from "lucide-react";
 import { useI18n } from "@/lib/i18n/provider";
 
+import { cn } from "@/lib/cn";
+
 export interface TourStep {
   targetId: string;
   title: string;
@@ -16,47 +18,77 @@ export interface TourStep {
 const TOUR_STEPS: TourStep[] = [
   {
     targetId: "tour-ceiling-card",
-    title: "Start here: 5,000,000 DZD Ceiling",
+    title: "Step 1: 5,000,000 DZD Annual Ceiling",
     description:
-      "This is your statutory turnover tracker under Algerian Law 22-23. It monitors your 5,000,000 DZD annual ceiling and alerts you before reaching capacity.",
+      "Under Algerian Law 22-23 (Art. 2), auto-entrepreneurs can collect up to 5,000,000 DZD per fiscal year. This real-time gauge tracks your collected turnover and alerts you before reaching statutory capacity.",
     placement: "bottom",
     path: "/dashboard",
   },
   {
     targetId: "tour-pending-inflow",
-    title: "Cash-Basis Protection",
+    title: "Step 2: Cash-Basis Protection",
     description:
-      "Under Executive Decree 23-197, you only recognize turnover upon cash clearance into your bank or CCP. Unpaid client invoices do not consume your ceiling.",
+      "Crucial protection: under Executive Decree 23-197, issued or pending client invoices do NOT consume your 5M cap until the funds are officially credited to your bank account or CCP. You never pay tax on uncashed invoices.",
     placement: "top",
     path: "/dashboard",
   },
   {
     targetId: "tour-statutory-deadline",
-    title: "0.5% Flat IFU Tax & Form G50-A",
+    title: "Step 3: 0.5% Flat IFU Tax & G50-A Deadline",
     description:
-      "Your sole fiscal obligation is a flat 0.5% IFU tax on cashed revenue, payable annually via declaration form G50-A before June 30th.",
+      "Your sole fiscal obligation is a single flat 0.5% IFU rate on collected turnover. MoukawilOS tracks your annual G50-A declaration deadline (June 30th) to ensure timely filing without audits or penalties.",
     placement: "top",
     path: "/dashboard",
   },
   {
-    targetId: "tour-sidebar-nav",
-    title: "Operational Core",
+    targetId: "tour-operational-indicators",
+    title: "Step 4: 0% VAT Exemption & Social Security",
     description:
-      "Everything else: manage your commercial Invoices Ledger, verified B2B/B2C client directory, regulatory AI Assistant, and statutory settings.",
-    placement: "right",
+      "As an auto-entrepreneur, you operate with 0% VAT exemption legally certified on all vouchers, full CASNOS healthcare and retirement coverage, and automated real-time IFU tax estimation.",
+    placement: "top",
+    path: "/dashboard",
+  },
+  {
+    targetId: "tour-recent-invoices",
+    title: "Step 5: Payment Clearance & Official Receipts",
+    description:
+      "Track your billing pipeline in real time. When a debtor settles via BNA, CPA, or CCP, click 'Mark as Paid' to verify settlement details and print decree-compliant realization receipts.",
+    placement: "top",
+    path: "/dashboard",
   },
   {
     targetId: "tour-new-invoice",
-    title: "Compliant Commercial Invoicing",
+    title: "Step 6: Generating Compliant Invoices",
     description:
-      "Issue professional invoices with permanent 0% VAT exemption clauses, client tax ID verification (NIF/NIS), and official QR certification.",
+      "Create professional invoices in seconds. Every invoice includes your official ANAE registration number, mandatory 0% VAT legal citation, client tax identification (NIF/NIS), and instant PDF generation.",
     placement: "bottom",
   },
   {
-    targetId: "tour-how-it-works",
-    title: "Revisit This Guide Anytime",
+    targetId: "tour-fiscal-year",
+    title: "Step 7: Multi-Year Fiscal Cycle",
     description:
-      "Click 'How Moukawil Works' whenever you need a quick interactive refresher on fiscal rules or navigation. You're all set to go!",
+      "Auto-entrepreneurs can maintain this status for up to 3 consecutive fiscal years. Switch between active and closed fiscal years (2026, 2025, 2024) with complete accounting separation.",
+    placement: "bottom",
+  },
+  {
+    targetId: "tour-notifications",
+    title: "Step 8: Automated Regulatory Sentinel",
+    description:
+      "Get proactive compliance alerts for approaching filing deadlines, statutory ceiling milestone warnings at 80% and 90%, and ANAE national card registry renewals.",
+    placement: "bottom",
+  },
+  {
+    targetId: "tour-sidebar-nav",
+    title: "Step 9: Ledger, Clients & AI Legal Assistant",
+    description:
+      "Navigate your complete commercial operations: the Invoices Ledger, client dossiers with NIF validation, and the AI Assistant trained on Algerian tax legislation to answer any legal question.",
+    placement: "right",
+  },
+  {
+    targetId: "tour-how-it-works",
+    title: "Step 10: Permanent Interactive Help",
+    description:
+      "Whenever you have a doubt about tax rates, invoice rules, or ceiling limits, click 'How Moukawil Works' to reopen this guided walkthrough anytime. You are ready to succeed!",
     placement: "right",
   },
 ];
@@ -344,18 +376,39 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
           <p className="mt-1.5 text-xs leading-relaxed text-slate-600">{t(step.description)}</p>
         </div>
 
+<<<<<<< HEAD
         {/* Card Footer: Step Counter + Pill Buttons */}
         <div className="mt-4 flex items-center justify-between pt-1">
           <span className="text-xs font-semibold text-slate-500">
             {t("{v1} of {length}", { v1: currentStep + 1, length: TOUR_STEPS.length })}
           </span>
+=======
+        {/* Card Footer: Step Counter + Progress Dots + Pill Buttons */}
+        <div className="mt-4 flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-3">
+          <div className="flex flex-col gap-1">
+            <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400">
+              Step {currentStep + 1} of {TOUR_STEPS.length}
+            </span>
+            <div className="flex items-center gap-1">
+              {TOUR_STEPS.map((_, idx) => (
+                <span
+                  key={idx}
+                  className={cn(
+                    "h-1 rounded-full transition-all duration-300",
+                    idx === currentStep ? "w-3.5 bg-primary" : "w-1 bg-slate-200 dark:bg-slate-700",
+                  )}
+                />
+              ))}
+            </div>
+          </div>
+>>>>>>> 54f30513d721fafffd7e3a42f0cb35710f3eeb15
 
           <div className="flex items-center gap-2">
             {currentStep > 0 && (
               <button
                 type="button"
                 onClick={handleBack}
-                className="rounded-full border border-slate-200 bg-card px-3.5 py-1 text-xs font-semibold text-slate-700 shadow-2xs transition-all hover:bg-slate-50 active:scale-95"
+                className="rounded-full border border-slate-200 bg-card px-3 py-1 text-xs font-semibold text-slate-700 dark:text-slate-200 shadow-2xs transition-all hover:bg-slate-50 active:scale-95"
               >
                 {t("Back")}
               </button>
@@ -363,9 +416,13 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
             <button
               type="button"
               onClick={handleNext}
-              className="rounded-full bg-slate-950 px-4 py-1.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-slate-800 active:scale-95"
+              className="rounded-full bg-primary px-3.5 py-1 text-xs font-semibold text-white shadow-xs transition-all hover:bg-primary-ink active:scale-95"
             >
+<<<<<<< HEAD
               {currentStep === TOUR_STEPS.length - 1 ? t("Got it") : t("Next")}
+=======
+              {currentStep === TOUR_STEPS.length - 1 ? "Finish" : "Next"}
+>>>>>>> 54f30513d721fafffd7e3a42f0cb35710f3eeb15
             </button>
           </div>
         </div>

@@ -8,9 +8,9 @@ import { Pill } from "@/components/ui/pill";
 import type { Deadline, TurnoverStats } from "@/types/models";
 import { useI18n } from "@/lib/i18n/provider";
 
-const cardClass = "flex flex-1 flex-col justify-between rounded-xl border border-slate-100 bg-card p-6 shadow-sm transition-all hover:border-slate-200";
+const cardClass = "flex flex-1 flex-col justify-between rounded-xl border border-slate-200/80 bg-card p-6 shadow-xs transition-all duration-200 hover:shadow-md hover:border-slate-300";
 const labelClass = "text-xs font-bold uppercase tracking-wider text-muted";
-const linkClass = "inline-flex items-center gap-1.5 rounded-lg border border-slate-200/80 bg-surface-low px-3 py-1.5 text-xs font-semibold text-accent transition-all hover:border-slate-300 hover:bg-surface";
+const linkClass = "inline-flex items-center gap-1.5 rounded-lg border border-slate-200/80 bg-surface-low px-3 py-1.5 text-xs font-semibold text-accent transition-all duration-150 hover:border-slate-300 hover:bg-surface active:scale-95 shadow-2xs hover:shadow-xs";
 
 export function SecondaryKpis({ deadline, stats }: { deadline: Deadline; stats: TurnoverStats }) {
   const { t, formatAmount, formatLongDate } = useI18n();
