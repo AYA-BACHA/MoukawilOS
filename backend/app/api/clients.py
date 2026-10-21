@@ -1,8 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status , Query
 
 from app.core.security import get_current_freelancer_id
 from app.repositories import clients as repo
-from app.schemas.clients import ClientCreate, ClientOut, ClientUpdate
+from app.schemas.clients import ClientCreate, ClientOut, ClientUpdate , ClientPage
+from fastapi import Query
+
 
 router = APIRouter(prefix="/clients", tags=["clients"])
 
@@ -19,10 +21,16 @@ def create_client(data: ClientCreate, fid: int = Depends(get_current_freelancer_
         raise HTTPException(status.HTTP_409_CONFLICT, "a client with this NIF already exists")
 
 
-@router.get("", response_model=list[ClientOut])
-def list_clients(archived: bool = False, fid: int = Depends(get_current_freelancer_id)):
-    return repo.list_all(fid, archived)
-
+@router.get("")
+def list_clients(
+    archived: bool = False,
+    q: str | None = Query(None, max_length=100),
+    limit: int = Query(20, ge=1, le=100),
+    offset: int = Query(0, ge=0),
+    fid: int = Depends(get_current_freelancer_id),
+):
+    items, total = repo.list_all(fid, archived, q, limit, offset)
+    return {"items": items, "total": total, "limit": limit, "offset": offset}
 
 @router.get("/{client_id}", response_model=ClientOut)
 def get_client(client_id: int, fid: int = Depends(get_current_freelancer_id)):
@@ -58,3 +66,5 @@ def restore_client(client_id: int, fid: int = Depends(get_current_freelancer_id)
     if c is None:
         raise _not_found()
     return c
+
+

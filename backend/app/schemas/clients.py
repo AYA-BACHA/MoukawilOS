@@ -55,3 +55,10 @@ class ClientOut(BaseModel):
     phone: str | None
     archived_at: datetime | None
     created_at: datetime
+
+
+class ClientPage(BaseModel):
+    items: list[ClientOut]
+    total: int
+    limit: int
+    offset: int

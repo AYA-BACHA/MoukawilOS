@@ -52,15 +52,25 @@ def get(freelancer_id: int, client_id: int) -> ClientOut | None:
     return _to_out(r) if r else None
 
 
-def list_all(freelancer_id: int, archived: bool) -> list[ClientOut]:
-    cond = "c.archived_at is not null" if archived else "c.archived_at is null"
+def list_all(freelancer_id: int, archived: bool, q: str | None,
+             limit: int, offset: int) -> tuple[list[ClientOut], int]:
+    where = ["c.freelancer_id = %s",
+             "c.archived_at is not null" if archived else "c.archived_at is null"]
+    params: list = [freelancer_id]
+    if q:
+        where.append("(c.name ilike %s or c.nif ilike %s)")
+        like = f"%{q.strip()}%"
+        params += [like, like]
+    w = " and ".join(where)
     with pool.connection() as conn:
+        total = conn.execute(
+            f"select count(*) from {FROM} where {w}", params).fetchone()[0]
         rows = conn.execute(
-            f"select {COLUMNS} from {FROM} "
-            f"where c.freelancer_id = %s and {cond} order by c.name",
-            (freelancer_id,),
+            f"select {COLUMNS} from {FROM} where {w} "
+            f"order by c.name, c.id limit %s offset %s",
+            (*params, limit, offset),
         ).fetchall()
-    return [_to_out(r) for r in rows]
+    return [_to_out(r) for r in rows], total
 
 
 def update(freelancer_id: int, client_id: int, d: ClientUpdate) -> ClientOut | None:
