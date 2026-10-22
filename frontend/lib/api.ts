@@ -3,7 +3,6 @@ import type {
   AssistantMessage,
   Client,
   ClientInput,
-  Deadline,
   InvoiceDraft,
   InvoiceWithClient,
   Statute,
@@ -52,10 +51,10 @@ export async function getInvoices(): Promise<InvoiceWithClient[]> {
     .sort((a, b) => b.issueDate.localeCompare(a.issueDate));
 }
 
-export async function getNextDeadline(): Promise<Deadline> {
-  const deadline = (db.deadlines as Deadline[]).find((item) => item.userId === CURRENT_USER_ID);
-  if (!deadline) throw new Error("Deadline not found");
-  return deadline;
+import { computeNextDeadline, type ExtendedDeadline } from "@/lib/deadline";
+
+export async function getNextDeadline(): Promise<ExtendedDeadline> {
+  return computeNextDeadline(new Date(), CURRENT_USER_ID);
 }
 
 export async function getInvoiceDraft(clientId?: string): Promise<InvoiceDraft> {

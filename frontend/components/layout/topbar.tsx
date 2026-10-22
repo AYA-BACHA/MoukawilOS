@@ -45,8 +45,8 @@ export function Topbar({ utilization }: { utilization: number }) {
     {
       id: "1",
       title: "Statutory G12 bis Declaration Due",
-      desc: "Annual IFU declaration deadline is June 30, 2026.",
-      time: "In 72 days",
+      desc: "Annual IFU regularisation deadline is January 20, 2027.",
+      time: "In 90 days",
       icon: Clock,
       color: "text-amber-600 bg-amber-50",
     },
@@ -60,9 +60,9 @@ export function Topbar({ utilization }: { utilization: number }) {
     },
     {
       id: "3",
-      title: "ANAE Registry Verified",
-      desc: "Your legal auto-entrepreneur card is active with 0% VAT exemption.",
-      time: "System",
+      title: "Sample Auto-Entrepreneur Profile",
+      desc: "ANAE card AE-16-0492 with 0% VAT exemption (sample demo data).",
+      time: "Sample",
       icon: ShieldCheck,
       color: "text-accent bg-mint/50",
     },
@@ -92,11 +92,11 @@ export function Topbar({ utilization }: { utilization: number }) {
         <button
           type="button"
           onClick={handleSync}
-          title={t("Audit & Sync Fiscal Ledger")}
+          title={t("Recalculate Fiscal Metrics")}
           className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200/80 bg-surface-low px-2.5 py-1.5 text-xs font-semibold text-body transition-all duration-150 hover:bg-surface hover:text-ink active:scale-95 shadow-2xs"
         >
           <RefreshCw className={cn("size-3.5 text-accent transition-transform", isSyncing && "animate-spin")} />
-          <span>{isSyncing ? t("Auditing...") : t("Sync")}</span>
+          <span>{isSyncing ? t("Recalculating...") : t("Recalculate")}</span>
         </button>
         <Pill dot="size-2 bg-primary" className="bg-mint px-3 py-1 text-mint-ink shadow-xs">
           {t("Status: {v1}% Utilized • In Compliance", { v1: Math.round(utilization * 100) })}
@@ -104,6 +104,9 @@ export function Topbar({ utilization }: { utilization: number }) {
       </div>
 
       <div className="flex items-center gap-3">
+        <Pill className="border border-amber-300 bg-amber-50 text-amber-800 text-[11px] font-semibold px-2.5 py-1 shadow-2xs">
+          {t("Demo account (sample data)")}
+        </Pill>
         <LanguageSwitcher />
         <ThemeToggle />
 
@@ -171,7 +174,7 @@ export function Topbar({ utilization }: { utilization: number }) {
           </button>
 
           {showUserMenu && (
-            <div className="absolute end-0 z-50 mt-2 w-48 ltr:origin-top-right rtl:origin-top-left rounded-xl border border-slate-200 bg-card p-1.5 shadow-xl shadow-black/8 animate-in fade-in zoom-in-95">
+            <div className="absolute end-0 z-50 mt-2 w-52 ltr:origin-top-right rtl:origin-top-left rounded-xl border border-slate-200 bg-card p-1.5 shadow-xl shadow-black/8 animate-in fade-in zoom-in-95">
               <Link
                 href="/settings"
                 onClick={() => setShowUserMenu(false)}
@@ -182,7 +185,9 @@ export function Topbar({ utilization }: { utilization: number }) {
               </Link>
               <div className="my-1 border-t border-slate-100" />
               <div className="px-3 py-1.5 text-[11px] text-muted">
-                {t("Statute:")} <span className="font-semibold text-teal">{t("Auto-Entrepreneur")}</span>
+                <div className="font-semibold text-ink">Amine B. (AE-16-0492)</div>
+                <div className="text-amber-700 font-medium">{t("Demo account (sample data)")}</div>
+                <div className="mt-1">{t("Statute:")} <span className="font-semibold text-teal">{t("Auto-Entrepreneur")}</span></div>
               </div>
             </div>
           )}
@@ -192,7 +197,7 @@ export function Topbar({ utilization }: { utilization: number }) {
       {syncToast && (
         <div className="fixed bottom-6 end-6 z-50 flex items-center gap-2.5 rounded-2xl border border-slate-200 bg-card p-3.5 shadow-2xl animate-in slide-in-from-bottom-2 duration-200">
           <CheckCircle2 className="size-4 text-emerald-600" />
-          <span className="text-xs font-semibold text-ink">{t("Ledger audited & synced with ANAE registry")}</span>
+          <span className="text-xs font-semibold text-ink">{t("Ledger recalculated from recorded payments")}</span>
         </div>
       )}
     </header>

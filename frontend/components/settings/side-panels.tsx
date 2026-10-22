@@ -84,7 +84,7 @@ export function PassCard({ user }: { user: User }) {
 export function AuditPanel({ user }: { user: User }) {
   const { t } = useI18n();
   const items = [
-    { icon: FileCheck2, title: t("Tax Year {year} Declaration Open", { year: FISCAL_YEAR }), detail: "G12 bis filing schedule synced" },
+    { icon: FileCheck2, title: t("Tax Year {year} Declaration Open", { year: FISCAL_YEAR }), detail: "G12 bis filing schedule ready" },
     { icon: History, title: "Digital Signature Certificate", detail: t("RSA-2048 • Valid through {date}", { date: user.certificateValidUntil }) },
   ];
 

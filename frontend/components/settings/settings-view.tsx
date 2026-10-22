@@ -143,7 +143,7 @@ export function SettingsView({ user, stats }: { user: User; stats: TurnoverStats
           <ShieldCheck className="size-[17px] text-accent" />
           <div>
             <p className="text-sm font-semibold text-primary-ink">{t("Settings saved successfully")}</p>
-            <p className="text-xs tracking-[0.01em] text-body">{t("Invoicing defaults and fiscal registry synced.")}</p>
+            <p className="text-xs tracking-[0.01em] text-body">{t("Invoicing defaults and profile updated.")}</p>
           </div>
           <button aria-label={t("Dismiss")} onClick={() => setToast(false)} className="ps-3 text-body">
             <X className="size-2.5" />

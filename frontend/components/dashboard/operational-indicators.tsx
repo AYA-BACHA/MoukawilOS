@@ -37,14 +37,14 @@ export function OperationalIndicators({ user, stats }: { user: User; stats: Turn
       <Indicator
         icon={Percent}
         label={t("TVA Exemption Status")}
-        value={<span className="text-lg font-semibold leading-6 tracking-[-0.01em] text-ink">{t("0.00% VAT Certified")}</span>}
-        description={t("Law 22-23 legal exemption strictly active on all generated vouchers.")}
+        value={<span className="text-lg font-semibold leading-6 tracking-[-0.01em] text-ink">{t("0.00% VAT Exemption (Law 22-23)")}</span>}
+        description={t("Statutory exemption notice automatically appended to all generated invoices.")}
       />
       <Indicator
         icon={ShieldCheck}
         label={t("CASNOS Social Security")}
-        value={<span className="text-lg font-semibold leading-6 tracking-[-0.01em] text-ink">{t("Coverage Active")}</span>}
-        description={t("Full healthcare, maternity, and independent retirement recognized.")}
+        value={<span className="text-lg font-semibold leading-6 tracking-[-0.01em] text-ink">{t("Annual CASNOS Tracking")}</span>}
+        description={t("Fixed 24,000 DZD annual contribution tracked for auto-entrepreneur status.")}
       />
       <Indicator
         icon={Calculator}

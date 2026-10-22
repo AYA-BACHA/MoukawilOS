@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { X } from "lucide-react";
 
@@ -36,7 +36,7 @@ const TOUR_STEPS: TourStep[] = [
     targetId: "tour-statutory-deadline",
     title: "Step 3: 0.5% Flat IFU Tax & G12 bis Deadline",
     description:
-      "Your sole fiscal obligation is a single flat 0.5% IFU rate on collected turnover. MoukawilOS tracks your annual G12 bis declaration deadline (June 30th) to ensure timely filing without audits or penalties.",
+      "Your sole fiscal obligation is a single flat 0.5% IFU rate on collected turnover. MoukawilOS tracks your statutory G12 and G12 bis declaration deadlines to ensure timely filing without audits or penalties.",
     placement: "top",
     path: "/dashboard",
   },
@@ -134,7 +134,8 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
   // Always reset to step 0 when tour is opened
   useEffect(() => {
     if (isOpen) {
-      setCurrentStep(0);
+      const timer = setTimeout(() => setCurrentStep(0), 0);
+      return () => clearTimeout(timer);
     }
   }, [isOpen]);
 

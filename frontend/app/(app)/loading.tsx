@@ -76,10 +76,10 @@ export default function AppLoading() {
         </div>
       </div>
 
-      {/* Subtle Synchronizing Footer */}
+      {/* Subtle Loading Footer */}
       <div className="flex items-center justify-center gap-2 pt-2 text-xs text-muted">
         <span className="size-2 rounded-full bg-accent animate-ping" />
-        <span>Synchronizing fiscal registry under Law 22-23...</span>
+        <span>Loading workspace and fiscal metrics...</span>
       </div>
     </div>
   );

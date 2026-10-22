@@ -6,7 +6,7 @@
 
 Statutory compliance under Law 22-23 and Executive Decree 23-197 &nbsp;|&nbsp; Strict cash-basis turnover tracking (5,000,000 DZD ceiling) &nbsp;|&nbsp; Deterministic 0.5% IFU calculation &nbsp;|&nbsp; Multilingual PDF invoicing (Arabic RTL, French, English) &nbsp;|&nbsp; Regulatory RAG assistant with verified legal citations
 
-[Live Demo](https://moukawil-os.vercel.app) &nbsp;|&nbsp; [Demo Video](https://moukawil-os.vercel.app) &nbsp;|&nbsp; [Source Code](https://github.com/AYA-BACHA/MoukawilOS)
+[Live Demo](https://moukawil-os.vercel.app) &nbsp;|&nbsp; [Demo Video]([DEMO_VIDEO_URL]) &nbsp;|&nbsp; [Source Code](https://github.com/AYA-BACHA/MoukawilOS)
 
 ![Next.js](https://img.shields.io/badge/Next.js_16.3-000000?logo=nextdotjs&logoColor=white)
 ![React](https://img.shields.io/badge/React_19-61DAFB?logo=react&logoColor=black)
@@ -16,6 +16,7 @@ Statutory compliance under Law 22-23 and Executive Decree 23-197 &nbsp;|&nbsp; S
 ![Python](https://img.shields.io/badge/Python_3.11-3776AB?logo=python&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL_18-4169E1?logo=postgresql&logoColor=white)
 ![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?logo=supabase&logoColor=white)
+![OpenAI](https://img.shields.io/badge/OpenAI-RAG_Target-412991?logo=openai&logoColor=white)
 ![Vercel](https://img.shields.io/badge/Vercel-Frontend_Deployment-000000?logo=vercel&logoColor=white)
 ![Render](https://img.shields.io/badge/Render-Backend_API-46E3B7?logo=render&logoColor=black)
 ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-Automated_CI-2088FF?logo=githubactions&logoColor=white)
@@ -49,7 +50,7 @@ Statutory compliance under Law 22-23 and Executive Decree 23-197 &nbsp;|&nbsp; S
 15. [Security & Multi-Tenancy Architecture](#15-security--multi-tenancy-architecture)
 16. [Regulatory & Legal Disclaimer](#16-regulatory--legal-disclaimer)
 17. [License](#17-license)
-18. [Statutory & Regulatory Sources](#18-statutory--regulatory-sources)
+18. [Statutory & Regulatory Sources](#18-sources)
 
 ---
 
@@ -98,7 +99,7 @@ MoukawilOS unifies cash-basis accounting, sequential invoicing, automated fiscal
 Evaluators and reviewers can verify the end-to-end statutory and fiscal workflows directly in the browser:
 
 1. Open the live deployment: **https://moukawil-os.vercel.app**
-2. Click **"Instant Guest Demo"** on the landing screen to load a pre-seeded workspace without registration.
+2. The application boots directly into the pre-seeded **Demo account (sample data)** for sample user **Amine B.** (ANAE `AE-16-0492`) with pre-loaded clients and invoices, requiring no registration or login.
 3. Navigate to **Invoices** -> click **"New Invoice"**, select a client, add a billable line item in DZD, and click **"Finalize Invoice"**.
    - Notice the status updates to `ISSUED / PENDING`.
    - Return to the **Dashboard**: observe that the **Turnover Meter remains unchanged at 0 DZD consumed**. Under Law 22-23, issuing an invoice does not consume turnover or trigger tax liability.
@@ -168,6 +169,13 @@ flowchart TD
 ```
 
 > **Deployment:** Frontend on Vercel · Backend API on Cloud/Render · Automated CI via GitHub Actions (`.github/workflows/ci.yml`)
+
+### What Runs Where (Live Demo vs. Full-Stack Architecture)
+
+To guarantee zero-friction evaluator accessibility without requiring database setup or external API dependencies during review:
+- **Live Vercel Web App (`moukawil-os.vercel.app`):** Runs the Next.js 16 presentation tier directly in the browser, powered by an embedded statutory mock database (`frontend/data/db.json`). All user interactions (creating invoices, recording payment settlements, recalculating metrics) mutate in-memory React state. Data is preserved throughout your browsing session, but resets to the initial demo state upon a full page refresh.
+- **Backend REST Service (`backend/`):** A standalone Python FastAPI application using Pydantic v2 exact decimal types and endpoints designed for multi-tenant PostgreSQL / Supabase persistence.
+- **Regulatory Intelligence (`rag/`):** A microservice architecture skeleton targeting OpenAI legal embeddings and retrieval, complemented by the live frontend's deterministic keyword search over indexed Algerian statutes.
 
 ---
 
@@ -361,7 +369,7 @@ The retrieval corpus is restricted to verified Algerian statutory texts:
 | Legal Document | Official Citation | Key Subject Matter Covered | Verification Status |
 |---|---|---|---|
 | **Loi n° 22-23** | 18 December 2022 (*JORA n° 85*) | Auto-entrepreneur status, rights, obligations, 5,000,000 DZD ceiling, 3-consecutive-years radiation rule (*art. 13-14*). | Verified Official |
-| **Décret exécutif n° 23-196** | 25 May 2023 (*JORA n° 37*) | Organization of ANAE, National Auto-Entrepreneur Registry, registration portal, card issuance. | Verified Official |
+| **Décret exécutif n° 23-196** | 25 May 2023 (*JORA n° 37*) | Organization of ANAE, National Auto-Entrepreneur Registry, registration portal, card issuance. | Pending Source Verification |
 | **Décret exécutif n° 23-197** | 25 May 2023 (*JORA n° 37*) | Official nomenclature of the 7 approved activity sectors and individual eligibility codes. | Verified Official |
 | **Loi de Finances 2024 (Loi 23-22)** | 24 December 2023 (*JORA n° 86*) | Reduced 0.5% IFU rate (*CIDTA art. 282 sexies*), 10,000 DZD minimum floor (*art. 365 bis*). | Verified Official |
 | **Décret exécutif n° 26-257** | 15 July 2026 (*JORA n° 53*) | Flat 24,000 DZD annual CASNOS social security contribution for auto-entrepreneurs. | Verified Official |
@@ -444,7 +452,7 @@ MoukawilOS standardizes on a modern, decoupled web architecture:
 
 ```bash
 git clone https://github.com/AYA-BACHA/MoukawilOS.git
-cd Moukawil-OS
+cd MoukawilOS
 ```
 
 ---
@@ -563,7 +571,7 @@ The frontend includes an embedded statutory mock database (`frontend/data/db.jso
 MoukawilOS is structured as a clean monorepo:
 
 ```
-Moukawil-OS/
+MoukawilOS/
 ├── frontend/                     # Next.js 16 Presentation Tier (App Router, React 19, Tailwind v4)
 │   ├── app/                      # Route segments (Dashboard, Invoices, Clients, Assistant, Settings)
 │   ├── components/               # UI components, data tables, fiscal gauges, modals
@@ -613,9 +621,12 @@ Moukawil-OS/
 
 | Team Member | Engineering Role | Core Contributions |
 |---|---|---|
-| **Bacha Aya** | **Founder & Project Lead · Full-Stack & System Architecture** | Product vision and specifications; Next.js 16 architecture; client state machine; multilingual invoice compilation (Arabic RTL glyph shaping, French, English); design-system implementation. |
-| **Core Engineering Team** | **Systems Architecture & Fiscal Engine** | FastAPI backend architecture; Pydantic v2 deterministic `Decimal` fiscal calculation engine; PostgreSQL schema design with Row-Level Security (RLS); invoice immutability database triggers; sequential numbering engine (`FA-YYYY-NNN`). |
-| **Data & AI Engineering Team** | **Regulatory Intelligence & Infrastructure** | Article-boundary legal chunking pipeline; `pgvector` HNSW index configuration; deterministic refusal fallback guardrails; 25-query golden benchmark evaluation suite; Vercel and Render deployment pipelines. |
+| **Bacha Aya** | **Founder & Product Lead** | Product architecture, Algerian regulatory mapping, design system, client-side state, invoicing engine. |
+| **Achouri Dalia** | **Data & ML Engineer** | Legal RAG service, indexing of Law 22-23 and Decree 23-197 with citation mapping. |
+| **Kawther Yakoub** | **Backend Engineer** | FastAPI backend, Supabase/PostgreSQL schema, auth, REST endpoints, Decimal logic for the 5M DZD ceiling, 0.5% IFU engine, invoice status transitions. |
+| **Rahima Hamouda** | **Data & ML Engineer** | Retrieval pipeline, prompt engineering, guardrails for out-of-scope queries. |
+| **Ilyes Guebabi** | **Business Operations & Strategy** | Freelancer interviews, MVP scope, fiscal workflow validation. |
+| **Yasmine Hamaili** | **Frontend Engineer** | Next.js views for clients, invoice preview and form validation. |
 
 ---
 
@@ -625,8 +636,8 @@ We maintain complete transparency regarding the role of Artificial Intelligence 
 
 | Context | AI Tooling / Model | Implementation Scope | Verification & Engineering Boundaries |
 |---|---|---|---|
-| **Inside the Product** | OpenAI `text-embedding-3-small` & `gpt-4o-mini` | Semantic vector search and grounded natural language synthesis in the Regulatory Assistant. | Operates under strict prompt guardrails. Constrained exclusively to retrieved legal chunks. If cosine similarity is below 0.70, a deterministic refusal is issued to prevent hallucination. |
-| **During Development** | Claude, Gemini, GitHub Copilot | Code assistance, unit test scaffolding, and initial drafting of repetitive boilerplate. | All generated code, database schemas, and mathematical formulas were audited, reviewed, and verified against Algerian statutes by human engineers before merging. |
+| **Inside the Product** | Local Statutory Retrieval & OpenAI API Target (`text-embedding-3-small`, `gpt-4o-mini`) | The live web demo operates via deterministic keyword retrieval grounded strictly in indexed Algerian decrees; the standalone RAG microservice targets OpenAI embeddings with cosine similarity thresholds (refusal fallback below 0.70). | Zero tax calculation hallucination risk: fiscal math is isolated in deterministic code and physically separated from AI generation. |
+| **During Development** | Claude, Gemini, GitHub Copilot | Code assistance, unit test scaffolding, and drafting repetitive boilerplate. | All generated code, database schemas, and mathematical formulas were audited, reviewed, and verified against Algerian statutes by human engineers before merging. |
 
 ---
 
@@ -715,7 +726,7 @@ MoukawilOS is an administrative and fiscal productivity tool designed to help Al
 
 ## 17. License
 
-Copyright (c) 2026 Aya Bacha. All rights reserved.
+Copyright (c) 2026 the MoukawilOS team. All rights reserved.
 
 This project, its source code, architecture, and associated documentation are proprietary. The repository is made publicly accessible strictly for portfolio review, technical demonstration, and evaluation purposes.
 
@@ -723,6 +734,7 @@ No license or permission is granted to copy, reproduce, modify, redistribute, fo
 
 ---
 
+<a id="18-sources"></a>
 ## 18. Statutory & Regulatory Sources
 
 The compliance logic and regulatory citations in MoukawilOS are grounded in the following official publications of the People's Democratic Republic of Algeria:

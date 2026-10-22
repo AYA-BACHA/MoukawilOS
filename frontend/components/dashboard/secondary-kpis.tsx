@@ -17,6 +17,8 @@ export function SecondaryKpis({ deadline, stats }: { deadline: Deadline; stats: 
   const [showDeclaration, setShowDeclaration] = useState(false);
 
   const ifuTax = stats.collected * 0.005;
+  const isExtended = "formCode" in deadline;
+  const extended = deadline as unknown as { formCode: string; label: string; daysRemaining: number };
 
   return (
     <>
@@ -30,11 +32,20 @@ export function SecondaryKpis({ deadline, stats }: { deadline: Deadline; stats: 
               </span>
             </div>
             <div>
-              <p className="font-num text-2xl font-bold tracking-tight text-ink">
-                {formatLongDate(deadline.dueDate)}
-              </p>
+              <div className="flex flex-wrap items-baseline gap-2.5">
+                <p className="font-num text-2xl font-bold tracking-tight text-ink">
+                  {formatLongDate(deadline.dueDate)}
+                </p>
+                {isExtended && (
+                  <Pill className="border border-mint bg-mint/60 px-2 py-0.5 font-num text-[11px] font-semibold text-mint-ink">
+                    {t("{days} days remaining", { days: extended.daysRemaining })}
+                  </Pill>
+                )}
+              </div>
               <p className="mt-1 text-xs text-body leading-relaxed">
-                {t("Annual G12 bis filing (0.5% flat IFU tax obligation) • No unexpected audits.")}
+                {isExtended
+                  ? `${t(extended.label)} • ${t(deadline.description)}`
+                  : t("Annual G12 bis regularisation (0.5% flat IFU tax obligation) • Due January 20, 2027.")}
               </p>
             </div>
           </div>
@@ -48,7 +59,7 @@ export function SecondaryKpis({ deadline, stats }: { deadline: Deadline; stats: 
               <ArrowRight className="rtl:-scale-x-100 size-3" />
             </button>
             <Pill className="border border-slate-200/70 bg-surface-low px-2 py-0.5 font-num text-[11px] text-muted">
-              {t("DGI Tax Portal Sync")}
+              {t("Calculated from your recorded payments")}
             </Pill>
           </div>
         </article>
@@ -94,10 +105,14 @@ export function SecondaryKpis({ deadline, stats }: { deadline: Deadline; stats: 
             <div className="flex items-start justify-between border-b border-slate-100 pb-3">
               <div>
                 <span className="rounded bg-mint px-2 py-0.5 text-[10px] font-bold text-mint-ink">
-                  {t("Official Algerian Tax Slip")}
+                  {t("Statutory Tax Template (Specimen)")}
                 </span>
-                <h3 className="mt-1 text-lg font-bold text-ink">{t("Formulaire G12 bis (Déclaration IFU)")}</h3>
-                <p className="text-xs text-muted">{t("Direction Générale des Impôts • Régime Auto-Entrepreneur")}</p>
+                <h3 className="mt-1 text-lg font-bold text-ink">
+                  {isExtended && extended.formCode === "G12"
+                    ? t("Formulaire G12 (Déclaration provisionnelle)")
+                    : t("Formulaire G12 bis (Déclaration définitive & régularisation IFU)")}
+                </h3>
+                <p className="text-xs text-muted">{t("Modèle indicatif préparé selon les règles DGI • Régime Auto-Entrepreneur")}</p>
               </div>
               <button
                 onClick={() => setShowDeclaration(false)}
@@ -110,7 +125,7 @@ export function SecondaryKpis({ deadline, stats }: { deadline: Deadline; stats: 
             <div className="mt-4 flex flex-col gap-3 rounded-xl border border-slate-200/80 bg-slate-50 p-4 font-mono text-xs">
               <div className="border-b border-slate-200 pb-2 text-center font-sans">
                 <p className="text-[11px] font-bold uppercase tracking-wider text-slate-700">{t("RÉPUBLIQUE ALGÉRIENNE DÉMOCRATIQUE ET POPULAIRE")}</p>
-                <p className="text-[10px] text-slate-500">{t("MINISTÈRE DES FINANCES — DGI")}</p>
+                <p className="text-[10px] text-slate-500">{t("MINISTÈRE DES FINANCES — DGI (SPÉCIMEN)")}</p>
               </div>
 
               <div className="flex justify-between py-1">
@@ -119,7 +134,7 @@ export function SecondaryKpis({ deadline, stats }: { deadline: Deadline; stats: 
               </div>
               <div className="flex justify-between py-1">
                 <span className="text-slate-600">{t("Date Limite de Dépôt:")}</span>
-                <span className="font-bold text-amber-700">{t("30 Juin 2026")}</span>
+                <span className="font-bold text-amber-700">{formatLongDate(deadline.dueDate)}</span>
               </div>
               <div className="flex justify-between py-1">
                 <span className="text-slate-600">{t("Chiffre d'Affaires Réalisé (Encaissé):")}</span>

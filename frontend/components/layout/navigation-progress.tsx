@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 
 export function NavigationProgress() {
@@ -11,14 +11,16 @@ export function NavigationProgress() {
   useEffect(() => {
     // When pathname changes, complete and reset
     if (loading) {
-      setProgress(100);
       const timer = setTimeout(() => {
-        setLoading(false);
-        setProgress(0);
-      }, 300);
+        setProgress(100);
+        setTimeout(() => {
+          setLoading(false);
+          setProgress(0);
+        }, 300);
+      }, 0);
       return () => clearTimeout(timer);
     }
-  }, [pathname]);
+  }, [pathname, loading]);
 
   useEffect(() => {
     // Intercept clicks on links to start progress bar immediately

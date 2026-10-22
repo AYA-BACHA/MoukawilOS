@@ -22,6 +22,8 @@ interface HowItWorksModalProps {
   onClose: () => void;
 }
 
+const TOTAL_STEPS = 6;
+
 export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
   const { t } = useI18n();
   const [currentStep, setCurrentStep] = useState(0);
@@ -31,7 +33,7 @@ export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") onClose();
       if (event.key === "ArrowRight") {
-        setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
+        setCurrentStep((prev) => Math.min(prev + 1, TOTAL_STEPS - 1));
       }
       if (event.key === "ArrowLeft") {
         setCurrentStep((prev) => Math.max(prev - 1, 0));
@@ -103,7 +105,7 @@ export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
       title: "How Your Tax is Calculated (0.5% Flat IFU)",
       lawRef: "Code des Impôts Directs • Formulaire G12 bis",
       description:
-        "Your sole tax obligation is the Impôt Forfaitaire Unique (IFU) at an ultra-low rate of 0.5% on collected turnover. You declare this once a year using official form G12 bis before June 30th directly to your tax inspection.",
+        "Your sole tax obligation is the Impôt Forfaitaire Unique (IFU) at an ultra-low rate of 0.5% on collected turnover. You regularize this annually using official form G12 bis by January 20th directly to your tax inspection (following the provisional G12 declaration on June 30th).",
       demo: (
         <div className="rounded-xl border border-slate-200/90 bg-slate-50 p-4 font-mono text-xs">
           <div className="flex justify-between py-1 border-b border-slate-200">
