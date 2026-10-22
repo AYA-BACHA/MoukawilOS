@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Check, Download, ExternalLink, FileDown, MoreHorizontal, Printer, X } from "lucide-react";
 import { Pill } from "@/components/ui/pill";
 import { PaymentModal } from "@/components/invoices/payment-modal";
+import { PrintInvoiceModal } from "@/components/invoices/print-invoice-modal";
 
 import { cn } from "@/lib/cn";
 import { payInvoiceApi } from "@/lib/api";
@@ -22,16 +23,23 @@ const headClass = "px-4 py-3 text-xs font-semibold uppercase tracking-wider text
 export function RecentInvoices({
   invoices: initialInvoices,
   stats,
+  onPaymentConfirmed,
 }: {
   invoices: InvoiceWithClient[];
   stats?: TurnoverStats;
+  onPaymentConfirmed?: (payment: PaymentConfirmation) => void;
 }) {
   const { t, formatAmount, formatDate } = useI18n();
   const [invoices, setInvoices] = useState(initialInvoices);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const [payingInvoice, setPayingInvoice] = useState<InvoiceWithClient | null>(null);
   const [viewingReceipt, setViewingReceipt] = useState<InvoiceWithClient | null>(null);
+  const [printingInvoice, setPrintingInvoice] = useState<InvoiceWithClient | null>(null);
   const [settledInvoice, setSettledInvoice] = useState<InvoiceWithClient | null>(null);
+
+  useEffect(() => {
+    setInvoices(initialInvoices);
+  }, [initialInvoices]);
 
   const subtotalPending = invoices
     .filter((invoice) => invoice.status === "pending")
@@ -49,6 +57,7 @@ export function RecentInvoices({
 
   const confirmPayment = ({ invoiceId, settlementDate, rail }: PaymentConfirmation) => {
     payInvoiceApi(invoiceId, settlementDate, rail).catch(console.error);
+    onPaymentConfirmed?.({ invoiceId, settlementDate, rail });
     setInvoices((prev) =>
       prev.map((item) =>
         item.id === invoiceId ? { ...item, status: "paid", paidAt: settlementDate, paymentRail: rail } : item,
@@ -154,7 +163,7 @@ export function RecentInvoices({
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {invoices.map((invoice) => {
+              {invoices.map((invoice, idx) => {
                 const status = statusStyles[invoice.status];
                 return (
                   <tr key={invoice.id} className="transition-all duration-150 hover:bg-slate-50/90 hover:shadow-[inset_3px_0_0_0_#0D9488]">
@@ -225,7 +234,14 @@ export function RecentInvoices({
                           </button>
 
                           {activeMenuId === invoice.id && (
-                            <div className="absolute end-0 z-50 mt-1 w-40 ltr:origin-top-right rtl:origin-top-left rounded-xl border border-slate-200 bg-card p-1 shadow-lg shadow-black/8 animate-in fade-in zoom-in-95">
+                            <div
+                              className={cn(
+                                "absolute end-0 z-50 w-40 rounded-xl border border-slate-200 bg-card p-1 shadow-lg shadow-black/8 animate-in fade-in zoom-in-95",
+                                idx >= 1
+                                  ? "bottom-full mb-1 ltr:origin-bottom-right rtl:origin-bottom-left"
+                                  : "top-full mt-1 ltr:origin-top-right rtl:origin-top-left",
+                              )}
+                            >
                               <Link
                                 href="/invoices"
                                 className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-body hover:bg-surface-low hover:text-ink transition-colors"
@@ -236,7 +252,7 @@ export function RecentInvoices({
                               <button
                                 type="button"
                                 onClick={() => {
-                                  window.print();
+                                  setPrintingInvoice(invoice);
                                   setActiveMenuId(null);
                                 }}
                                 className="flex w-full items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-body hover:bg-surface-low hover:text-ink transition-colors"
@@ -279,7 +295,10 @@ export function RecentInvoices({
       {/* Official Receipt Voucher Modal */}
       {viewingReceipt && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-3 sm:p-4 backdrop-blur-sm animate-in fade-in">
-          <div className="relative flex max-h-[92dvh] w-full max-w-md flex-col rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 shadow-2xl animate-in zoom-in-95 overflow-hidden">
+          <div
+            id="receipt-voucher-sheet"
+            className="relative flex max-h-[92dvh] w-full max-w-md flex-col rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 shadow-2xl animate-in zoom-in-95 overflow-hidden"
+          >
             <div className="flex items-start justify-between border-b border-slate-100 pb-3">
               <div>
                 <span className="rounded bg-mint px-2 py-0.5 text-[10px] font-bold text-mint-ink">
@@ -292,7 +311,7 @@ export function RecentInvoices({
                 type="button"
                 onClick={() => setViewingReceipt(null)}
                 aria-label={t("Close Receipt")}
-                className="flex size-11 items-center justify-center rounded-lg text-muted hover:bg-slate-100 hover:text-ink active:scale-95"
+                className="no-print flex size-11 items-center justify-center rounded-lg text-muted hover:bg-slate-100 hover:text-ink active:scale-95"
               >
                 <X className="size-5" />
               </button>
@@ -322,7 +341,7 @@ export function RecentInvoices({
               <span>{t("Recognized in Statutory Turnover under cash-basis rules (Law 22-23). 0% VAT strictly applied.")}</span>
             </div>
 
-            <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
+            <div className="no-print mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
               <button
                 type="button"
                 onClick={() => setViewingReceipt(null)}
@@ -341,6 +360,15 @@ export function RecentInvoices({
             </div>
           </div>
         </div>
+      )}
+
+      {/* Invoice Print & PDF Modal */}
+      {printingInvoice && (
+        <PrintInvoiceModal
+          invoice={printingInvoice}
+          onClose={() => setPrintingInvoice(null)}
+          autoPrint={true}
+        />
       )}
 
       {/* Payment Confirmation Toast */}

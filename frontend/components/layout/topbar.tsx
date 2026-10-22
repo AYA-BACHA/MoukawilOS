@@ -44,6 +44,22 @@ export function Topbar({ utilization }: { utilization: number }) {
   const notifRef = useRef<HTMLDivElement>(null);
   const userRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedFy = localStorage.getItem("moukawil_fiscal_year");
+      if (storedFy) setFiscalYear(storedFy);
+    }
+  }, []);
+
+  const handleFiscalYearChange = (year: string) => {
+    setFiscalYear(year);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("moukawil_fiscal_year", year);
+      document.cookie = `moukawil_fiscal_year=${year}; path=/; max-age=31536000`;
+      window.dispatchEvent(new CustomEvent("moukawil_fy_change", { detail: year }));
+    }
+  };
+
   const pageTitle = pageTitles[pathname] ?? (pathname.startsWith("/invoices") ? "Invoices" : "MoukawilOS");
 
   useEffect(() => {
@@ -136,7 +152,7 @@ export function Topbar({ utilization }: { utilization: number }) {
             <SelectDropdown
               value={fiscalYear}
               options={yearOptions}
-              onChange={setFiscalYear}
+              onChange={handleFiscalYearChange}
               icon={<CalendarDays className="size-3.5 text-accent" />}
             />
           </div>

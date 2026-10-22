@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Check, Download, FileDown, FileText, Plus, Printer, Trash2, X } from "lucide-react";
 import { clientDetail } from "@/lib/format";
 import { cn } from "@/lib/cn";
+import { PrintInvoiceModal } from "@/components/invoices/print-invoice-modal";
 import type { InvoiceStatus, InvoiceWithClient } from "@/types/models";
 import { useI18n } from "@/lib/i18n/provider";
 
@@ -27,6 +28,7 @@ interface LedgerTableProps {
 export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: LedgerTableProps) {
   const { t, formatAmount, formatDate } = useI18n();
   const [viewingReceipt, setViewingReceipt] = useState<InvoiceWithClient | null>(null);
+  const [printingInvoice, setPrintingInvoice] = useState<InvoiceWithClient | null>(null);
 
   return (
     <>
@@ -299,7 +301,7 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
                           aria-label={t("Download PDF")}
                           onClick={() => {
                             if (invoice.status === "paid") setViewingReceipt(invoice);
-                            else window.print();
+                            else setPrintingInvoice(invoice);
                           }}
                           className="rounded-lg p-1.5 text-body transition-colors hover:bg-surface hover:text-ink"
                         >
@@ -318,7 +320,10 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
       {/* Official Receipt Voucher Modal */}
       {viewingReceipt && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-3 sm:p-4 backdrop-blur-sm animate-in fade-in">
-          <div className="relative flex max-h-[92dvh] w-full max-w-md flex-col rounded-2xl border border-slate-200 bg-card p-4 sm:p-6 shadow-2xl animate-in zoom-in-95 overflow-hidden">
+          <div
+            id="receipt-voucher-sheet"
+            className="relative flex max-h-[92dvh] w-full max-w-md flex-col rounded-2xl border border-slate-200 bg-card p-4 sm:p-6 shadow-2xl animate-in zoom-in-95 overflow-hidden"
+          >
             <div className="flex items-start justify-between border-b border-slate-100 pb-3">
               <div>
                 <span className="rounded bg-mint px-2 py-0.5 text-[10px] font-bold text-mint-ink">
@@ -331,7 +336,7 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
                 type="button"
                 onClick={() => setViewingReceipt(null)}
                 aria-label={t("Close Receipt")}
-                className="flex size-11 items-center justify-center rounded-lg text-muted hover:bg-slate-100 hover:text-ink active:scale-95"
+                className="no-print flex size-11 items-center justify-center rounded-lg text-muted hover:bg-slate-100 hover:text-ink active:scale-95"
               >
                 <X className="size-5" />
               </button>
@@ -361,7 +366,7 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
               <span>{t("Recognized in Statutory Turnover under cash-basis rules (Law 22-23). 0% VAT strictly applied.")}</span>
             </div>
 
-            <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
+            <div className="no-print mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
               <button
                 type="button"
                 onClick={() => setViewingReceipt(null)}
@@ -380,6 +385,15 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
             </div>
           </div>
         </div>
+      )}
+
+      {/* Invoice Print Modal */}
+      {printingInvoice && (
+        <PrintInvoiceModal
+          invoice={printingInvoice}
+          onClose={() => setPrintingInvoice(null)}
+          autoPrint={true}
+        />
       )}
     </>
   );

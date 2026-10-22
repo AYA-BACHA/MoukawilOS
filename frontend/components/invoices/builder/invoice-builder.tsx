@@ -29,15 +29,20 @@ export function InvoiceBuilder({ user, draft: initialDraft }: { user: User; draf
     } catch (e) {
       console.error(e);
     }
-    window.print();
+    setActiveTab("preview");
+    setTimeout(() => {
+      window.print();
+    }, 200);
   };
 
   return (
     <>
-      <BuilderStrip number={draft.number} saved={draft.savedAt !== null} onSave={save} onIssue={handleIssue} />
+      <div className="no-print">
+        <BuilderStrip number={draft.number} saved={draft.savedAt !== null} onSave={save} onIssue={handleIssue} />
+      </div>
 
       {/* Mobile Segmented Tab Control (< lg) */}
-      <div className="flex lg:hidden rounded-xl bg-surface-low p-1 mx-1 mt-3 shadow-2xs">
+      <div className="no-print flex lg:hidden rounded-xl bg-surface-low p-1 mx-1 mt-3 shadow-2xs">
         <button
           type="button"
           onClick={() => setActiveTab("edit")}
@@ -65,7 +70,7 @@ export function InvoiceBuilder({ user, draft: initialDraft }: { user: User; draf
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] items-start gap-4 sm:gap-6 px-1 sm:px-4 py-3 sm:py-4">
-        <div className={cn("flex flex-col gap-4", activeTab !== "edit" && "hidden lg:flex")}>
+        <div className={cn("no-print flex flex-col gap-4", activeTab !== "edit" && "hidden lg:flex")}>
           <ClientCard
             clientType={draft.clientType}
             client={draft.client}
@@ -82,7 +87,7 @@ export function InvoiceBuilder({ user, draft: initialDraft }: { user: User; draf
       </div>
 
       {/* Sticky Mobile Action Bar (< lg) */}
-      <div className="sticky bottom-16 lg:hidden z-20 flex items-center justify-between gap-2 rounded-xl border border-slate-200/90 bg-card/95 p-3 shadow-lg backdrop-blur-md mx-1 mb-2">
+      <div className="no-print sticky bottom-16 lg:hidden z-20 flex items-center justify-between gap-2 rounded-xl border border-slate-200/90 bg-card/95 p-3 shadow-lg backdrop-blur-md mx-1 mb-2">
         <button
           type="button"
           onClick={save}

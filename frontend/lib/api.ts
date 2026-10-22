@@ -21,7 +21,10 @@ export type DemoScenario = "standard" | "near_ceiling" | "new_user";
 
 export function getDemoScenario(): DemoScenario {
   if (typeof window !== "undefined") {
-    return (localStorage.getItem("moukawil_demo_scenario") as DemoScenario) || "standard";
+    const local = localStorage.getItem("moukawil_demo_scenario") as DemoScenario;
+    if (local) return local;
+    const match = document.cookie.match(/moukawil_demo_scenario=([^;]+)/);
+    if (match) return match[1] as DemoScenario;
   }
   return "standard";
 }
@@ -29,6 +32,8 @@ export function getDemoScenario(): DemoScenario {
 export function setDemoScenario(scenario: DemoScenario) {
   if (typeof window !== "undefined") {
     localStorage.setItem("moukawil_demo_scenario", scenario);
+    document.cookie = `moukawil_demo_scenario=${scenario}; path=/; max-age=31536000`;
+    window.dispatchEvent(new CustomEvent("moukawil_scenario_change", { detail: scenario }));
     window.location.reload();
   }
 }
@@ -383,8 +388,8 @@ export async function updateClient(client: Client, input: ClientInput): Promise<
   return updatedClient;
 }
 
-export async function getInvoices(): Promise<InvoiceWithClient[]> {
-  const scenario = getDemoScenario();
+export async function getInvoices(explicitScenario?: DemoScenario): Promise<InvoiceWithClient[]> {
+  const scenario = explicitScenario || getDemoScenario();
   const clients = await getClients();
   const clientMap = new Map(clients.map((c) => [c.id, c]));
 
