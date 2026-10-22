@@ -4,11 +4,12 @@ from app.core.security import get_current_freelancer_id
 from app.repositories import invoices as repo
 from app.schemas.invoices import (
     CancelRequest, InvoiceCreate, InvoiceOut, InvoiceUpdate, InvoicePage ,
-    IssueRequest, PayRequest,
+     PayRequest,
 )
-from typing import Literal
+
 from fastapi import Query
 from datetime import date
+from app.core.lookups import InvoiceStatus
 
 router = APIRouter(prefix="/invoices", tags=["invoices"])
 
@@ -27,10 +28,10 @@ def _guard(fn):
         raise HTTPException(409, str(e))
     except repo.ProfileIncomplete as e:
         raise HTTPException(422, {"code": "profile_incomplete", "missing": e.missing})
-    except repo.StartingNumberRequired:
-        raise HTTPException(422, {"code": "starting_number_required"})
     except repo.NumberTaken:
         raise HTTPException(409, "this invoice number already exists, retry")
+    except repo.InvalidPaymentDate as e:
+        raise HTTPException(400, {"code": e.code, "message": e.message})
     if r is None:
         raise _nf()
     return r
@@ -40,10 +41,9 @@ def _guard(fn):
 def create_invoice(data: InvoiceCreate, fid: int = Depends(get_current_freelancer_id)):
     return _guard(lambda: repo.create(fid, data))
 
-
 @router.get("", response_model=InvoicePage)
 def list_invoices(
-    status_: Literal["draft", "issued", "paid", "cancelled"] | None = Query(None, alias="status"),
+    status_: InvoiceStatus | None = Query(None, alias="status"),
     client_id: int | None = None,
     q: str | None = Query(None, max_length=100),
     date_from: date | None = Query(None, alias="from"),
@@ -81,7 +81,7 @@ def issue_invoice(invoice_id: int, fid: int = Depends(get_current_freelancer_id)
 @router.post("/{invoice_id}/pay", response_model=InvoiceOut)
 def pay_invoice(invoice_id: int, data: PayRequest,
                 fid: int = Depends(get_current_freelancer_id)):
-    return _guard(lambda: repo.mark_paid(fid, invoice_id, data.paid_at))
+    return _guard(lambda: repo.mark_paid(fid, invoice_id, data.paid_at, data.payment_rail))
 
 
 @router.post("/{invoice_id}/revert-payment", response_model=InvoiceOut)

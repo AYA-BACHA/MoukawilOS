@@ -1,7 +1,8 @@
 from app.core.db import pool
 from app.schemas.profile import PreferencesUpdate, ProfileUpdate
 from app.services.profile import completeness
-from app.services.numbering import current_year, next_number
+from app.services.numbering import current_year, next_number , parse_number
+
 
 # fixed whitelist: column names never come from user input
 COLUMNS = [
@@ -10,33 +11,35 @@ COLUMNS = [
     "activity_start_date",
 ]
 
-
+class CounterLocked(Exception):
+    pass
 
 
 def get(fid: int) -> dict:
     with pool.connection() as conn:
         cur = conn.execute(
-            f"select {', '.join(COLUMNS)}, past_years_status, onboarding_completed_at "
+            f"select {', '.join(COLUMNS)}, past_years_status, "
+            "onboarding_completed_at, last_invoice_number, last_invoice_year "
             "from public.freelancers where id = %s",
             (fid,),
         )
         row = cur.fetchone()
         names = [d.name for d in cur.description]
-        counter = conn.execute(
-            "select last_invoice_number, last_invoice_year "
-            "from public.freelancers where id = %s", (fid,),
-        ).fetchone()
-    profile = dict(zip(names, row))
+    data = dict(zip(names, row))
+    last_number = data.pop("last_invoice_number") or 0
+    last_year = data.pop("last_invoice_year")
     return {
-        "profile": profile,
-        "completeness": completeness(profile),
-        "next_invoice_number": next_number(counter[0], counter[1], current_year()),
+        "profile": data,
+        "completeness": completeness(data),
+        "next_invoice_number": next_number(last_number, last_year, current_year()),
+        "can_edit_invoice_counter": last_number == 0,
     }
 
 
 def patch(fid: int, data: ProfileUpdate) -> dict:
     changes = data.model_dump(exclude_unset=True)
     confirmed = changes.pop("past_years_confirmed", None)
+    new_counter = changes.pop("last_invoice_number", None)
     sets, values = [], []
     for col, val in changes.items():
         if col in COLUMNS:
@@ -45,29 +48,25 @@ def patch(fid: int, data: ProfileUpdate) -> dict:
     if confirmed is not None:
         sets.append("past_years_status = %s")
         values.append("confirmed" if confirmed else "unknown")
+    if new_counter is not None:
+        year, seq = parse_number(new_counter)
+        sets += ["last_invoice_number = %s", "last_invoice_year = %s"]
+        values += [seq, year]
     if sets:
         with pool.connection() as conn:
+            if new_counter is not None:
+                # lock the row so an invoice can't be issued in between
+                row = conn.execute(
+                    "select last_invoice_number from public.freelancers "
+                    "where id = %s for update", (fid,),
+                ).fetchone()
+                if row is None or row[0]:      # counter already used
+                    raise CounterLocked()
             conn.execute(
                 f"update public.freelancers set {', '.join(sets)} where id = %s",
                 (*values, fid),
             )
-    result = get(fid)
-    # onboarding is complete once the invoicing fields are all filled
-    if result["completeness"]["can_issue_invoices"]:
-        with pool.connection() as conn:
-            conn.execute(
-                "update public.freelancers set onboarding_completed_at = now() "
-                "where id = %s and onboarding_completed_at is null",
-                (fid,),
-            )
-    else:
-        with pool.connection() as conn:
-            conn.execute(
-                "update public.freelancers set onboarding_completed_at = null "
-                "where id = %s",
-                (fid,),
-            )
-    return get(fid)
+    
 
 
 def get_preferences(fid: int) -> dict:

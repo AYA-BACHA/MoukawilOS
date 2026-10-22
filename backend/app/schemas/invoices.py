@@ -1,9 +1,12 @@
 from datetime import date, datetime
 from decimal import Decimal
 from typing import Literal
+from app.core.lookups import PaymentRail
 
 from pydantic import BaseModel, Field
 
+
+#PaymentRail = Literal["cash", "bank_transfer", "cheque", "ccp", "card"]
 
 class ItemIn(BaseModel):
     description: str = Field(min_length=1, max_length=500)
@@ -28,7 +31,11 @@ class InvoiceBase(BaseModel):
     currency: Literal["DZD"] = "DZD"
     items: list[ItemIn] = []
 
+# PaymentRail = Literal["cash", "bank_transfer", "cheque", "ccp", "card"]
 
+class PayRequest(BaseModel):
+    paid_at: date
+    payment_rail: PaymentRail | None = None
 class InvoiceCreate(InvoiceBase):
     pass
 
@@ -37,13 +44,9 @@ class InvoiceUpdate(InvoiceBase):
     """Full replacement of a draft (items included)."""
 
 
-class IssueRequest(BaseModel):
-    # only needed for the very first invoice of the freelancer
-    starting_number: int | None = Field(default=None, gt=0)
 
 
-class PayRequest(BaseModel):
-    paid_at: date
+
 
 
 class CancelRequest(BaseModel):
@@ -64,7 +67,11 @@ class SnapshotOut(BaseModel):
     client_nif: str | None
     client_nis: str | None
     
-
+class AuditEventOut(BaseModel):
+    id: int
+    event_type: str            # issued | paid | unpaid | cancelled
+    details: dict = {}
+    created_at: datetime
 
 class InvoiceOut(BaseModel):
     id: int
@@ -78,7 +85,8 @@ class InvoiceOut(BaseModel):
     due_date: date | None
     currency: str
     total: Decimal
-    paid_at: date | None
+    paid_at: date | None     
+    payment_rail: str | None = None
     cancelled_at: datetime | None
     cancellation_reason: str | None
     note: str | None
@@ -86,6 +94,8 @@ class InvoiceOut(BaseModel):
     items: list[ItemOut]
     warning: str | None = None
     snapshot: SnapshotOut | None = None
+    audit_log: list[AuditEventOut] | None = None
+    
 
 
 

@@ -4,6 +4,8 @@ from app.core.security import get_current_freelancer_id
 from app.repositories import profile as repo
 from app.schemas.profile import PreferencesUpdate, ProfileUpdate
 
+from fastapi import HTTPException
+
 router = APIRouter(tags=["profile"])
 
 
@@ -12,9 +14,13 @@ def read_profile(fid: int = Depends(get_current_freelancer_id)):
     return repo.get(fid)
 
 
+
 @router.patch("/profile")
 def update_profile(data: ProfileUpdate, fid: int = Depends(get_current_freelancer_id)):
-    return repo.patch(fid, data)
+    try:
+        return repo.patch(fid, data)
+    except repo.CounterLocked:
+        raise HTTPException(409, "invoice counter can no longer be changed")
 
 
 @router.get("/preferences")

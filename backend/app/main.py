@@ -3,13 +3,16 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import clients, health, me, onboarding , invoices , profile
+from app.api import clients, health, me, onboarding , invoices , profile , lookups
 from app.core.config import settings
 from app.core.db import pool
-
+import logging
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    
+    logging.basicConfig(level=logging.WARNING)
+    logging.getLogger("psycopg.pool").setLevel(logging.WARNING)
     pool.open(wait=True, timeout=10)
     yield
     pool.close()
@@ -31,3 +34,4 @@ app.include_router(onboarding.router)
 app.include_router(clients.router)
 app.include_router(invoices.router) 
 app.include_router(profile.router) 
+app.include_router(lookups.router)

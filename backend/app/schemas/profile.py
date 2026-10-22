@@ -1,7 +1,9 @@
 from datetime import date
-from typing import Literal
 
 from pydantic import BaseModel, Field, model_validator
+
+from app.core.lookups import Language, Theme
+from app.services.numbering import parse_number
 
 REQUIRED_NOT_NULL = {"first_name", "last_name"}
 
@@ -20,15 +22,20 @@ class ProfileUpdate(BaseModel):
     anae_card_issue_date: date | None = None
     activity_start_date: date | None = None
     past_years_confirmed: bool | None = None
+    last_invoice_number: str | None = Field(default=None, max_length=30)
 
     @model_validator(mode="after")
     def no_null_names(self):
         for f in REQUIRED_NOT_NULL:
             if f in self.model_fields_set and getattr(self, f) is None:
                 raise ValueError(f"{f} cannot be null")
+        if "last_invoice_number" in self.model_fields_set:
+            if self.last_invoice_number is None:
+                raise ValueError("last_invoice_number cannot be null")
+            parse_number(self.last_invoice_number)  # ValueError -> 422
         return self
 
 
 class PreferencesUpdate(BaseModel):
-    language: Literal["fr", "ar"] | None = None
-    theme: Literal["light", "dark", "system"] | None = None
+    language: Language | None = None
+    theme: Theme | None = None
