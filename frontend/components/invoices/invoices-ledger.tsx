@@ -10,6 +10,7 @@ import { SummaryStrip } from "@/components/invoices/summary-strip";
 import { downloadLedgerCsv } from "@/lib/csv";
 
 import { computeStats } from "@/lib/stats";
+import { payInvoiceApi } from "@/lib/api";
 import type { InvoiceWithClient, PaymentConfirmation, User } from "@/types/models";
 import { useI18n } from "@/lib/i18n/provider";
 
@@ -49,6 +50,7 @@ export function InvoicesLedger({ user, invoices: initialInvoices, initialQuery =
   const payingInvoice = invoices.find((invoice) => invoice.id === payingId) ?? null;
 
   const confirmPayment = ({ invoiceId, settlementDate, rail }: PaymentConfirmation) => {
+    payInvoiceApi(invoiceId, settlementDate, rail).catch(console.error);
     const target = invoices.find((inv) => inv.id === invoiceId);
     setInvoices((current) =>
       current.map((invoice) => (invoice.id === invoiceId ? { ...invoice, status: "paid", paidAt: settlementDate, paymentRail: rail } : invoice)),

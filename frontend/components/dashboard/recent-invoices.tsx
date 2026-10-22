@@ -7,6 +7,7 @@ import { Pill } from "@/components/ui/pill";
 import { PaymentModal } from "@/components/invoices/payment-modal";
 
 import { cn } from "@/lib/cn";
+import { payInvoiceApi } from "@/lib/api";
 import type { InvoiceStatus, InvoiceWithClient, PaymentConfirmation, TurnoverStats } from "@/types/models";
 import { useI18n } from "@/lib/i18n/provider";
 
@@ -47,6 +48,7 @@ export function RecentInvoices({
   };
 
   const confirmPayment = ({ invoiceId, settlementDate, rail }: PaymentConfirmation) => {
+    payInvoiceApi(invoiceId, settlementDate, rail).catch(console.error);
     setInvoices((prev) =>
       prev.map((item) =>
         item.id === invoiceId ? { ...item, status: "paid", paidAt: settlementDate, paymentRail: rail } : item,

@@ -6,6 +6,7 @@ import { BuilderStrip } from "@/components/invoices/builder/builder-strip";
 import { ClientCard, ItemsCard, MetadataCard, SummaryCard } from "@/components/invoices/builder/form-cards";
 import { InvoicePreview } from "@/components/invoices/builder/invoice-preview";
 import { cn } from "@/lib/cn";
+import { issueInvoiceApi } from "@/lib/api";
 import type { InvoiceDraft, User } from "@/types/models";
 import { useI18n } from "@/lib/i18n/provider";
 
@@ -22,9 +23,18 @@ export function InvoiceBuilder({ user, draft: initialDraft }: { user: User; draf
     setTimeout(() => setToast(null), 3500);
   };
 
+  const handleIssue = async () => {
+    try {
+      await issueInvoiceApi(draft);
+    } catch (e) {
+      console.error(e);
+    }
+    window.print();
+  };
+
   return (
     <>
-      <BuilderStrip number={draft.number} saved={draft.savedAt !== null} onSave={save} onIssue={() => window.print()} />
+      <BuilderStrip number={draft.number} saved={draft.savedAt !== null} onSave={save} onIssue={handleIssue} />
 
       {/* Mobile Segmented Tab Control (< lg) */}
       <div className="flex lg:hidden rounded-xl bg-surface-low p-1 mx-1 mt-3 shadow-2xs">
@@ -83,7 +93,7 @@ export function InvoiceBuilder({ user, draft: initialDraft }: { user: User; draf
         </button>
         <button
           type="button"
-          onClick={() => window.print()}
+          onClick={handleIssue}
           className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-xs font-semibold text-white shadow-xs active:scale-95 hover:bg-primary-ink"
         >
           <ShieldCheck className="size-3.5" />
