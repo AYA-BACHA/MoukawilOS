@@ -16,7 +16,7 @@ export default async function DashboardPage() {
   const stats = computeStats(user, invoices);
 
   return (
-    <div className="flex flex-col gap-6 px-8 py-6">
+    <div className="flex flex-col gap-4 sm:gap-6">
       <DashboardHeader user={user} />
       <CeilingCard stats={stats} />
       <SecondaryKpis deadline={deadline} stats={stats} />

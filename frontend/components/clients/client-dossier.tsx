@@ -23,7 +23,7 @@ export function ClientDossier({ row, onEdit }: { row: ClientRow; onEdit: () => v
   const business = client.type === "B2B";
 
   return (
-    <div className="col-span-4 flex flex-col gap-3">
+    <div className="col-span-12 lg:col-span-4 flex flex-col gap-3">
       <section className="flex flex-col gap-3 overflow-hidden rounded-lg bg-card pb-4 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
         <div className="flex items-center justify-between gap-2 bg-surface-low px-4 pb-2 pt-3">
           <h2 className="flex items-center gap-1 text-xs font-semibold uppercase leading-4 tracking-[0.05em] text-primary-ink">

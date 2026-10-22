@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { cookies } from "next/headers";
 import { Geist, JetBrains_Mono, Noto_Sans_Arabic, Tinos } from "next/font/google";
 import { NavigationProgress } from "@/components/layout/navigation-progress";
@@ -16,6 +16,12 @@ export const metadata: Metadata = {
   description: "Fiscal OS for Algerian auto-entrepreneurs",
 };
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+};
+
 const themeInit = `try{var t=localStorage.getItem("moukawil_theme");if(t==="dark")document.documentElement.classList.add("dark");else document.documentElement.classList.remove("dark")}catch(e){}`;
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
@@ -27,7 +33,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
       </head>
-      <body className="antialiased">
+      <body className="antialiased min-h-dvh overflow-x-hidden">
         <I18nProvider initialLang={lang}>
           <NavigationProgress />
           {children}

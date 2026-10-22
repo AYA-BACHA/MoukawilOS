@@ -22,14 +22,14 @@ export function CeilingCard({ stats }: { stats: TurnoverStats }) {
 
   return (
     <>
-      <section id="tour-ceiling-card" className="relative overflow-hidden rounded-xl border border-slate-200/80 bg-card p-7 shadow-xs transition-all">
+      <section id="tour-ceiling-card" className="relative overflow-hidden rounded-xl border border-slate-200/80 bg-card p-4 sm:p-7 shadow-xs transition-all">
         <div className="flex flex-col gap-4">
           <div className="flex flex-wrap items-center justify-between gap-y-2">
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <h2 className="text-xs font-bold uppercase tracking-wider text-muted">{t("Collected Turnover")}</h2>
               <Pill className="bg-mint/50 px-2.5 py-1 text-teal">
-                <Banknote className="size-3" />
-                {t("Cash-Basis Accounting (Law 22-23)")}
+                <Banknote className="size-3 shrink-0" />
+                <span className="truncate">{t("Cash-Basis Accounting (Law 22-23)")}</span>
               </Pill>
             </div>
             <Pill className="border border-slate-200/80 bg-surface-low px-2.5 py-1 text-body">
@@ -39,14 +39,14 @@ export function CeilingCard({ stats }: { stats: TurnoverStats }) {
 
           <div className="relative flex flex-wrap items-start justify-between gap-2">
             <p className="flex items-baseline gap-2 pt-1">
-              <span className="font-num text-3xl font-extrabold tracking-tight text-ink">
+              <span className="font-num text-2xl sm:text-3xl font-extrabold tracking-tight text-ink">
                 {formatAmount(collected)}
               </span>
-              <span className="font-num text-xl font-medium text-muted">{t("DZD")}</span>
+              <span className="font-num text-lg sm:text-xl font-medium text-muted">{t("DZD")}</span>
             </p>
-            <Pill className="bg-surface-low px-3 py-1.5 font-normal text-body border border-slate-200/60">
-              <BadgeCheck className="size-3.5 text-teal" />
-              {t("Calculated from your recorded payments")}
+            <Pill className="bg-surface-low px-3 py-1.5 font-normal text-body border border-slate-200/60 text-xs">
+              <BadgeCheck className="size-3.5 text-teal shrink-0" />
+              <span className="truncate">{t("Calculated from your recorded payments")}</span>
             </Pill>
           </div>
 
@@ -60,7 +60,8 @@ export function CeilingCard({ stats }: { stats: TurnoverStats }) {
               <div className="absolute inset-y-0 start-2/4 w-px bg-card/70" />
               <div className="absolute inset-y-0 start-3/4 w-px bg-card/70" />
             </div>
-            <div className="flex justify-between px-1 pt-1 font-num text-xs">
+            {/* Desktop Milestones */}
+            <div className="hidden sm:flex justify-between px-1 pt-1 font-num text-xs">
               {milestones.map(({ label, ratio }) => (
                 <span key={label} className={ratio === 0.5 ? "font-semibold text-body" : "text-muted"}>
                   {t(label)}
@@ -68,10 +69,16 @@ export function CeilingCard({ stats }: { stats: TurnoverStats }) {
               ))}
               <span className="font-bold text-primary-ink">{t("100% ({v1} DZD Ceiling)", { v1: formatAmount(ceiling) })}</span>
             </div>
+            {/* Mobile Milestones */}
+            <div className="flex sm:hidden justify-between px-1 pt-1 font-num text-[11px]">
+              <span className="text-muted">0 DZD</span>
+              <span className="font-semibold text-body">50% (2.5M)</span>
+              <span className="font-bold text-primary-ink">100% (5M DZD)</span>
+            </div>
           </div>
 
-          <div className="flex flex-wrap items-center justify-between gap-y-3 pt-2">
-            <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+            <div className="flex flex-wrap items-center gap-2.5">
               <Pill
                 dot="size-2 bg-primary"
                 className="bg-mint px-3 py-1.5 text-xs font-bold text-accent shadow-xs ring-1 ring-emerald-600/10"
@@ -85,7 +92,7 @@ export function CeilingCard({ stats }: { stats: TurnoverStats }) {
             <button
               type="button"
               onClick={() => setShowDetails(true)}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200/80 bg-surface-low px-3 py-1.5 text-xs font-semibold text-accent transition-all duration-150 hover:border-slate-300 hover:bg-surface active:scale-95 shadow-2xs hover:shadow-xs"
+              className="inline-flex min-h-[44px] items-center gap-1.5 rounded-lg border border-slate-200/80 bg-surface-low px-3 py-2 text-xs font-semibold text-accent transition-all duration-150 hover:border-slate-300 hover:bg-surface active:scale-95 shadow-2xs hover:shadow-xs"
             >
               {t("View calculation details")}
               <ArrowRight className="rtl:-scale-x-100 size-3" />
@@ -96,25 +103,27 @@ export function CeilingCard({ stats }: { stats: TurnoverStats }) {
 
       {/* Calculation Details Modal */}
       {showDetails && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm animate-in fade-in">
-          <div className="relative w-full max-w-lg rounded-2xl border border-slate-200 bg-card p-6 shadow-2xl animate-in zoom-in-95">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-3 sm:p-4 backdrop-blur-sm animate-in fade-in">
+          <div className="relative flex max-h-[92dvh] w-full max-w-lg flex-col rounded-2xl border border-slate-200 bg-card p-4 sm:p-6 shadow-2xl animate-in zoom-in-95 overflow-hidden">
             <div className="flex items-start justify-between border-b border-slate-100 pb-3">
               <div>
                 <span className="rounded bg-mint px-1.5 py-0.5 text-[10px] font-bold text-mint-ink">
                   {t("Statutory Audit Breakdown")}
                 </span>
-                <h3 className="mt-1 text-lg font-bold text-ink">{t("Turnover Calculation Details")}</h3>
+                <h3 className="mt-1 text-base sm:text-lg font-bold text-ink">{t("Turnover Calculation Details")}</h3>
                 <p className="text-xs text-muted">{t("Algerian Law 22-23 (December 18, 2022)")}</p>
               </div>
               <button
+                type="button"
                 onClick={() => setShowDetails(false)}
-                className="rounded-lg p-1 text-muted hover:bg-slate-100 hover:text-ink"
+                aria-label={t("Close Details")}
+                className="flex size-11 items-center justify-center rounded-lg text-muted hover:bg-slate-100 hover:text-ink active:scale-95"
               >
-                <X className="size-4" />
+                <X className="size-5" />
               </button>
             </div>
 
-            <div className="mt-4 flex flex-col gap-3 text-xs">
+            <div className="mt-4 flex flex-1 flex-col gap-3 text-xs overflow-y-auto pe-1">
               <div className="flex items-center justify-between rounded-lg bg-slate-50 p-3">
                 <span className="text-body font-medium">{t("Statutory Annual Ceiling:")}</span>
                 <span className="font-num text-sm font-bold text-ink">{t("{v1} DZD", { v1: formatAmount(ceiling) })}</span>
@@ -149,10 +158,11 @@ export function CeilingCard({ stats }: { stats: TurnoverStats }) {
               </div>
             </div>
 
-            <div className="mt-5 flex justify-end">
+            <div className="mt-4 flex justify-end border-t border-slate-100 pt-3">
               <button
+                type="button"
                 onClick={() => setShowDetails(false)}
-                className="rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-primary-ink"
+                className="flex min-h-[44px] items-center justify-center rounded-lg bg-primary px-5 py-2 text-xs font-semibold text-white shadow-sm hover:bg-primary-ink active:scale-95"
               >
                 {t("Close Details")}
               </button>

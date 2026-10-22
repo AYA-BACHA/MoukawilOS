@@ -87,12 +87,12 @@ export function ReferenceVault({ statutes, cited, user, stats }: ReferenceVaultP
 
         {/* Quick Search */}
         <div className="relative">
-          <Search className="absolute start-2.5 top-2.5 size-3 text-muted" />
+          <Search className="absolute start-2.5 top-3.5 sm:top-2.5 size-3.5 sm:size-3 text-muted" />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder={t("Search Law 22-23, decrees...")}
-            className="w-full rounded-lg border border-slate-200 bg-slate-50/70 py-1.5 ps-7 pe-3 text-xs text-ink placeholder:text-muted/70 outline-none transition-all focus:border-primary focus:bg-card"
+            className="w-full min-h-[44px] sm:min-h-0 rounded-lg border border-slate-200 bg-slate-50/70 py-2 sm:py-1.5 ps-8 pe-3 text-base sm:text-xs text-ink placeholder:text-muted/70 outline-none transition-all focus:border-primary focus:bg-card"
           />
         </div>
 

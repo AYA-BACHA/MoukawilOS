@@ -3,13 +3,15 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Bell, CalendarDays, CheckCircle2, ChevronDown, Clock, Plus, RefreshCw, ShieldCheck, User as UserIcon } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { Bell, CalendarDays, CheckCircle2, ChevronDown, Clock, Menu, Plus, RefreshCw, ShieldCheck, User as UserIcon } from "lucide-react";
 import { buttonClass } from "@/components/ui/button";
 import { Pill } from "@/components/ui/pill";
 import { SelectDropdown } from "@/components/ui/select-dropdown";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { cn } from "@/lib/cn";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
+import { useMobileNav } from "@/components/layout/mobile-nav-context";
 import { useI18n } from "@/lib/i18n/provider";
 
 const yearOptions = [
@@ -18,8 +20,19 @@ const yearOptions = [
   { value: "2024", label: "FY 2024", badge: "Closed" },
 ];
 
+const pageTitles: Record<string, string> = {
+  "/dashboard": "Dashboard",
+  "/invoices": "Invoices",
+  "/invoices/new": "New Invoice",
+  "/clients": "Clients",
+  "/assistant": "Legal AI",
+  "/settings": "Settings",
+};
+
 export function Topbar({ utilization }: { utilization: number }) {
   const { t } = useI18n();
+  const pathname = usePathname();
+  const { open } = useMobileNav();
   const [fiscalYear, setFiscalYear] = useState("2026");
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -27,6 +40,8 @@ export function Topbar({ utilization }: { utilization: number }) {
   const [syncToast, setSyncToast] = useState(false);
   const notifRef = useRef<HTMLDivElement>(null);
   const userRef = useRef<HTMLDivElement>(null);
+
+  const pageTitle = pageTitles[pathname] ?? (pathname.startsWith("/invoices") ? "Invoices" : "MoukawilOS");
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -79,36 +94,71 @@ export function Topbar({ utilization }: { utilization: number }) {
   };
 
   return (
-    <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-slate-100 bg-card/95 px-6 shadow-xs backdrop-blur-md">
-      <div className="flex items-center gap-3">
-        <div id="tour-fiscal-year">
-          <SelectDropdown
-            value={fiscalYear}
-            options={yearOptions}
-            onChange={setFiscalYear}
-            icon={<CalendarDays className="size-3.5 text-accent" />}
-          />
+    <header className="sticky top-0 z-10 flex h-16 w-full items-center justify-between border-b border-slate-100 bg-card/95 px-3 sm:px-6 shadow-xs backdrop-blur-md overflow-x-clip">
+      {/* Mobile Topbar View (< lg) */}
+      <div className="flex w-full items-center justify-between gap-2 lg:hidden">
+        <div className="flex items-center gap-2 min-w-0">
+          <button
+            type="button"
+            onClick={open}
+            aria-label={t("Open Menu")}
+            className="flex size-11 shrink-0 items-center justify-center rounded-lg text-body transition-colors hover:bg-surface hover:text-ink active:scale-95"
+          >
+            <Menu className="size-5" />
+          </button>
+          <div className="flex items-center gap-2 min-w-0">
+            <Image src="/brand/monogram.png" alt="MoukawilOS" width={24} height={24} className="shrink-0" />
+            <h1 className="text-sm font-bold text-ink truncate">{t(pageTitle)}</h1>
+          </div>
         </div>
-        <button
-          type="button"
-          onClick={handleSync}
-          title={t("Recalculate Fiscal Metrics")}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200/80 bg-surface-low px-2.5 py-1.5 text-xs font-semibold text-body transition-all duration-150 hover:bg-surface hover:text-ink active:scale-95 shadow-2xs"
-        >
-          <RefreshCw className={cn("size-3.5 text-accent transition-transform", isSyncing && "animate-spin")} />
-          <span>{isSyncing ? t("Recalculating...") : t("Recalculate")}</span>
-        </button>
-        <Pill dot="size-2 bg-primary" className="bg-mint px-3 py-1 text-mint-ink shadow-xs">
-          {t("Status: {v1}% Utilized • In Compliance", { v1: Math.round(utilization * 100) })}
-        </Pill>
+
+        <div className="flex items-center gap-1.5 shrink-0">
+          <span className="rounded-full border border-amber-300 bg-amber-50 px-2 py-0.5 text-[10px] font-bold text-amber-800">
+            {t("Demo")}
+          </span>
+          <LanguageSwitcher />
+          <ThemeToggle />
+          <Link
+            href="/settings"
+            aria-label={t("Settings")}
+            className="flex size-9 items-center justify-center rounded-lg p-0.5"
+          >
+            <Image src="/brand/avatar.png" alt="" width={28} height={28} className="rounded-lg shadow-2xs" />
+          </Link>
+        </div>
       </div>
 
-      <div className="flex items-center gap-3">
-        <Pill className="border border-amber-300 bg-amber-50 text-amber-800 text-[11px] font-semibold px-2.5 py-1 shadow-2xs">
-          {t("Demo account (sample data)")}
-        </Pill>
-        <LanguageSwitcher />
-        <ThemeToggle />
+      {/* Desktop Topbar View (>= lg) */}
+      <div className="hidden w-full items-center justify-between gap-2 lg:flex min-w-0">
+        <div className="flex items-center gap-2 xl:gap-3 shrink-0">
+          <div id="tour-fiscal-year">
+            <SelectDropdown
+              value={fiscalYear}
+              options={yearOptions}
+              onChange={setFiscalYear}
+              icon={<CalendarDays className="size-3.5 text-accent" />}
+            />
+          </div>
+          <button
+            type="button"
+            onClick={handleSync}
+            title={t("Recalculate Fiscal Metrics")}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200/80 bg-surface-low px-2.5 py-1.5 text-xs font-semibold text-body transition-all duration-150 hover:bg-surface hover:text-ink active:scale-95 shadow-2xs"
+          >
+            <RefreshCw className={cn("size-3.5 text-accent transition-transform", isSyncing && "animate-spin")} />
+            <span className="hidden xl:inline">{isSyncing ? t("Recalculating...") : t("Recalculate")}</span>
+          </button>
+          <Pill dot="size-2 bg-primary" className="hidden 2xl:inline-flex bg-mint px-3 py-1 text-mint-ink shadow-xs">
+            {t("Status: {v1}% Utilized • In Compliance", { v1: Math.round(utilization * 100) })}
+          </Pill>
+        </div>
+
+        <div className="flex items-center gap-1.5 xl:gap-3 shrink-0">
+          <Pill className="hidden xl:inline-flex border border-amber-300 bg-amber-50 text-amber-800 text-[11px] font-semibold px-2.5 py-1 shadow-2xs">
+            {t("Demo account (sample data)")}
+          </Pill>
+          <LanguageSwitcher />
+          <ThemeToggle />
 
         {/* Notifications Popover */}
         <div id="tour-notifications" ref={notifRef} className="relative">
@@ -192,6 +242,7 @@ export function Topbar({ utilization }: { utilization: number }) {
             </div>
           )}
         </div>
+      </div>
       </div>
 
       {syncToast && (

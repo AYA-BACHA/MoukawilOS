@@ -69,7 +69,7 @@ export function ChatPanel({ messages, statutes, pending, onAsk }: ChatPanelProps
   const titleOf = (id: string) => statutes.find((statute) => statute.id === id)?.title ?? "";
 
   return (
-    <section className="col-span-12 lg:col-span-8 flex h-[680px] flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-card shadow-xs">
+    <section className="col-span-12 lg:col-span-8 flex h-[calc(100dvh-14rem)] min-h-[460px] lg:h-[680px] flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-card shadow-xs">
       {/* Copilot Header */}
       <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/70 px-5 py-3">
         <div className="flex items-center gap-2.5">
@@ -161,17 +161,17 @@ export function ChatPanel({ messages, statutes, pending, onAsk }: ChatPanelProps
 
       {/* Suggested Prompt Chips */}
       {messages.length <= 2 && (
-        <div className="border-t border-slate-100 bg-slate-50/50 px-5 pt-3 pb-2">
+        <div className="border-t border-slate-100 bg-slate-50/50 px-4 sm:px-5 pt-3 pb-2">
           <p className="flex items-center gap-1 text-[11px] font-medium text-muted mb-2">
             <HelpCircle className="size-3 text-accent" /> {t("Suggested Questions:")}
           </p>
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex overflow-x-auto sm:flex-wrap gap-1.5 pb-1 no-scrollbar">
             {suggestions.map((suggestion) => (
               <button
                 key={suggestion}
                 type="button"
                 onClick={() => onAsk(suggestion)}
-                className="rounded-lg border border-slate-200/80 bg-card px-2.5 py-1 text-xs text-body transition-all hover:border-slate-300 hover:bg-surface hover:text-ink active:scale-[0.98]"
+                className="whitespace-nowrap sm:whitespace-normal shrink-0 sm:shrink rounded-lg border border-slate-200/80 bg-card px-2.5 py-1 text-xs text-body transition-all hover:border-slate-300 hover:bg-surface hover:text-ink active:scale-[0.98]"
               >
                 {t(suggestion)}
               </button>
@@ -181,28 +181,28 @@ export function ChatPanel({ messages, statutes, pending, onAsk }: ChatPanelProps
       )}
 
       {/* Input Form Bar */}
-      <div className="border-t border-slate-100 bg-card p-4">
+      <div className="border-t border-slate-100 bg-card p-3 sm:p-4">
         <div className="flex items-center gap-2 rounded-xl border border-slate-300 bg-slate-50/70 p-1.5 transition-all focus-within:border-primary focus-within:bg-card focus-within:ring-2 focus-within:ring-primary/20">
           <input
             value={draft}
             onChange={(event) => setDraft(event.target.value)}
             onKeyDown={(event) => event.key === "Enter" && submit()}
             placeholder={t("Ask about your ceiling, VAT exemption, IFU, declarations...")}
-            className="flex-1 bg-transparent px-3 text-xs text-ink outline-none placeholder:text-muted/70"
+            className="flex-1 bg-transparent px-3 text-base sm:text-xs text-ink outline-none placeholder:text-muted/70"
           />
           <button
             type="button"
             aria-label={t("Send question")}
             onClick={submit}
             disabled={!draft.trim() || pending}
-            className="grid size-9 place-items-center rounded-lg bg-primary text-white shadow-xs transition-all hover:bg-primary-ink disabled:opacity-40 active:scale-95"
+            className="grid min-h-[44px] min-w-[44px] size-11 sm:size-9 place-items-center rounded-lg bg-primary text-white shadow-xs transition-all hover:bg-primary-ink disabled:opacity-40 active:scale-95"
           >
             <SendHorizontal className="size-4" />
           </button>
         </div>
-        <div className="mt-1.5 flex items-center justify-between px-1 text-[10px] text-muted">
+        <div className="mt-1.5 flex flex-col sm:flex-row sm:items-center justify-between gap-1 px-1 text-[10px] text-muted">
           <span>{t("Press Enter ↵ to send • Shift + Enter for new line")}</span>
-          <span>{t("Official 0.5% IFU & Law 22-23 references")}</span>
+          <span className="hidden sm:inline">{t("Official 0.5% IFU & Law 22-23 references")}</span>
         </div>
       </div>
     </section>

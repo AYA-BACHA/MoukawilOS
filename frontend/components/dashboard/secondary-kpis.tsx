@@ -8,9 +8,9 @@ import { Pill } from "@/components/ui/pill";
 import type { Deadline, TurnoverStats } from "@/types/models";
 import { useI18n } from "@/lib/i18n/provider";
 
-const cardClass = "flex flex-1 flex-col justify-between rounded-xl border border-slate-200/80 bg-card p-6 shadow-xs transition-all duration-200 hover:shadow-md hover:border-slate-300";
+const cardClass = "flex flex-1 flex-col justify-between rounded-xl border border-slate-200/80 bg-card p-4 sm:p-6 shadow-xs transition-all duration-200 hover:shadow-md hover:border-slate-300";
 const labelClass = "text-xs font-bold uppercase tracking-wider text-muted";
-const linkClass = "inline-flex items-center gap-1.5 rounded-lg border border-slate-200/80 bg-surface-low px-3 py-1.5 text-xs font-semibold text-accent transition-all duration-150 hover:border-slate-300 hover:bg-surface active:scale-95 shadow-2xs hover:shadow-xs";
+const linkClass = "inline-flex min-h-[44px] items-center gap-1.5 rounded-lg border border-slate-200/80 bg-surface-low px-3 py-2 text-xs font-semibold text-accent transition-all duration-150 hover:border-slate-300 hover:bg-surface active:scale-95 shadow-2xs hover:shadow-xs";
 
 export function SecondaryKpis({ deadline, stats }: { deadline: Deadline; stats: TurnoverStats }) {
   const { t, formatAmount, formatLongDate } = useI18n();
@@ -22,7 +22,7 @@ export function SecondaryKpis({ deadline, stats }: { deadline: Deadline; stats: 
 
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
         <article id="tour-statutory-deadline" className={cardClass}>
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
@@ -33,7 +33,7 @@ export function SecondaryKpis({ deadline, stats }: { deadline: Deadline; stats: 
             </div>
             <div>
               <div className="flex flex-wrap items-baseline gap-2.5">
-                <p className="font-num text-2xl font-bold tracking-tight text-ink">
+                <p className="font-num text-xl sm:text-2xl font-bold tracking-tight text-ink">
                   {formatLongDate(deadline.dueDate)}
                 </p>
                 {isExtended && (
@@ -49,7 +49,7 @@ export function SecondaryKpis({ deadline, stats }: { deadline: Deadline; stats: 
               </p>
             </div>
           </div>
-          <div className="flex items-center justify-between border-t border-slate-100 pt-4 mt-3">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 pt-3.5 mt-3">
             <button
               type="button"
               onClick={() => setShowDeclaration(true)}
@@ -74,7 +74,7 @@ export function SecondaryKpis({ deadline, stats }: { deadline: Deadline; stats: 
             </div>
             <div>
               <p className="flex items-baseline gap-1.5">
-                <span className="font-num text-2xl font-bold tracking-tight text-ink">
+                <span className="font-num text-xl sm:text-2xl font-bold tracking-tight text-ink">
                   {formatAmount(stats.pending)}
                 </span>
                 <span className="font-num text-sm font-medium text-muted">{t("DZD")}</span>
@@ -86,7 +86,7 @@ export function SecondaryKpis({ deadline, stats }: { deadline: Deadline; stats: 
               </div>
             </div>
           </div>
-          <div className="flex items-center justify-between border-t border-slate-100 pt-4 mt-3">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 pt-3.5 mt-3">
             <Link href="/invoices" className={linkClass}>
               {t("Track receivables")}
               <ArrowRight className="rtl:-scale-x-100 size-3" />
@@ -100,14 +100,14 @@ export function SecondaryKpis({ deadline, stats }: { deadline: Deadline; stats: 
 
       {/* Statutory Form G12 bis Preview Modal */}
       {showDeclaration && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm animate-in fade-in">
-          <div className="relative w-full max-w-lg rounded-2xl border border-slate-200 bg-card p-6 shadow-2xl animate-in zoom-in-95">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-3 sm:p-4 backdrop-blur-sm animate-in fade-in">
+          <div className="relative flex max-h-[92dvh] w-full max-w-lg flex-col rounded-2xl border border-slate-200 bg-card p-4 sm:p-6 shadow-2xl animate-in zoom-in-95 overflow-hidden">
             <div className="flex items-start justify-between border-b border-slate-100 pb-3">
               <div>
                 <span className="rounded bg-mint px-2 py-0.5 text-[10px] font-bold text-mint-ink">
                   {t("Statutory Tax Template (Specimen)")}
                 </span>
-                <h3 className="mt-1 text-lg font-bold text-ink">
+                <h3 className="mt-1 text-base sm:text-lg font-bold text-ink">
                   {isExtended && extended.formCode === "G12"
                     ? t("Formulaire G12 (Déclaration provisionnelle)")
                     : t("Formulaire G12 bis (Déclaration définitive & régularisation IFU)")}
@@ -115,14 +115,16 @@ export function SecondaryKpis({ deadline, stats }: { deadline: Deadline; stats: 
                 <p className="text-xs text-muted">{t("Modèle indicatif préparé selon les règles DGI • Régime Auto-Entrepreneur")}</p>
               </div>
               <button
+                type="button"
                 onClick={() => setShowDeclaration(false)}
-                className="rounded-lg p-1 text-muted hover:bg-slate-100 hover:text-ink"
+                aria-label={t("Close Preview")}
+                className="flex size-11 items-center justify-center rounded-lg text-muted hover:bg-slate-100 hover:text-ink active:scale-95"
               >
-                <X className="size-4" />
+                <X className="size-5" />
               </button>
             </div>
 
-            <div className="mt-4 flex flex-col gap-3 rounded-xl border border-slate-200/80 bg-slate-50 p-4 font-mono text-xs">
+            <div className="mt-4 flex flex-1 flex-col gap-3 rounded-xl border border-slate-200/80 bg-slate-50 p-4 font-mono text-xs overflow-y-auto">
               <div className="border-b border-slate-200 pb-2 text-center font-sans">
                 <p className="text-[11px] font-bold uppercase tracking-wider text-slate-700">{t("RÉPUBLIQUE ALGÉRIENNE DÉMOCRATIQUE ET POPULAIRE")}</p>
                 <p className="text-[10px] text-slate-500">{t("MINISTÈRE DES FINANCES — DGI (SPÉCIMEN)")}</p>
@@ -150,11 +152,11 @@ export function SecondaryKpis({ deadline, stats }: { deadline: Deadline; stats: 
               </div>
             </div>
 
-            <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-3">
+            <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
               <button
                 type="button"
                 onClick={() => window.print()}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-card px-3 py-1.5 text-xs font-medium text-ink hover:bg-slate-50"
+                className="inline-flex min-h-[44px] items-center gap-1.5 rounded-lg border border-slate-200 bg-card px-3.5 py-2 text-xs font-medium text-ink hover:bg-slate-50 active:scale-95"
               >
                 <Printer className="size-3.5" />
                 {t("Imprimer Déclaration")}
@@ -162,7 +164,7 @@ export function SecondaryKpis({ deadline, stats }: { deadline: Deadline; stats: 
               <button
                 type="button"
                 onClick={() => setShowDeclaration(false)}
-                className="rounded-lg bg-primary px-4 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-primary-ink"
+                className="flex min-h-[44px] items-center justify-center rounded-lg bg-primary px-5 py-2 text-xs font-semibold text-white shadow-sm hover:bg-primary-ink active:scale-95"
               >
                 {t("Fermer")}
               </button>

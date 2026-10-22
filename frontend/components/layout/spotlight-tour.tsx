@@ -215,7 +215,7 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
 
   // Calculate popover coordinates
   const PADDING = 8;
-  const TOOLTIP_WIDTH = 340;
+  const TOOLTIP_WIDTH = typeof window !== "undefined" ? Math.min(340, window.innerWidth - 32) : 340;
   const TOOLTIP_HEIGHT = 160;
 
   let tooltipStyle: React.CSSProperties = {
@@ -328,7 +328,7 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
       {/* Popover Card (matching user screenshot) */}
       <div
         style={tooltipStyle}
-        className="pointer-events-auto w-[340px] rounded-2xl border border-slate-100 bg-card p-5 shadow-2xl animate-in fade-in zoom-in-95 duration-200"
+        className="pointer-events-auto w-[340px] max-w-[calc(100vw-32px)] rounded-2xl border border-slate-100 bg-card p-4 sm:p-5 shadow-2xl animate-in fade-in zoom-in-95 duration-200"
       >
         {/* Caret Arrow pointing to target */}
         {targetRect && (
@@ -363,12 +363,12 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
         {/* Card Content with crossfade */}
         <div key={currentStep} className="animate-in fade-in duration-200">
           <div className="flex items-start justify-between">
-            <h4 className="text-sm font-bold tracking-tight text-slate-900">{t(step.title)}</h4>
+            <h4 className="text-sm font-bold tracking-tight text-slate-900 pe-2">{t(step.title)}</h4>
             <button
               type="button"
               onClick={onClose}
               aria-label={t("Close walkthrough")}
-              className="rounded-full p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
+              className="flex min-h-[44px] min-w-[44px] items-center justify-center -me-2 -mt-2 rounded-full p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
             >
               <X className="size-4" />
             </button>
@@ -401,7 +401,7 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
               <button
                 type="button"
                 onClick={handleBack}
-                className="rounded-full border border-slate-200 bg-card px-3 py-1 text-xs font-semibold text-slate-700 dark:text-slate-200 shadow-2xs transition-all hover:bg-slate-50 active:scale-95"
+                className="flex min-h-[44px] items-center justify-center rounded-full border border-slate-200 bg-card px-4 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 shadow-2xs transition-all hover:bg-slate-50 active:scale-95"
               >
                 {t("Back")}
               </button>
@@ -409,7 +409,7 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
             <button
               type="button"
               onClick={handleNext}
-              className="rounded-full bg-primary px-3.5 py-1 text-xs font-semibold text-white shadow-xs transition-all hover:bg-primary-ink active:scale-95"
+              className="flex min-h-[44px] items-center justify-center rounded-full bg-primary px-5 py-2 text-xs font-semibold text-white shadow-xs transition-all hover:bg-primary-ink active:scale-95"
             >
               {currentStep === TOUR_STEPS.length - 1 ? t("Finish") : t("Next")}
             </button>

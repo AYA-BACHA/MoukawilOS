@@ -1,16 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { Check, X } from "lucide-react";
+import { Bookmark, Check, ShieldCheck, X } from "lucide-react";
 import { BuilderStrip } from "@/components/invoices/builder/builder-strip";
 import { ClientCard, ItemsCard, MetadataCard, SummaryCard } from "@/components/invoices/builder/form-cards";
 import { InvoicePreview } from "@/components/invoices/builder/invoice-preview";
+import { cn } from "@/lib/cn";
 import type { InvoiceDraft, User } from "@/types/models";
 import { useI18n } from "@/lib/i18n/provider";
 
 export function InvoiceBuilder({ user, draft: initialDraft }: { user: User; draft: InvoiceDraft }) {
   const { t } = useI18n();
   const [draft, setDraft] = useState(initialDraft);
+  const [activeTab, setActiveTab] = useState<"edit" | "preview">("edit");
   const [toast, setToast] = useState<string | null>(null);
 
   const edit = (patch: Partial<InvoiceDraft>) => setDraft((current) => ({ ...current, ...patch, savedAt: null }));
@@ -23,8 +25,37 @@ export function InvoiceBuilder({ user, draft: initialDraft }: { user: User; draf
   return (
     <>
       <BuilderStrip number={draft.number} saved={draft.savedAt !== null} onSave={save} onIssue={() => window.print()} />
-      <div className="grid grid-cols-[minmax(0,5fr)_minmax(0,7fr)] items-start gap-6 px-6 py-4">
-        <div className="flex flex-col gap-4">
+
+      {/* Mobile Segmented Tab Control (< lg) */}
+      <div className="flex lg:hidden rounded-xl bg-surface-low p-1 mx-1 mt-3 shadow-2xs">
+        <button
+          type="button"
+          onClick={() => setActiveTab("edit")}
+          className={cn(
+            "flex min-h-[44px] flex-1 items-center justify-center rounded-lg text-xs font-bold transition-all active:scale-95",
+            activeTab === "edit"
+              ? "bg-card text-ink shadow-xs"
+              : "text-muted hover:text-ink"
+          )}
+        >
+          {t("Edit Invoice")}
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("preview")}
+          className={cn(
+            "flex min-h-[44px] flex-1 items-center justify-center rounded-lg text-xs font-bold transition-all active:scale-95",
+            activeTab === "preview"
+              ? "bg-card text-ink shadow-xs"
+              : "text-muted hover:text-ink"
+          )}
+        >
+          {t("Preview PDF")}
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] items-start gap-4 sm:gap-6 px-1 sm:px-4 py-3 sm:py-4">
+        <div className={cn("flex flex-col gap-4", activeTab !== "edit" && "hidden lg:flex")}>
           <ClientCard
             clientType={draft.clientType}
             client={draft.client}
@@ -35,7 +66,29 @@ export function InvoiceBuilder({ user, draft: initialDraft }: { user: User; draf
           <ItemsCard items={draft.items} onChange={(items) => edit({ items })} />
           <SummaryCard items={draft.items} />
         </div>
-        <InvoicePreview user={user} draft={draft} />
+        <div className={cn("overflow-x-auto max-w-full", activeTab !== "preview" && "hidden lg:block")}>
+          <InvoicePreview user={user} draft={draft} />
+        </div>
+      </div>
+
+      {/* Sticky Mobile Action Bar (< lg) */}
+      <div className="sticky bottom-16 lg:hidden z-20 flex items-center justify-between gap-2 rounded-xl border border-slate-200/90 bg-card/95 p-3 shadow-lg backdrop-blur-md mx-1 mb-2">
+        <button
+          type="button"
+          onClick={save}
+          className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-surface-low px-3 py-2 text-xs font-semibold text-ink active:scale-95"
+        >
+          <Bookmark className="size-3.5 text-accent" />
+          {draft.savedAt ? t("Draft Saved") : t("Save Draft")}
+        </button>
+        <button
+          type="button"
+          onClick={() => window.print()}
+          className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-xs font-semibold text-white shadow-xs active:scale-95 hover:bg-primary-ink"
+        >
+          <ShieldCheck className="size-3.5" />
+          {t("Issue PDF")}
+        </button>
       </div>
 
       {/* Save Draft Toast */}

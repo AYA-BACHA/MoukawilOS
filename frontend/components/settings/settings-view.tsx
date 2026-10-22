@@ -68,8 +68,8 @@ export function SettingsView({ user, stats }: { user: User; stats: TurnoverStats
   };
 
   return (
-    <div className="flex flex-col gap-6 px-6 pb-6 pt-4">
-      <header className="flex items-end justify-between rounded-lg bg-card p-6 shadow-[0_1px_1px_rgba(0,0,0,0.05)]">
+    <div className="flex flex-col gap-6 px-4 sm:px-6 pb-24 lg:pb-6 pt-4">
+      <header className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 rounded-lg bg-card p-4 sm:p-6 shadow-[0_1px_1px_rgba(0,0,0,0.05)]">
         <div className="flex flex-col gap-1">
           <nav className="flex items-center gap-1 text-xs font-medium uppercase tracking-[0.05em] text-body">
             {t("Fiscal OS")}
@@ -78,29 +78,29 @@ export function SettingsView({ user, stats }: { user: User; stats: TurnoverStats
             <ChevronRight className="rtl:-scale-x-100 size-2.5" />
             <span className="font-semibold text-primary-ink">{t("Statutory Profile")}</span>
           </nav>
-          <h1 className="text-[32px] font-semibold leading-10 tracking-[-0.025em] text-ink">{t("Profile & Settings")}</h1>
-          <p className="max-w-2xl text-base tracking-[-0.005em] text-body">{t("Manage your statutory identification, fiscal credentials, contact details, and invoice defaults.")}</p>
+          <h1 className="text-2xl sm:text-[32px] font-semibold leading-tight sm:leading-10 tracking-[-0.025em] text-ink">{t("Profile & Settings")}</h1>
+          <p className="max-w-2xl text-sm sm:text-base tracking-[-0.005em] text-body">{t("Manage your statutory identification, fiscal credentials, contact details, and invoice defaults.")}</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <p className="flex items-center gap-1 text-xs font-medium tracking-[0.02em] text-body">
             <RefreshCw className="size-2.5" />
             {synced ? t("Last synced just now") : t("All changes synced")}
           </p>
-          <button onClick={save} disabled={saving} className="flex items-center gap-1 rounded bg-primary px-4 py-2.5 text-sm font-medium text-white shadow-[0_1px_1px_rgba(0,0,0,0.05)] disabled:opacity-60">
+          <button onClick={save} disabled={saving} className="flex min-h-[44px] items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white shadow-[0_1px_1px_rgba(0,0,0,0.05)] disabled:opacity-60">
             <Save className="size-3.5" />
             {t("Save Changes")}
           </button>
         </div>
       </header>
 
-      <nav className="flex gap-1 overflow-auto rounded-lg bg-surface-low p-1.5 shadow-[inset_0_2px_4px_rgba(0,0,0,0.05)]">
+      <nav className="flex gap-1 overflow-x-auto rounded-lg bg-surface-low p-1.5 shadow-[inset_0_2px_4px_rgba(0,0,0,0.05)] no-scrollbar">
         {tabs.map(({ id, label, icon: Icon }) => (
           <button
             key={id}
             onClick={() => goTo(id)}
             className={cn(
-              "flex items-center gap-1 whitespace-nowrap rounded px-3 py-2 text-sm font-medium",
-              activeTab === id ? "bg-card text-primary-ink shadow-[0_1px_1px_rgba(0,0,0,0.05)]" : "text-body",
+              "flex min-h-[44px] sm:min-h-0 items-center gap-1.5 whitespace-nowrap rounded px-3 py-2 text-sm font-medium transition-colors",
+              activeTab === id ? "bg-card text-primary-ink shadow-[0_1px_1px_rgba(0,0,0,0.05)]" : "text-body hover:text-ink",
             )}
           >
             <Icon className="size-[15px]" strokeWidth={1.75} />
@@ -109,29 +109,29 @@ export function SettingsView({ user, stats }: { user: User; stats: TurnoverStats
         ))}
       </nav>
 
-      <div className="grid grid-cols-12 items-start gap-6">
-        <div className="col-span-8 flex flex-col gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 items-start gap-6">
+        <div className="col-span-1 lg:col-span-8 flex flex-col gap-6">
           <IdentificationSection user={user} />
           <ContactSection values={values} onChange={update} />
           <InvoicingSection values={values} onChange={update} />
         </div>
-        <div className="col-span-4 flex flex-col gap-6">
+        <div className="col-span-1 lg:col-span-4 flex flex-col gap-6">
           <CeilingPanel user={user} stats={stats} />
           <PassCard user={user} />
           <AuditPanel user={user} />
         </div>
       </div>
 
-      <div className="sticky bottom-4 z-10 flex items-center justify-between rounded-lg bg-card p-4 shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_8px_10px_-6px_rgba(0,0,0,0.1)]">
+      <div className="sticky bottom-20 lg:bottom-4 z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-lg bg-card p-4 shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_8px_10px_-6px_rgba(0,0,0,0.1)]">
         <p className="flex items-center gap-2 text-xs tracking-[0.01em] text-body">
           <Info className="size-4 shrink-0 text-accent" />
           {t("Any modification to your legal name, NIF, or statutory activity code requires formal ANAE re-validation.")}
         </p>
-        <div className="flex items-center gap-3">
-          <button onClick={() => setValues(saved)} disabled={!dirty} className="rounded bg-surface px-4 py-2.5 text-sm font-medium text-ink disabled:opacity-50">
+        <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+          <button onClick={() => setValues(saved)} disabled={!dirty} className="flex min-h-[44px] items-center justify-center rounded-lg bg-surface px-4 py-2 text-sm font-medium text-ink disabled:opacity-50">
             {t("Discard Changes")}
           </button>
-          <button onClick={save} disabled={saving || !dirty} className="flex items-center gap-1 rounded bg-primary px-6 py-2.5 text-sm font-medium text-white shadow-[0_1px_1px_rgba(0,0,0,0.05)] disabled:opacity-60">
+          <button onClick={save} disabled={saving || !dirty} className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-lg bg-primary px-6 py-2 text-sm font-medium text-white shadow-[0_1px_1px_rgba(0,0,0,0.05)] disabled:opacity-60">
             <Check className="size-3.5" />
             {t("Save Changes")}
           </button>

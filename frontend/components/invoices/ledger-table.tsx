@@ -30,7 +30,120 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
 
   return (
     <>
-      <div className="overflow-x-auto">
+      {/* Mobile Stacked Card View (< md) */}
+      <div className="flex flex-col gap-3 md:hidden">
+        {invoices.length === 0 ? (
+          <div className="rounded-xl border border-slate-100 bg-card p-8 text-center shadow-xs">
+            <div className="mx-auto flex size-10 items-center justify-center rounded-full bg-mint text-accent">
+              <FileText className="size-5" />
+            </div>
+            <p className="mt-2 text-sm font-semibold text-ink">{t("No commercial records found")}</p>
+            <p className="mt-1 text-xs text-muted">
+              {t("No invoices match the current filter. Create your first compliant 0% VAT invoice.")}
+            </p>
+            <Link
+              href="/invoices/new"
+              className="mt-3 inline-flex min-h-[44px] items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs"
+            >
+              <Plus className="size-3.5" />
+              {t("Create New Invoice")}
+            </Link>
+          </div>
+        ) : (
+          invoices.map((invoice) => {
+            const status = statusStyles[invoice.status];
+            const isDraft = invoice.status === "draft";
+            return (
+              <div
+                key={invoice.id}
+                className={cn(
+                  "flex flex-col gap-3 rounded-xl border border-slate-200/80 bg-card p-4 shadow-xs transition-all",
+                  isDraft && "opacity-90",
+                )}
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-num text-sm font-bold text-ink">{invoice.number}</span>
+                  <span
+                    className={cn(
+                      "inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-medium",
+                      status.pill,
+                    )}
+                  >
+                    <span className={cn("size-1.5 rounded-full", status.dot)} />
+                    {t(status.label)}
+                  </span>
+                </div>
+
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-bold text-ink truncate">{invoice.client.name}</p>
+                    <div className="flex items-center gap-2 pt-0.5 text-xs text-muted">
+                      <span className="rounded bg-surface-low px-1.5 py-0.2 font-semibold text-[10px] text-teal">
+                        {invoice.client.type}
+                      </span>
+                      <span className="truncate">{clientDetail(invoice.client)}</span>
+                    </div>
+                  </div>
+                  <div className="text-end shrink-0">
+                    <p className="font-num text-base font-bold text-ink">
+                      {formatAmount(invoice.amount)} <span className="text-xs font-normal text-muted">{t("DZD")}</span>
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between gap-2 border-t border-slate-100 pt-2 text-xs text-muted">
+                  <span>{t("Issued: {d}", { d: formatDate(invoice.issueDate) })}</span>
+                  <span>{t("Due: {d}", { d: formatDate(invoice.dueDate) })}</span>
+                </div>
+
+                <div className="flex flex-wrap items-center justify-end gap-2 border-t border-slate-100 pt-2">
+                  {invoice.status === "pending" && (
+                    <button
+                      type="button"
+                      onClick={() => onMarkPaid(invoice.id)}
+                      className="inline-flex min-h-[44px] items-center gap-1 rounded-lg bg-primary px-3.5 py-2 text-xs font-semibold text-white shadow-xs active:scale-95"
+                    >
+                      <Check className="size-3.5" />
+                      {t("Mark Paid")}
+                    </button>
+                  )}
+                  {invoice.status === "paid" && (
+                    <button
+                      type="button"
+                      onClick={() => setViewingReceipt(invoice)}
+                      className="inline-flex min-h-[44px] items-center gap-1 rounded-lg border border-slate-200 bg-surface-low px-3.5 py-2 text-xs font-medium text-body active:scale-95"
+                    >
+                      <FileDown className="size-3.5 text-accent" />
+                      {t("Receipt")}
+                    </button>
+                  )}
+                  {isDraft && (
+                    <>
+                      <Link
+                        href={`/invoices/new?client=${invoice.client.id}`}
+                        className="inline-flex min-h-[44px] items-center rounded-lg border border-slate-200 bg-surface-low px-3.5 py-2 text-xs font-medium text-body active:scale-95"
+                      >
+                        {t("Edit Draft")}
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={() => onDeleteDraft(invoice.id)}
+                        className="inline-flex min-h-[44px] items-center rounded-lg p-2.5 text-red-600 hover:bg-red-50 active:scale-95"
+                        aria-label={t("Delete Draft")}
+                      >
+                        <Trash2 className="size-4" />
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* Desktop Table View (>= md) */}
+      <div className="hidden overflow-x-auto md:block">
         <table className="w-full text-start">
           <thead className="border-b border-slate-100 bg-surface-low/80">
             <tr>
@@ -204,8 +317,8 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
 
       {/* Official Receipt Voucher Modal */}
       {viewingReceipt && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm animate-in fade-in">
-          <div className="relative w-full max-w-md rounded-2xl border border-slate-200 bg-card p-6 shadow-2xl animate-in zoom-in-95">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-3 sm:p-4 backdrop-blur-sm animate-in fade-in">
+          <div className="relative flex max-h-[92dvh] w-full max-w-md flex-col rounded-2xl border border-slate-200 bg-card p-4 sm:p-6 shadow-2xl animate-in zoom-in-95 overflow-hidden">
             <div className="flex items-start justify-between border-b border-slate-100 pb-3">
               <div>
                 <span className="rounded bg-mint px-2 py-0.5 text-[10px] font-bold text-mint-ink">
@@ -215,14 +328,16 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
                 <p className="text-xs text-muted">{t("Invoice Ref: #{number}", { number: viewingReceipt.number })}</p>
               </div>
               <button
+                type="button"
                 onClick={() => setViewingReceipt(null)}
-                className="rounded-lg p-1 text-muted hover:bg-slate-100 hover:text-ink"
+                aria-label={t("Close Receipt")}
+                className="flex size-11 items-center justify-center rounded-lg text-muted hover:bg-slate-100 hover:text-ink active:scale-95"
               >
-                <X className="size-4" />
+                <X className="size-5" />
               </button>
             </div>
 
-            <div className="mt-4 flex flex-col gap-2.5 rounded-xl border border-slate-200 bg-slate-50/80 p-4 font-mono text-xs">
+            <div className="mt-4 flex flex-1 flex-col gap-2.5 rounded-xl border border-slate-200 bg-slate-50/80 p-4 font-mono text-xs overflow-y-auto">
               <div className="flex justify-between py-1 border-b border-slate-200/80">
                 <span className="text-slate-600">{t("Client:")}</span>
                 <span className="font-bold text-slate-900">{viewingReceipt.client.name}</span>
@@ -246,21 +361,21 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
               <span>{t("Recognized in Statutory Turnover under cash-basis rules (Law 22-23). 0% VAT strictly applied.")}</span>
             </div>
 
-            <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-3">
-              <button
-                type="button"
-                onClick={() => window.print()}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-card px-3 py-1.5 text-xs font-semibold text-ink hover:bg-slate-50"
-              >
-                <Printer className="size-3.5" />
-                {t("Print Voucher")}
-              </button>
+            <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
               <button
                 type="button"
                 onClick={() => setViewingReceipt(null)}
-                className="rounded-lg bg-primary px-4 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-primary-ink"
+                className="flex min-h-[44px] items-center justify-center rounded-xl border border-slate-200 bg-surface-low px-4 py-2 text-xs font-semibold text-ink shadow-2xs hover:bg-surface active:scale-95"
               >
                 {t("Close")}
+              </button>
+              <button
+                type="button"
+                onClick={() => window.print()}
+                className="inline-flex min-h-[44px] items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-primary-ink active:scale-95 transition-all"
+              >
+                <Printer className="size-3.5" />
+                {t("Print Voucher")}
               </button>
             </div>
           </div>

@@ -22,7 +22,7 @@ export function InvoicingSection({ values, onChange }: InvoicingSectionProps) {
       title={t("Invoicing Defaults & Numbering Rules")}
       subtitle={t("Statutory sequences, payment terms, and automated PDF footer statements")}
     >
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <SettingField label={t("Invoice series prefix")} hint={t("Fiscal Year identifier token.")}>
           <input className={cn(controlClass, "font-num font-bold")} value={values.invoicePrefix} onChange={(event) => onChange({ invoicePrefix: event.target.value })} />
         </SettingField>
@@ -46,7 +46,7 @@ export function InvoicingSection({ values, onChange }: InvoicingSectionProps) {
             <ChevronDown className="pointer-events-none absolute end-3 top-3.5 size-3 text-body" />
           </span>
         </SettingField>
-        <SettingField label={t("Statutory ledger currency")} hint={t("Executive Decree 23-197 obligates all domestic transactions to be invoiced and logged in Dinar.")} className="col-span-3">
+        <SettingField label={t("Statutory ledger currency")} hint={t("Executive Decree 23-197 obligates all domestic transactions to be invoiced and logged in Dinar.")} className="col-span-1 sm:col-span-3">
           <ReadOnly
             trailing={
               <span className="flex items-center gap-1 text-xs font-medium tracking-[0.02em] text-muted">
@@ -59,8 +59,8 @@ export function InvoicingSection({ values, onChange }: InvoicingSectionProps) {
             <span className="font-num font-bold text-primary-ink">{t("DZD (Algerian Dinar)")}</span>
           </ReadOnly>
         </SettingField>
-        <div className="col-span-3 flex flex-col gap-2">
-          <div className="flex items-center justify-between">
+        <div className="col-span-1 sm:col-span-3 flex flex-col gap-2">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
             <label htmlFor="exemption-clause" className="text-xs font-semibold uppercase tracking-[0.05em] text-body">
               {t("Mandatory statutory exemption clause")}
             </label>
@@ -72,12 +72,12 @@ export function InvoicingSection({ values, onChange }: InvoicingSectionProps) {
           <textarea
             id="exemption-clause"
             rows={3}
-            className="w-full resize-none rounded bg-surface-low px-3 py-3 text-xs leading-[19.5px] tracking-[0.01em] text-ink shadow-[inset_0_2px_4px_rgba(0,0,0,0.05)] outline-none focus:ring-2 focus:ring-primary/30"
+            className="w-full resize-none rounded-lg bg-surface-low px-3.5 py-3 text-base sm:text-xs leading-relaxed tracking-[0.01em] text-ink shadow-[inset_0_2px_4px_rgba(0,0,0,0.05)] outline-none focus:ring-2 focus:ring-primary/30"
             value={values.exemptionClause}
             onChange={(event) => onChange({ exemptionClause: event.target.value })}
           />
           <p className="flex items-center gap-1 text-xs font-medium tracking-[0.02em] text-teal">
-            <ShieldCheck className="size-3.5" />
+            <ShieldCheck className="size-3.5 shrink-0" />
             {t("Statutory legal safeguard to avoid withholding taxes during B2B invoicing")}
           </p>
         </div>

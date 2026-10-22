@@ -69,30 +69,31 @@ export function InvoicesLedger({ user, invoices: initialInvoices, initialQuery =
     };
 
   return (
-    <div className="flex flex-col gap-6 px-6 py-6">
-      <div className="flex items-center justify-between">
+    <div className="flex flex-col gap-4 sm:gap-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
             <span className="text-xs font-medium uppercase tracking-[0.05em] text-muted">{t("Fiscal Ledger")}</span>
             <span className="size-1.5 rounded-full bg-hairline" />
             <span className="font-num text-xs text-teal">{t("Decree 23-197 Compliant")}</span>
           </div>
-          <h1 className="text-[32px] font-semibold leading-10 tracking-[-0.025em] text-ink">{t("Invoices & Revenue")}</h1>
-          <p className="max-w-2xl text-sm text-body">
+          <h1 className="text-2xl sm:text-[32px] font-semibold leading-tight sm:leading-10 tracking-[-0.025em] text-ink">{t("Invoices & Revenue")}</h1>
+          <p className="max-w-2xl text-xs sm:text-sm text-body">
             {t("Manage commercial invoices, record client payments, and track statutory cash-basis turnover under Law 22-23.")}
           </p>
         </div>
-        <div className="flex items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2.5">
           <button
+            type="button"
             onClick={() => downloadLedgerCsv(filtered)}
-            className="flex items-center gap-1.5 rounded-lg border border-slate-200/80 bg-surface-low hover:bg-surface px-3.5 py-2 text-xs font-semibold text-ink shadow-xs transition-all hover:border-slate-300 active:scale-[0.98]"
+            className="flex min-h-[44px] items-center gap-1.5 rounded-lg border border-slate-200/80 bg-surface-low hover:bg-surface px-4 py-2 text-xs font-semibold text-ink shadow-xs transition-all hover:border-slate-300 active:scale-[0.98]"
           >
             <Download className="size-3.5 text-accent" />
             {t("Export Ledger (CSV)")}
           </button>
           <Link
             href="/invoices/new"
-            className="flex items-center gap-1.5 rounded-lg bg-primary hover:bg-primary-ink px-3.5 py-2 text-xs font-semibold text-white shadow-xs transition-all active:scale-[0.98]"
+            className="flex min-h-[44px] items-center gap-1.5 rounded-lg bg-primary hover:bg-primary-ink px-4 py-2 text-xs font-semibold text-white shadow-xs transition-all active:scale-[0.98]"
           >
             <Plus className="size-3.5" />
             {t("New Invoice")}

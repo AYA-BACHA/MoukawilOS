@@ -87,24 +87,32 @@ export function ClientsDirectory({ clients: initialClients, invoices }: { client
   ];
 
   return (
-    <div className="flex flex-col gap-6 p-6">
-      <div className="flex items-center justify-between">
+    <div className="flex flex-col gap-4 sm:gap-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex flex-col">
           <p className="flex items-center gap-1 pb-1 text-xs font-medium uppercase tracking-[0.05em]">
             <span className="text-teal">{t("Statutory Database")}</span>
             <span className="text-muted">/</span>
             <span className="text-teal">{t("Fiscal Registry")}</span>
           </p>
-          <h1 className="text-[32px] font-semibold leading-10 tracking-[-0.025em] text-ink">{t("Clients Directory")}</h1>
-          <p className="max-w-lg pt-0.5 text-sm text-body">{t("Manage verified B2B corporate entities and B2C individual clients with statutory tax identification.")}</p>
+          <h1 className="text-2xl sm:text-[32px] font-semibold leading-tight sm:leading-10 tracking-[-0.025em] text-ink">{t("Clients Directory")}</h1>
+          <p className="max-w-lg pt-0.5 text-xs sm:text-sm text-body">{t("Manage verified B2B corporate entities and B2C individual clients with statutory tax identification.")}</p>
         </div>
-        <div className="flex items-center gap-2">
-          <button onClick={() => downloadClientsCsv(filtered)} className="flex items-center gap-1 rounded bg-surface px-3 py-2 text-sm font-medium text-ink">
-            <Download className="size-3" />
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() => downloadClientsCsv(filtered)}
+            className="flex min-h-[44px] items-center gap-1.5 rounded-lg bg-surface px-4 py-2 text-xs font-medium text-ink active:scale-95 shadow-2xs"
+          >
+            <Download className="size-3.5" />
             {t("Export Registry")}
           </button>
-          <button onClick={() => setModal("new")} className="flex items-center gap-1 rounded bg-primary px-4 py-2 text-sm font-medium text-white shadow-[0_1px_1px_rgba(0,0,0,0.05)]">
-            <Plus className="size-3" />
+          <button
+            type="button"
+            onClick={() => setModal("new")}
+            className="flex min-h-[44px] items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs active:scale-95 hover:bg-primary-ink"
+          >
+            <Plus className="size-3.5" />
             {t("Add New Client")}
           </button>
         </div>
@@ -112,26 +120,27 @@ export function ClientsDirectory({ clients: initialClients, invoices }: { client
 
       <ClientMetrics metrics={metrics} />
 
-      <div className="flex items-center gap-3 rounded-lg bg-card p-3 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
-        <div className="flex rounded bg-surface-low p-1">
+      <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3 rounded-xl border border-slate-100 bg-card p-3 shadow-xs">
+        <div className="flex w-full md:w-auto overflow-x-auto rounded-lg bg-surface-low p-1">
           {tabs.map(({ value, label, count }) => (
             <button
               key={value}
+              type="button"
               onClick={() => reset(setType)(value)}
-              className={cn("whitespace-nowrap rounded px-3 py-1.5 text-sm", type === value ? "bg-card font-semibold text-primary-ink shadow-[0_1px_1px_rgba(0,0,0,0.05)]" : "font-medium text-body")}
+              className={cn("flex min-h-[36px] shrink-0 items-center whitespace-nowrap rounded px-3 py-1.5 text-xs", type === value ? "bg-card font-bold text-primary-ink shadow-xs" : "font-medium text-body")}
             >
               {t(label)} ({count})
             </button>
           ))}
         </div>
-        <div className="flex flex-1 items-center justify-end gap-2">
-          <label className="relative min-w-60 max-w-xs flex-1">
+        <div className="flex w-full flex-1 flex-wrap items-center justify-start md:justify-end gap-2">
+          <label className="relative min-w-full sm:min-w-60 max-w-xs flex-1">
             <Search className="absolute start-3.5 top-1/2 size-[13px] -translate-y-1/2 text-body" />
             <input
               value={query}
               onChange={(event) => reset(setQuery)(event.target.value)}
               placeholder={t("Search client name, NIF, RC, or contact email...")}
-              className="h-10 w-full rounded bg-surface-low ps-9 pe-3 text-sm text-ink outline-none placeholder:text-muted focus:ring-2 focus:ring-primary/30"
+              className="h-10 w-full rounded-lg bg-surface-low ps-9 pe-3 text-base sm:text-xs text-ink outline-none placeholder:text-muted focus:ring-2 focus:ring-primary/30"
             />
           </label>
           <SelectDropdown label={t("Sort:")} value={sort} options={sortOptions} onChange={reset(setSort)} />
