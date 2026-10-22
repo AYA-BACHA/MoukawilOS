@@ -16,14 +16,17 @@ Statutory compliance under Law 22-23 and Executive Decree 23-197 &nbsp;|&nbsp; S
 ![Python](https://img.shields.io/badge/Python_3.11-3776AB?logo=python&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL_15-4169E1?logo=postgresql&logoColor=white)
 ![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?logo=supabase&logoColor=white)
+![Vercel](https://img.shields.io/badge/Vercel-Frontend_Deployment-000000?logo=vercel&logoColor=white)
+![Render](https://img.shields.io/badge/Render-Backend_API-46E3B7?logo=render&logoColor=black)
+![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-Automated_CI-2088FF?logo=githubactions&logoColor=white)
 ![License](https://img.shields.io/badge/License-Proprietary-red.svg)
 
 <img src="docs/screenshots/hero.png" alt="MoukawilOS Dashboard" width="860">
 
 </div>
 
-> **Notice on Workspace vs. Document Localization:**  
-> The MoukawilOS web application user interface is engineered strictly in **English** to guarantee international evaluator accessibility, standardized UX ergonomics, and clean developer readability. In contrast, generated export invoices (the official legal PDF documents issued to Algerian commercial entities, domestic clients, and tax authorities) support complete multilingual rendering in **Arabic (with native right-to-left layout and glyph shaping)**, **French**, and **English**.
+> **Notice on Workspace Theme & Localization:**  
+> The MoukawilOS web application user interface boots natively in an institutional, high-contrast **Light Mode** by default (with Dark Mode available on demand via the header toggle) and is engineered in **English** to guarantee international evaluator accessibility, standardized UX ergonomics, and clean developer readability. In contrast, generated export invoices (the official legal PDF documents issued to Algerian commercial entities, domestic clients, and tax authorities) support complete multilingual rendering in **Arabic (with native right-to-left layout and glyph shaping)**, **French**, and **English**.
 
 ---
 
@@ -85,8 +88,8 @@ MoukawilOS unifies cash-basis accounting, sequential invoicing, automated fiscal
 | **Regulatory RAG Assistant** | Semantic legal retrieval engine grounded in official Algerian statutes (*Loi 22-23*, *Décret 23-197*, *CIDTA*). Attributes answers to specific legal articles with deterministic refusal fallback on out-of-scope queries. | Assistant: English / French / Arabic queries | Completed |
 | **Statutory Credit Notes (Avoirs)** | Generates linked credit notes (`AV-YYYY-NNN`) to correct billing errors or process refunds on finalized invoices without breaking sequential numbering or deleting historical records. | Workspace & PDF: Multilingual | Completed |
 | **Instant Guest Sandbox** | Zero-friction evaluation mode providing a pre-seeded, isolated test account with realistic clients, invoices, and turnover data for instant reviewer verification. | Workspace: English UI | Completed |
-| **Automated Bank Statement Ingestion** | Ingestion pipeline for parsing domestic bank and postal statements (BaridiMob / CCP / SATIM) to automatically match bank credits to issued invoices. | Integrations: Ingest / Parser | In Active Development |
-| **Pre-filled G12 / G12 bis Tax Forms** | Direct PDF compilation of official Direction Générale des Impôts (DGI) tax forms pre-populated from the annual cash-basis ledger. | Export Output: Official DGI Forms | In Active Development |
+| **Automated Bank Statement Ingestion** | Ingestion pipeline for parsing domestic bank and postal statements (BaridiMob / CCP / SATIM) to automatically match bank credits to issued invoices. | Integrations: Ingest / Parser | Target Milestone / Post-MVP (Month 1 Closed Beta) |
+| **Pre-filled G12 / G12 bis Tax Forms** | Direct PDF compilation of official Direction Générale des Impôts (DGI) tax forms pre-populated from the annual cash-basis ledger. | Export Output: Official DGI Forms | Target Milestone / Post-MVP (Month 1 Closed Beta) |
 
 ---
 
@@ -163,6 +166,8 @@ flowchart TD
     FastAPI -->|Invoice Data Payloads| PDF
     RAG -->|Vector Cosine Search| DB
 ```
+
+> **Deployment:** Frontend on Vercel · Backend API on Cloud/Render · Automated CI via GitHub Actions (`.github/workflows/ci.yml`)
 
 ---
 
@@ -417,6 +422,7 @@ MoukawilOS standardizes on a modern, decoupled web architecture:
 | **Vector Search Engine** | **pgvector** | HNSW cosine index (`vector(1536)`) | Semantic legal similarity search over chunked Algerian statutory texts embedded directly inside PostgreSQL. |
 | **Document Compilation** | **Multilingual A4 Renderer & PDF Engine** | DIN 476 / ISO 216 Engine, ReportLab | Standardized legal invoice export supporting Arabic bidirectional text shaping (`arabic-reshaper`, `python-bidi`), French, and English. |
 | **Testing & CI/CD** | **TypeScript & GitHub Actions** | TypeScript 5, GitHub Workflows | Typechecking, CI validation workflows (`.github/workflows/ci.yml`), and fiscal test coverage. |
+| **CI/CD & Deployment** | **Vercel, Render & GitHub Actions** | Production Cloud Pipelines | Deployment: Frontend on Vercel · Backend API on Cloud/Render · Automated CI via GitHub Actions (.github/workflows/ci.yml) |
 
 ---
 
@@ -607,7 +613,7 @@ Moukawil-OS/
 
 | Team Member | Engineering Role | Core Contributions |
 |---|---|---|
-| **Bacha Aya** | **Product Lead & Frontend Architecture** | Product vision and specifications; Next.js 16 architecture; client state machine; multilingual invoice compilation (Arabic RTL glyph shaping, French, English); design-system implementation. |
+| **Bacha Aya** | **Founder & Project Lead · Full-Stack & System Architecture** | Product vision and specifications; Next.js 16 architecture; client state machine; multilingual invoice compilation (Arabic RTL glyph shaping, French, English); design-system implementation. |
 | **Core Engineering Team** | **Systems Architecture & Fiscal Engine** | FastAPI backend architecture; Pydantic v2 deterministic `Decimal` fiscal calculation engine; PostgreSQL schema design with Row-Level Security (RLS); invoice immutability database triggers; sequential numbering engine (`FA-YYYY-NNN`). |
 | **Data & AI Engineering Team** | **Regulatory Intelligence & Infrastructure** | Article-boundary legal chunking pipeline; `pgvector` HNSW index configuration; deterministic refusal fallback guardrails; 25-query golden benchmark evaluation suite; Vercel and Render deployment pipelines. |
 
@@ -629,7 +635,7 @@ We maintain complete transparency regarding the role of Artificial Intelligence 
 We believe rigorous engineering requires transparently documenting technical constraints and deliberate architectural trade-offs:
 
 1. **Manual Payment Settlement Confirmation:**
-   Algerian financial institutions and postal systems (*SATIM*, *BaridiMob*, *CCP*) do not currently offer public developer APIs or automated webhook notifications for individual accounts. As a result, invoice payment settlement requires the user to manually click "Record Payment" and enter the transaction date and settlement channel. Automated bank statement parsing (CSV/OCR) is in active development to streamline this step.
+   Algerian financial institutions and postal systems (*SATIM*, *BaridiMob*, *CCP*) do not currently offer public developer APIs or automated webhook notifications for individual accounts. As a result, invoice payment settlement requires the user to manually click "Record Payment" and enter the transaction date and settlement channel. Automated bank statement parsing (CSV/OCR) is scheduled for the Month 1 Closed Beta target milestone to streamline this step.
 
 2. **Single-User Workspace Scope:**
    The MVP is architected for single-operator accounts. Multi-user enterprise delegation, sub-contractor permission tiers, and external accountant portal access are outside the MVP scope and slated for future releases.
@@ -651,13 +657,11 @@ We believe rigorous engineering requires transparently documenting technical con
 flowchart LR
     P1["<strong>Phase 1: MVP Core</strong><br/><em>[Completed]</em><br/>• Cash-basis turnover tracker<br/>• 5M DA ceiling & 80% warning<br/>• Multilingual PDF invoices<br/>• Regulatory RAG assistant"]
     
-    P2["<strong>Phase 2: Declarations</strong><br/><em>[Q3 2026]</em><br/>• Pre-filled DGI G12 / G12 bis<br/>• Official tax PDF exports<br/>• Accountant fiscal package"]
+    P2["<strong>Target Milestone / Post-MVP</strong><br/><em>[Month 1 Closed Beta]</em><br/>• Pre-filled DGI G12 / G12 bis<br/>• Bank statement ingestion<br/>• Accountant fiscal package"]
     
-    P3["<strong>Phase 3: Banking Ingest</strong><br/><em>[Q4 2026]</em><br/>• BaridiMob statement parsing<br/>• CCP & bank CSV reconciliation<br/>• Auto-match settled payments"]
-    
-    P4["<strong>Phase 4: Integrations</strong><br/><em>[2027]</em><br/>• DGI Jibayatic API integration<br/>• Direct CASNOS portal bridge<br/>• Multi-operator workspaces"]
+    P3["<strong>Future Integrations</strong><br/><em>[2027]</em><br/>• DGI Jibayatic API integration<br/>• Direct CASNOS portal bridge<br/>• Multi-operator workspaces"]
 
-    P1 --> P2 --> P3 --> P4
+    P1 --> P2 --> P3
 ```
 
 - **Phase 1: MVP Core (Completed):**
@@ -667,16 +671,15 @@ flowchart LR
   - Deterministic IFU and CASNOS calculation engine.
   - Regulatory RAG microservice with legal citations and deterministic refusal fallback.
 
-- **Phase 2: Compliance Exports (Q3 2026):**
-  - One-click compilation of pre-filled official DGI Série G n° 12 and G n° 12 bis PDF tax declarations.
-  - Annual fiscal summary export package for certified accountants.
+- **Target Milestone / Post-MVP (Month 1 Closed Beta):**
+  - **Pre-filled G12 / G12 bis Tax Forms:** One-click compilation of pre-filled official Direction Générale des Impôts (DGI) Série G n° 12 and G n° 12 bis PDF tax declarations pre-populated directly from the annual cash-basis ledger.
+  - **Automated Bank Statement Ingestion:** Ingestion pipeline for parsing domestic bank and postal statements (BaridiMob / CCP / SATIM CSV and PDF exports) to automatically match bank credits to issued invoices.
+  - **Accountant Export Package:** Annual fiscal and ledger audit export package for certified accountants.
 
-- **Phase 3: Banking & Settlement Ingestion (Q4 2026):**
-  - Semi-automated bank statement parsing (BaridiMob and bank statement CSV/PDF imports).
-  - Automated reconciliation suggestions matching statement credits to outstanding issued invoices.
-
-- **Phase 4: Official Digital Tax Portal Integration (2027):**
+- **Future Scope: Official Digital Tax Portal Integration (2027):**
   - Direct integration with emerging national tax platforms (DGI Jibayatic) as public administrative APIs become available.
+  - Direct CASNOS social security portal verification bridge.
+  - Multi-operator workspace delegations.
 
 ---
 

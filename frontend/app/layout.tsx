@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   description: "Fiscal OS for Algerian auto-entrepreneurs",
 };
 
-const themeInit = `try{var t=localStorage.getItem("moukawil_theme");if(t==="dark"||(!t&&matchMedia("(prefers-color-scheme: dark)").matches))document.documentElement.classList.add("dark")}catch(e){}`;
+const themeInit = `try{var t=localStorage.getItem("moukawil_theme");if(t==="dark")document.documentElement.classList.add("dark");else document.documentElement.classList.remove("dark")}catch(e){}`;
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const stored = (await cookies()).get(LANG_COOKIE)?.value;
