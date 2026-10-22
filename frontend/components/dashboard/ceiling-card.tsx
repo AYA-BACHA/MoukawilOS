@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { AlertTriangle, ArrowRight, BadgeCheck, Banknote, CheckCircle, Info, X } from "lucide-react";
+import { AlertTriangle, ArrowRight, BadgeCheck, Banknote, Calculator, CheckCircle, Info, ShieldCheck, X } from "lucide-react";
 import { Pill } from "@/components/ui/pill";
 
 import type { TurnoverStats } from "@/types/models";
@@ -20,6 +20,12 @@ export function CeilingCard({ stats }: { stats: TurnoverStats }) {
   const { utilization, remaining, ceiling, collected, pending } = stats;
   const percent = Math.round(utilization * 100);
 
+  // Algerian Law 22-23 statutory tax rules
+  const rawIfu = collected * 0.005;
+  const ifuTax = Math.max(10000, rawIfu);
+  const casnos = 24000;
+  const totalStateObligations = ifuTax + casnos;
+
   return (
     <>
       <section id="tour-ceiling-card" className="relative overflow-hidden rounded-xl border border-slate-200/80 bg-card p-4 sm:p-7 shadow-xs transition-all">
@@ -32,9 +38,15 @@ export function CeilingCard({ stats }: { stats: TurnoverStats }) {
                 <span className="truncate">{t("Cash-Basis Accounting (Law 22-23)")}</span>
               </Pill>
             </div>
-            <Pill className="border border-slate-200/80 bg-surface-low px-2.5 py-1 text-body">
-              {t("Statutory Cap:")} <span className="font-num text-sm font-bold text-ink">{t("{v1} DZD", { v1: formatAmount(ceiling) })}</span>
-            </Pill>
+            <div className="flex flex-wrap items-center gap-2">
+              <Pill className="border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-900 shadow-2xs">
+                <Calculator className="size-3 text-emerald-600 shrink-0" />
+                <span>{t("Tax Payable (IFU):")} <strong className="font-num font-bold text-emerald-950">{formatAmount(ifuTax)} DZD</strong></span>
+              </Pill>
+              <Pill className="border border-slate-200/80 bg-surface-low px-2.5 py-1 text-body">
+                {t("Statutory Cap:")} <span className="font-num text-sm font-bold text-ink">{t("{v1} DZD", { v1: formatAmount(ceiling) })}</span>
+              </Pill>
+            </div>
           </div>
 
           <div className="relative flex flex-wrap items-start justify-between gap-2">
@@ -171,6 +183,26 @@ export function CeilingCard({ stats }: { stats: TurnoverStats }) {
               <div className="flex items-center justify-between rounded-lg bg-surface-low p-3">
                 <span className="text-body font-medium">{t("Available Headroom:")}</span>
                 <span className="font-num text-sm font-bold text-accent">{t("{v1} DZD ({v2}%)", { v1: formatAmount(remaining), v2: 100 - percent })}</span>
+              </div>
+
+              {/* Fiscal & Social Breakdown */}
+              <div className="flex items-center justify-between rounded-lg bg-emerald-100/60 p-3">
+                <div>
+                  <p className="text-body font-medium">{t("Estimated Single Tax (IFU 0.5%):")}</p>
+                  <p className="text-[10px] text-muted">
+                    {rawIfu < 10000 && collected > 0
+                      ? t("Statutory floor applied (10,000 DZD min.)")
+                      : t("Flat 0.5% tax rate under Law 22-23")}
+                  </p>
+                </div>
+                <span className="font-num text-sm font-bold text-emerald-900">{t("{v1} DZD", { v1: formatAmount(ifuTax) })}</span>
+              </div>
+              <div className="flex items-center justify-between rounded-lg bg-teal/10 p-3">
+                <div>
+                  <p className="text-body font-medium">{t("CASNOS Social Contribution:")}</p>
+                  <p className="text-[10px] text-muted">{t("Mandatory annual healthcare & retirement")}</p>
+                </div>
+                <span className="font-num text-sm font-bold text-teal">{t("{v1} DZD", { v1: formatAmount(casnos) })}</span>
               </div>
 
               <div className="rounded-xl border border-slate-200/80 bg-slate-50/50 p-3">

@@ -29,8 +29,10 @@ function Indicator({ icon: Icon, label, value, description }: IndicatorProps) {
 
 export function OperationalIndicators({ user, stats }: { user: User; stats: TurnoverStats }) {
   const { t, formatAmount } = useI18n();
-  const ifuDue = stats.collected * user.ifuRate;
+  const rawIfu = stats.collected * user.ifuRate;
+  const ifuDue = Math.max(10000, rawIfu);
   const ifuPercent = user.ifuRate * 100;
+  const isFloor = stats.collected > 0 && rawIfu < 10000;
 
   return (
     <div id="tour-operational-indicators" className="grid grid-cols-1 md:grid-cols-3 gap-3 pb-8">
@@ -50,7 +52,14 @@ export function OperationalIndicators({ user, stats }: { user: User; stats: Turn
         icon={Calculator}
         label={t("Estimated IFU Due")}
         value={<span className="font-num text-xl font-bold leading-7 tracking-[-0.01em] text-ink">{t("{v1} DZD", { v1: formatAmount(ifuDue) })}</span>}
-        description={t("Calculated at flat {pct}% against collected turnover of {amount}M DZD.", { pct: ifuPercent, amount: (stats.collected / 1_000_000).toFixed(1) })}
+        description={
+          isFloor
+            ? t("Statutory minimum floor of 10,000 DZD applied under CIDTA Art. 282 quater.")
+            : t("Calculated at flat {pct}% against collected turnover of {amount}M DZD.", {
+                pct: ifuPercent,
+                amount: (stats.collected / 1_000_000).toFixed(1),
+              })
+        }
       />
     </div>
   );

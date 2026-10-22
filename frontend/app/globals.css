@@ -125,7 +125,17 @@ body {
   letter-spacing: -0.015em;
 }
 
+/* Screen mode: hide print portal completely */
+#moukawil-print-mount {
+  display: none !important;
+}
+
 @media print {
+  @page {
+    size: A4 portrait;
+    margin: 8mm;
+  }
+
   html, body {
     background: #ffffff !important;
     color: #000000 !important;
@@ -138,15 +148,45 @@ body {
     print-color-adjust: exact !important;
   }
 
-  /* When an invoice or receipt modal is active, completely remove all other top-level elements from document flow */
-  body:has(#invoice-sheet) > *:not(:has(#invoice-sheet)),
-  body:has(#receipt-voucher-sheet) > *:not(:has(#receipt-voucher-sheet)) {
+  /* When printing via Moukawil portal: hide everything except #moukawil-print-mount */
+  body.moukawil-printing > *:not(#moukawil-print-mount) {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  body.moukawil-printing #moukawil-print-mount {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    max-width: 800px !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+
+  body.moukawil-printing #moukawil-print-mount * {
+    visibility: visible !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Fallback: When printing directly via browser shortcut (Ctrl+P) while modal is open */
+  body:not(.moukawil-printing):has(#invoice-sheet) > *:not(:has(#invoice-sheet)),
+  body:not(.moukawil-printing):has(#receipt-voucher-sheet) > *:not(:has(#receipt-voucher-sheet)),
+  body:not(.moukawil-printing):has(#declaration-preview-sheet) > *:not(:has(#declaration-preview-sheet)) {
     display: none !important;
   }
 
-  /* Reset all modal backdrops, dialog wrappers, and overflow containers so they do not clip or repeat across pages */
-  body:has(#invoice-sheet) div,
-  body:has(#receipt-voucher-sheet) div {
+  /* Prevent Chromium from repeating fixed backdrops across multi-page layouts */
+  body:not(.moukawil-printing) .fixed {
+    position: static !important;
+    background: transparent !important;
+    padding: 0 !important;
     max-height: none !important;
     overflow: visible !important;
   }
@@ -163,12 +203,14 @@ body {
   }
 
   #invoice-sheet,
-  #invoice-sheet *,
   #receipt-voucher-sheet,
-  #receipt-voucher-sheet *,
-  .printable-invoice,
-  .printable-invoice * {
+  #declaration-preview-sheet,
+  .printable-invoice {
     visibility: visible !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
   }
 
   #invoice-sheet,
@@ -184,12 +226,11 @@ body {
     color: #000000 !important;
     box-shadow: none !important;
     border: none !important;
-    page-break-inside: avoid !important;
-    break-inside: avoid !important;
     zoom: 1 !important;
   }
 
-  #receipt-voucher-sheet {
+  #receipt-voucher-sheet,
+  #declaration-preview-sheet {
     display: block !important;
     position: relative !important;
     width: 100% !important;
@@ -202,19 +243,13 @@ body {
     border: 1px solid #cbd5e1 !important;
     border-radius: 12px !important;
     box-shadow: none !important;
-    page-break-inside: avoid !important;
-    break-inside: avoid !important;
   }
 
   #receipt-voucher-sheet button,
-  #invoice-sheet button {
+  #invoice-sheet button,
+  #declaration-preview-sheet button {
     display: none !important;
     visibility: hidden !important;
-  }
-
-  @page {
-    margin: 8mm;
-    size: A4 portrait;
   }
 }
 

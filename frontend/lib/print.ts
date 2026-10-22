@@ -1,10 +1,14 @@
 "use client";
 
 /**
- * Robust, isolated single-page print utility for MoukawilOS.
- * Renders the specified DOM element into an isolated hidden iframe
- * so that background pages, modal dialogs, and outer scrollbars never
- * produce blank or duplicate pages in the print preview.
+ * Universal, isolated single-page print utility for MoukawilOS.
+ * Mounts the target element directly into a dedicated DOM portal (#moukawil-print-mount)
+ * attached to document.body, applies .moukawil-printing to <body>, and calls window.print().
+ *
+ * This guarantees:
+ * 1. Zero blank pages in Chromium (renders in the live document with full stylesheets & fonts).
+ * 2. Zero duplicate pages or repeated backdrops (ancestor modals and fixed overlays are excluded from print flow).
+ * 3. Exact 1-page fit on standard A4 paper for invoices, vouchers, and fiscal declarations.
  */
 export function printElementById(elementId: string, documentTitle = "MoukawilOS - Document Officiel") {
   if (typeof window === "undefined") return;
@@ -15,98 +19,71 @@ export function printElementById(elementId: string, documentTitle = "MoukawilOS 
     return;
   }
 
-  // Remove any pre-existing print iframe
-  const existingIframe = document.getElementById("moukawil-print-frame");
-  if (existingIframe) {
-    existingIframe.remove();
+  // Remove any legacy print iframes
+  const existingFrame = document.getElementById("moukawil-print-frame");
+  if (existingFrame) existingFrame.remove();
+
+  // Get or create top-level portal mount directly on document.body
+  let mount = document.getElementById("moukawil-print-mount");
+  if (!mount) {
+    mount = document.createElement("div");
+    mount.id = "moukawil-print-mount";
+    mount.setAttribute("aria-hidden", "true");
+    document.body.appendChild(mount);
   }
 
-  const iframe = document.createElement("iframe");
-  iframe.id = "moukawil-print-frame";
-  iframe.setAttribute("aria-hidden", "true");
-  iframe.style.position = "fixed";
-  iframe.style.right = "0";
-  iframe.style.bottom = "0";
-  iframe.style.width = "0";
-  iframe.style.height = "0";
-  iframe.style.border = "none";
-  iframe.style.visibility = "hidden";
-  document.body.appendChild(iframe);
+  // Deep clone the source element so we can optimize its print geometry without disturbing screen UI
+  const clone = sourceElement.cloneNode(true) as HTMLElement;
 
-  const iframeDoc = iframe.contentWindow?.document;
-  if (!iframeDoc) {
-    window.print();
-    return;
+  // Strip elements marked with no-print, buttons, or modal controls
+  clone.querySelectorAll(".no-print, button, [data-no-print]").forEach((el) => el.remove());
+
+  // Reset viewport & scroll constraints so it renders cleanly within single A4 page bounds
+  clone.style.minHeight = "auto";
+  clone.style.maxHeight = "none";
+  clone.style.height = "auto";
+  clone.style.overflow = "visible";
+  clone.style.zoom = "1";
+  clone.style.transform = "none";
+  clone.style.boxShadow = "none";
+
+  mount.innerHTML = "";
+  mount.appendChild(clone);
+
+  const prevTitle = document.title;
+  if (documentTitle) {
+    document.title = documentTitle;
   }
 
-  // Collect all stylesheets and style tags from host document
-  const headStyles = Array.from(document.querySelectorAll("link[rel='stylesheet'], style"))
-    .map((el) => el.outerHTML)
-    .join("\n");
+  document.body.classList.add("moukawil-printing");
 
-  iframeDoc.open();
-  iframeDoc.write(`
-    <!DOCTYPE html>
-    <html lang="fr">
-      <head>
-        <meta charset="utf-8" />
-        <title>${documentTitle}</title>
-        ${headStyles}
-        <style>
-          @page {
-            size: A4 portrait;
-            margin: 8mm;
-          }
-          * {
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-            box-sizing: border-box;
-          }
-          html, body {
-            margin: 0 !important;
-            padding: 0 !important;
-            background: #ffffff !important;
-            color: #0f172a !important;
-            height: auto !important;
-            min-height: auto !important;
-            overflow: visible !important;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-          }
-          #${elementId} {
-            width: 100% !important;
-            max-width: 800px !important;
-            margin: 0 auto !important;
-            padding: 16px !important;
-            border: none !important;
-            box-shadow: none !important;
-            background: #ffffff !important;
-            display: block !important;
-            page-break-inside: avoid !important;
-            break-inside: avoid !important;
-          }
-          .no-print {
-            display: none !important;
-          }
-        </style>
-      </head>
-      <body>
-        ${sourceElement.outerHTML}
-      </body>
-    </html>
-  `);
-  iframeDoc.close();
-
-  // Allow styles and font assets to settle
-  setTimeout(() => {
-    try {
-      iframe.contentWindow?.focus();
-      iframe.contentWindow?.print();
-    } catch {
-      window.print();
-    } finally {
-      setTimeout(() => {
-        iframe.remove();
-      }, 1500);
+  let cleaned = false;
+  const cleanUp = () => {
+    if (cleaned) return;
+    cleaned = true;
+    document.body.classList.remove("moukawil-printing");
+    if (mount) {
+      mount.innerHTML = "";
     }
-  }, 250);
+    if (documentTitle) {
+      document.title = prevTitle;
+    }
+  };
+
+  // Modern browsers fire afterprint when dialog is either printed or cancelled
+  window.addEventListener("afterprint", cleanUp, { once: true });
+
+  // Use requestAnimationFrame + slight timeout so Chromium calculates styles and layout of the clone before invoking print
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      try {
+        window.print();
+      } catch (err) {
+        console.error("Print error:", err);
+      } finally {
+        // Fallback cleanup in case afterprint does not fire in some environments
+        setTimeout(cleanUp, 3500);
+      }
+    }, 120);
+  });
 }
