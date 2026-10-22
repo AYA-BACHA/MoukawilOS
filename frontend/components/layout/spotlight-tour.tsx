@@ -215,13 +215,13 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
 
   // Calculate popover coordinates
   const PADDING = 8;
-  const TOOLTIP_WIDTH = typeof window !== "undefined" ? Math.min(340, window.innerWidth - 32) : 340;
-  const TOOLTIP_HEIGHT = 160;
+  const TOOLTIP_WIDTH = typeof window !== "undefined" ? Math.min(360, window.innerWidth - 32) : 340;
+  const TOOLTIP_HEIGHT = 240; // Realistic height including header, description, step indicator, and Back/Next buttons
 
   let tooltipStyle: React.CSSProperties = {
     position: "fixed",
     zIndex: 60,
-    transition: "top 400ms cubic-bezier(0.16, 1, 0.3, 1), left 400ms cubic-bezier(0.16, 1, 0.3, 1), opacity 200ms ease",
+    transition: "top 350ms cubic-bezier(0.16, 1, 0.3, 1), left 350ms cubic-bezier(0.16, 1, 0.3, 1), opacity 200ms ease",
   };
 
   let arrowPlacement: "top" | "bottom" | "left" | "right" = "top";
@@ -230,38 +230,48 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
   if (targetRect) {
     let placement = step.placement ?? "bottom";
 
-    // Auto-flip if tooltip would exceed screen boundary
-    if (placement === "bottom" && targetRect.bottom + PADDING + 12 + TOOLTIP_HEIGHT > window.innerHeight - 16) {
+    const spaceAbove = targetRect.top - PADDING - 12;
+    const spaceBelow = (typeof window !== "undefined" ? window.innerHeight : 800) - (targetRect.bottom + PADDING + 12);
+    const spaceLeft = targetRect.left - PADDING - 12;
+    const spaceRight = (typeof window !== "undefined" ? window.innerWidth : 1200) - (targetRect.right + PADDING + 12);
+
+    // Auto-flip if selected side does not have sufficient space
+    if (placement === "bottom" && spaceBelow < TOOLTIP_HEIGHT && spaceAbove > TOOLTIP_HEIGHT) {
       placement = "top";
-    } else if (placement === "top" && targetRect.top - PADDING - TOOLTIP_HEIGHT - 12 < 16) {
+    } else if (placement === "top" && spaceAbove < TOOLTIP_HEIGHT && spaceBelow > TOOLTIP_HEIGHT) {
       placement = "bottom";
-    } else if (placement === "right" && targetRect.right + PADDING + 12 + TOOLTIP_WIDTH > window.innerWidth - 16) {
+    } else if (placement === "right" && spaceRight < TOOLTIP_WIDTH && spaceLeft > TOOLTIP_WIDTH) {
       placement = "left";
-    } else if (placement === "left" && targetRect.left - PADDING - TOOLTIP_WIDTH - 12 < 16) {
+    } else if (placement === "left" && spaceLeft < TOOLTIP_WIDTH && spaceRight > TOOLTIP_WIDTH) {
       placement = "right";
     }
 
+    const winHeight = typeof window !== "undefined" ? window.innerHeight : 800;
+    const winWidth = typeof window !== "undefined" ? window.innerWidth : 1200;
+
     if (placement === "bottom") {
-      const top = targetRect.bottom + PADDING + 12;
-      const left = Math.max(16, Math.min(window.innerWidth - TOOLTIP_WIDTH - 16, targetRect.left + targetRect.width / 2 - TOOLTIP_WIDTH / 2));
+      const rawTop = targetRect.bottom + PADDING + 12;
+      const top = Math.max(16, Math.min(winHeight - TOOLTIP_HEIGHT - 20, rawTop));
+      const left = Math.max(16, Math.min(winWidth - TOOLTIP_WIDTH - 16, targetRect.left + targetRect.width / 2 - TOOLTIP_WIDTH / 2));
       tooltipStyle = { ...tooltipStyle, top, left };
       arrowPlacement = "top";
       arrowOffset = Math.max(16, Math.min(TOOLTIP_WIDTH - 24, targetRect.left + targetRect.width / 2 - left));
     } else if (placement === "top") {
-      const top = Math.max(16, targetRect.top - PADDING - TOOLTIP_HEIGHT - 12);
-      const left = Math.max(16, Math.min(window.innerWidth - TOOLTIP_WIDTH - 16, targetRect.left + targetRect.width / 2 - TOOLTIP_WIDTH / 2));
+      const rawTop = targetRect.top - PADDING - TOOLTIP_HEIGHT - 12;
+      const top = Math.max(16, Math.min(winHeight - TOOLTIP_HEIGHT - 20, rawTop));
+      const left = Math.max(16, Math.min(winWidth - TOOLTIP_WIDTH - 16, targetRect.left + targetRect.width / 2 - TOOLTIP_WIDTH / 2));
       tooltipStyle = { ...tooltipStyle, top, left };
       arrowPlacement = "bottom";
       arrowOffset = Math.max(16, Math.min(TOOLTIP_WIDTH - 24, targetRect.left + targetRect.width / 2 - left));
     } else if (placement === "right") {
-      const left = targetRect.right + PADDING + 12;
-      const top = Math.max(16, Math.min(window.innerHeight - TOOLTIP_HEIGHT - 16, targetRect.top + targetRect.height / 2 - TOOLTIP_HEIGHT / 2));
+      const left = Math.max(16, Math.min(winWidth - TOOLTIP_WIDTH - 16, targetRect.right + PADDING + 12));
+      const top = Math.max(16, Math.min(winHeight - TOOLTIP_HEIGHT - 20, targetRect.top + targetRect.height / 2 - TOOLTIP_HEIGHT / 2));
       tooltipStyle = { ...tooltipStyle, top, left };
       arrowPlacement = "left";
       arrowOffset = Math.max(16, Math.min(TOOLTIP_HEIGHT - 24, targetRect.top + targetRect.height / 2 - top));
     } else if (placement === "left") {
-      const left = Math.max(16, targetRect.left - PADDING - TOOLTIP_WIDTH - 12);
-      const top = Math.max(16, Math.min(window.innerHeight - TOOLTIP_HEIGHT - 16, targetRect.top + targetRect.height / 2 - TOOLTIP_HEIGHT / 2));
+      const left = Math.max(16, Math.min(winWidth - TOOLTIP_WIDTH - 16, targetRect.left - PADDING - TOOLTIP_WIDTH - 12));
+      const top = Math.max(16, Math.min(winHeight - TOOLTIP_HEIGHT - 20, targetRect.top + targetRect.height / 2 - TOOLTIP_HEIGHT / 2));
       tooltipStyle = { ...tooltipStyle, top, left };
       arrowPlacement = "right";
       arrowOffset = Math.max(16, Math.min(TOOLTIP_HEIGHT - 24, targetRect.top + targetRect.height / 2 - top));
@@ -274,7 +284,7 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
       left: "50%",
       transform: "translate(-50%, -50%)",
       zIndex: 60,
-      transition: "top 400ms cubic-bezier(0.16, 1, 0.3, 1), left 400ms cubic-bezier(0.16, 1, 0.3, 1), opacity 200ms ease",
+      transition: "top 350ms cubic-bezier(0.16, 1, 0.3, 1), left 350ms cubic-bezier(0.16, 1, 0.3, 1), opacity 200ms ease",
     };
   }
 

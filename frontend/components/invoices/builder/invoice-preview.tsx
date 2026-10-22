@@ -7,6 +7,7 @@ import Image from "next/image";
 
 import { hashSeed } from "@/lib/hash";
 import { addDays, lineTotal, subtotal } from "@/lib/invoice-math";
+import { printElementById } from "@/lib/print";
 import type { InvoiceDraft, User } from "@/types/models";
 import { useI18n } from "@/lib/i18n/provider";
 
@@ -36,7 +37,7 @@ export function InvoicePreview({ user, draft }: { user: User; draft: InvoiceDraf
           <button aria-label={t("Zoom out")} disabled={scaleIndex === 0} onClick={() => setScaleIndex(scaleIndex - 1)} className={toolButton}>
             <ZoomOut className="size-3.5" />
           </button>
-          <button aria-label={t("Print")} onClick={() => window.print()} className={toolButton}>
+          <button aria-label={t("Print")} onClick={() => printElementById("invoice-sheet", `Facture-${draft.number}`)} className={toolButton}>
             <Printer className="size-3.5" />
           </button>
         </div>

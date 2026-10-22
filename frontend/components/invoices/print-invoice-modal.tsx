@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Download, Printer, X } from "lucide-react";
 import { QrMark } from "@/components/invoices/builder/qr-mark";
 import { hashSeed } from "@/lib/hash";
+import { printElementById } from "@/lib/print";
 import { useI18n } from "@/lib/i18n/provider";
 import type { InvoiceWithClient, User } from "@/types/models";
 
@@ -29,11 +30,15 @@ export function PrintInvoiceModal({
   const isCompany = invoice.client.type === "B2B";
   const hash = hashSeed(`${invoice.number}-${invoice.amount}`).toString(16).padStart(8, "0");
 
+  const handlePrint = () => {
+    printElementById("invoice-sheet", `Facture-${invoice.number}`);
+  };
+
   useEffect(() => {
     if (autoPrint) {
       const timer = setTimeout(() => {
-        window.print();
-      }, 250);
+        handlePrint();
+      }, 300);
       return () => clearTimeout(timer);
     }
   }, [autoPrint]);
@@ -54,7 +59,7 @@ export function PrintInvoiceModal({
           <div className="flex items-center gap-2">
             <button
               type="button"
-              onClick={() => window.print()}
+              onClick={handlePrint}
               className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-white shadow-xs hover:bg-primary-ink active:scale-95 transition-all"
             >
               <Printer className="size-3.5" />

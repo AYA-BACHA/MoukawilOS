@@ -9,6 +9,7 @@ import { PrintInvoiceModal } from "@/components/invoices/print-invoice-modal";
 
 import { cn } from "@/lib/cn";
 import { payInvoiceApi } from "@/lib/api";
+import { printElementById } from "@/lib/print";
 import type { InvoiceStatus, InvoiceWithClient, PaymentConfirmation, TurnoverStats } from "@/types/models";
 import { useI18n } from "@/lib/i18n/provider";
 
@@ -351,7 +352,7 @@ export function RecentInvoices({
               </button>
               <button
                 type="button"
-                onClick={() => window.print()}
+                onClick={() => printElementById("receipt-voucher-sheet", `Recu-${viewingReceipt.number}`)}
                 className="inline-flex min-h-[44px] items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-primary-ink active:scale-95 transition-all"
               >
                 <Printer className="size-3.5" />

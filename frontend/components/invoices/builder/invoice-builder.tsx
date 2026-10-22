@@ -7,6 +7,7 @@ import { ClientCard, ItemsCard, MetadataCard, SummaryCard } from "@/components/i
 import { InvoicePreview } from "@/components/invoices/builder/invoice-preview";
 import { cn } from "@/lib/cn";
 import { issueInvoiceApi } from "@/lib/api";
+import { printElementById } from "@/lib/print";
 import type { InvoiceDraft, User } from "@/types/models";
 import { useI18n } from "@/lib/i18n/provider";
 
@@ -31,8 +32,8 @@ export function InvoiceBuilder({ user, draft: initialDraft }: { user: User; draf
     }
     setActiveTab("preview");
     setTimeout(() => {
-      window.print();
-    }, 200);
+      printElementById("invoice-sheet", `Facture-${draft.number}`);
+    }, 250);
   };
 
   return (
