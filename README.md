@@ -8,15 +8,14 @@ Statutory compliance under Law 22-23 and Executive Decree 23-197 &nbsp;|&nbsp; S
 
 [Live Demo](https://moukawil-os.vercel.app) &nbsp;|&nbsp; [Demo Video](https://moukawil-os.vercel.app) &nbsp;|&nbsp; [Source Code](https://github.com/AYA-BACHA/MoukawilOS)
 
-![Next.js](https://img.shields.io/badge/Next.js_15-000000?logo=nextdotjs&logoColor=white)
+![Next.js](https://img.shields.io/badge/Next.js_16.3-000000?logo=nextdotjs&logoColor=white)
+![React](https://img.shields.io/badge/React_19-61DAFB?logo=react&logoColor=black)
 ![TypeScript](https://img.shields.io/badge/TypeScript_5-3178C6?logo=typescript&logoColor=white)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS_v3-06B6D4?logo=tailwindcss&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS_v4-06B6D4?logo=tailwindcss&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
 ![Python](https://img.shields.io/badge/Python_3.11-3776AB?logo=python&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL_15-4169E1?logo=postgresql&logoColor=white)
 ![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?logo=supabase&logoColor=white)
-![Vercel](https://img.shields.io/badge/Frontend-Vercel-000000?logo=vercel&logoColor=white)
-![Render](https://img.shields.io/badge/API-Render-46E3B7?logo=render&logoColor=white)
 ![License](https://img.shields.io/badge/License-Proprietary-red.svg)
 
 <img src="docs/screenshots/hero.png" alt="MoukawilOS Dashboard" width="860">
@@ -115,20 +114,20 @@ Evaluators and reviewers can verify the end-to-end statutory and fiscal workflow
 
 ## 4. Screenshots & Interface Overview
 
-| Dashboard & Cash-Basis Turnover Meter | Sequential Invoice Editor & Mandatory Mentions |
+| Dashboard & Cash-Basis Turnover Meter | Sequential Invoice Editor & Live Document Preview |
 |---|---|
 | <img src="docs/screenshots/dashboard.png" alt="MoukawilOS Dashboard" width="420"> | <img src="docs/screenshots/invoice-editor.png" alt="Invoice Editor" width="420"> |
-| Real-time 5,000,000 DZD ceiling gauge with 80% preventative warning, cash-collected revenue cards, and statutory deadlines. | Gapless sequential numbering (`FA-YYYY-NNN`), seller NIF/ANAE injection, and automatic VAT exemption notices. |
+| Real-time 5,000,000 DZD ceiling gauge with 80% preventative warning, cash-collected revenue cards, and statutory G12 bis deadlines. | Gapless sequential numbering (`FA-YYYY-NNN`), seller NIF/ANAE injection, and mandatory VAT exemption badge (`TVA Non-Assujetti`). |
 
-| Arabic (RTL) Legal Invoice PDF | French / English Invoice PDF |
+| Commercial Invoices Ledger & Settlement Tracking | Regulatory Assistant with Legal Citations |
 |---|---|
-| <img src="docs/screenshots/invoice-ar.png" alt="Arabic RTL Invoice" width="420"> | <img src="docs/screenshots/invoice-fr-en.png" alt="French and English Invoice" width="420"> |
-| Exportable A4 PDF rendering with bidirectional Arabic text shaping, right-to-left layout, and domestic tax notices. | Exportable A4 PDF rendering in French and English, formatted for international clients and institutional partners. |
+| <img src="docs/screenshots/invoices-ledger.png" alt="Invoices Ledger" width="420"> | <img src="docs/screenshots/assistant.png" alt="Regulatory Assistant" width="420"> |
+| Real-time cash-basis ledger separating cleared receipts from outstanding receivables with automated settlement workflows. | Semantic legal Q&A powered by pgvector, delivering article-level citations and deterministic refusal guardrails. |
 
-| Compliance Simulator & Statutory Calendar | Regulatory Assistant with Legal Citations |
+| Multi-Tier Client Directory (B2B & B2C) | Compliance Settings & Audit Trail |
 |---|---|
-| <img src="docs/screenshots/compliance.png" alt="Compliance Simulator" width="420"> | <img src="docs/screenshots/assistant.png" alt="Regulatory Assistant" width="420"> |
-| Deterministic IFU calculator (0.5% with 10,000 DZD minimum), CASNOS regime modeler, and official filing countdowns. | Semantic legal Q&A powered by pgvector, delivering article-level citations and deterministic refusal guardrails. |
+| <img src="docs/screenshots/clients.png" alt="Client Directory" width="420"> | <img src="docs/screenshots/compliance.png" alt="Compliance Settings" width="420"> |
+| Corporate client validation with mandatory 15-digit NIF/RC tracking to preserve statutory single-tax treatment. | ANAE accreditation monitoring, CASNOS social security sync, and unalterable statutory log hash tracking. |
 
 ---
 
@@ -142,11 +141,11 @@ The platform uses a decoupled architecture separating the presentation tier, cor
 flowchart TD
     Client(["User Web Browser"])
 
-    subgraph PresentationTier ["1. Presentation Layer (Vercel)"]
-        NextApp["Next.js 14+ Frontend<br/>App Router • TypeScript • Tailwind CSS • Lucide Icons"]
+    subgraph PresentationTier ["1. Presentation Layer"]
+        NextApp["Next.js 16.3 Frontend<br/>App Router • React 19 • Tailwind CSS v4 • TypeScript 5"]
     end
 
-    subgraph BackendTier ["2. Application & Fiscal Engine (Render)"]
+    subgraph BackendTier ["2. Application & Fiscal Engine"]
         FastAPI["FastAPI Core Backend (Python 3.11)<br/>Pydantic v2 Strict Decimal Math • Uvicorn Async REST API"]
     end
 
@@ -405,20 +404,19 @@ This protocol guarantees that the system never generates speculative legal or fi
 
 ## 8. Technical Stack
 
-MoukawilOS standardizes on a unified, modern web architecture:
+MoukawilOS standardizes on a modern, decoupled web architecture:
 
 | Tier | Technology | Specification / Version | Rationale & Architectural Purpose |
 |---|---|---|---|
-| **Frontend Framework** | **Next.js 14+** | App Router, React 18, TypeScript 5 | Server-rendered performance, typed routes, zero-friction client state transitions. Hosted on Vercel. |
-| **Styling & Icons** | **Tailwind CSS & Lucide Icons** | Tailwind CSS v3, Lucide React | Curated fiscal design system, responsive data tables, accessibility-compliant components. |
-| **Core API & Backend** | **FastAPI** | Python 3.11, Uvicorn | High-throughput asynchronous REST API, auto-generating OpenAPI documentation (`/docs`). Hosted on Render. |
-| **Validation & Fiscal Math** | **Pydantic v2** | Strict Decimal types | Zero floating-point precision loss on currency and tax computations; strict runtime schema enforcement. |
-| **Relational Database** | **PostgreSQL 15+** | Supabase (Managed Postgres) | Multi-tenant relational storage, Row-Level Security (RLS) policies, and trigger constraints for invoice immutability. |
-| **Vector Search Engine** | **pgvector** | HNSW cosine index (`vector(1536)`) | Semantic vector similarity search over chunked Algerian statutes embedded directly inside PostgreSQL. |
-| **RAG Orchestration** | **LangChain** | Python LangChain Core | Semantic retrieval pipeline, document metadata formatting, and prompt guardrail enforcement. |
-| **AI Models** | **OpenAI API** | `text-embedding-3-small` & `gpt-4o-mini` | Cost-effective 1536-dimensional embeddings and attributed response generation. |
-| **Document Compilation** | **ReportLab / PyMuPDF** | Python PDF Engine | High-fidelity A4 PDF invoice export supporting Arabic bidirectional text shaping (`arabic-reshaper`, `python-bidi`). |
-| **Testing & CI/CD** | **Pytest & GitHub Actions** | Pytest, Vitest, GitHub Workflows | Automated regression suites for fiscal test cases, schema validation, and deployment linting. |
+| **Frontend Framework** | **Next.js 16.3** | Next.js 16.3.8, App Router, React 19.2.8, Turbopack | Modern server-rendered and client performance, type-safe routes, zero-friction client state transitions. |
+| **Styling & UI Tokens** | **Tailwind CSS v4 & Lucide Icons** | Tailwind CSS ^4, Lucide React ^1.58 | Curated Algerian fiscal design system, responsive data tables, accessible dark-mode tokens. |
+| **Core API Backend** | **FastAPI** | Python 3.11, Uvicorn, FastAPI 0.110+ | Asynchronous REST API under `backend/app/main.py` with automatic OpenAPI docs (`/docs`). |
+| **Validation & Fiscal Engine** | **Pydantic v2 & Python Decimal** | Strict Decimal types | Zero floating-point drift on currency and tax calculations; strict schema validation. |
+| **RAG Microservice** | **FastAPI & LangChain** | Python 3.11, LangChain Core | Standalone retrieval service under `rag/app/main.py` grounded in indexed Algerian legal decrees. |
+| **Relational Database** | **PostgreSQL 15+** | Supabase Managed Relational Store | Multi-tenant schema with 9 incremental migrations and strict Row-Level Security (RLS). |
+| **Vector Search Engine** | **pgvector** | HNSW cosine index (`vector(1536)`) | Semantic legal similarity search over chunked Algerian statutory texts embedded directly inside PostgreSQL. |
+| **Document Compilation** | **Multilingual A4 Renderer & PDF Engine** | DIN 476 / ISO 216 Engine, ReportLab | Standardized legal invoice export supporting Arabic bidirectional text shaping (`arabic-reshaper`, `python-bidi`), French, and English. |
+| **Testing & CI/CD** | **TypeScript & GitHub Actions** | TypeScript 5, GitHub Workflows | Typechecking, CI validation workflows (`.github/workflows/ci.yml`), and fiscal test coverage. |
 
 ---
 
@@ -428,11 +426,11 @@ MoukawilOS standardizes on a unified, modern web architecture:
 
 | Tool | Minimum Version | Recommended Source |
 |---|---|---|
+| **Node.js** | 20.x or newer (LTS) | [nodejs.org](https://nodejs.org/) |
 | **Python** | 3.11 or newer | [python.org](https://www.python.org/) |
-| **Node.js** | 18.17 or newer (LTS) | [nodejs.org](https://nodejs.org/) |
 | **Git** | 2.38 or newer | [git-scm.com](https://git-scm.com/) |
-| **PostgreSQL / Supabase** | PostgreSQL 15+ with `pgvector` | Local PostgreSQL or free [Supabase](https://supabase.com) project |
-| **OpenAI API Key** | Valid API key | [platform.openai.com](https://platform.openai.com) (for RAG assistant) |
+| **PostgreSQL / Supabase** | PostgreSQL 15+ with `pgvector` | Local PostgreSQL or [Supabase](https://supabase.com) project (for production mode) |
+| **OpenAI API Key** | Valid API key | [platform.openai.com](https://platform.openai.com) (for live RAG assistant) |
 
 ---
 
@@ -445,25 +443,48 @@ cd Moukawil-OS
 
 ---
 
-### Step 2: Backend & RAG Setup (FastAPI)
+### Step 2: Frontend Setup (Next.js 16)
 
-1. Navigate to the backend directory and set up a Python virtual environment:
+The frontend includes an embedded statutory mock database (`frontend/data/db.json`), enabling immediate local testing and evaluation without database configuration:
+
+1. Navigate to the frontend directory:
    ```bash
-   cd backend
-   python -m venv .venv
+   cd frontend
    ```
 
-2. Activate the virtual environment:
-   - **Linux / macOS:**
-     ```bash
-     source .venv/bin/activate
-     ```
+2. Install Node.js dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Start the Next.js development server:
+   ```bash
+   npm run dev
+   ```
+   Open **http://localhost:3000** in your browser to access the complete application (Dashboard, Invoice Builder, Ledger, Client Directory, and AI Assistant).
+
+---
+
+### Step 3: Backend API Setup (FastAPI)
+
+1. Open a new terminal and navigate to the backend directory:
+   ```bash
+   cd backend
+   ```
+
+2. Create and activate a Python virtual environment:
    - **Windows (PowerShell):**
      ```powershell
+     python -m venv .venv
      .venv\Scripts\Activate.ps1
      ```
+   - **Linux / macOS:**
+     ```bash
+     python -m venv .venv
+     source .venv/bin/activate
+     ```
 
-3. Install Python dependencies:
+3. Install backend dependencies:
    ```bash
    pip install --upgrade pip
    pip install -r requirements.txt
@@ -473,45 +494,49 @@ cd Moukawil-OS
    ```bash
    cp .env.example .env
    ```
-   *Edit `.env` to set your PostgreSQL connection string and OpenAI API key.*
 
-5. Run database migrations or initial schemas:
-   ```bash
-   # Executes Supabase / Postgres table initialization
-   python -m scripts.init_db
-   ```
-
-6. Start the FastAPI development server:
+5. Start the FastAPI development server:
    ```bash
    uvicorn app.main:app --reload --port 8000
    ```
-   The interactive Swagger API documentation will be available at: **http://localhost:8000/docs**.
+   Interactive Swagger API documentation is available at **http://localhost:8000/docs**.
 
 ---
 
-### Step 3: Frontend Setup (Next.js)
+### Step 4: Regulatory RAG Microservice Setup (Optional)
 
-1. Open a second terminal window and navigate to the frontend directory:
+1. Open a new terminal and navigate to the RAG service directory:
    ```bash
-   cd frontend
+   cd rag
    ```
 
-2. Install Node.js packages:
+2. Create and activate a Python virtual environment:
+   - **Windows (PowerShell):**
+     ```powershell
+     python -m venv .venv
+     .venv\Scripts\Activate.ps1
+     ```
+   - **Linux / macOS:**
+     ```bash
+     python -m venv .venv
+     source .venv/bin/activate
+     ```
+
+3. Install RAG service dependencies:
    ```bash
-   npm install
+   pip install -r requirements.txt
    ```
 
-3. Configure environment variables:
+4. Configure environment variables:
    ```bash
-   cp .env.example .env.local
+   cp .env.example .env
    ```
-   *Ensure `NEXT_PUBLIC_API_URL` points to `http://localhost:8000`.*
+   *Set your `OPENAI_API_KEY` in `.env`.*
 
-4. Start the Next.js development server:
+5. Start the RAG microservice:
    ```bash
-   npm run dev
+   uvicorn app.main:app --reload --port 8001
    ```
-   Open **http://localhost:3000** in your browser.
 
 ---
 
@@ -520,11 +545,10 @@ cd Moukawil-OS
 | Variable | Target Service | Purpose & Format | Example Value |
 |---|---|---|---|
 | `DATABASE_URL` | Backend | PostgreSQL connection string with SSL | `postgresql+asyncpg://postgres:pass@db.xxx.supabase.co:5432/postgres` |
-| `OPENAI_API_KEY` | Backend | OpenAI secret key for embeddings and RAG | `sk-proj-xxxxxxxxxxxxxxxxxxxxxxxx` |
+| `OPENAI_API_KEY` | Backend / RAG | OpenAI secret key for legal embeddings & RAG | `sk-proj-xxxxxxxxxxxxxxxxxxxxxxxx` |
 | `ALLOWED_ORIGINS` | Backend | Comma-separated list of origins allowed by CORS | `http://localhost:3000,https://moukawil-os.vercel.app` |
-| `ENVIRONMENT` | Backend | Deployment environment flag | `development` or `production` |
-| `NEXT_PUBLIC_API_URL` | Frontend | Base URL of the backend REST API | `http://localhost:8000` or production API URL |
-| `NEXT_PUBLIC_APP_URL` | Frontend | Public URL of the frontend web application | `http://localhost:3000` or production web URL |
+| `NEXT_PUBLIC_API_URL` | Frontend | Base URL of the backend REST API | `http://localhost:8000` |
+| `NEXT_PUBLIC_APP_URL` | Frontend | Public URL of the frontend web application | `http://localhost:3000` |
 
 ---
 
@@ -534,47 +558,47 @@ MoukawilOS is structured as a clean monorepo:
 
 ```
 Moukawil-OS/
-├── frontend/                     # Next.js 14+ Presentation Tier (App Router)
-│   ├── app/                      # Route segments (Dashboard, Invoices, Compliance, Assistant)
+├── frontend/                     # Next.js 16 Presentation Tier (App Router, React 19, Tailwind v4)
+│   ├── app/                      # Route segments (Dashboard, Invoices, Clients, Assistant, Settings)
 │   ├── components/               # UI components, data tables, fiscal gauges, modals
-│   ├── lib/                      # API client, formatting utilities, currency helpers
-│   ├── types/                    # TypeScript interfaces for invoices, profiles, and compliance
-│   ├── public/                   # Static assets, branding, and bundled Arabic fonts
-│   └── package.json              # Frontend dependencies and scripts
+│   ├── data/                     # Seeded JSON database (db.json) for standalone evaluation
+│   ├── lib/                      # API client, stats calculations, i18n dictionaries (en, fr, ar)
+│   ├── types/                    # TypeScript data models and interfaces
+│   ├── public/                   # Brand assets and logos
+│   └── package.json              # Next.js 16.3.8 & React 19 dependencies
 │
 ├── backend/                      # FastAPI Core Application & Business Services
 │   ├── app/                      # Application package
-│   │   ├── api/                  # REST API routes (invoices, clients, compliance, assistant)
+│   │   ├── api/                  # REST API routes (health, invoices, clients, profile)
+│   │   ├── calculation/          # Deterministic Decimal fiscal calculation engine
 │   │   ├── core/                 # App configuration, security settings, CORS policies
-│   │   ├── models/               # SQLAlchemy ORM models (invoices, line items, profiles)
-│   │   ├── schemas/              # Pydantic v2 schemas with strict Decimal fiscal validation
-│   │   ├── services/             # Fiscal calculation engine, sequence generator, PDF compiler
-│   │   └── main.py               # FastAPI application entrypoint
-│   ├── tests/                    # Pytest test suite (12 golden fiscal calculation cases)
-│   └── requirements.txt          # Python dependencies
+│   │   ├── pdf/                  # PDF compilation engine
+│   │   ├── repositories/         # Database persistence abstractions
+│   │   ├── schemas/              # Pydantic v2 schemas with strict Decimal validation
+│   │   ├── services/             # Fiscal services & sequential numbering
+│   │   └── main.py               # FastAPI application entrypoint (port 8000)
+│   ├── requirements.txt          # Python dependencies
+│   └── tests/                    # Pytest test suites
 │
-├── rag/                          # Regulatory RAG Knowledge Engine & Pipelines
+├── rag/                          # Regulatory RAG Knowledge Engine & Microservice
 │   ├── app/                      # RAG retrieval endpoints and LangChain orchestration
-│   ├── corpus/                   # Indexed legal texts (Loi 22-23, CIDTA, Executive Decrees)
-│   ├── pipelines/                # Article-boundary chunking and vector embedding scripts
-│   └── tests/                    # Benchmark evaluation suite (25 legal test queries)
+│   ├── requirements.txt          # Python dependencies
+│   └── tests/                    # Legal benchmark evaluation tests
 │
 ├── database/                     # PostgreSQL & Supabase Relational Assets
-│   ├── migrations/               # Incremental SQL migrations
-│   ├── schema/                   # Complete relational schema blueprint with pgvector tables
-│   └── seeds/                    # Seed data for guest evaluation mode
+│   └── migrations/               # Incremental SQL migrations
 │
 ├── docs/                         # Canonical Technical & Legal Specifications
-│   ├── architecture.md           # Deep-dive system architecture specification
+│   ├── architecture.md           # Architecture specification
 │   ├── legal-sources.md          # Comprehensive regulatory registry with JORADP links
-│   ├── product.md                # Canonical product specifications and state machine
-│   └── screenshots/              # System screenshots for documentation
+│   ├── product.md                # Product specifications and state machine
+│   └── screenshots/              # High-resolution production app screenshots
 │
 ├── .github/                      # CI/CD Workflows
-│   └── workflows/                # Automated GitHub Actions test and lint pipelines
+│   └── workflows/ci.yml          # GitHub Actions workflow
 ├── .env.example                  # Environment variable blueprint
-├── LICENSE                       # MIT Open Source License
-└── README.md                     # Canonical documentation
+├── LICENSE                       # Proprietary License
+└── README.md                     # Institutional documentation
 ```
 
 ---
@@ -583,7 +607,7 @@ Moukawil-OS/
 
 | Team Member | Engineering Role | Core Contributions |
 |---|---|---|
-| **Bacha Aya** | **Product Lead & Frontend Architecture** | Product vision and specifications; Next.js 14 architecture; client state machine; multilingual invoice compilation (Arabic RTL glyph shaping, French, English); Figma design-system implementation. |
+| **Bacha Aya** | **Product Lead & Frontend Architecture** | Product vision and specifications; Next.js 16 architecture; client state machine; multilingual invoice compilation (Arabic RTL glyph shaping, French, English); design-system implementation. |
 | **Core Engineering Team** | **Systems Architecture & Fiscal Engine** | FastAPI backend architecture; Pydantic v2 deterministic `Decimal` fiscal calculation engine; PostgreSQL schema design with Row-Level Security (RLS); invoice immutability database triggers; sequential numbering engine (`FA-YYYY-NNN`). |
 | **Data & AI Engineering Team** | **Regulatory Intelligence & Infrastructure** | Article-boundary legal chunking pipeline; `pgvector` HNSW index configuration; deterministic refusal fallback guardrails; 25-query golden benchmark evaluation suite; Vercel and Render deployment pipelines. |
 

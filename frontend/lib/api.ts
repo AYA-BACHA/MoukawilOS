@@ -100,7 +100,7 @@ export async function askAssistant(question: string): Promise<AssistantMessage> 
 
   const content = matches.length
     ? matches.map((statute) => `${statute.code}: ${statute.summary}`).join("\n\n")
-    : "I can only answer questions grounded in the auto-entrepreneur regulations listed in the reference vault, such as the turnover ceiling, cash-basis recognition, VAT exemption, the IFU rate or the G50-A declaration. Try rephrasing around one of them.";
+    : "I can only answer questions grounded in the auto-entrepreneur regulations listed in the reference vault, such as the turnover ceiling, cash-basis recognition, VAT exemption, the IFU rate or the G12 bis declaration. Try rephrasing around one of them.";
 
   return {
     id: `msg_${Date.now()}`,

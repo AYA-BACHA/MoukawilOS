@@ -153,9 +153,14 @@ export function InvoicePreview({ user, draft }: { user: User; draft: InvoiceDraf
                 <span className="font-semibold text-body">{t("Subtotal (HT):")}</span>
                 <span className="font-num font-bold text-ink">{t("{v1} DZD", { v1: formatAmount(total) })}</span>
               </div>
-              <div className="flex justify-between gap-3">
-                <span className="font-semibold text-body">{t("VAT / TVA (0%):")}</span>
-                <span className="font-num text-ink">{t("0.00 DZD")}</span>
+              <div className="flex items-center justify-between gap-3">
+                <span className="font-semibold text-body">{t("VAT / TVA:")}</span>
+                <div className="flex items-center gap-1.5">
+                  <span className="rounded bg-teal/10 px-1.5 py-0.5 text-[9px] font-bold text-teal">
+                    {t("TVA Non-Assujetti (Art. 282 bis CIDTA)")}
+                  </span>
+                  <span className="font-num text-ink">{t("0.00 DZD")}</span>
+                </div>
               </div>
               <div className="flex justify-between gap-3 border-t-2 border-black pt-2 text-xs font-extrabold text-black">
                 <span className="uppercase">{t("Grand Total")}:</span>
@@ -195,7 +200,7 @@ export function InvoicePreview({ user, draft }: { user: User; draft: InvoiceDraf
             </div>
           </div>
           <p className="border-t border-slate-300 pt-3 text-center text-[10px] leading-4 text-body">
-            {t("Invoice issued under the Algerian Auto-Entrepreneur statutory regime (Law 22-23) — Strictly exempt from Value Added Tax (VAT) pursuant to Executive Decree 23-197.")}
+            {t("Invoice issued under the Algerian Auto-Entrepreneur statutory regime (Law 22-23) — TVA Non-Assujetti (Art. 282 bis CIDTA). Strictly exempt from Value Added Tax (VAT) pursuant to Executive Decree 23-197.")}
           </p>
         </div>
       </div>

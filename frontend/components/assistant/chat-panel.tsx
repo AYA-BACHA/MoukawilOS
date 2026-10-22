@@ -20,7 +20,7 @@ const suggestions = [
   "What happens if I exceed the 5,000,000 DZD ceiling?",
   "Do pending invoices count toward my ceiling?",
   "Which clause must appear on B2B invoices?",
-  "When is my G50-A declaration due?",
+  "When is my G12 bis declaration due?",
 ];
 
 interface ChatPanelProps {

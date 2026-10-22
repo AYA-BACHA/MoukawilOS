@@ -34,7 +34,7 @@ export function SecondaryKpis({ deadline, stats }: { deadline: Deadline; stats: 
                 {formatLongDate(deadline.dueDate)}
               </p>
               <p className="mt-1 text-xs text-body leading-relaxed">
-                {t("Annual G50-A filing (0.5% flat IFU tax obligation) • No unexpected audits.")}
+                {t("Annual G12 bis filing (0.5% flat IFU tax obligation) • No unexpected audits.")}
               </p>
             </div>
           </div>
@@ -87,7 +87,7 @@ export function SecondaryKpis({ deadline, stats }: { deadline: Deadline; stats: 
         </article>
       </div>
 
-      {/* Statutory Form G50-A Preview Modal */}
+      {/* Statutory Form G12 bis Preview Modal */}
       {showDeclaration && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm animate-in fade-in">
           <div className="relative w-full max-w-lg rounded-2xl border border-slate-200 bg-card p-6 shadow-2xl animate-in zoom-in-95">
@@ -96,7 +96,7 @@ export function SecondaryKpis({ deadline, stats }: { deadline: Deadline; stats: 
                 <span className="rounded bg-mint px-2 py-0.5 text-[10px] font-bold text-mint-ink">
                   {t("Official Algerian Tax Slip")}
                 </span>
-                <h3 className="mt-1 text-lg font-bold text-ink">{t("Formulaire G50-A (Déclaration IFU)")}</h3>
+                <h3 className="mt-1 text-lg font-bold text-ink">{t("Formulaire G12 bis (Déclaration IFU)")}</h3>
                 <p className="text-xs text-muted">{t("Direction Générale des Impôts • Régime Auto-Entrepreneur")}</p>
               </div>
               <button

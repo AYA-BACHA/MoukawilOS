@@ -34,9 +34,9 @@ const TOUR_STEPS: TourStep[] = [
   },
   {
     targetId: "tour-statutory-deadline",
-    title: "Step 3: 0.5% Flat IFU Tax & G50-A Deadline",
+    title: "Step 3: 0.5% Flat IFU Tax & G12 bis Deadline",
     description:
-      "Your sole fiscal obligation is a single flat 0.5% IFU rate on collected turnover. MoukawilOS tracks your annual G50-A declaration deadline (June 30th) to ensure timely filing without audits or penalties.",
+      "Your sole fiscal obligation is a single flat 0.5% IFU rate on collected turnover. MoukawilOS tracks your annual G12 bis declaration deadline (June 30th) to ensure timely filing without audits or penalties.",
     placement: "top",
     path: "/dashboard",
   },

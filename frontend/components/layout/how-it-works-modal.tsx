@@ -101,9 +101,9 @@ export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
       icon: Calculator,
       tag: "Statutory Rule 03",
       title: "How Your Tax is Calculated (0.5% Flat IFU)",
-      lawRef: "Code des Impôts Directs • Formulaire G50-A",
+      lawRef: "Code des Impôts Directs • Formulaire G12 bis",
       description:
-        "Your sole tax obligation is the Impôt Forfaitaire Unique (IFU) at an ultra-low rate of 0.5% on collected turnover. You declare this once a year using official form G50-A before June 30th directly to your tax inspection.",
+        "Your sole tax obligation is the Impôt Forfaitaire Unique (IFU) at an ultra-low rate of 0.5% on collected turnover. You declare this once a year using official form G12 bis before June 30th directly to your tax inspection.",
       demo: (
         <div className="rounded-xl border border-slate-200/90 bg-slate-50 p-4 font-mono text-xs">
           <div className="flex justify-between py-1 border-b border-slate-200">

@@ -44,7 +44,7 @@ export function Topbar({ utilization }: { utilization: number }) {
   const notifications = [
     {
       id: "1",
-      title: "Statutory G50-A Declaration Due",
+      title: "Statutory G12 bis Declaration Due",
       desc: "Annual IFU declaration deadline is June 30, 2026.",
       time: "In 72 days",
       icon: Clock,

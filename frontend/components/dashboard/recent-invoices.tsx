@@ -43,7 +43,7 @@ export function RecentInvoices({
     utilization: 0.4,
     pending: subtotalPending,
     totalInvoiced: 2000000 + subtotalPending,
-    counts: { all: invoices.length, paid: 1, pending: 2, draft: 0 },
+    counts: { all: invoices.length, paid: 1, pending: 1, draft: 1 },
   };
 
   const confirmPayment = ({ invoiceId, settlementDate, rail }: PaymentConfirmation) => {
@@ -66,7 +66,7 @@ export function RecentInvoices({
           <div className="flex items-center gap-2.5">
             <h2 className="text-lg font-bold tracking-tight text-ink">{t("Recent Invoices")}</h2>
             <Pill className="border border-slate-200/80 bg-surface-low px-2.5 py-0.5 text-ink font-semibold">
-              {t("{length} Total", { length: invoices.length })}
+              {t("{length} Total", { length: stats?.counts.all ?? invoices.length })}
             </Pill>
           </div>
           <Link
