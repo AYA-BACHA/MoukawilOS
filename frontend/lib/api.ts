@@ -17,6 +17,22 @@ import type {
 const CURRENT_USER_ID = "usr_1";
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
+export type DemoScenario = "standard" | "near_ceiling" | "new_user";
+
+export function getDemoScenario(): DemoScenario {
+  if (typeof window !== "undefined") {
+    return (localStorage.getItem("moukawil_demo_scenario") as DemoScenario) || "standard";
+  }
+  return "standard";
+}
+
+export function setDemoScenario(scenario: DemoScenario) {
+  if (typeof window !== "undefined") {
+    localStorage.setItem("moukawil_demo_scenario", scenario);
+    window.location.reload();
+  }
+}
+
 export interface Lookups {
   client_types: string[];
   languages: string[];
@@ -368,8 +384,76 @@ export async function updateClient(client: Client, input: ClientInput): Promise<
 }
 
 export async function getInvoices(): Promise<InvoiceWithClient[]> {
+  const scenario = getDemoScenario();
   const clients = await getClients();
   const clientMap = new Map(clients.map((c) => [c.id, c]));
+
+  if (scenario === "new_user") {
+    return [];
+  }
+
+  if (scenario === "near_ceiling") {
+    const b2bClient: Client = clients.find((c) => c.type === "B2B") || {
+      id: "cli_b2b_demo",
+      userId: CURRENT_USER_ID,
+      name: "Sonatrach Digital SPA",
+      type: "B2B",
+      nif: "000216001234567",
+      nis: "000216010123456",
+      rc: "16/00-1234567B20",
+      address: "Hydra, Alger",
+      location: "Hydra, Alger",
+      description: null,
+      email: "achats@sonatrach-digital.dz",
+      phone: "021000001",
+      anaeVerified: true,
+    };
+
+    return [
+      {
+        id: "inv_cap_1",
+        userId: CURRENT_USER_ID,
+        clientId: b2bClient.id,
+        number: "FAC-2026-008",
+        issueDate: "2026-09-15",
+        dueDate: "2026-10-15",
+        amount: 2700000,
+        status: "paid",
+        statutoryClause: "TVA non applicable - Art. 13 de la LFR 2023",
+        paidAt: "2026-10-01",
+        paymentRail: "bank_transfer",
+        client: b2bClient,
+      },
+      {
+        id: "inv_cap_2",
+        userId: CURRENT_USER_ID,
+        clientId: b2bClient.id,
+        number: "FAC-2026-007",
+        issueDate: "2026-06-10",
+        dueDate: "2026-07-10",
+        amount: 2000000,
+        status: "paid",
+        statutoryClause: "TVA non applicable - Art. 13 de la LFR 2023",
+        paidAt: "2026-07-01",
+        paymentRail: "bank_transfer",
+        client: b2bClient,
+      },
+      {
+        id: "inv_cap_3",
+        userId: CURRENT_USER_ID,
+        clientId: b2bClient.id,
+        number: "FAC-2026-009",
+        issueDate: "2026-10-10",
+        dueDate: "2026-11-10",
+        amount: 350000,
+        status: "pending",
+        statutoryClause: "TVA non applicable - Art. 13 de la LFR 2023",
+        paidAt: null,
+        paymentRail: null,
+        client: b2bClient,
+      },
+    ];
+  }
 
   const res = await fetchBackend<{ items: BackendInvoiceOut[]; total: number }>("/invoices?limit=100");
 

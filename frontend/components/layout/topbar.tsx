@@ -11,6 +11,8 @@ import { SelectDropdown } from "@/components/ui/select-dropdown";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { cn } from "@/lib/cn";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
+import { DemoSwitcher } from "@/components/layout/demo-switcher";
+import { SpotlightTour } from "@/components/layout/spotlight-tour";
 import { useMobileNav } from "@/components/layout/mobile-nav-context";
 import { useI18n } from "@/lib/i18n/provider";
 
@@ -38,6 +40,7 @@ export function Topbar({ utilization }: { utilization: number }) {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncToast, setSyncToast] = useState(false);
+  const [showTour, setShowTour] = useState(false);
   const notifRef = useRef<HTMLDivElement>(null);
   const userRef = useRef<HTMLDivElement>(null);
 
@@ -113,9 +116,7 @@ export function Topbar({ utilization }: { utilization: number }) {
         </div>
 
         <div className="flex items-center gap-1.5 shrink-0">
-          <span className="rounded-full border border-amber-300 bg-amber-50 px-2 py-0.5 text-[10px] font-bold text-amber-800">
-            {t("Demo")}
-          </span>
+          <DemoSwitcher onStartTour={() => setShowTour(true)} />
           <LanguageSwitcher />
           <ThemeToggle />
           <Link
@@ -154,9 +155,7 @@ export function Topbar({ utilization }: { utilization: number }) {
         </div>
 
         <div className="flex items-center gap-1.5 xl:gap-3 shrink-0">
-          <Pill className="hidden xl:inline-flex border border-amber-300 bg-amber-50 text-amber-800 text-[11px] font-semibold px-2.5 py-1 shadow-2xs">
-            {t("Demo account (sample data)")}
-          </Pill>
+          <DemoSwitcher onStartTour={() => setShowTour(true)} />
           <LanguageSwitcher />
           <ThemeToggle />
 
@@ -251,6 +250,8 @@ export function Topbar({ utilization }: { utilization: number }) {
           <span className="text-xs font-semibold text-ink">{t("Ledger recalculated from recorded payments")}</span>
         </div>
       )}
+
+      <SpotlightTour isOpen={showTour} onClose={() => setShowTour(false)} />
     </header>
   );
 }

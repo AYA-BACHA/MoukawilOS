@@ -99,18 +99,22 @@ MoukawilOS unifies cash-basis accounting, sequential invoicing, automated fiscal
 Evaluators and reviewers can verify the end-to-end statutory and fiscal workflows directly in the browser:
 
 1. Open the live deployment: **https://moukawil-os.vercel.app**
-2. The application boots directly into the pre-seeded **Demo account (sample data)** for sample user **Amine B.** (ANAE `AE-16-0492`) with pre-loaded clients and invoices, requiring no registration or login.
-3. Navigate to **Invoices** -> click **"New Invoice"**, select a client, add a billable line item in DZD, and click **"Finalize Invoice"**.
+2. The application boots directly into the pre-seeded **Demo Account** (sample auto-entrepreneur **Sara Benali / Amine B.**, ANAE `23-123456` / `AE-16-0492`) with pre-loaded clients and invoices, requiring no registration or login.
+3. **Instant Pitch Simulation (Top Header Bar):**
+   - Click the **Scenario Switcher** pill in the top header (`Scenario: 40% Ceiling`).
+   - Switch between **Standard (40%)**, **Near Statutory Cap Alert (94%)** (which triggers the Law 22-23 Art. 13 statutory warning banner), and **Fresh Auto-Entrepreneur (0%)**.
+   - Click **"Launch Guided 2-Min Pitch Walkthrough"** to experience the step-by-step interactive evaluator tour.
+4. Navigate to **Invoices** -> click **"New Invoice"**, select a client, add a billable line item in DZD, and click **"Finalize Invoice"**.
    - Notice the status updates to `ISSUED / PENDING`.
    - Return to the **Dashboard**: observe that the **Turnover Meter remains unchanged at 0 DZD consumed**. Under Law 22-23, issuing an invoice does not consume turnover or trigger tax liability.
-4. Return to the invoice, click **"Record Payment"**, select settlement method (*Virement bancaire*, *Chèque*, or *BaridiMob*), and confirm.
-   - The invoice transitions to the immutable `PAID` state.
-5. Check the **Dashboard**:
+5. Return to the invoice, click **"Record Payment"**, select settlement method (*Virement bancaire*, *Chèque*, or *BaridiMob*), and confirm.
+   - The invoice transitions to the immutable `PAID` state, synced with the backend API and database.
+6. Check the **Dashboard**:
    - The **Turnover Meter** increments by the settled amount.
    - The **5,000,000 DZD ceiling gauge** and remaining headroom recalculate.
    - The **IFU Tax Liability** updates immediately, adhering to the `max(0.5%, 10,000 DZD)` statutory floor.
-6. Open the invoice details, toggle the language selector between **Arabic (RTL)**, **French**, and **English**, and click **"Download PDF"** to verify high-fidelity multilingual document compilation.
-7. Open the **Regulatory Assistant** and test statutory grounding:
+7. Open the invoice details, toggle the language selector between **Arabic (RTL)**, **French**, and **English**, and click **"Download PDF"** to verify high-fidelity multilingual document compilation.
+8. Open the **Regulatory Assistant** and test statutory grounding:
    - *Grounded Query:* "Which activities are eligible under the auto-entrepreneur status?" -> Returns approved sectors with citations to Executive Decree No. 23-197.
    - *Adversarial / Out-of-Scope Query:* "Can a retail pharmacy operate under auto-entrepreneur status?" -> System triggers a deterministic refusal stating the topic cannot be verified in the indexed decrees, refusing to hallucinate tax advice.
 

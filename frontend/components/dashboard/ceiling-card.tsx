@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight, BadgeCheck, Banknote, CheckCircle, Info, X } from "lucide-react";
+import { AlertTriangle, ArrowRight, BadgeCheck, Banknote, CheckCircle, Info, X } from "lucide-react";
 import { Pill } from "@/components/ui/pill";
 
 import type { TurnoverStats } from "@/types/models";
@@ -79,12 +79,28 @@ export function CeilingCard({ stats }: { stats: TurnoverStats }) {
 
           <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
             <div className="flex flex-wrap items-center gap-2.5">
-              <Pill
-                dot="size-2 bg-primary"
-                className="bg-mint px-3 py-1.5 text-xs font-bold text-accent shadow-xs ring-1 ring-emerald-600/10"
-              >
-                {t("{percent}% utilized • Safe & In Compliance", { percent })}
-              </Pill>
+              {percent >= 90 ? (
+                <Pill
+                  dot="size-2 bg-amber-500 animate-pulse"
+                  className="bg-amber-100 px-3 py-1.5 text-xs font-bold text-amber-900 border border-amber-300 shadow-xs"
+                >
+                  {t("{percent}% utilized • WARNING: Approaching Cap", { percent })}
+                </Pill>
+              ) : percent >= 80 ? (
+                <Pill
+                  dot="size-2 bg-amber-400"
+                  className="bg-amber-50 px-3 py-1.5 text-xs font-bold text-amber-800 border border-amber-200 shadow-xs"
+                >
+                  {t("{percent}% utilized • 80% Threshold Reached", { percent })}
+                </Pill>
+              ) : (
+                <Pill
+                  dot="size-2 bg-primary"
+                  className="bg-mint px-3 py-1.5 text-xs font-bold text-accent shadow-xs ring-1 ring-emerald-600/10"
+                >
+                  {t("{percent}% utilized • Safe & In Compliance", { percent })}
+                </Pill>
+              )}
               <p className="text-xs text-body">
                 <span className="font-num font-bold text-ink">{t("{v1} DZD", { v1: formatAmount(remaining) })}</span> {t("remaining under your 5M DZD statutory limit")}
               </p>
@@ -98,6 +114,16 @@ export function CeilingCard({ stats }: { stats: TurnoverStats }) {
               <ArrowRight className="rtl:-scale-x-100 size-3" />
             </button>
           </div>
+
+          {percent >= 80 && (
+            <div className="mt-1 flex items-start gap-3 rounded-xl border border-amber-300 bg-amber-50/90 p-3 text-amber-900 animate-in fade-in slide-in-from-top-1">
+              <AlertTriangle className="size-4.5 shrink-0 text-amber-600 mt-0.5" />
+              <div className="text-xs leading-relaxed">
+                <strong className="font-bold text-amber-950">{t("Statutory Ceiling Sentinel (Law 22-23, Art. 13):")}</strong>{" "}
+                {t("You have utilized {percent}% of your annual ceiling. Under Executive Decree 23-197, exceeding 5,000,000 DZD for 3 consecutive fiscal years requires mandatory radiation or transition to the standard commercial register (CNRC).", { percent })}
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
