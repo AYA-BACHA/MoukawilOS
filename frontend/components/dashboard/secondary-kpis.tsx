@@ -29,68 +29,8 @@ export function SecondaryKpis({ deadline, stats }: { deadline: Deadline; stats: 
 
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-        {/* Primary Statutory Tax Due Card */}
-        <article id="tour-tax-payable" className={cardClass}>
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center justify-between">
-              <h3 className={labelClass}>{t("Tax Payable (IFU)")}</h3>
-              <span className="grid size-9 place-items-center rounded-xl bg-emerald-100 text-emerald-800 shadow-xs">
-                <Calculator className="size-4 text-emerald-700" />
-              </span>
-            </div>
-            <div>
-              <div className="flex flex-wrap items-baseline gap-1.5">
-                <span className="font-num text-xl sm:text-2xl font-bold tracking-tight text-ink">
-                  {formatAmount(ifuTax)}
-                </span>
-                <span className="font-num text-sm font-medium text-muted">{t("DZD")}</span>
-                <Pill className="ms-auto border border-emerald-200 bg-emerald-50 px-2 py-0.5 font-num text-[11px] font-bold text-emerald-800">
-                  {t("0.5% Flat Rate")}
-                </Pill>
-              </div>
-              <div className="mt-2 flex flex-col gap-1">
-                <p className="text-xs text-body leading-relaxed">
-                  {isFloorApplied
-                    ? t("Statutory floor applied (10,000 DZD min. under CIDTA Art. 282 quater).")
-                    : stats.collected === 0
-                    ? t("Minimum annual floor of 10,000 DZD due by statutory deadline.")
-                    : t("Calculated on {amount} DZD cash turnover. 0% VAT strictly exempt.", {
-                        amount: formatAmount(stats.collected),
-                      })}
-                </p>
-                <div className="flex flex-wrap items-center gap-1.5 pt-0.5 text-[11px] text-muted">
-                  <span className="rounded bg-surface-low px-1.5 py-0.5 font-medium text-slate-700">
-                    {t("CASNOS: 24,000 DZD")}
-                  </span>
-                  <span>•</span>
-                  <span className="font-medium text-teal">
-                    {t("Retained: {pct}%", {
-                      pct: stats.collected > 0
-                        ? ((1 - ifuTax / stats.collected) * 100).toFixed(1)
-                        : "99.5",
-                    })}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 pt-3.5 mt-3">
-            <button
-              type="button"
-              onClick={() => setShowDeclaration(true)}
-              className={linkClass}
-            >
-              {t("View declaration preview")}
-              <ArrowRight className="rtl:-scale-x-100 size-3" />
-            </button>
-            <Pill className="border border-slate-200/70 bg-surface-low px-2 py-0.5 text-[11px] text-body">
-              {t("Law 22-23 Certified")}
-            </Pill>
-          </div>
-        </article>
-
-        {/* Statutory Filing Deadline Card */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+        {/* Statutory Filing Deadline & Tax Due Card */}
         <article id="tour-statutory-deadline" className={cardClass}>
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
@@ -115,6 +55,24 @@ export function SecondaryKpis({ deadline, stats }: { deadline: Deadline; stats: 
                   ? `${t(extended.label)} • ${t(deadline.description)}`
                   : t("Annual G12 bis regularisation (0.5% flat IFU tax obligation) • Due January 20, 2027.")}
               </p>
+
+              {/* Prominent Statutory Tax Payable Box */}
+              <div className="mt-3 flex items-center justify-between rounded-xl border border-emerald-200/90 bg-emerald-50/70 p-3 text-xs">
+                <div>
+                  <div className="flex items-center gap-1.5 font-bold text-emerald-900">
+                    <Calculator className="size-3.5 text-emerald-600 shrink-0" />
+                    <span>{t("Tax Payable (IFU 0.5%):")}</span>
+                  </div>
+                  <p className="text-[11px] text-emerald-700/90 pt-0.5">
+                    {isFloorApplied
+                      ? t("Statutory floor applied (10,000 DZD min.)")
+                      : t("Flat 0.5% single tax under Law 22-23")}
+                  </p>
+                </div>
+                <span className="font-num font-extrabold text-emerald-950 text-base">
+                  {formatAmount(ifuTax)} {t("DZD")}
+                </span>
+              </div>
             </div>
           </div>
           <div className="flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 pt-3.5 mt-3">
@@ -123,11 +81,11 @@ export function SecondaryKpis({ deadline, stats }: { deadline: Deadline; stats: 
               onClick={() => setShowDeclaration(true)}
               className={linkClass}
             >
-              {t("Prepare G12 bis filing")}
+              {t("View declaration preview")}
               <ArrowRight className="rtl:-scale-x-100 size-3" />
             </button>
             <Pill className="border border-slate-200/70 bg-surface-low px-2 py-0.5 font-num text-[11px] text-muted">
-              {t("Annual declaration")}
+              {t("DGI Tax Portal Sync")}
             </Pill>
           </div>
         </article>

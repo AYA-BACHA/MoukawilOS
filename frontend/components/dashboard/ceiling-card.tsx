@@ -58,7 +58,7 @@ export function CeilingCard({ stats }: { stats: TurnoverStats }) {
             </p>
             <Pill className="bg-surface-low px-3 py-1.5 font-normal text-body border border-slate-200/60 text-xs">
               <BadgeCheck className="size-3.5 text-teal shrink-0" />
-              <span className="truncate">{t("Calculated from your recorded payments")}</span>
+              <span className="truncate">{t("Audited Against Official Treasury Receipts")}</span>
             </Pill>
           </div>
 
