@@ -1,12 +1,12 @@
 <div align="center">
 
-# MoukawilOS
+# MoukawilOS (مقاول)
 
-### Regulatory and Fiscal Compliance Workspace for Algerian Auto-Entrepreneurs
+### Regulatory and Fiscal Compliance Workspace for Algerian Auto-Entrepreneurs (مقاول)
 
 Statutory compliance under Law 22-23 and Executive Decree 23-197 &nbsp;|&nbsp; Strict cash-basis turnover tracking (5,000,000 DZD ceiling) &nbsp;|&nbsp; Deterministic 0.5% IFU calculation &nbsp;|&nbsp; Multilingual PDF invoicing (Arabic RTL, French, English) &nbsp;|&nbsp; Regulatory RAG assistant with verified legal citations
 
-[Live Demo](https://moukawil-os.vercel.app) &nbsp;|&nbsp; [Demo Video]([DEMO_VIDEO_URL]) &nbsp;|&nbsp; [Source Code](https://github.com/AYA-BACHA/MoukawilOS)
+[Live Demo](https://moukawil-os.vercel.app/dashboard) &nbsp;|&nbsp; [Demo Video]([DEMO_VIDEO_URL]) &nbsp;|&nbsp; [Source Code](https://github.com/AYA-BACHA/MoukawilOS)
 
 ![Next.js](https://img.shields.io/badge/Next.js_16.3-000000?logo=nextdotjs&logoColor=white)
 ![React](https://img.shields.io/badge/React_19-61DAFB?logo=react&logoColor=black)
@@ -16,7 +16,7 @@ Statutory compliance under Law 22-23 and Executive Decree 23-197 &nbsp;|&nbsp; S
 ![Python](https://img.shields.io/badge/Python_3.11-3776AB?logo=python&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL_18-4169E1?logo=postgresql&logoColor=white)
 ![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?logo=supabase&logoColor=white)
-![OpenAI](https://img.shields.io/badge/OpenAI-RAG_Target-412991?logo=openai&logoColor=white)
+![Google Gemini](https://img.shields.io/badge/Google_Gemini-Gemini_1.5_Flash-4285F4?logo=googlegemini&logoColor=white)
 ![Vercel](https://img.shields.io/badge/Vercel-Frontend_Deployment-000000?logo=vercel&logoColor=white)
 ![Render](https://img.shields.io/badge/Render-Backend_API-46E3B7?logo=render&logoColor=black)
 ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-Automated_CI-2088FF?logo=githubactions&logoColor=white)
@@ -43,7 +43,7 @@ Statutory compliance under Law 22-23 and Executive Decree 23-197 &nbsp;|&nbsp; S
 8. [Technical Stack](#8-technical-stack)
 9. [Local Development Setup](#9-local-development-setup)
 10. [Project Structure](#10-project-structure)
-11. [Engineering Team](#11-engineering-team)
+11. [Project Status & Team](#project-status)
 12. [AI Transparency & Attribution](#12-ai-transparency--attribution)
 13. [Known Limitations & Engineering Trade-Offs](#13-known-limitations--engineering-trade-offs)
 14. [Roadmap & Future Scope](#14-roadmap--future-scope)
@@ -160,7 +160,7 @@ flowchart TD
     subgraph ServicesTier ["3. Persistence, Intelligence & Document Services"]
         direction LR
         DB[("PostgreSQL 15+ & pgvector<br/>Supabase Managed Relational Store<br/>Row-Level Security & Immutability Triggers")]
-        RAG["Regulatory RAG Pipeline<br/>LangChain • text-embedding-3-small • GPT-4o-mini<br/>Article Citations & Refusal Fallback Gate"]
+        RAG["Regulatory RAG Pipeline<br/>LangChain • text-embedding-004 • Gemini 1.5 Flash<br/>Article Citations & Refusal Fallback Gate"]
         PDF["Document Generator<br/>ReportLab / PyMuPDF<br/>Arabic RTL Shaping (Cairo / Amiri)"]
     end
 
@@ -179,7 +179,7 @@ flowchart TD
 To guarantee zero-friction evaluator accessibility without requiring database setup or external API dependencies during review:
 - **Live Vercel Web App (`moukawil-os.vercel.app`):** Runs the Next.js 16 presentation tier directly in the browser, powered by an embedded statutory mock database (`frontend/data/db.json`). All user interactions (creating invoices, recording payment settlements, recalculating metrics) mutate in-memory React state. Data is preserved throughout your browsing session, but resets to the initial demo state upon a full page refresh.
 - **Backend REST Service (`backend/`):** A standalone Python FastAPI application using Pydantic v2 exact decimal types and endpoints designed for multi-tenant PostgreSQL / Supabase persistence.
-- **Regulatory Intelligence (`rag/`):** A microservice architecture skeleton targeting OpenAI legal embeddings and retrieval, complemented by the live frontend's deterministic keyword search over indexed Algerian statutes.
+- **Regulatory Intelligence (`rag/`):** A microservice architecture skeleton targeting Google Gemini legal embeddings (text-embedding-004) and retrieval (Gemini 1.5 Flash), complemented by the live frontend's deterministic keyword search over indexed Algerian statutes.
 
 ---
 
@@ -397,12 +397,12 @@ To prevent LLMs from inventing tax rates, deadlines, or legal exemptions, the RA
 
 ```mermaid
 flowchart TD
-    Q([User Question in English, French, or Arabic]) --> E[Generate Query Embedding via text-embedding-3-small]
+    Q([User Question in English, French, or Arabic]) --> E[Generate Query Embedding via text-embedding-004]
     E --> V[Vector Search: Cosine Similarity over pgvector Legal Chunks]
     V --> S{Top Similarity Score >= 0.70?}
     
     S -- Yes --> C[Inject Matched Chunks into Strict System Context]
-    C --> G[LLM Synthesizes Answer: GPT-4o-mini]
+    C --> G[LLM Synthesizes Answer: Gemini 1.5 Flash]
     G --> A[Output Answer with Article Citation, JORADP URL & Verification Badge]
     
     S -- No --> F[Deterministic Refusal Fallback Triggered]
@@ -431,7 +431,7 @@ MoukawilOS standardizes on a modern, decoupled web architecture:
 | **Validation & Fiscal Engine** | **Pydantic v2 & Python Decimal** | Strict Decimal types | Zero floating-point drift on currency and tax calculations; strict schema validation. |
 | **RAG Microservice** | **FastAPI & LangChain** | Python 3.11, LangChain Core | Standalone retrieval service under `rag/app/main.py` grounded in indexed Algerian legal decrees. |
 | **Relational Database** | **PostgreSQL 15+** | Supabase Managed Relational Store | Multi-tenant schema with 9 incremental migrations and strict Row-Level Security (RLS). |
-| **Vector Search Engine** | **pgvector** | HNSW cosine index (`vector(1536)`) | Semantic legal similarity search over chunked Algerian statutory texts embedded directly inside PostgreSQL. |
+| **Vector Search Engine** | **pgvector** | HNSW cosine index (`vector(768)`) | Semantic legal similarity search over chunked Algerian statutory texts embedded directly inside PostgreSQL. |
 | **Document Compilation** | **Multilingual A4 Renderer & PDF Engine** | DIN 476 / ISO 216 Engine, ReportLab | Standardized legal invoice export supporting Arabic bidirectional text shaping (`arabic-reshaper`, `python-bidi`), French, and English. |
 | **Testing & CI/CD** | **TypeScript & GitHub Actions** | TypeScript 5, GitHub Workflows | Typechecking, CI validation workflows (`.github/workflows/ci.yml`), and fiscal test coverage. |
 | **CI/CD & Deployment** | **Vercel, Render & GitHub Actions** | Production Cloud Pipelines | Deployment: Frontend on Vercel · Backend API on Cloud/Render · Automated CI via GitHub Actions (.github/workflows/ci.yml) |
@@ -448,7 +448,7 @@ MoukawilOS standardizes on a modern, decoupled web architecture:
 | **Python** | 3.11 or newer | [python.org](https://www.python.org/) |
 | **Git** | 2.38 or newer | [git-scm.com](https://git-scm.com/) |
 | **PostgreSQL / Supabase** | PostgreSQL 15+ with `pgvector` | Local PostgreSQL or [Supabase](https://supabase.com) project (for production mode) |
-| **OpenAI API Key** | Valid API key | [platform.openai.com](https://platform.openai.com) (for live RAG assistant) |
+| **Gemini API Key** | Valid API key | [aistudio.google.com](https://aistudio.google.com) (for live RAG assistant) |
 
 ---
 
@@ -549,7 +549,7 @@ The frontend includes an embedded statutory mock database (`frontend/data/db.jso
    ```bash
    cp .env.example .env
    ```
-   *Set your `OPENAI_API_KEY` in `.env`.*
+   *Set your `GEMINI_API_KEY` in `.env`.*
 
 5. Start the RAG microservice:
    ```bash
@@ -563,7 +563,7 @@ The frontend includes an embedded statutory mock database (`frontend/data/db.jso
 | Variable | Target Service | Purpose & Format | Example Value |
 |---|---|---|---|
 | `DATABASE_URL` | Backend | PostgreSQL connection string with SSL | `postgresql+asyncpg://postgres:pass@db.xxx.supabase.co:5432/postgres` |
-| `OPENAI_API_KEY` | Backend / RAG | OpenAI secret key for legal embeddings & RAG | `sk-proj-xxxxxxxxxxxxxxxxxxxxxxxx` |
+| `GEMINI_API_KEY` | Backend / RAG | Google Gemini API key for legal embeddings & RAG | `AIzaSyxxxxxxxxxxxxxxxxxxxxxxx` |
 | `ALLOWED_ORIGINS` | Backend | Comma-separated list of origins allowed by CORS | `http://localhost:3000,https://moukawil-os.vercel.app` |
 | `NEXT_PUBLIC_API_URL` | Frontend | Base URL of the backend REST API | `http://localhost:8000` |
 | `NEXT_PUBLIC_APP_URL` | Frontend | Public URL of the frontend web application | `http://localhost:3000` |
@@ -621,16 +621,21 @@ MoukawilOS/
 
 ---
 
-## 11. Engineering Team
+## Project Status
 
-| Team Member | Engineering Role | Core Contributions |
+Live MVP: https://moukawil-os.vercel.app/dashboard (opens with a demo account, no sign-up).
+Core flow works end to end: create invoice → mark as paid → ceiling and IFU update. Also: cited Legal AI assistant, Arabic RTL.
+
+## Team
+
+| Name | Role | Built |
 |---|---|---|
-| **Bacha Aya** | **Founder & Product Lead** | Product architecture, Algerian regulatory mapping, design system, client-side state, invoicing engine. |
-| **Achouri Dalia** | **Data & ML Engineer** | Legal RAG service, indexing of Law 22-23 and Decree 23-197 with citation mapping. |
-| **Kawther Yakoub** | **Backend Engineer** | FastAPI backend, Supabase/PostgreSQL schema, auth, REST endpoints, Decimal logic for the 5M DZD ceiling, 0.5% IFU engine, invoice status transitions. |
-| **Rahima Hamouda** | **Data & ML Engineer** | Retrieval pipeline, prompt engineering, guardrails for out-of-scope queries. |
-| **Ilyes Guebabi** | **Business Operations & Strategy** | Freelancer interviews, MVP scope, fiscal workflow validation. |
-| **Yasmine Hamaili** | **Frontend Engineer** | Next.js views for clients, invoice preview and form validation. |
+| Bacha Aya | Founder & Product Lead | Product scope, Law 22-23 mapping, design system, invoice builder |
+| Kawther Yakoub | Backend | FastAPI backend, Postgres/Supabase schema and auth, exact-decimal ceiling/IFU engine |
+| Yasmine Hamaili | Frontend | Responsive UI, client management, invoice preview, form validation |
+| Achouri Dalia | Data & ML | Legal RAG service, indexing of Law 22-23 and Decree 23-197 with citations |
+| Rahima Hamouda | Data & ML | Retrieval pipeline, prompts, out-of-scope guardrails |
+| Ilyes Guebabi | Business & Research | 12 freelancer interviews, MVP scope, workflow validation |
 
 ---
 
@@ -640,7 +645,7 @@ We maintain complete transparency regarding the role of Artificial Intelligence 
 
 | Context | AI Tooling / Model | Implementation Scope | Verification & Engineering Boundaries |
 |---|---|---|---|
-| **Inside the Product** | Local Statutory Retrieval & OpenAI API Target (`text-embedding-3-small`, `gpt-4o-mini`) | The live web demo operates via deterministic keyword retrieval grounded strictly in indexed Algerian decrees; the standalone RAG microservice targets OpenAI embeddings with cosine similarity thresholds (refusal fallback below 0.70). | Zero tax calculation hallucination risk: fiscal math is isolated in deterministic code and physically separated from AI generation. |
+| **Inside the Product** | Local Statutory Retrieval & Google Gemini API Target (`text-embedding-004`, `Gemini 1.5 Flash`) | The live web demo operates via deterministic keyword retrieval grounded strictly in indexed Algerian decrees; the standalone RAG microservice targets Gemini embeddings with cosine similarity thresholds (refusal fallback below 0.70). | Deterministic execution: tax math never goes through the LLM. Fiscal calculations are isolated in deterministic code and physically separated from AI generation. |
 | **During Development** | Claude, Gemini, GitHub Copilot | Code assistance, unit test scaffolding, and drafting repetitive boilerplate. | All generated code, database schemas, and mathematical formulas were audited, reviewed, and verified against Algerian statutes by human engineers before merging. |
 
 ---
@@ -708,10 +713,10 @@ MoukawilOS enforces security at every layer of the stack:
 2. **Database-Level Immutability Constraints:**  
    PostgreSQL trigger functions reject any `UPDATE` or `DELETE` statements executed against invoices with a status of `issued` or `paid`. Even in the event of an API validation regression, the database prohibits tampering with finalized invoices.
 
-3. **Zero Secret Leakage:**  
-   No API tokens, database credentials, or secret keys are committed to the repository. Sensitive variables are loaded strictly from environment variables.
+3. **Secure Credential Handling:**  
+   Credential isolation practices ensure that API tokens, database passwords, and secret keys are excluded from repository commits. Sensitive variables are loaded strictly from environment configuration files.
 
-To verify your local repository clone for leaked secrets:
+To verify that no sensitive credential files are tracked in your git clone:
 
 ```bash
 git ls-files | grep -E '(\.env|\.pem|\.key)$'
