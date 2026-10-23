@@ -6,7 +6,7 @@
 
 Statutory compliance under Law 22-23 and Executive Decree 23-197 &nbsp;|&nbsp; Strict cash-basis turnover tracking (5,000,000 DZD ceiling) &nbsp;|&nbsp; Deterministic 0.5% IFU calculation &nbsp;|&nbsp; Multilingual PDF invoicing (Arabic RTL, French, English) &nbsp;|&nbsp; Regulatory RAG assistant with verified legal citations
 
-[Live Demo](https://moukawil-os.vercel.app/dashboard) &nbsp;|&nbsp; [Demo Video]([DEMO_VIDEO_URL]) &nbsp;|&nbsp; [Source Code](https://github.com/AYA-BACHA/MoukawilOS)
+[Live Demo](https://moukawil-os.vercel.app/dashboard) &nbsp;|&nbsp; [Demo Video](https://drive.google.com/file/d/19sY-x4XJzbiCkms53TvNUkb1odRagCMb/view?usp=sharing) &nbsp;|&nbsp; [Source Code](https://github.com/AYA-BACHA/MoukawilOS)
 
 ![Next.js](https://img.shields.io/badge/Next.js_16.3-000000?logo=nextdotjs&logoColor=white)
 ![React](https://img.shields.io/badge/React_19-61DAFB?logo=react&logoColor=black)
