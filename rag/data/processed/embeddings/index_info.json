@@ -1,0 +1,8 @@
+{
+  "model": "intfloat/multilingual-e5-small",
+  "dimensions": 384,
+  "count": 70,
+  "batch_size": 8,
+  "normalized": true,
+  "source": "rag/data/processed/chunks.json"
+}
