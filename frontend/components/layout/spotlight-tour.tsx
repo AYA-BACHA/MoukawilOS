@@ -78,15 +78,22 @@ const TOUR_STEPS: TourStep[] = [
     placement: "bottom",
   },
   {
+    targetId: "tour-demo-switcher",
+    title: "Step 9: Interactive Evaluator Scenarios",
+    description:
+      "Judges & Evaluators: test MoukawilOS across different fiscal conditions in real time! Switch between Standard (40%), Near Ceiling Warning (94% - Art. 13 Sentinel), and Fresh Slate (0%) to observe live reactive calculations.",
+    placement: "bottom",
+  },
+  {
     targetId: "tour-sidebar-nav",
-    title: "Step 9: Ledger, Clients & AI Legal Assistant",
+    title: "Step 10: Ledger, Clients & AI Legal Assistant",
     description:
       "Navigate your complete commercial operations: the Invoices Ledger, client dossiers with NIF validation, and the AI Assistant trained on Algerian tax legislation to answer any legal question.",
     placement: "right",
   },
   {
     targetId: "tour-how-it-works",
-    title: "Step 10: Permanent Interactive Help",
+    title: "Step 11: Permanent Interactive Help",
     description:
       "Whenever you have a doubt about tax rates, invoice rules, or ceiling limits, click 'How Moukawil Works' to reopen this guided walkthrough anytime. You are ready to succeed!",
     placement: "right",

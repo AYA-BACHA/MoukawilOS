@@ -63,10 +63,33 @@ export function DemoSwitcher({ onStartTour }: DemoSwitcherProps) {
   const [backendHealthy, setBackendHealthy] = useState<boolean | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
+  const [showJudgeHint, setShowJudgeHint] = useState(false);
+
   useEffect(() => {
     setScenario(getDemoScenario());
     checkBackendHealth().then((healthy) => setBackendHealthy(healthy));
+
+    // Show friendly evaluator callout hint on fresh session if not dismissed
+    if (typeof window !== "undefined") {
+      const dismissed = sessionStorage.getItem("moukawil_judge_hint_dismissed");
+      if (!dismissed) {
+        const timer = setTimeout(() => setShowJudgeHint(true), 1200);
+        // Auto-hide after 12s so it never gets in the way
+        const autoHide = setTimeout(() => setShowJudgeHint(false), 13200);
+        return () => {
+          clearTimeout(timer);
+          clearTimeout(autoHide);
+        };
+      }
+    }
   }, []);
+
+  const dismissJudgeHint = () => {
+    setShowJudgeHint(false);
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("moukawil_judge_hint_dismissed", "true");
+    }
+  };
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -82,35 +105,88 @@ export function DemoSwitcher({ onStartTour }: DemoSwitcherProps) {
     setScenario(selected);
     setDemoScenario(selected);
     setIsOpen(false);
+    dismissJudgeHint();
   };
 
   const current = scenarios.find((s) => s.id === scenario) || scenarios[0];
 
   return (
     <div ref={menuRef} className="relative inline-flex items-center">
-      {/* Trigger Button */}
+      {/* Trigger Button - Vibrant & Catchy for Judges without being forcing */}
       <button
         type="button"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => {
+          setIsOpen(!isOpen);
+          dismissJudgeHint();
+        }}
         aria-label={t("Demo Scenario Switcher & System Status")}
         className={cn(
-          "inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs font-semibold shadow-2xs transition-all active:scale-95",
+          "group relative inline-flex items-center gap-1.5 sm:gap-2 rounded-xl border px-2.5 sm:px-3 py-1.5 text-xs font-semibold shadow-2xs transition-all duration-200 active:scale-95",
           scenario === "near_ceiling"
-            ? "border-amber-300 bg-amber-50 text-amber-900 hover:bg-amber-100"
-            : "border-slate-200/80 bg-surface-low text-ink hover:bg-surface hover:border-slate-300",
+            ? "border-amber-400/90 bg-amber-50 text-amber-900 hover:bg-amber-100/90 ring-1 ring-amber-400/20"
+            : "border-emerald-300/80 bg-gradient-to-r from-emerald-50/90 via-surface to-mint/40 text-ink hover:border-emerald-400 hover:shadow-xs ring-1 ring-emerald-500/15",
         )}
       >
-        <span
-          className={cn(
-            "size-2 rounded-full",
-            backendHealthy ? "bg-emerald-500 animate-pulse" : "bg-teal",
-          )}
-          title={backendHealthy ? "FastAPI Backend Connected" : "Backend Ready"}
-        />
-        <span className="hidden sm:inline font-medium text-body">{t("Scenario:")}</span>
-        <span className="font-bold">{t(current.badge)}</span>
-        <ChevronDown className="size-3 text-muted" />
+        <span className="relative flex size-2 shrink-0">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+          <span className="relative inline-flex size-2 rounded-full bg-emerald-600" />
+        </span>
+        <Sparkles className="size-3.5 text-accent group-hover:scale-110 transition-transform shrink-0" />
+        <span className="hidden sm:inline font-bold text-accent">{t("Scenarios:")}</span>
+        <span className={cn("rounded-md border px-1.5 py-0.5 text-[10px] font-extrabold shadow-2xs", current.badgeClass)}>
+          {t(current.badge)}
+        </span>
+        <ChevronDown className="size-3 text-muted group-hover:text-ink transition-colors" />
       </button>
+
+      {/* Non-intrusive Judge Scenario Callout Balloon */}
+      {showJudgeHint && !isOpen && (
+        <div className="absolute end-0 top-full z-40 mt-2.5 w-76 sm:w-84 max-w-[calc(100vw-32px)] rounded-2xl border border-emerald-300/90 bg-card p-3.5 shadow-xl shadow-black/10 backdrop-blur-md animate-in fade-in slide-in-from-top-2 duration-300 ltr:origin-top-right rtl:origin-top-left">
+          {/* Arrow */}
+          <div className="absolute -top-1.5 end-8 size-3 rotate-45 border-s border-t border-emerald-300/90 bg-card" />
+
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex items-center gap-1.5 font-bold text-xs text-ink">
+              <span className="flex size-5 items-center justify-center rounded-md bg-mint text-accent">
+                <Sparkles className="size-3" />
+              </span>
+              <span>{t("Judge Pitch Scenarios")}</span>
+            </div>
+            <button
+              type="button"
+              onClick={dismissJudgeHint}
+              aria-label={t("Dismiss hint")}
+              className="flex size-6 items-center justify-center rounded-md text-muted hover:bg-slate-100 hover:text-ink transition-colors"
+            >
+              <X className="size-3.5" />
+            </button>
+          </div>
+
+          <p className="mt-1 text-[11px] leading-relaxed text-body">
+            {t("Test real-time ceiling alerts and clean slates in 1-click:")}
+          </p>
+
+          <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+            {scenarios.map((sc) => (
+              <button
+                key={sc.id}
+                type="button"
+                onClick={() => {
+                  handleSelect(sc.id);
+                  dismissJudgeHint();
+                }}
+                className={cn(
+                  "rounded-lg border px-2 py-1 text-[10px] font-bold transition-all hover:scale-105 active:scale-95 shadow-2xs",
+                  sc.badgeClass,
+                  sc.id === scenario && "ring-1 ring-emerald-500",
+                )}
+              >
+                {t(sc.badge)}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Popover Card */}
       {isOpen && (

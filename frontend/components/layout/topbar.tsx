@@ -171,7 +171,9 @@ export function Topbar({ utilization }: { utilization: number }) {
         </div>
 
         <div className="flex items-center gap-1.5 xl:gap-3 shrink-0">
-          <DemoSwitcher onStartTour={() => setShowTour(true)} />
+          <div id="tour-demo-switcher">
+            <DemoSwitcher onStartTour={() => setShowTour(true)} />
+          </div>
           <LanguageSwitcher />
           <ThemeToggle />
 
