@@ -152,8 +152,10 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
       const el = document.getElementById(step.targetId);
       if (el) {
         if (!isElementInViewport(el)) {
-          el.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
-          const scrollTimer = setTimeout(updateRect, 400);
+          const scrollBlock: ScrollLogicalPosition =
+            step.placement === "bottom" ? "start" : step.placement === "top" ? "end" : "center";
+          el.scrollIntoView({ behavior: "smooth", block: scrollBlock, inline: "nearest" });
+          const scrollTimer = setTimeout(updateRect, 350);
           return () => clearTimeout(scrollTimer);
         } else {
           updateRect();
@@ -215,8 +217,8 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
 
   // Calculate popover coordinates
   const PADDING = 8;
-  const TOOLTIP_WIDTH = typeof window !== "undefined" ? Math.min(360, window.innerWidth - 32) : 340;
-  const TOOLTIP_HEIGHT = 240; // Realistic height including header, description, step indicator, and Back/Next buttons
+  const TOOLTIP_WIDTH = typeof window !== "undefined" ? Math.min(350, window.innerWidth - 32) : 340;
+  const TOOLTIP_HEIGHT = 280; // Safe height including header, multi-line description, step indicator, and 44px buttons
 
   let tooltipStyle: React.CSSProperties = {
     position: "fixed",
@@ -236,42 +238,43 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
     const spaceRight = (typeof window !== "undefined" ? window.innerWidth : 1200) - (targetRect.right + PADDING + 12);
 
     // Auto-flip if selected side does not have sufficient space
-    if (placement === "bottom" && spaceBelow < TOOLTIP_HEIGHT && spaceAbove > TOOLTIP_HEIGHT) {
+    if (placement === "bottom" && spaceBelow < TOOLTIP_HEIGHT && spaceAbove > spaceBelow) {
       placement = "top";
-    } else if (placement === "top" && spaceAbove < TOOLTIP_HEIGHT && spaceBelow > TOOLTIP_HEIGHT) {
+    } else if (placement === "top" && spaceAbove < TOOLTIP_HEIGHT && spaceBelow > spaceAbove) {
       placement = "bottom";
-    } else if (placement === "right" && spaceRight < TOOLTIP_WIDTH && spaceLeft > TOOLTIP_WIDTH) {
+    } else if (placement === "right" && spaceRight < TOOLTIP_WIDTH && spaceLeft > spaceRight) {
       placement = "left";
-    } else if (placement === "left" && spaceLeft < TOOLTIP_WIDTH && spaceRight > TOOLTIP_WIDTH) {
+    } else if (placement === "left" && spaceLeft < TOOLTIP_WIDTH && spaceRight > spaceLeft) {
       placement = "right";
     }
 
     const winHeight = typeof window !== "undefined" ? window.innerHeight : 800;
     const winWidth = typeof window !== "undefined" ? window.innerWidth : 1200;
+    const maxTop = Math.max(16, winHeight - TOOLTIP_HEIGHT - 24);
 
     if (placement === "bottom") {
       const rawTop = targetRect.bottom + PADDING + 12;
-      const top = Math.max(16, Math.min(winHeight - TOOLTIP_HEIGHT - 20, rawTop));
+      const top = Math.max(16, Math.min(maxTop, rawTop));
       const left = Math.max(16, Math.min(winWidth - TOOLTIP_WIDTH - 16, targetRect.left + targetRect.width / 2 - TOOLTIP_WIDTH / 2));
       tooltipStyle = { ...tooltipStyle, top, left };
       arrowPlacement = "top";
       arrowOffset = Math.max(16, Math.min(TOOLTIP_WIDTH - 24, targetRect.left + targetRect.width / 2 - left));
     } else if (placement === "top") {
       const rawTop = targetRect.top - PADDING - TOOLTIP_HEIGHT - 12;
-      const top = Math.max(16, Math.min(winHeight - TOOLTIP_HEIGHT - 20, rawTop));
+      const top = Math.max(16, Math.min(maxTop, rawTop));
       const left = Math.max(16, Math.min(winWidth - TOOLTIP_WIDTH - 16, targetRect.left + targetRect.width / 2 - TOOLTIP_WIDTH / 2));
       tooltipStyle = { ...tooltipStyle, top, left };
       arrowPlacement = "bottom";
       arrowOffset = Math.max(16, Math.min(TOOLTIP_WIDTH - 24, targetRect.left + targetRect.width / 2 - left));
     } else if (placement === "right") {
       const left = Math.max(16, Math.min(winWidth - TOOLTIP_WIDTH - 16, targetRect.right + PADDING + 12));
-      const top = Math.max(16, Math.min(winHeight - TOOLTIP_HEIGHT - 20, targetRect.top + targetRect.height / 2 - TOOLTIP_HEIGHT / 2));
+      const top = Math.max(16, Math.min(maxTop, targetRect.top + targetRect.height / 2 - TOOLTIP_HEIGHT / 2));
       tooltipStyle = { ...tooltipStyle, top, left };
       arrowPlacement = "left";
       arrowOffset = Math.max(16, Math.min(TOOLTIP_HEIGHT - 24, targetRect.top + targetRect.height / 2 - top));
     } else if (placement === "left") {
       const left = Math.max(16, Math.min(winWidth - TOOLTIP_WIDTH - 16, targetRect.left - PADDING - TOOLTIP_WIDTH - 12));
-      const top = Math.max(16, Math.min(winHeight - TOOLTIP_HEIGHT - 20, targetRect.top + targetRect.height / 2 - TOOLTIP_HEIGHT / 2));
+      const top = Math.max(16, Math.min(maxTop, targetRect.top + targetRect.height / 2 - TOOLTIP_HEIGHT / 2));
       tooltipStyle = { ...tooltipStyle, top, left };
       arrowPlacement = "right";
       arrowOffset = Math.max(16, Math.min(TOOLTIP_HEIGHT - 24, targetRect.top + targetRect.height / 2 - top));
@@ -293,6 +296,7 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
       setCurrentStep((prev) => prev + 1);
     } else {
       if (typeof window !== "undefined") {
+        sessionStorage.setItem("moukawil_session_tour_shown", "true");
         localStorage.setItem("moukawil_spotlight_tour_done", "true");
       }
       onClose();
@@ -338,7 +342,7 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
       {/* Popover Card (matching user screenshot) */}
       <div
         style={tooltipStyle}
-        className="pointer-events-auto w-[340px] max-w-[calc(100vw-32px)] rounded-2xl border border-slate-100 bg-card p-4 sm:p-5 shadow-2xl animate-in fade-in zoom-in-95 duration-200"
+        className="pointer-events-auto flex max-h-[calc(100dvh-32px)] w-[350px] max-w-[calc(100vw-32px)] flex-col justify-between rounded-2xl border border-slate-100 bg-card p-4 sm:p-5 shadow-2xl animate-in fade-in zoom-in-95 duration-200 overflow-hidden"
       >
         {/* Caret Arrow pointing to target */}
         {targetRect && (
@@ -371,7 +375,7 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
         )}
 
         {/* Card Content with crossfade */}
-        <div key={currentStep} className="animate-in fade-in duration-200">
+        <div key={currentStep} className="flex-1 overflow-y-auto pe-1 animate-in fade-in duration-200">
           <div className="flex items-start justify-between">
             <h4 className="text-sm font-bold tracking-tight text-slate-900 pe-2">{t(step.title)}</h4>
             <button
@@ -388,7 +392,7 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
         </div>
 
         {/* Card Footer: Step Counter + Progress Dots + Pill Buttons */}
-        <div className="mt-4 flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-3">
+        <div className="mt-4 flex shrink-0 items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-3">
           <div className="flex flex-col gap-1">
             <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400">
               {t("Step {v1} of {length}", { v1: currentStep + 1, length: TOUR_STEPS.length })}

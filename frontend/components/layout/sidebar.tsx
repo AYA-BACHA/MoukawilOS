@@ -18,11 +18,15 @@ export function Sidebar({ user }: { user: User }) {
   const [showTour, setShowTour] = useState(false);
   const { isOpen, close } = useMobileNav();
 
-  // Auto-launch spotlight tour on first visit
+  // Auto-launch spotlight tour on first login / new session or when ?tour=true is provided
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const tourDone = localStorage.getItem("moukawil_spotlight_tour_done");
-      if (!tourDone) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const forceTour = urlParams.get("tour") === "true" || urlParams.get("tour") === "1";
+      const sessionShown = sessionStorage.getItem("moukawil_session_tour_shown");
+
+      if (forceTour || !sessionShown) {
+        sessionStorage.setItem("moukawil_session_tour_shown", "true");
         const timer = setTimeout(() => setShowTour(true), 900);
         return () => clearTimeout(timer);
       }

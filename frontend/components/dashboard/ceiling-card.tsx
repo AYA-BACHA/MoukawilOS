@@ -39,10 +39,15 @@ export function CeilingCard({ stats }: { stats: TurnoverStats }) {
               </Pill>
             </div>
             <div className="flex flex-wrap items-center gap-2">
-              <Pill className="border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-900 shadow-2xs">
+              <button
+                type="button"
+                onClick={() => setShowDetails(true)}
+                title={t("View turnover & IFU calculation details")}
+                className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-900 shadow-2xs transition-all hover:bg-emerald-100 hover:border-emerald-300 active:scale-95 cursor-pointer"
+              >
                 <Calculator className="size-3 text-emerald-600 shrink-0" />
                 <span>{t("Tax Payable (IFU):")} <strong className="font-num font-bold text-emerald-950">{formatAmount(ifuTax)} DZD</strong></span>
-              </Pill>
+              </button>
               <Pill className="border border-slate-200/80 bg-surface-low px-2.5 py-1 text-body">
                 {t("Statutory Cap:")} <span className="font-num text-sm font-bold text-ink">{t("{v1} DZD", { v1: formatAmount(ceiling) })}</span>
               </Pill>
@@ -191,8 +196,8 @@ export function CeilingCard({ stats }: { stats: TurnoverStats }) {
                   <p className="text-body font-medium">{t("Estimated Single Tax (IFU 0.5%):")}</p>
                   <p className="text-[10px] text-muted">
                     {rawIfu < 10000 && collected > 0
-                      ? t("Statutory floor applied (10,000 DZD min.)")
-                      : t("Flat 0.5% tax rate under Law 22-23")}
+                      ? t("Raw 0.5% = {raw} DZD • Statutory floor applied (CIDTA Art. 282 quater: 10,000 DZD min.)", { raw: formatAmount(rawIfu) })
+                      : t("Calculated at flat 0.5% on collected cash turnover under Law 22-23")}
                   </p>
                 </div>
                 <span className="font-num text-sm font-bold text-emerald-900">{t("{v1} DZD", { v1: formatAmount(ifuTax) })}</span>

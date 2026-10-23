@@ -57,10 +57,15 @@ export function SecondaryKpis({ deadline, stats }: { deadline: Deadline; stats: 
               </p>
 
               {/* Prominent Statutory Tax Payable Box */}
-              <div className="mt-3 flex items-center justify-between rounded-xl border border-emerald-200/90 bg-emerald-50/70 p-3 text-xs">
+              <button
+                type="button"
+                onClick={() => setShowDeclaration(true)}
+                title={t("Click to view full statutory IFU calculation & declaration")}
+                className="mt-3 flex w-full items-center justify-between rounded-xl border border-emerald-200/90 bg-emerald-50/70 p-3 text-xs text-start transition-all duration-150 hover:bg-emerald-100/70 hover:border-emerald-300 active:scale-[0.99] cursor-pointer group"
+              >
                 <div>
                   <div className="flex items-center gap-1.5 font-bold text-emerald-900">
-                    <Calculator className="size-3.5 text-emerald-600 shrink-0" />
+                    <Calculator className="size-3.5 text-emerald-600 shrink-0 group-hover:scale-110 transition-transform" />
                     <span>{t("Tax Payable (IFU 0.5%):")}</span>
                   </div>
                   <p className="text-[11px] text-emerald-700/90 pt-0.5">
@@ -69,10 +74,15 @@ export function SecondaryKpis({ deadline, stats }: { deadline: Deadline; stats: 
                       : t("Flat 0.5% single tax under Law 22-23")}
                   </p>
                 </div>
-                <span className="font-num font-extrabold text-emerald-950 text-base">
-                  {formatAmount(ifuTax)} {t("DZD")}
-                </span>
-              </div>
+                <div className="text-end">
+                  <span className="font-num font-extrabold text-emerald-950 text-base block">
+                    {formatAmount(ifuTax)} {t("DZD")}
+                  </span>
+                  <span className="text-[10px] font-semibold text-emerald-700 underline group-hover:text-emerald-950 transition-colors">
+                    {t("Inspect calculation")} →
+                  </span>
+                </div>
+              </button>
             </div>
           </div>
           <div className="flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 pt-3.5 mt-3">
@@ -173,8 +183,16 @@ export function SecondaryKpis({ deadline, stats }: { deadline: Deadline; stats: 
                 <span className="font-bold text-slate-900">{t("{v1} DZD", { v1: formatAmount(stats.collected) })}</span>
               </div>
               <div className="flex justify-between py-1 border-b border-slate-200/60">
+                <span className="text-slate-600">{t("Factures en Attente (Non Encaissées):")}</span>
+                <span className="font-bold text-amber-700">{t("{v1} DZD (0 DZD imposé)", { v1: formatAmount(stats.pending) })}</span>
+              </div>
+              <div className="flex justify-between py-1 border-b border-slate-200/60">
                 <span className="text-slate-600">{t("Taux IFU Forfaitaire (Art. 6):")}</span>
                 <span className="font-bold text-emerald-700">0.5 %</span>
+              </div>
+              <div className="flex justify-between py-1 border-b border-slate-200/60">
+                <span className="text-slate-600">{t("Calcul Brut (0.5% × CA Encaissé):")}</span>
+                <span className="font-bold text-slate-800">{formatAmount(rawIfu)} DZD</span>
               </div>
               <div className="flex justify-between py-1 border-b border-slate-200/60">
                 <span className="text-slate-600">{t("Minimum Légal Garanti (Art. 282 quater):")}</span>
@@ -193,9 +211,18 @@ export function SecondaryKpis({ deadline, stats }: { deadline: Deadline; stats: 
                 <span className="text-slate-900">{t("{v1} DZD", { v1: formatAmount(totalStateObligations) })}</span>
               </div>
 
-              <div className="mt-2 flex items-center gap-2 rounded-lg bg-emerald-50 p-2 text-[10px] text-emerald-800 font-sans">
-                <ShieldCheck className="size-4 shrink-0 text-emerald-600" />
-                <span>{t("TVA non-assujetti (Art. 282 bis CIDTA). Régime Auto-Entrepreneur Loi 22-23.")}</span>
+              <div className="mt-2 flex flex-col gap-1.5 rounded-lg bg-emerald-50 p-2.5 text-[11px] text-emerald-900 font-sans">
+                <div className="flex items-center gap-1.5 font-bold text-emerald-950">
+                  <ShieldCheck className="size-4 shrink-0 text-emerald-600" />
+                  <span>{t("Règles Fiscales Officielles (Loi 22-23 & CIDTA)")}</span>
+                </div>
+                <p className="text-[10px] text-emerald-800 leading-relaxed">
+                  {t("• 0.5% d'IFU appliqué uniquement sur les encaissements réels (Décret 23-197).")}
+                  <br />
+                  {t("• Plancher minimum légal de 10 000 DZD garanti par l'Art. 282 quater du CIDTA.")}
+                  <br />
+                  {t("• Exonération légale totale de TVA (0%) sous l'Art. 282 bis du CIDTA.")}
+                </p>
               </div>
             </div>
 
