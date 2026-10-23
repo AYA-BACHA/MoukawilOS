@@ -1,8 +1,8 @@
 <div align="center">
 
-# MoukawilOS (مقاول)
+# MoukawilOS 
 
-### Regulatory and Fiscal Compliance Workspace for Algerian Auto-Entrepreneurs (مقاول)
+### Regulatory and Fiscal Compliance Workspace for Algerian Auto-Entrepreneurs 
 
 Statutory compliance under Law 22-23 and Executive Decree 23-197 &nbsp;|&nbsp; Strict cash-basis turnover tracking (5,000,000 DZD ceiling) &nbsp;|&nbsp; Deterministic 0.5% IFU calculation &nbsp;|&nbsp; Multilingual PDF invoicing (Arabic RTL, French, English) &nbsp;|&nbsp; Regulatory RAG assistant with verified legal citations
 
