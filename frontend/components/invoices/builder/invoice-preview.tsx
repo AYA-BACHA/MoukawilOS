@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { Printer, RefreshCw, ZoomIn, ZoomOut } from "lucide-react";
 import { QrMark } from "@/components/invoices/builder/qr-mark";
-import Image from "next/image";
 
 import { hashSeed } from "@/lib/hash";
 import { addDays, lineTotal, subtotal } from "@/lib/invoice-math";
@@ -48,7 +47,7 @@ export function InvoicePreview({ user, draft }: { user: User; draft: InvoiceDraf
           <div className="flex items-start justify-between gap-6">
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-3">
-                <Image src="/brand/monogram.png" alt="MoukawilOS" width={40} height={40} className="size-10 shrink-0" />
+                <span className="grid size-10 shrink-0 place-items-center bg-black text-lg font-bold text-white">M</span>
                 <div>
                   <h2 className="text-base font-extrabold uppercase leading-5 text-black">{user.fullName}</h2>
                   <p className="text-[10px] font-medium uppercase text-muted">{user.profession}</p>

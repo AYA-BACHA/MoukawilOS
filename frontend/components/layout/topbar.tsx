@@ -3,12 +3,13 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Bell, CalendarDays, CheckCircle2, ChevronDown, Clock, Plus, RefreshCw, ShieldCheck, User as UserIcon } from "lucide-react";
+import { Bell, CalendarDays, CheckCircle2, ChevronDown, Clock, Plus, RefreshCw, ShieldCheck, User as UserIcon, LogOut } from "lucide-react";
 import { buttonClass } from "@/components/ui/button";
 import { Pill } from "@/components/ui/pill";
 import { SelectDropdown } from "@/components/ui/select-dropdown";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { cn } from "@/lib/cn";
+import { signOutAction } from "@/lib/auth-actions";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
 import { useI18n } from "@/lib/i18n/provider";
 
@@ -180,6 +181,12 @@ export function Topbar({ utilization }: { utilization: number }) {
                 <UserIcon className="size-3.5 text-muted" />
                 {t("Profile & Settings")}
               </Link>
+              <form action={signOutAction}>
+                <button type="submit" className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium text-body transition-colors hover:bg-surface-low hover:text-ink">
+                  <LogOut className="size-3.5 text-muted" />
+                  {t("Sign out")}
+                </button>
+              </form>
               <div className="my-1 border-t border-slate-100" />
               <div className="px-3 py-1.5 text-[11px] text-muted">
                 {t("Statute:")} <span className="font-semibold text-teal">{t("Auto-Entrepreneur")}</span>
