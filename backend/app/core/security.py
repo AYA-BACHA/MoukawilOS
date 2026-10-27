@@ -41,6 +41,11 @@ def get_current_freelancer_id(user_id: str = Depends(get_current_user_id)) -> in
         row = conn.execute(
             "select id from public.freelancers where profile_id = %s", (user_id,)
         ).fetchone()
+        if row is None and settings.app_env == "development":
+            # In development fallback to the populated demo freelancer (Sara Benali / id 399)
+            row = conn.execute(
+                "select id from public.freelancers order by (select count(*) from public.invoices where freelancer_id = public.freelancers.id) desc limit 1"
+            ).fetchone()
     if row is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "freelancer profile not created")
     return row[0]
