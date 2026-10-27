@@ -138,6 +138,40 @@ export function StatuteModal({ statute, onClose }: StatuteModalProps) {
         <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-5">
           {activeTab === "text" ? (
             <>
+              {/* Quick PDF Switch Strip */}
+              <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-slate-100/90 p-3 border border-slate-200">
+                <div className="flex items-center gap-2">
+                  <span className="text-base">📑</span>
+                  <div>
+                    <span className="text-xs font-bold text-ink block">
+                      {t("Authentic Official Gazette Scan: {file}", { file: doc.pdf_filename })}
+                    </span>
+                    <span className="text-[10px] text-muted">
+                      {doc.gazette_ref} • {doc.article_label} (Page {doc.page_number})
+                    </span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("pdf")}
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-teal text-white px-3 py-1.5 text-xs font-bold hover:bg-teal-ink transition-colors shadow-2xs active:scale-95"
+                  >
+                    <FileText className="size-3.5" />
+                    <span>{t("View Original PDF Scan ↗")}</span>
+                  </button>
+                  <a
+                    href={doc.pdf_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 rounded-lg border border-slate-300 bg-card px-2.5 py-1.5 text-xs font-semibold text-body hover:bg-surface transition-colors"
+                  >
+                    <span>{t("New Tab")}</span>
+                    <ExternalLink className="size-3" />
+                  </a>
+                </div>
+              </div>
+
               {/* Deduced Rule Card */}
               <div className="rounded-2xl border-2 border-amber-400/60 bg-amber-50/70 p-4 shadow-xs">
                 <div className="flex items-center gap-2 text-amber-900 font-bold text-xs mb-1.5">

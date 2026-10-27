@@ -11,6 +11,7 @@ import {
   Sparkles,
   User as UserIcon,
   BookOpen,
+  Scale,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import type { AssistantMessage, Statute } from "@/types/models";
@@ -144,24 +145,33 @@ export function ChatPanel({ messages, statutes, pending, onAsk, onInspectStatute
 
                 {/* Citations Badges: Clickable & Inspectable */}
                 {message.citations.length > 0 && (
-                  <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
-                    <span className="text-[10px] font-semibold text-muted flex items-center gap-1">
-                      <BookOpen className="size-3 text-accent" />
-                      {t("Statutory Sources:")}
-                    </span>
-                    {message.citations.map((id) => (
-                      <button
-                        key={id}
-                        type="button"
-                        onClick={() => handleStatuteClick(id)}
-                        title={t("Click to inspect official text & gazette: {title}", { title: titleOf(id) })}
-                        className="group/badge inline-flex items-center gap-1 rounded-md border border-teal/30 bg-mint/60 px-2 py-0.5 font-num text-[10px] font-bold text-teal transition-all hover:bg-mint hover:border-teal hover:scale-105 active:scale-95 shadow-2xs"
-                      >
-                        <BookOpen className="size-2.5 text-accent group-hover/badge:scale-110 transition-transform" />
-                        <span>{codeOf(id)}</span>
-                        <span className="text-[9px] text-teal/70 font-normal">👁</span>
-                      </button>
-                    ))}
+                  <div className="mt-2.5 rounded-xl border border-teal/30 bg-mint/30 p-2.5 sm:p-3">
+                    <div className="flex flex-wrap items-center justify-between gap-1 mb-2">
+                      <span className="text-[11px] font-bold text-teal flex items-center gap-1.5">
+                        <Scale className="size-3.5 text-accent" />
+                        {t("Official Algerian Republic Gazette Sources & Evidence:")}
+                      </span>
+                      <span className="text-[10px] text-muted hidden sm:inline">
+                        {t("Click any source to view authentic Gazette PDF & highlighted line")}
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {message.citations.map((id) => (
+                        <button
+                          key={id}
+                          type="button"
+                          onClick={() => handleStatuteClick(id)}
+                          title={t("Click to view authentic Gazette PDF and exact deduced line for {title}", { title: titleOf(id) })}
+                          className="group/badge inline-flex items-center gap-2 rounded-xl border border-teal/40 bg-card px-3 py-1.5 text-xs font-bold text-teal shadow-2xs transition-all hover:bg-mint hover:border-teal hover:scale-[1.02] active:scale-95"
+                        >
+                          <BookOpen className="size-3.5 text-accent group-hover/badge:scale-110 transition-transform" />
+                          <span className="font-num">{codeOf(id)}</span>
+                          <span className="inline-flex items-center gap-1 rounded-md bg-teal/10 px-1.5 py-0.5 text-[10px] font-semibold text-teal group-hover/badge:bg-teal group-hover/badge:text-white transition-colors">
+                            {t("View PDF & Article ↗")}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>

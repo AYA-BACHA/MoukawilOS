@@ -55,7 +55,7 @@ def get_messages() -> List[Dict[str, Any]]:
             "id": "msg_welcome",
             "userId": "usr_1",
             "role": "assistant",
-            "content": "Hello. I am the MoukawilOS Regulatory AI Assistant, grounded in verified official Algerian legislation (Law 22-23, Executive Decrees 23-196, 23-197, 23-198, and CIDTA). Ask me any question regarding your turnover ceiling, 0% VAT exemption, flat 0.5% IFU tax calculation, CASNOS affiliation, or compliant invoicing rules.",
+            "content": "Hello! I am the MoukawilOS Regulatory AI Assistant, grounded in verified official Algerian legislation (Law 22-23, Executive Decrees 23-196, 23-197, and CIDTA).\n\nAsk me any question regarding your turnover ceiling, 0% VAT exemption, flat 0.5% IFU tax calculation, or compliant invoicing rules.\n\n💡 **How to view the official legislation & PDF:** Click on any statutory button below (e.g. *Loi 22-23 · Art. 2*) or in the **Legal Vault** on the right to open the interactive viewer, see the exact legal line highlighted in gold, or view the original Republic Gazette PDF scan.",
             "citations": ["JORADP-2022-085:art-2", "JORADP-2023-197:art-4"],
             "createdAt": datetime.now(timezone.utc).isoformat(),
         }

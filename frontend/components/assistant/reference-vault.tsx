@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Gauge, Scale, Search, ShieldCheck } from "lucide-react";
+import { FileText, Gauge, Scale, Search, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/cn";
 
 import type { Statute, TurnoverStats, User } from "@/types/models";
@@ -132,6 +132,15 @@ export function ReferenceVault({ statutes, cited, user, stats, onInspectStatute 
                 <p className="mt-1 text-[11px] leading-relaxed text-muted line-clamp-2">
                   {t(statute.summary)}
                 </p>
+                <div className="mt-2.5 pt-2 border-t border-slate-200/50 flex items-center justify-between">
+                  <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-teal group-hover/statute:text-accent transition-colors">
+                    <FileText className="size-3" />
+                    <span>{t("Inspect Gazette PDF & Law")}</span>
+                  </span>
+                  <span className="rounded bg-teal/10 px-1.5 py-0.5 text-[9px] font-bold text-teal">
+                    {t("View ↗")}
+                  </span>
+                </div>
               </li>
             );
           })}
