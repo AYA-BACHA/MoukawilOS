@@ -125,7 +125,7 @@ export function DashboardView({
         },
       ];
     }
-    return invoices;
+    return invoices.filter((inv) => !inv.issueDate || inv.issueDate.startsWith(fiscalYear));
   }, [invoices, fiscalYear, user.id]);
 
   // Reactive Stats: updates automatically when activeInvoices change!

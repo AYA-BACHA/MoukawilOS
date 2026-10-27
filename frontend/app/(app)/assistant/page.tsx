@@ -10,5 +10,6 @@ export default async function AssistantPage() {
     getAssistantMessages(),
     new Promise((resolve) => setTimeout(resolve, 400)),
   ]);
-  return <AssistantView user={user} stats={computeStats(user, invoices)} statutes={statutes} initialMessages={messages} />;
+  const activeYearInvoices = invoices.filter((i) => !i.issueDate || i.issueDate.startsWith("2026"));
+  return <AssistantView user={user} stats={computeStats(user, activeYearInvoices)} statutes={statutes} initialMessages={messages} />;
 }

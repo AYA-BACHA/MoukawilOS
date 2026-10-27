@@ -7,7 +7,8 @@ import { computeStats } from "@/lib/stats";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const [user, invoices] = await Promise.all([getCurrentUser(), getInvoices()]);
-  const { utilization } = computeStats(user, invoices);
+  const activeYearInvoices = invoices.filter((i) => !i.issueDate || i.issueDate.startsWith("2026"));
+  const { utilization } = computeStats(user, activeYearInvoices);
 
   return (
     <MobileNavProvider>

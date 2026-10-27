@@ -15,6 +15,7 @@ import {
 import { cn } from "@/lib/cn";
 import type { AssistantMessage, Statute } from "@/types/models";
 import { useI18n } from "@/lib/i18n/provider";
+import { FormattedMarkdown } from "@/components/assistant/formatted-markdown";
 
 const suggestions = [
   "What happens if I exceed the 5,000,000 DZD ceiling?",
@@ -105,8 +106,8 @@ export function ChatPanel({ messages, statutes, pending, onAsk }: ChatPanelProps
                 <Bot className="size-4" strokeWidth={2} />
               </span>
               <div className="flex flex-col gap-2">
-                <div className="relative rounded-2xl rounded-ss-xs border border-slate-200/70 bg-slate-50/80 px-4 py-3 text-xs sm:text-sm leading-relaxed text-ink shadow-2xs">
-                  <p className="whitespace-pre-line">{answerText(message.content)}</p>
+                <div className="relative rounded-2xl rounded-ss-xs border border-slate-200/70 bg-slate-50/80 px-4 py-3 pe-8 text-xs sm:text-sm leading-relaxed text-ink shadow-2xs">
+                  <FormattedMarkdown content={answerText(message.content)} />
 
                   {/* Copy Button */}
                   <button

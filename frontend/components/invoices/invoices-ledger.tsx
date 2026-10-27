@@ -162,7 +162,7 @@ export function InvoicesLedger({
         },
       ];
     }
-    return invoices;
+    return invoices.filter((inv) => !inv.issueDate || inv.issueDate.startsWith(fiscalYear));
   }, [invoices, fiscalYear, user.id]);
 
   const stats = useMemo(() => computeStats(user, activeInvoices), [user, activeInvoices]);

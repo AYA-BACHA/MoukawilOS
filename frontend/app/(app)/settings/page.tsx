@@ -4,5 +4,6 @@ import { computeStats } from "@/lib/stats";
 
 export default async function SettingsPage() {
   const [user, invoices] = await Promise.all([getCurrentUser(), getInvoices()]);
-  return <SettingsView user={user} stats={computeStats(user, invoices)} />;
+  const activeYearInvoices = invoices.filter((i) => !i.issueDate || i.issueDate.startsWith("2026"));
+  return <SettingsView user={user} stats={computeStats(user, activeYearInvoices)} />;
 }
