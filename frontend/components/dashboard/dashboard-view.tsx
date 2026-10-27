@@ -131,7 +131,31 @@ export function DashboardView({
   // Reactive Stats: updates automatically when activeInvoices change!
   const stats = useMemo(() => computeStats(user, activeInvoices), [user, activeInvoices]);
 
-  // Listen for scenario or fiscal year changes across components
+  // Sync client-side persistent payments on mount so navigation never resets paid status
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("moukawil_paid_invoices");
+      if (stored) {
+        const paymentsMap = JSON.parse(stored);
+        setInvoices((prev) =>
+          prev.map((inv) =>
+            paymentsMap[inv.id]
+              ? {
+                  ...inv,
+                  status: "paid" as const,
+                  paidAt: paymentsMap[inv.id].paidAt,
+                  paymentRail: paymentsMap[inv.id].paymentRail,
+                }
+              : inv,
+          ),
+        );
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  // Listen for scenario, fiscal year, or payment events across components
   useEffect(() => {
     const handleScenarioChange = (e: Event) => {
       const customEvent = e as CustomEvent<DemoScenario>;
@@ -144,11 +168,27 @@ export function DashboardView({
       if (customEvent.detail) setFiscalYear(customEvent.detail);
     };
 
+    const handlePaidEvent = (e: Event) => {
+      const customEvent = e as CustomEvent<{ invoiceId: string; settlementDate: string; rail: string }>;
+      if (customEvent.detail) {
+        const { invoiceId, settlementDate, rail } = customEvent.detail;
+        setInvoices((prev) =>
+          prev.map((item) =>
+            item.id === invoiceId
+              ? { ...item, status: "paid", paidAt: settlementDate, paymentRail: rail }
+              : item,
+          ),
+        );
+      }
+    };
+
     window.addEventListener("moukawil_scenario_change", handleScenarioChange);
     window.addEventListener("moukawil_fy_change", handleFyChange);
+    window.addEventListener("moukawil_invoice_paid", handlePaidEvent);
     return () => {
       window.removeEventListener("moukawil_scenario_change", handleScenarioChange);
       window.removeEventListener("moukawil_fy_change", handleFyChange);
+      window.removeEventListener("moukawil_invoice_paid", handlePaidEvent);
     };
   }, []);
 

@@ -463,7 +463,7 @@ export async function getInvoices(explicitScenario?: DemoScenario): Promise<Invo
   const res = await fetchBackend<{ items: BackendInvoiceOut[]; total: number }>("/invoices?limit=100");
 
   if (res && res.items && res.items.length > 0) {
-    return res.items
+    let resList = res.items
       .filter((inv) => inv.status !== "cancelled")
       .map((item) => {
         const status: InvoiceStatus =
@@ -505,8 +505,31 @@ export async function getInvoices(explicitScenario?: DemoScenario): Promise<Invo
           paymentRail: item.payment_rail,
           client,
         };
-      })
-      .sort((a, b) => b.issueDate.localeCompare(a.issueDate));
+      });
+
+    // Merge persistent client-side payments so payments never reset on page navigation
+    if (typeof window !== "undefined") {
+      try {
+        const storedPayments = localStorage.getItem("moukawil_paid_invoices");
+        if (storedPayments) {
+          const paymentsMap: Record<string, { paidAt: string; paymentRail: string }> = JSON.parse(storedPayments);
+          resList = resList.map((inv) =>
+            paymentsMap[inv.id]
+              ? {
+                  ...inv,
+                  status: "paid" as const,
+                  paidAt: paymentsMap[inv.id].paidAt,
+                  paymentRail: paymentsMap[inv.id].paymentRail,
+                }
+              : inv,
+          );
+        }
+      } catch {
+        // ignore
+      }
+    }
+
+    return resList.sort((a, b) => b.issueDate.localeCompare(a.issueDate));
   }
 
   let baseInvoices = (db.invoices as InvoiceWithClient[])
@@ -537,23 +560,34 @@ export async function payInvoiceApi(
   settlementDate: string,
   rail: string,
 ): Promise<{ success: boolean; invoiceId: string }> {
-  if (/^\d+$/.test(invoiceId)) {
-    await fetchBackend(`/invoices/${invoiceId}/pay`, {
-      method: "POST",
-      body: JSON.stringify({
-        paid_at: settlementDate,
-        payment_rail: rail,
-      }),
-    });
-  }
-
+  // 1. Immediately persist locally so changes never reset across navigation
   if (typeof window !== "undefined") {
     try {
       const existing = JSON.parse(localStorage.getItem("moukawil_paid_invoices") || "{}");
       existing[invoiceId] = { paidAt: settlementDate, paymentRail: rail };
       localStorage.setItem("moukawil_paid_invoices", JSON.stringify(existing));
+      window.dispatchEvent(
+        new CustomEvent("moukawil_invoice_paid", {
+          detail: { invoiceId, settlementDate, rail },
+        }),
+      );
     } catch {
       // ignore
+    }
+  }
+
+  // 2. Persist to backend database
+  if (/^\d+$/.test(invoiceId)) {
+    try {
+      await fetchBackend(`/invoices/${invoiceId}/pay`, {
+        method: "POST",
+        body: JSON.stringify({
+          paid_at: settlementDate,
+          payment_rail: rail,
+        }),
+      });
+    } catch (e) {
+      console.error("Backend pay error:", e);
     }
   }
 
