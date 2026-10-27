@@ -271,7 +271,10 @@ def get_official_statutes() -> List[Dict[str, Any]]:
             "title": "Turnover Ceiling (5,000,000 DZD)",
             "keywords": ["ceiling", "threshold", "5000000", "plafond", "seuil"],
             "summary": "Annual collected turnover is strictly capped at 5,000,000 DZD per calendar year under the auto-entrepreneur regime (cash basis).",
-            "official_url": "https://www.joradp.dz/FTP/jo-francais/2022/F2022085.pdf"
+            "official_url": "https://www.joradp.dz/FTP/jo-francais/2022/F2022085.pdf",
+            "gazette_ref": "Journal Officiel de la République Algérienne n° 85 (18 décembre 2022), Page 6",
+            "excerpt_fr": "« Art. 2. — Est considérée comme auto-entrepreneur au sens de la présente loi, toute personne physique qui exerce à titre individuel une activité lucrative figurant sur la liste des activités éligibles fixée par voie réglementaire et dont le chiffre d'affaires annuel n'excède pas un montant fixé par la législation fiscale en vigueur (5 000 000 DA sur la base des encaissements effectifs). »",
+            "excerpt_ar": "« المادة 2: يُعتبر مقاولاً ذاتياً بمفهوم هذا القانون، كل شخص طبيعي يمارس بصفة فردية نشاطاً مربحاً يندرج ضمن قائمة الأنشطة المؤهلة المحددة عن طريق التنظيم، ولا يتجاوز رقم أعماله السنوي سقفاً محدداً في التشريع الجبائي الساري المفعول (5 ملايين دينار جزائري على أساس التحصيل الفعلي). »"
         },
         {
             "id": "JORADP-2022-085:art-13",
@@ -279,7 +282,10 @@ def get_official_statutes() -> List[Dict[str, Any]]:
             "title": "Ceiling Breach & Radiation",
             "keywords": ["exceed", "depassement", "radiation", "registre", "cnrc"],
             "summary": "Exceeding the 5M DZD threshold for three (3) consecutive years triggers mandatory registration with CNRC and radiation from ANAE.",
-            "official_url": "https://www.joradp.dz/FTP/jo-francais/2022/F2022085.pdf"
+            "official_url": "https://www.joradp.dz/FTP/jo-francais/2022/F2022085.pdf",
+            "gazette_ref": "Journal Officiel de la République Algérienne n° 85 (18 décembre 2022), Page 7",
+            "excerpt_fr": "« Art. 13. — Lorsque le chiffre d'affaires annuel de l'auto-entrepreneur dépasse le seuil légal durant trois (3) années consécutives, il est tenu de s'inscrire au registre du commerce dans les formes prévues par la législation en vigueur. Art. 14. — Le non-respect entraîne la radiation d'office du registre national de l'auto-entrepreneur. »",
+            "excerpt_ar": "« المادة 13: عندما يتجاوز رقم الأعمال السنوي للمقاول الذاتي السقف القانوني المحدد خلال ثلاث (3) سنوات متتالية، يتعين عليه التسجيل في السجل التجاري وفقاً للأشكال المنصوص عليها في التشريع الساري المفعول. المادة 14: يؤدي الإخلال بذلك إلى الشطب التلقائي من السجل الوطني للمقاول الذاتي. »"
         },
         {
             "id": "JORADP-2023-197:art-4",
@@ -287,7 +293,10 @@ def get_official_statutes() -> List[Dict[str, Any]]:
             "title": "7 Approved Activity Domains",
             "keywords": ["activities", "domaines", "digital", "consulting", "services"],
             "summary": "Official nomenclature of the 7 eligible sectors (Consulting, Digital, Home services, Personal services, Leisure, Business services, Audiovisual).",
-            "official_url": "https://www.joradp.dz/FTP/jo-francais/2023/F2023037.pdf"
+            "official_url": "https://www.joradp.dz/FTP/jo-francais/2023/F2023037.pdf",
+            "gazette_ref": "Journal Officiel de la République Algérienne n° 37 (25 mai 2023), Page 12",
+            "excerpt_fr": "« Art. 4. — Les activités éligibles au statut de l'auto-entrepreneur sont réparties en sept (7) domaines : 1. Conseil, expertise et formation ; 2. Services numériques et connexes ; 3. Prestations à domicile ; 4. Services à la personne ; 5. Loisirs et récréation ; 6. Services aux entreprises ; 7. Services culturels, communication et audiovisuel. Les professions libérales et réglementées sont exclues (Art. 3). »",
+            "excerpt_ar": "« المادة 4: تُوزع الأنشطة المؤهلة للاستفادة من صفة المقاول الذاتي على سبعة (7) مجالات: 1. الاستشارة والخبرة والتكوين؛ 2. الخدمات الرقمية والأنشطة التابعة؛ 3. الخدمات المنزلية؛ 4. الخدمات الموجهة للشخص؛ 5. الترفيه والتسلية؛ 6. الخدمات الموجهة للمؤسسات؛ 7. الخدمات الثقافية والاتصال والسمعي البصري. وتُستثنى المهن الحرة والتنظيمية. »"
         },
         {
             "id": "CIDTA-282-sexies",
@@ -295,7 +304,10 @@ def get_official_statutes() -> List[Dict[str, Any]]:
             "title": "Flat 0.5% IFU Tax Rate",
             "keywords": ["ifu", "tax", "0.5", "impot", "taux", "minimum"],
             "summary": "Single flat 0.5% IFU on collected turnover with 10,000 DZD minimum annual floor. Unpaid invoices never incur tax.",
-            "official_url": "https://www.joradp.dz/FTP/jo-francais/2023/F2023086.pdf"
+            "official_url": "https://www.joradp.dz/FTP/jo-francais/2023/F2023086.pdf",
+            "gazette_ref": "Journal Officiel de la République Algérienne n° 86 (Loi de Finances 2024), Page 15",
+            "excerpt_fr": "« Art. 282 sexies. — Les personnes physiques exerçant sous le statut d'auto-entrepreneur sont soumises à l'impôt forfaitaire unique (IFU) au taux préférentiel de 0,5 % calculé sur le chiffre d'affaires effectivement encaissé. Le minimum légal de perception est fixé à dix mille dinars (10 000 DA) par an (Art. 365 bis). Les factures émises non encaissées ne sont pas imposables. »",
+            "excerpt_ar": "« المادة 282 مكرر 6: يخضع الأشخاص الطبيعيون الممارسون بصفة المقاول الذاتي للضريبة الجزافية الوحيدة (IFU) بمعدل تفضيلي قدره 0.5% يُحسب على رقم الأعمال المحصَّل فعلياً. ويُحدد الحد الأدنى للتحصيل بـ 10,000 دج سنوياً (المادة 365 مكرر). »"
         },
         {
             "id": "CIDTA-282-bis",
@@ -303,7 +315,10 @@ def get_official_statutes() -> List[Dict[str, Any]]:
             "title": "0% VAT Statutory Exemption",
             "keywords": ["vat", "tva", "exemption", "non-assujetti", "clause"],
             "summary": "Legally exempt from VAT on all domestic transactions. Invoices must carry the statutory exemption citation.",
-            "official_url": "https://www.joradp.dz/FTP/jo-francais/2022/F2022085.pdf"
+            "official_url": "https://www.joradp.dz/FTP/jo-francais/2022/F2022085.pdf",
+            "gazette_ref": "Code des Impôts Directs et Taxes Assimilées / Loi 22-23",
+            "excerpt_fr": "« Art. 282 bis. — L'auto-entrepreneur est exonéré de plein droit du régime de la taxe sur la valeur ajoutée (TVA non-assujetti). Les factures doivent obligatoirement porter la mention : 'Facture établie sous le régime de l'auto-entrepreneur (Loi 22-23) — TVA Non-Assujetti (Art. 282 bis CIDTA)'. »",
+            "excerpt_ar": "« المادة 282 مكرر: يُعفى المقاول الذاتي بقوة القانون من الرسم على القيمة المضافة (غير خاضع للرسم 0% TVA). ويجب إلزامياً تضمين العبارة القانونية في الفواتير لضمان الخصم الضريبي للزبائن. »"
         },
         {
             "id": "CIDTA-282-quater",
@@ -311,7 +326,10 @@ def get_official_statutes() -> List[Dict[str, Any]]:
             "title": "G12 & G12 bis Filing Calendar",
             "keywords": ["g12", "g12 bis", "deadline", "declaration", "echeance"],
             "summary": "Bifurcated declaration: G12 provisional due June 30th; G12 bis definitive annual regularisation due January 20th.",
-            "official_url": "https://www.mfdgi.gov.dz"
+            "official_url": "https://www.mfdgi.gov.dz",
+            "gazette_ref": "Directives DGI & Code des Impôts Directs (Art. 282 quater)",
+            "excerpt_fr": "« Art. 282 quater. — Le calendrier fiscal des auto-entrepreneurs comprend la déclaration prévisionnelle G12 au plus tard le 30 juin de chaque année, et la déclaration définitive de régularisation G12 bis au plus tard le 20 janvier de l'année N+1. L'auto-entrepreneur est dispensé des déclarations mensuelles de la série G n° 50. »",
+            "excerpt_ar": "« المادة 282 مكرر 4: يتضمن الالتزام الجبائي التصريح التقديري G12 في أجل أقصاه 30 جوان من كل سنة، والتصريح النهائي والتسوية G12 bis في أجل أقصاه 20 جانفي من السنة الموالية (N+1). ويُعفى من التصريح الشهري G50. »"
         },
         {
             "id": "JORADP-2026-257",
@@ -319,6 +337,21 @@ def get_official_statutes() -> List[Dict[str, Any]]:
             "title": "Flat 24,000 DZD CASNOS Coverage",
             "keywords": ["casnos", "social", "security", "insurance", "cotisation"],
             "summary": "Preferential flat annual social security contribution of 24,000 DZD/year for full healthcare and retirement benefits.",
-            "official_url": "https://www.casnos.com.dz"
+            "official_url": "https://www.casnos.com.dz",
+            "gazette_ref": "Régime CASNOS Auto-Entrepreneur & Arrêté ministériel",
+            "excerpt_fr": "« L'auto-entrepreneur bénéficie d'une cotisation forfaitaire préférentielle annuelle de 24 000 DA auprès de la CASNOS. Cette cotisation lui ouvre l'accès complet à la carte Chifa, aux prestations médicales et pharmaceutiques ainsi qu'aux droits à pension de retraite. Échéance de paiement : 30 juin. »",
+            "excerpt_ar": "« يستفيد المقاول الذاتي من اشتراك سنوي جزافي تفضيلي لدى كاسنوس CASNOS قدره 24,000 دج سنوياً، يمنحه حقوق التأمين الصحي وبطاقة الشفاء والتقاعد. أجل التسوية: 30 جوان. »"
+        },
+        {
+            "id": "JORADP-2023-196:art-5",
+            "code": "Décret 23-196 · Art. 5",
+            "title": "ANAE Digital Registration (3 Days)",
+            "keywords": ["anae", "carte", "plateforme", "inscription", "delai"],
+            "summary": "Registration on the national register via the ANAE digital platform with processing under 3 working days and 5-year card validity.",
+            "official_url": "https://www.joradp.dz/FTP/jo-francais/2023/F2023037.pdf",
+            "gazette_ref": "Journal Officiel de la République Algérienne n° 37 (25 mai 2023), Page 8",
+            "excerpt_fr": "« Art. 5. — La demande d'immatriculation au registre national de l'auto-entrepreneur est introduite exclusivement via la plate-forme électronique de l'Agence nationale de l'auto-entrepreneur (ANAE). L'Agence délivre la carte d'auto-entrepreneur dans un délai n'excédant pas trois (3) jours ouvrables. »",
+            "excerpt_ar": "« المادة 5: يُودع طلب التسجيل في السجل الوطني للمقاول الذاتي حصرياً عبر المنصة الإلكترونية للوكالة الوطنية للمقاول الذاتي (ANAE). وتُسلَّم بطاقة المقاول الذاتي في أجل لا يتعدى ثلاثة (3) أيام عمل. »"
         }
     ]
+

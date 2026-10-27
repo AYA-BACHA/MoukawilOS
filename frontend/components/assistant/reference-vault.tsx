@@ -12,9 +12,10 @@ interface ReferenceVaultProps {
   cited: string[];
   user: User;
   stats: TurnoverStats;
+  onInspectStatute?: (statute: Statute) => void;
 }
 
-export function ReferenceVault({ statutes, cited, user, stats }: ReferenceVaultProps) {
+export function ReferenceVault({ statutes, cited, user, stats, onInspectStatute }: ReferenceVaultProps) {
   const { t, formatAmount, formatWhole } = useI18n();
   const [search, setSearch] = useState("");
 
@@ -103,8 +104,9 @@ export function ReferenceVault({ statutes, cited, user, stats }: ReferenceVaultP
             return (
               <li
                 key={statute.id}
+                onClick={() => onInspectStatute?.(statute)}
                 className={cn(
-                  "rounded-xl p-3 border transition-all duration-200",
+                  "cursor-pointer rounded-xl p-3 border transition-all duration-200 hover:shadow-xs hover:border-teal/40 group/statute",
                   isCited
                     ? "border-primary/40 bg-mint/40 shadow-xs ring-1 ring-primary/20"
                     : "border-slate-100 bg-slate-50/60 hover:bg-slate-50 hover:border-slate-200",
@@ -112,15 +114,24 @@ export function ReferenceVault({ statutes, cited, user, stats }: ReferenceVaultP
               >
                 <div className="flex items-center justify-between mb-1">
                   <span className="font-num text-[11px] font-bold text-teal">{statute.code}</span>
-                  {isCited && (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-primary px-2 py-0.5 text-[9px] font-bold text-white shadow-2xs">
-                      <span className="size-1 rounded-full bg-card animate-pulse" />
-                      {t("Cited")}
+                  <div className="flex items-center gap-1.5">
+                    {isCited && (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-primary px-2 py-0.5 text-[9px] font-bold text-white shadow-2xs">
+                        <span className="size-1 rounded-full bg-card animate-pulse" />
+                        {t("Cited")}
+                      </span>
+                    )}
+                    <span className="text-[10px] text-teal/70 group-hover/statute:text-teal font-semibold">
+                      {t("View text ↗")}
                     </span>
-                  )}
+                  </div>
                 </div>
-                <h4 className="text-xs font-bold text-ink leading-tight">{t(statute.title)}</h4>
-                <p className="mt-1 text-[11px] leading-relaxed text-muted">{t(statute.summary)}</p>
+                <h4 className="text-xs font-bold text-ink leading-tight group-hover/statute:text-primary transition-colors">
+                  {t(statute.title)}
+                </h4>
+                <p className="mt-1 text-[11px] leading-relaxed text-muted line-clamp-2">
+                  {t(statute.summary)}
+                </p>
               </li>
             );
           })}

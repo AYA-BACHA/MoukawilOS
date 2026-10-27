@@ -162,13 +162,45 @@ export function DashboardView({
     );
   };
 
+  // Curate a representative selection covering all invoice states so testers can try all options:
+  // - Pending: allows testing "Mark as Paid" -> Cash-basis settlement modal
+  // - Paid: allows testing "PDF Receipt" -> View & print official receipt
+  // - Draft: allows testing "Resume Edit" -> Open invoice builder
+  const recentDisplayInvoices = useMemo(() => {
+    const pending = activeInvoices.find((inv) => inv.status === "pending");
+    const paid = activeInvoices.find((inv) => inv.status === "paid");
+    const draft = activeInvoices.find((inv) => inv.status === "draft");
+
+    const pickedIds = new Set<string>();
+    const result: InvoiceWithClient[] = [];
+
+    // Prioritize pending so tester can immediately try "Mark as Paid"
+    [pending, paid, draft].forEach((inv) => {
+      if (inv && !pickedIds.has(inv.id)) {
+        pickedIds.add(inv.id);
+        result.push(inv);
+      }
+    });
+
+    // Fill up to 4 items with remaining active invoices
+    for (const inv of activeInvoices) {
+      if (result.length >= 4) break;
+      if (!pickedIds.has(inv.id)) {
+        pickedIds.add(inv.id);
+        result.push(inv);
+      }
+    }
+
+    return result.length > 0 ? result : activeInvoices.slice(0, 4);
+  }, [activeInvoices]);
+
   return (
     <div className="flex flex-col gap-4 sm:gap-6">
       <DashboardHeader user={user} />
       <CeilingCard stats={stats} />
       <SecondaryKpis deadline={deadline} stats={stats} />
       <RecentInvoices
-        invoices={activeInvoices.slice(0, 3)}
+        invoices={recentDisplayInvoices}
         stats={stats}
         onPaymentConfirmed={handlePayment}
       />

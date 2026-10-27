@@ -4,6 +4,7 @@ import { useState } from "react";
 import { RotateCcw } from "lucide-react";
 import { ChatPanel } from "@/components/assistant/chat-panel";
 import { ReferenceVault } from "@/components/assistant/reference-vault";
+import { StatuteModal } from "@/components/assistant/statute-modal";
 import { askAssistant } from "@/lib/api";
 import type { AssistantMessage, Statute, TurnoverStats, User } from "@/types/models";
 import { useI18n } from "@/lib/i18n/provider";
@@ -19,6 +20,7 @@ export function AssistantView({ user, stats, statutes, initialMessages }: Assist
   const { t } = useI18n();
   const [messages, setMessages] = useState(initialMessages);
   const [pending, setPending] = useState(false);
+  const [inspectingStatute, setInspectingStatute] = useState<Statute | null>(null);
 
   const ask = async (question: string) => {
     setMessages((current) => [
@@ -72,9 +74,24 @@ export function AssistantView({ user, stats, statutes, initialMessages }: Assist
 
       {/* Main Grid: ChatPanel (8 cols) + ReferenceVault (4 cols) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 items-start gap-5">
-        <ChatPanel messages={messages} statutes={statutes} pending={pending} onAsk={ask} />
-        <ReferenceVault statutes={statutes} cited={cited} user={user} stats={stats} />
+        <ChatPanel
+          messages={messages}
+          statutes={statutes}
+          pending={pending}
+          onAsk={ask}
+          onInspectStatute={setInspectingStatute}
+        />
+        <ReferenceVault
+          statutes={statutes}
+          cited={cited}
+          user={user}
+          stats={stats}
+          onInspectStatute={setInspectingStatute}
+        />
       </div>
+
+      {/* Official Statute Inspector Modal */}
+      <StatuteModal statute={inspectingStatute} onClose={() => setInspectingStatute(null)} />
     </div>
   );
 }

@@ -131,6 +131,10 @@ export interface Statute {
   title: string;
   keywords: string[];
   summary: string;
+  official_url?: string;
+  gazette_ref?: string;
+  excerpt_fr?: string;
+  excerpt_ar?: string;
 }
 
 export interface AssistantMessage {

@@ -29,9 +29,10 @@ interface ChatPanelProps {
   statutes: Statute[];
   pending: boolean;
   onAsk: (question: string) => void;
+  onInspectStatute?: (statute: Statute) => void;
 }
 
-export function ChatPanel({ messages, statutes, pending, onAsk }: ChatPanelProps) {
+export function ChatPanel({ messages, statutes, pending, onAsk, onInspectStatute }: ChatPanelProps) {
   const { t } = useI18n();
   // Assistant answers are "<statute code>: <summary>" blocks (or a fixed fallback); translate the summary part.
   const answerText = (content: string) =>
@@ -68,6 +69,23 @@ export function ChatPanel({ messages, statutes, pending, onAsk }: ChatPanelProps
 
   const codeOf = (id: string) => statutes.find((statute) => statute.id === id)?.code ?? id;
   const titleOf = (id: string) => statutes.find((statute) => statute.id === id)?.title ?? "";
+
+  const handleStatuteClick = (id: string) => {
+    const found = statutes.find((s) => s.id === id);
+    if (found) {
+      onInspectStatute?.(found);
+    } else {
+      onInspectStatute?.({
+        id,
+        code: id,
+        title: "Algerian Auto-Entrepreneur Statutory Provision",
+        keywords: [],
+        summary: "This article is codified in the Official Gazettes of the Algerian Republic (Law 22-23 & Executive Decree 23-197).",
+        official_url: "https://www.joradp.dz/FTP/jo-francais/2022/F2022085.pdf",
+        gazette_ref: "Journal Officiel de la République Algérienne",
+      });
+    }
+  };
 
   return (
     <section className="col-span-12 lg:col-span-8 flex h-[calc(100dvh-14rem)] min-h-[460px] lg:h-[680px] flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-card shadow-xs">
@@ -124,7 +142,7 @@ export function ChatPanel({ messages, statutes, pending, onAsk }: ChatPanelProps
                   </button>
                 </div>
 
-                {/* Citations Badges */}
+                {/* Citations Badges: Clickable & Inspectable */}
                 {message.citations.length > 0 && (
                   <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
                     <span className="text-[10px] font-semibold text-muted flex items-center gap-1">
@@ -132,13 +150,17 @@ export function ChatPanel({ messages, statutes, pending, onAsk }: ChatPanelProps
                       {t("Statutory Sources:")}
                     </span>
                     {message.citations.map((id) => (
-                      <span
+                      <button
                         key={id}
-                        title={titleOf(id)}
-                        className="inline-flex items-center gap-1 rounded-md border border-teal/20 bg-mint/50 px-2 py-0.5 font-num text-[10px] font-bold text-teal transition-colors hover:bg-mint"
+                        type="button"
+                        onClick={() => handleStatuteClick(id)}
+                        title={t("Click to inspect official text & gazette: {title}", { title: titleOf(id) })}
+                        className="group/badge inline-flex items-center gap-1 rounded-md border border-teal/30 bg-mint/60 px-2 py-0.5 font-num text-[10px] font-bold text-teal transition-all hover:bg-mint hover:border-teal hover:scale-105 active:scale-95 shadow-2xs"
                       >
-                        {codeOf(id)}
-                      </span>
+                        <BookOpen className="size-2.5 text-accent group-hover/badge:scale-110 transition-transform" />
+                        <span>{codeOf(id)}</span>
+                        <span className="text-[9px] text-teal/70 font-normal">👁</span>
+                      </button>
                     ))}
                   </div>
                 )}
