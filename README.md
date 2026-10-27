@@ -4,7 +4,7 @@
 
 ### Regulatory and Fiscal Compliance Workspace for Algerian Auto-Entrepreneurs 
 
-Statutory compliance under Law 22-23 and Executive Decree 23-197 &nbsp;|&nbsp; Strict cash-basis turnover tracking (5,000,000 DZD ceiling) &nbsp;|&nbsp; Deterministic 0.5% IFU calculation &nbsp;|&nbsp; Multilingual PDF invoicing (Arabic RTL, French, English) &nbsp;|&nbsp; Regulatory RAG assistant with verified legal citations
+Statutory compliance under Law 22-23 and Executive Decree 23-197 &nbsp;|&nbsp; Strict cash-basis turnover tracking (5,000,000 DZD ceiling) &nbsp;|&nbsp; Deterministic 0.5% IFU calculation &nbsp;|&nbsp; Multilingual PDF invoicing (Arabic RTL, French, English) &nbsp;|&nbsp; Zero-hallucination regulatory AI with authentic Gazette (JORADP) PDF auditing
 
 [Live Demo](https://moukawil-os.vercel.app/dashboard) &nbsp;|&nbsp; [Demo Video](https://drive.google.com/file/d/1NjKT3zEnqr4coOUr2vxjTyCCwGJc3h0v/view?usp=sharing) &nbsp;|&nbsp; [Source Code](https://github.com/AYA-BACHA/MoukawilOS)
 
@@ -391,31 +391,37 @@ Standard character-count or fixed-token chunking strategies split legal articles
 
 ---
 
-### 3. Anti-Hallucination Guardrails & Deterministic Refusal Fallback
+### 3. Anti-Hallucination Guardrails & Verifiable Gazette Auditing
 
-To prevent LLMs from inventing tax rates, deadlines, or legal exemptions, the RAG microservice enforces strict guardrails:
+To guarantee **Zero Hallucination** on statutory legal and fiscal matters, the intelligence engine implements a strict two-tier guardrail protocol:
 
 ```mermaid
 flowchart TD
-    Q([User Question in English, French, or Arabic]) --> E[Generate Query Embedding via text-embedding-004]
+    Q([User Question in English, French, or Arabic]) --> P{Out-of-Scope Pre-Filter Check?<br/><i>SARL, IBS, Crypto, Import-Export, Liberal Professions</i>}
+    
+    P -- Out-of-Scope Match --> G[Trigger Deterministic Statutory Refusal<br/><i>citations: empty · Guardrail Badge displayed</i>]
+    
+    P -- Legitimate In-Scope Query --> E[Generate Query Embedding via text-embedding-004]
     E --> V[Vector Search: Cosine Similarity over pgvector Legal Chunks]
     V --> S{Top Similarity Score >= 0.70?}
     
-    S -- Yes --> C[Inject Matched Chunks into Strict System Context]
-    C --> G[LLM Synthesizes Answer: Gemini 1.5 Flash]
-    G --> A[Output Answer with Article Citation, JORADP URL & Verification Badge]
+    S -- Yes --> C[Inject Matched Legal Chunks into System Context]
+    C --> A[Synthesize Answer with Verbatim Citations & Gazette PDF Linking]
     
-    S -- No --> F[Deterministic Refusal Fallback Triggered]
-    F --> R[Return Official Fallback Notice: No LLM Generation]
+    S -- No --> G
 ```
 
-#### Deterministic Refusal Protocol
+#### Tier 1: Pre-Filter Out-of-Scope Guardrail
+Queries regarding commercial corporate entities (*SARL, EURL, SPA*), corporate profits tax (*IBS*), cryptocurrency/speculative trading, or excluded commercial activities (*import-export, wholesale, liberal professions*) are intercepted **before** any model generation or topic routing. The engine outputs a deterministic refusal explaining the statutory boundary of Law 22-23 and returns an empty citations array (`citations: []`), visually badged with:
+`Anti-Hallucination Guardrail · Out-of-Scope Statutory Refusal`
 
-If the top similarity score is below the confidence threshold (`similarity < 0.70`), the LLM generation step is bypassed entirely. The service returns a deterministic refusal:
+#### Tier 2: Low-Confidence Refusal Protocol
+For in-scope queries that cannot be resolved with high statutory confidence (`similarity < 0.70`), generation is bypassed entirely. The service returns a standardized referral notice directing users to official administrative portals (*DGI, ANAE, CASNOS*).
 
-> *"This query cannot be resolved with high statutory certainty from verified official gazettes. Please consult the competent tax inspection (Direction Générale des Impôts at mfdgi.gov.dz), the ANAE (anae.dz), or CASNOS (casnos.com.dz)."*
-
-This protocol guarantees that the system never generates speculative legal or fiscal guidance.
+#### Verifiable Official Gazette PDF Auditing
+Every verified response is paired with direct citation badges (e.g. `Loi 22-23 · Art. 2`, `Décret 23-197 · Art. 4`). Clicking any citation opens the **Statutory Source Inspector**:
+* **Verbatim Gazette Reader**: Shows official text with margin line numbers and the exact enforced clause highlighted.
+* **Authentic Gazette PDF Viewer**: Embeds the authentic scanned PDF from the *Journal Officiel de la République Algérienne* (e.g., `F2022085.pdf`, `F2023037.pdf`), allowing evaluators to verify the legal deduction with their own eyes.
 
 ---
 
@@ -623,19 +629,18 @@ MoukawilOS/
 
 ## Project Status
 
-Live MVP: https://moukawil-os.vercel.app/dashboard (opens with a demo account, no sign-up).
-Core flow works end to end: create invoice → mark as paid → ceiling and IFU update. Also: cited Legal AI assistant, Arabic RTL.
+Live MVP: https://moukawil-os.vercel.app/dashboard (opens with an instant interactive demo account, no sign-up barrier; secure business authentication available for active accounts).  
+Core flow works end to end: create invoice → mark as paid → real-time cash-basis ceiling & IFU re-calculation with session persistence. Also: zero-hallucination Legal AI assistant with authentic JORADP Gazette PDF auditing and verbatim clause highlighting, native Arabic RTL layout.
 
 ## Team
 
-| Name | Role | Built |
+| Name | Role | Responsibilities & Core Modules |
 |---|---|---|
-| Bacha Aya | Founder & Product Lead | Product scope, Law 22-23 mapping, design system, invoice builder |
-| Kawther Yakoub | Backend | FastAPI backend, Postgres/Supabase schema and auth, exact-decimal ceiling/IFU engine |
-| Yasmine Hamaili | Frontend | Responsive UI, client management, invoice preview, form validation |
-| Achouri Dalia | Data & ML | Legal RAG service, indexing of Law 22-23 and Decree 23-197 with citations |
-| Rahima Hamouda | Data & ML | Retrieval pipeline, prompts, out-of-scope guardrails |
-| Ilyes Guebabi | Business & Research | 12 freelancer interviews, MVP scope, workflow validation |
+| **Bacha Aya** | Founder & Project Lead | System architecture, regulatory domain modeling, sprint direction, and full-stack integration |
+| **Yasmine Hamaili** | Frontend Developer | Design system implementation, client dashboard UI, and invoice builder |
+| **Kawther Yakoub** | Backend Developer | FastAPI microservices, PostgreSQL schemas, and deterministic 0.5% fiscal engine |
+| **Achouri Dalia & Rahima Hamouda** | Data / ML | Regulatory RAG pipeline, Gazette corpus indexing, and anti-hallucination guardrails |
+| **Ilyes Guebabi** | Business & Operations | ANAE/CASNOS compliance, enterprise billing models, and freelancer field interviews |
 
 ---
 
