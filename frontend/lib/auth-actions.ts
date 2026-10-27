@@ -49,12 +49,12 @@ export async function signUpAction(_prev: AuthState, formData: FormData): Promis
   if (!terms) return { error: "Please accept the terms to continue.", field: "terms", name, email };
 
   await startSession({ name, email });
-  redirect("/dashboard");
+  redirect("/dashboard?tour=true");
 }
 
 export async function demoSignInAction() {
   await startSession(DEMO_USER);
-  redirect("/dashboard");
+  redirect("/dashboard?tour=true");
 }
 
 export async function signOutAction() {

@@ -22,11 +22,19 @@ export function Sidebar({ user }: { user: User }) {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const urlParams = new URLSearchParams(window.location.search);
-      const forceTour = urlParams.get("tour") === "true" || urlParams.get("tour") === "1";
+      const forceTour =
+        urlParams.get("tour") === "true" ||
+        urlParams.get("tour") === "1" ||
+        sessionStorage.getItem("moukawil_demo_login") === "true";
       const sessionShown = sessionStorage.getItem("moukawil_session_tour_shown");
 
       if (forceTour || !sessionShown) {
         sessionStorage.setItem("moukawil_session_tour_shown", "true");
+        sessionStorage.removeItem("moukawil_demo_login");
+        if (urlParams.has("tour")) {
+          const cleanUrl = window.location.pathname;
+          window.history.replaceState({}, "", cleanUrl);
+        }
         const timer = setTimeout(() => setShowTour(true), 900);
         return () => clearTimeout(timer);
       }

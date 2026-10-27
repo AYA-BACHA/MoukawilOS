@@ -251,7 +251,15 @@ export function Topbar({ utilization }: { utilization: number }) {
                 <UserIcon className="size-3.5 text-muted" />
                 {t("Profile & Settings")}
               </Link>
-              <form action={signOutAction}>
+              <form
+                action={signOutAction}
+                onSubmit={() => {
+                  if (typeof window !== "undefined") {
+                    sessionStorage.removeItem("moukawil_session_tour_shown");
+                    sessionStorage.removeItem("moukawil_demo_login");
+                  }
+                }}
+              >
                 <button type="submit" className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium text-body transition-colors hover:bg-surface-low hover:text-ink">
                   <LogOut className="size-3.5 text-muted" />
                   {t("Sign out")}

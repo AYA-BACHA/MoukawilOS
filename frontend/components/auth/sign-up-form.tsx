@@ -47,7 +47,16 @@ export function SignUpForm() {
         </button>
       </form>
 
-      <form action={demoSignInAction} className="flex flex-col gap-2">
+      <form
+        action={demoSignInAction}
+        onSubmit={() => {
+          if (typeof window !== "undefined") {
+            sessionStorage.removeItem("moukawil_session_tour_shown");
+            sessionStorage.setItem("moukawil_demo_login", "true");
+          }
+        }}
+        className="flex flex-col gap-2"
+      >
         <button type="submit" className={buttonClass("outline", "h-11 justify-center rounded-lg text-sm")}>
           {t("Continue with the demo account")}
         </button>
