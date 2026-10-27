@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Bot, CalendarClock, ChevronDown, FileText, Gauge, Percent, Wallet } from "lucide-react";
+import { ArrowRight, Bot, CalendarClock, ChevronDown, FileText, Gauge, LogIn, Percent, Sparkles, UserPlus, Wallet } from "lucide-react";
 import { buttonClass } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n/provider";
+import { demoSignInAction } from "@/lib/auth-actions";
 
 const trust = ["Law 22-23", "Executive Decree 23-197", "ANAE", "CASNOS", "DGI"];
 
@@ -131,10 +132,48 @@ export function LandingSections({ signedIn }: { signedIn: boolean }) {
           <div className="relative mx-auto flex max-w-2xl flex-col items-center gap-5">
             <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl">{t("Ready to run your business with confidence?")}</h2>
             <p className="text-base leading-7 text-white/75">{t("Create your workspace and issue your first compliant invoice today.")}</p>
-            <Link href={signedIn ? "/dashboard" : "/sign-up"} className={buttonClass("outline", "h-12 rounded-xl border-transparent bg-white px-6 text-sm text-[#0c312d] hover:bg-white/90")}>
-              {signedIn ? t("Open dashboard") : t("Create your workspace")}
-              <ArrowRight className="size-4 rtl:-scale-x-100" />
-            </Link>
+            {signedIn ? (
+              <Link href="/dashboard" className={buttonClass("outline", "h-12 rounded-xl border-transparent bg-white px-6 text-sm text-[#0c312d] hover:bg-white/90")}>
+                {t("Open dashboard")}
+                <ArrowRight className="size-4 rtl:-scale-x-100" />
+              </Link>
+            ) : (
+              <div className="flex flex-col items-center gap-3">
+                <div className="flex flex-wrap items-center justify-center gap-3">
+                  <form
+                    action={demoSignInAction}
+                    onSubmit={() => {
+                      if (typeof window !== "undefined") {
+                        sessionStorage.removeItem("moukawil_session_tour_shown");
+                        sessionStorage.setItem("moukawil_demo_login", "true");
+                      }
+                    }}
+                  >
+                    <button
+                      type="submit"
+                      className="flex h-12 items-center gap-2 rounded-xl bg-white px-6 text-sm font-bold text-[#0c312d] shadow-lg hover:bg-white/90 active:scale-95 transition-all"
+                    >
+                      <Sparkles className="size-4 text-emerald-700" />
+                      <span>{t("Try Demo Account (Instant)")}</span>
+                    </button>
+                  </form>
+                  <Link
+                    href="/sign-up"
+                    className="flex h-12 items-center gap-2 rounded-xl border border-white/30 bg-white/10 px-5 text-sm font-semibold text-white hover:bg-white/20 active:scale-95 transition-all backdrop-blur-xs"
+                  >
+                    <UserPlus className="size-4" />
+                    <span>{t("Create Free Account")}</span>
+                  </Link>
+                </div>
+                <Link
+                  href="/sign-in"
+                  className="inline-flex items-center gap-1.5 text-xs font-medium text-white/80 hover:text-white hover:underline mt-1"
+                >
+                  <LogIn className="size-3.5" />
+                  <span>{t("Already registered? Sign in")}</span>
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </section>

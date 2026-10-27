@@ -2,7 +2,7 @@
 
 import { useActionState } from "react";
 import Link from "next/link";
-import { ArrowRight, Loader2, Lock, Mail } from "lucide-react";
+import { ArrowRight, Loader2, Lock, Mail, Sparkles } from "lucide-react";
 import { AuthField } from "@/components/auth/auth-field";
 import { AuthShell } from "@/components/auth/auth-shell";
 import { buttonClass } from "@/components/ui/button";
@@ -52,7 +52,8 @@ export function SignInForm() {
         }}
         className="flex flex-col gap-2"
       >
-        <button type="submit" className={buttonClass("outline", "h-11 justify-center rounded-lg text-sm")}>
+        <button type="submit" className={buttonClass("outline", "h-11 justify-center gap-2 rounded-lg text-sm border-slate-300 font-semibold hover:bg-surface-low")}>
+          <Sparkles className="size-4 text-accent shrink-0" />
           {t("Continue with the demo account")}
         </button>
         <p className="text-center text-[11px] text-muted">{t("Demo environment: no real account is created or stored.")}</p>
