@@ -800,6 +800,24 @@ export async function askAssistant(question: string): Promise<AssistantMessage> 
   const isAr = /[\u0600-\u06ff]/.test(question);
   const isFr = /(plafond|chiffre|affaires|comment|quelle|quel|droit|impot|facture|activite|statut)/.test(q);
 
+  // 1. Explicit Out-of-Scope Anti-Hallucination Guardrail
+  const outOfScopePattern = /(sarl|eurl|spa\b|snc\b|scs\b|soci[eé]t[eé]|corporate|ibs\b|tap\b|dividende|dividend|actionnaire|capital social|crypto|cryptocurrency|bitcoin|ethereum|trading|forex|binance|usdt|import|export|importation|exportation|import-export|commerce de gros|douane|m[eé]decin|avocat|notaire|architecte|pharmacie|pharmacien|laboratoire|clinique|boulangerie|restaurant|restauration|شرك|عملات مشفر|بيتكوين|تداول|استيراد|تصدير|جمارك|محام|طبيب|صيدل)/i;
+
+  if (outOfScopePattern.test(q)) {
+    return {
+      id: `msg_rag_guardrail_${Date.now()}`,
+      userId: CURRENT_USER_ID,
+      role: "assistant",
+      content: isAr
+        ? "يقع هذا الاستفسار خارج النطاق التشريعي لنظام المقاول الذاتي بالجزائر (القانون 22-23 والمرسوم التنفيذي 23-197). يخضع نظام المقاول الذاتي حصرياً للأشخاص الطبيعيين الممارسين للأنشطة المستقلة المؤهلة، ولا ينظم إطلاقاً الشركات التجارية (SARL, EURL, SPA)، أو الضريبة على أرباح الشركات (IBS)، أو تداول العملات المشفرة، أو أنشطة الاستيراد والتصدير. يرجى مراجعة المديرية العامة للضرائب (mfdgi.gov.dz) أو المركز الوطني للسجل التجاري (sidjilcom.cnrc.dz)."
+        : isFr
+        ? "Cette question relève d'un domaine strictement exclu du statut de l'auto-entrepreneur en Algérie (Loi n° 22-23 et Décret exécutif n° 23-197). Le statut d'auto-entrepreneur est réservé exclusivement aux personnes physiques exerçant des prestations de services éligibles. Il ne régit en aucun cas les sociétés commerciales (SARL, EURL, SPA), l'Impôt sur les Bénéfices des Sociétés (IBS), les crypto-actifs ou le commerce d'import-export. Pour ces régimes, veuillez consulter la Direction Générale des Impôts (mfdgi.gov.dz) ou le Centre National du Registre du Commerce (sidjilcom.cnrc.dz)."
+        : "This query falls strictly outside the statutory scope of the Algerian Auto-Entrepreneur regime (Law No. 22-23 and Executive Decrees 23-196 / 23-197). The auto-entrepreneur framework applies exclusively to individual physical persons providing approved independent services. It does NOT govern commercial corporate entities (SARL, EURL, SPA), Corporate Profit Tax (IBS), cryptocurrency trading, or import-export operations. For corporate tax and commercial registry inquiries, please consult the Directorate General of Taxes (DGI at mfdgi.gov.dz) or CNRC (sidjilcom.cnrc.dz).",
+      citations: [],
+      createdAt: new Date().toISOString(),
+    };
+  }
+
   if (/(ceiling|plafond|seuil|5000000|5,000,000|5m|سقف|حد)/.test(q)) {
     return {
       id: `msg_rag_${Date.now()}`,
@@ -815,7 +833,7 @@ export async function askAssistant(question: string): Promise<AssistantMessage> 
     };
   }
 
-  if (/(ifu|tax|rate|impot|taux|0.5|ضريبة|جزافية)/.test(q)) {
+  if (/(ifu|0\.5%?|imp[oô]t forfaitaire|taxe forfaitaire|forfaitaire|ضريبة جزافية|الضريبة الجزافية|tax rate|my tax|mon imp[oô]t|taux d'imposition|fiscalit[eé])/i.test(q)) {
     return {
       id: `msg_rag_${Date.now()}`,
       userId: CURRENT_USER_ID,

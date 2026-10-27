@@ -72,7 +72,7 @@ TOPIC_RULES = [
         "answer_ar": "وفقاً لـ **المادة 2 من القانون 22-23** و**المادة 282 مكرر من قانون الضرائب المباشرة (CIDTA)**، حُدد سقف رقم الأعمال السنوي للمقاول الذاتي بـ **5,000,000 دج** لكل سنة مدنية على أساس التحصيل الفعلي. وفي حالة تجاوز هذا السقف لمدة ثلاث (3) سنوات متتالية، يتعين على المقاول الذاتي القيد في السجل التجاري (CNRC) أو يُشطب من السجل الوطني (المادتان 13 و14)."
     },
     {
-        "keywords": ["ifu", "tax", "rate", "impot", "taux", "0.5", "0.5%", "ضريبة", "معدل", "جزافية"],
+        "keywords": ["ifu", "0.5%", "0.5", "impot forfaitaire", "taxe forfaitaire", "forfaitaire", "ضريبة جزافية", "الضريبة الجزافية", "tax rate", "my tax", "mon impot", "taux d'imposition"],
         "target_chunk": "JORADP-2022-085:art-1",
         "citation": "Loi de Finances 2024 · CIDTA Art. 282 sexies",
         "doc": "Loi n° 23-22 (LF 2024) / CIDTA",
@@ -167,7 +167,52 @@ def detect_language(text: str) -> str:
 def query_regulatory_assistant(question: str) -> Dict[str, Any]:
     load_corpus()
     lang = detect_language(question)
+    norm_q = _normalize(question)
     q_tokens = set(_tokenize(question))
+    out_of_scope_patterns = [
+        "sarl", "eurl", "spa", "snc", "scs", "societe", "societes", "corporate", "ibs", "tap",
+        "dividende", "dividendes", "dividend", "dividends", "actionnaire", "actionnaires", "capital social", "holding",
+        "crypto", "cryptocurrency", "cryptomonnaie", "bitcoin", "ethereum", "trading", "forex", "binance", "usdt",
+        "import", "export", "importation", "exportation", "import-export", "commerce de gros", "douane", "douanes", "douanier", "transit",
+        "medecin", "avocat", "notaire", "architecte", "pharmacie", "pharmacien", "laboratoire", "clinique",
+        "artisanat", "boulangerie", "restaurant", "restauration", "commerce de detail",
+        "شركة", "شركات", "عملات مشفرة", "بيتكوين", "تداول", "استيراد", "تصدير", "جمارك", "محامي", "طبيب", "صيدلي"
+    ]
+
+    is_out_of_scope = any(re.search(rf"\b{re.escape(term)}\b", norm_q) for term in out_of_scope_patterns) or any(term in norm_q for term in ["crypto", "sarl", "eurl", "spa", "ibs", "import-export", "trading", "عملات مشفرة"])
+
+    if is_out_of_scope:
+        if lang == "ar":
+            refusal_content = (
+                "يقع هذا الاستفسار خارج النطاق التشريعي لنظام المقاول الذاتي بالجزائر (القانون 22-23 والمرسوم التنفيذي 23-197). "
+                "يخضع نظام المقاول الذاتي حصرياً للأشخاص الطبيعيين الممارسين للأنشطة المستقلة المؤهلة، ولا ينظم إطلاقاً الشركات التجارية (SARL, EURL, SPA)، "
+                "أو الضريبة على أرباح الشركات (IBS)، أو تداول العملات المشفرة، أو أنشطة الاستيراد والتصدير. "
+                "يرجى مراجعة المديرية العامة للضرائب (mfdgi.gov.dz) أو المركز الوطني للسجل التجاري (sidjilcom.cnrc.dz)."
+            )
+        elif lang == "fr":
+            refusal_content = (
+                "Cette question relève d'un domaine strictement exclu du statut de l'auto-entrepreneur en Algérie (Loi n° 22-23 et Décret exécutif n° 23-197). "
+                "Le statut d'auto-entrepreneur est réservé exclusivement aux personnes physiques exerçant des prestations de services éligibles. "
+                "Il ne régit en aucun cas les sociétés commerciales (SARL, EURL, SPA), l'Impôt sur les Bénéfices des Sociétés (IBS), les crypto-actifs ou le commerce d'import-export. "
+                "Pour ces régimes, veuillez consulter la Direction Générale des Impôts (DGI - mfdgi.gov.dz) ou le Centre National du Registre du Commerce (sidjilcom.cnrc.dz)."
+            )
+        else:
+            refusal_content = (
+                "This query falls strictly outside the statutory scope of the Algerian Auto-Entrepreneur regime (Law No. 22-23 and Executive Decrees 23-196 / 23-197). "
+                "The auto-entrepreneur framework applies exclusively to individual physical persons providing approved independent services. "
+                "It does NOT govern commercial corporate entities (SARL, EURL, SPA), Corporate Profit Tax (IBS), cryptocurrency trading, or import-export operations. "
+                "For corporate tax and commercial registry inquiries, please consult the Directorate General of Taxes (DGI at mfdgi.gov.dz) or CNRC (sidjilcom.cnrc.dz)."
+            )
+
+        return {
+            "id": f"msg_rag_guardrail_{abs(hash(question)) % 10000000}",
+            "role": "assistant",
+            "content": refusal_content,
+            "citations": [],
+            "statutory_source": "Direction Générale des Impôts (DGI) / CNRC",
+            "confidence": 0.0,
+            "refusal": True,
+        }
 
     best_rule = None
     best_score = 0
