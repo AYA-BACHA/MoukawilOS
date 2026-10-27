@@ -684,7 +684,7 @@ export const fr: Record<string, string> = {
   "• Algerian Law 22-23 & Executive Decree 23-197": "• Loi algérienne 22-23 et Décret exécutif 23-197",
   "✓ 3,000,000 DZD remaining capacity. MoukawilOS alerts you before you approach 90%.": "✓ 3 000 000 DA de capacité restante. MoukawilOS vous alerte avant d'atteindre 90 %.",
   "✓ Recognized in Statutory Turnover under cash-basis rules (Law 22-23). 0% VAT strictly applied.": "✓ Reconnu dans le chiffre d'affaires légal selon les règles d'encaissement (Loi 22-23). TVA 0 % strictement appliquée.",
-  "🎉 Payment Recorded for {number}!": "🎉 Paiement enregistré pour {number} !",
+  "🎉 Payment Recorded for {number}!": "Paiement enregistré pour {number} !",
   "Executive Decree 23-197 • Art. 13": "Décret exécutif 23-197 • Art. 13",
   "Code des Impôts Directs • Formulaire G12 bis": "Code des Impôts Directs • Formulaire G12 bis",
   "TVA Non-Assujetti (Art. 282 bis CIDTA)": "TVA Non-Assujetti (Art. 282 bis CIDTA)",

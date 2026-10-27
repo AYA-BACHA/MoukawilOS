@@ -684,7 +684,7 @@ export const ar: Record<string, string> = {
   "• Algerian Law 22-23 & Executive Decree 23-197": "• القانون الجزائري 22-23 والمرسوم التنفيذي 23-197",
   "✓ 3,000,000 DZD remaining capacity. MoukawilOS alerts you before you approach 90%.": "✓ 3,000,000 دج طاقة متبقية. ينبهك MoukawilOS قبل بلوغ 90%.",
   "✓ Recognized in Statutory Turnover under cash-basis rules (Law 22-23). 0% VAT strictly applied.": "✓ معترف به ضمن رقم الأعمال القانوني وفق قواعد التحصيل (القانون 22-23). الرسم على القيمة المضافة 0% مطبَّق بصرامة.",
-  "🎉 Payment Recorded for {number}!": "🎉 تم تسجيل الدفعة للفاتورة {number}!",
+  "🎉 Payment Recorded for {number}!": "تم تسجيل الدفعة للفاتورة {number}!",
   "Executive Decree 23-197 • Art. 13": "المرسوم التنفيذي 23-197 • المادة 13",
   "Code des Impôts Directs • Formulaire G12 bis": "قانون الضرائب المباشرة • استمارة G12 bis",
   "TVA Non-Assujetti (Art. 282 bis CIDTA)": "غير خاضع للرسم على القيمة المضافة (المادة 282 مكرر CIDTA)",

@@ -112,35 +112,25 @@ export function ReferenceVault({ statutes, cited, user, stats, onInspectStatute 
                     : "border-slate-100 bg-slate-50/60 hover:bg-slate-50 hover:border-slate-200",
                 )}
               >
-                <div className="flex items-center justify-between mb-1">
-                  <span className="font-num text-[11px] font-bold text-teal">{statute.code}</span>
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="font-mono text-[11px] font-semibold text-slate-700 dark:text-slate-300">{statute.code}</span>
                   <div className="flex items-center gap-1.5">
                     {isCited && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-primary px-2 py-0.5 text-[9px] font-bold text-white shadow-2xs">
-                        <span className="size-1 rounded-full bg-card animate-pulse" />
+                      <span className="inline-flex items-center gap-1 rounded bg-slate-900 px-1.5 py-0.5 text-[9px] font-semibold text-white dark:bg-slate-100 dark:text-slate-900">
                         {t("Cited")}
                       </span>
                     )}
-                    <span className="text-[10px] text-teal/70 group-hover/statute:text-teal font-semibold">
-                      {t("View text ↗")}
+                    <span className="text-[11px] text-slate-400 group-hover/statute:text-slate-700 font-medium transition-colors">
+                      {t("View text")} →
                     </span>
                   </div>
                 </div>
-                <h4 className="text-xs font-bold text-ink leading-tight group-hover/statute:text-primary transition-colors">
+                <h4 className="text-xs font-semibold text-slate-900 leading-tight group-hover/statute:text-emerald-700 transition-colors dark:text-slate-100">
                   {t(statute.title)}
                 </h4>
-                <p className="mt-1 text-[11px] leading-relaxed text-muted line-clamp-2">
+                <p className="mt-1 text-[11px] leading-relaxed text-slate-500 line-clamp-2">
                   {t(statute.summary)}
                 </p>
-                <div className="mt-2.5 pt-2 border-t border-slate-200/50 flex items-center justify-between">
-                  <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-teal group-hover/statute:text-accent transition-colors">
-                    <FileText className="size-3" />
-                    <span>{t("Inspect Gazette PDF & Law")}</span>
-                  </span>
-                  <span className="rounded bg-teal/10 px-1.5 py-0.5 text-[9px] font-bold text-teal">
-                    {t("View ↗")}
-                  </span>
-                </div>
               </li>
             );
           })}

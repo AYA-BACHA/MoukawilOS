@@ -46,17 +46,16 @@ export function AssistantView({ user, stats, statutes, initialMessages }: Assist
     <div className="flex flex-col gap-5 py-3 pb-20 lg:pb-6">
       {/* Sleek Copilot Command Header */}
       <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl border border-slate-200/80 bg-card p-4 sm:p-5 shadow-xs">
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-1">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-mint px-2.5 py-0.5 text-[11px] font-bold text-mint-ink">
-              <span className="size-1.5 animate-pulse rounded-full bg-primary" />
-              {t("Audited AI Copilot")}
+            <span className="inline-flex items-center gap-1.5 rounded-md bg-slate-100 px-2.5 py-0.5 text-[11px] font-semibold text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+              {t("Statutory Intelligence")}
             </span>
-            <span className="text-[11px] font-medium text-muted">{t("• Algerian Law 22-23 & Executive Decree 23-197")}</span>
+            <span className="text-[11px] text-slate-400">{t("Official Algerian Gazettes · Law 22-23 & Executive Decrees 23-196 / 23-197")}</span>
           </div>
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-ink">{t("Al-Moukawil Legal AI")}</h1>
-          <p className="max-w-2xl text-xs leading-relaxed text-body">
-            {t("Ask any question regarding your turnover ceiling, B2B/B2C invoicing rules, or 0.5% IFU tax obligations. Every answer is legally grounded in official statutory codifications.")}
+          <h1 className="text-lg sm:text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100">{t("Al-Moukawil Regulatory Assistant")}</h1>
+          <p className="max-w-2xl text-xs leading-relaxed text-slate-600 dark:text-slate-400">
+            {t("Verified legal and fiscal references for Algerian auto-entrepreneurs. Query ceiling enforcement (5,000,000 DZD), 0.5% IFU taxation, 0% VAT exemption, and statutory invoicing rules.")}
           </p>
         </div>
 

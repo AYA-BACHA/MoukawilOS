@@ -5,13 +5,11 @@ import {
   Check,
   Copy,
   ExternalLink,
-  FileCheck2,
   FileText,
-  Highlighter,
   Scale,
   ShieldCheck,
   X,
-  FileCode2,
+  BookOpen,
 } from "lucide-react";
 import type { Statute } from "@/types/models";
 import { useI18n } from "@/lib/i18n/provider";
@@ -43,11 +41,10 @@ export function StatuteModal({ statute, onClose }: StatuteModalProps) {
 
   if (!statute) return null;
 
-  // Resolve the rich document with exact deduced line from statutory documents registry
   const doc: StatutoryDocument = getStatutoryDocument(statute.id || statute.code);
 
   const copyCitation = () => {
-    const text = `${doc.code} — ${doc.document_title}\n${doc.gazette_ref}\n${doc.article_label}\nLigne déduite: ${doc.deduced_line_text}\n\nRègle MoukawilOS: ${doc.deduction_rule_fr}`;
+    const text = `${doc.code} — ${doc.document_title}\n${doc.gazette_ref}\n${doc.article_label}\nLigne déduite: ${doc.deduced_line_text}\n\nInterprétation fiscale: ${doc.deduction_rule_fr}`;
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -62,7 +59,7 @@ export function StatuteModal({ statute, onClose }: StatuteModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/65 p-3 sm:p-5 backdrop-blur-xs animate-in fade-in duration-150"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-3 sm:p-5 backdrop-blur-xs animate-in fade-in duration-150"
       onClick={onClose}
     >
       <div
@@ -70,27 +67,27 @@ export function StatuteModal({ statute, onClose }: StatuteModalProps) {
         aria-modal="true"
         aria-labelledby="statute-modal-title"
         onClick={(e) => e.stopPropagation()}
-        className="relative flex w-full max-w-3xl max-h-[92vh] flex-col overflow-hidden rounded-2xl border border-slate-200/90 bg-card shadow-2xl animate-in zoom-in-95 duration-150"
+        className="relative flex w-full max-w-3xl max-h-[92vh] flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xl animate-in zoom-in-95 duration-150 dark:bg-slate-900 dark:border-slate-800"
       >
-        {/* Official Algerian Republic Header */}
-        <div className="flex flex-col border-b border-slate-200/90 bg-slate-50/90 px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex size-10 items-center justify-center rounded-xl bg-mint text-accent shadow-xs shrink-0">
-                <Scale className="size-5" />
+        {/* Header */}
+        <div className="flex flex-col border-b border-slate-200 bg-slate-50/80 px-6 py-4 dark:bg-slate-900/90 dark:border-slate-800">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-start gap-3">
+              <div className="flex size-9 items-center justify-center rounded-lg bg-slate-200/70 text-slate-800 shrink-0 mt-0.5 dark:bg-slate-800 dark:text-slate-200">
+                <Scale className="size-4" />
               </div>
               <div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="font-num text-xs font-bold text-teal">{doc.code}</span>
-                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800">
-                    <ShieldCheck className="size-3 text-emerald-700" />
-                    {t("Official Republic Gazette (JORADP)")}
+                  <span className="font-mono text-xs font-semibold text-slate-900 dark:text-slate-100">{doc.code}</span>
+                  <span className="inline-flex items-center gap-1 rounded bg-slate-200/70 px-2 py-0.5 text-[10px] font-medium text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                    <ShieldCheck className="size-3 text-slate-600 dark:text-slate-400" />
+                    {t("Official Gazette of the Algerian Republic")}
                   </span>
-                  <span className="rounded-full bg-slate-200/70 px-2 py-0.5 text-[10px] font-semibold text-slate-700 font-num">
+                  <span className="font-mono text-[10px] text-slate-500">
                     {doc.pdf_filename}
                   </span>
                 </div>
-                <h3 id="statute-modal-title" className="text-sm font-bold text-ink mt-0.5">
+                <h3 id="statute-modal-title" className="text-sm font-semibold text-slate-900 mt-1 leading-snug dark:text-slate-100">
                   {doc.document_title}
                 </h3>
               </div>
@@ -99,33 +96,33 @@ export function StatuteModal({ statute, onClose }: StatuteModalProps) {
               type="button"
               onClick={onClose}
               aria-label={t("Close")}
-              className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-200/60 hover:text-slate-700 active:scale-95 transition-all"
+              className="rounded-md p-1.5 text-slate-400 hover:bg-slate-200/60 hover:text-slate-700 transition-colors dark:hover:bg-slate-800"
             >
-              <X className="size-5" />
+              <X className="size-4" />
             </button>
           </div>
 
-          {/* Navigation Tabs */}
-          <div className="flex items-center gap-2 mt-4 pt-2 border-t border-slate-200/60">
+          {/* Clean Segmented Control Tabs */}
+          <div className="flex items-center gap-2 mt-4 pt-2 border-t border-slate-200/70 dark:border-slate-800">
             <button
               type="button"
               onClick={() => setActiveTab("text")}
-              className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
+              className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
                 activeTab === "text"
-                  ? "bg-primary text-white shadow-xs"
-                  : "bg-surface-low text-body hover:bg-surface hover:text-ink"
+                  ? "bg-slate-900 text-white shadow-xs dark:bg-slate-100 dark:text-slate-900"
+                  : "bg-slate-100 text-slate-600 hover:bg-slate-200/70 hover:text-slate-900 dark:bg-slate-800 dark:text-slate-300"
               }`}
             >
-              <Highlighter className="size-3.5" />
-              <span>{t("Document Text & Highlighted Line")}</span>
+              <BookOpen className="size-3.5" />
+              <span>{t("Statutory Text & Codification")}</span>
             </button>
             <button
               type="button"
               onClick={() => setActiveTab("pdf")}
-              className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
+              className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
                 activeTab === "pdf"
-                  ? "bg-primary text-white shadow-xs"
-                  : "bg-surface-low text-body hover:bg-surface hover:text-ink"
+                  ? "bg-slate-900 text-white shadow-xs dark:bg-slate-100 dark:text-slate-900"
+                  : "bg-slate-100 text-slate-600 hover:bg-slate-200/70 hover:text-slate-900 dark:bg-slate-800 dark:text-slate-300"
               }`}
             >
               <FileText className="size-3.5" />
@@ -134,120 +131,83 @@ export function StatuteModal({ statute, onClose }: StatuteModalProps) {
           </div>
         </div>
 
-        {/* Content Body */}
-        <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-5">
+        {/* Modal Body */}
+        <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-4">
           {activeTab === "text" ? (
             <>
-              {/* Quick PDF Switch Strip */}
-              <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-slate-100/90 p-3 border border-slate-200">
-                <div className="flex items-center gap-2">
-                  <span className="text-base">📑</span>
-                  <div>
-                    <span className="text-xs font-bold text-ink block">
-                      {t("Authentic Official Gazette Scan: {file}", { file: doc.pdf_filename })}
-                    </span>
-                    <span className="text-[10px] text-muted">
-                      {doc.gazette_ref} • {doc.article_label} (Page {doc.page_number})
-                    </span>
-                  </div>
+              {/* Publication Metadata & PDF Action */}
+              <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-slate-200 bg-slate-50/70 p-3 text-xs dark:border-slate-800 dark:bg-slate-900/50">
+                <div className="flex flex-col gap-0.5">
+                  <span className="font-medium text-slate-900 dark:text-slate-100">{doc.gazette_ref}</span>
+                  <span className="text-[11px] text-slate-500">{doc.article_label} • Page {doc.page_number}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
                     onClick={() => setActiveTab("pdf")}
-                    className="inline-flex items-center gap-1.5 rounded-lg bg-teal text-white px-3 py-1.5 text-xs font-bold hover:bg-teal-ink transition-colors shadow-2xs active:scale-95"
+                    className="inline-flex items-center gap-1.5 rounded-md border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 transition-colors shadow-2xs dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
                   >
-                    <FileText className="size-3.5" />
-                    <span>{t("View Original PDF Scan ↗")}</span>
+                    <FileText className="size-3.5 text-slate-500" />
+                    <span>{t("Open Embedded PDF")}</span>
                   </button>
                   <a
                     href={doc.pdf_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 rounded-lg border border-slate-300 bg-card px-2.5 py-1.5 text-xs font-semibold text-body hover:bg-surface transition-colors"
+                    className="inline-flex items-center gap-1 rounded-md border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 transition-colors shadow-2xs dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
                   >
                     <span>{t("New Tab")}</span>
-                    <ExternalLink className="size-3" />
+                    <ExternalLink className="size-3 text-slate-400" />
                   </a>
                 </div>
               </div>
 
-              {/* Deduced Rule Card */}
-              <div className="rounded-2xl border-2 border-amber-400/60 bg-amber-50/70 p-4 shadow-xs">
-                <div className="flex items-center gap-2 text-amber-900 font-bold text-xs mb-1.5">
-                  <FileCheck2 className="size-4 text-amber-600" />
-                  <span>{t("What MoukawilOS Deduced From This Exact Statutory Line:")}</span>
-                </div>
-                <p className="text-xs leading-relaxed text-amber-950 font-medium">
+              {/* Statutory Interpretation Note */}
+              <div className="rounded-lg border-l-4 border-emerald-600 bg-slate-50 p-4 border border-slate-200/80 dark:bg-slate-850 dark:border-slate-800">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">
+                  {t("Statutory Deduction & Application")}
+                </span>
+                <p className="text-xs leading-relaxed text-slate-800 font-medium dark:text-slate-200">
                   {activeDeductionRule}
                 </p>
               </div>
 
-              {/* Gazette Metadata Strip */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                <div className="flex items-center gap-2 rounded-xl bg-surface-low p-3 border border-slate-200/70">
-                  <FileCode2 className="size-4 text-teal shrink-0" />
-                  <div className="min-w-0">
-                    <span className="text-[10px] text-muted block uppercase tracking-wider font-semibold">
-                      {t("Gazette Reference")}
-                    </span>
-                    <span className="font-semibold text-ink truncate block">
-                      {doc.gazette_ref}
-                    </span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 rounded-xl bg-surface-low p-3 border border-slate-200/70">
-                  <Scale className="size-4 text-teal shrink-0" />
-                  <div className="min-w-0">
-                    <span className="text-[10px] text-muted block uppercase tracking-wider font-semibold">
-                      {t("Article & Section")}
-                    </span>
-                    <span className="font-semibold text-ink truncate block">
-                      {doc.article_label} (Page {doc.page_number})
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Authentic Document Viewer with Exact Line Highlight */}
+              {/* Verbatim Gazette Text */}
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-muted flex items-center gap-2">
-                    <span className="size-2 rounded-full bg-teal" />
-                    <span>{t("Verbatim Legal Text from Official Gazette")}</span>
-                  </h4>
-                  <span className="text-[11px] font-semibold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full flex items-center gap-1">
-                    <Highlighter className="size-3" />
-                    {t("Deduced line highlighted below")}
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                    {t("Official Gazette Verbatim Text")}
+                  </span>
+                  <span className="text-[11px] text-slate-500 font-medium">
+                    {t("Enforced legal passage indicated below")}
                   </span>
                 </div>
 
-                <div className="rounded-2xl border border-slate-300/80 bg-slate-50/70 p-4 font-mono text-xs overflow-x-auto shadow-inner">
-                  <div className="flex flex-col gap-1.5 divide-y divide-slate-200/40">
+                <div className="rounded-lg border border-slate-200 bg-slate-50/50 p-4 font-mono text-xs overflow-x-auto dark:border-slate-800 dark:bg-slate-950">
+                  <div className="flex flex-col gap-1 divide-y divide-slate-200/40 dark:divide-slate-850">
                     {doc.full_context_lines.map((lineObj) => (
                       <div
                         key={lineObj.line}
-                        className={`pt-1.5 flex items-start gap-3 transition-colors ${
+                        className={`pt-1 flex items-start gap-3 ${
                           lineObj.isDeduced
-                            ? "bg-amber-200/70 -mx-3 px-3 py-2 rounded-xl border-2 border-amber-400 font-sans shadow-sm ring-2 ring-amber-300/50"
-                            : "text-slate-700 font-serif"
+                            ? "bg-amber-50/90 -mx-3 px-3 py-2 rounded-md border-l-4 border-amber-600 dark:bg-amber-950/30"
+                            : "text-slate-700 dark:text-slate-300"
                         }`}
                       >
-                        <span className="font-mono text-[10px] font-bold text-slate-400 select-none pt-0.5 w-5 text-end shrink-0">
+                        <span className="font-mono text-[10px] font-medium text-slate-400 select-none pt-0.5 w-6 text-end shrink-0">
                           {String(lineObj.line).padStart(2, "0")}
                         </span>
                         <div className="flex-1">
                           {lineObj.isDeduced && (
-                            <div className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-amber-900 mb-1">
-                              <span className="size-2 rounded-full bg-amber-500 animate-pulse" />
-                              <span>👉 {t("THE EXACT DEDUCED STATUTORY LINE")}</span>
-                            </div>
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-amber-800 block mb-0.5 dark:text-amber-400">
+                              {t("Enforced Legal Clause:")}
+                            </span>
                           )}
                           <p
                             className={`leading-relaxed ${
                               lineObj.isDeduced
-                                ? "text-xs sm:text-sm font-bold text-amber-950 font-serif"
-                                : "text-xs"
+                                ? "text-xs font-semibold text-slate-900 font-serif dark:text-slate-100"
+                                : "text-xs font-serif"
                             }`}
                           >
                             {lineObj.text}
@@ -261,34 +221,34 @@ export function StatuteModal({ statute, onClose }: StatuteModalProps) {
 
               {/* Arabic Translation if available */}
               {doc.deduced_line_arabic && (
-                <div className="rounded-xl border border-slate-200 bg-surface-low/80 p-3.5">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted block mb-1">
-                    {t("Arabic Codification (النص القانوني بالعربية):")}
+                <div className="rounded-lg border border-slate-200 bg-slate-50/60 p-3.5 dark:border-slate-800 dark:bg-slate-900/50">
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 block mb-1">
+                    {t("Official Arabic Codification (النص القانوني بالعربية):")}
                   </span>
-                  <p dir="rtl" className="text-xs font-semibold text-ink leading-relaxed font-serif">
+                  <p dir="rtl" className="text-xs font-medium text-slate-900 leading-relaxed font-serif dark:text-slate-100">
                     {doc.deduced_line_arabic}
                   </p>
                 </div>
               )}
             </>
           ) : (
-            /* PDF Viewer Tab */
-            <div className="flex flex-col gap-3 h-[520px]">
-              <div className="flex items-center justify-between bg-surface-low p-2.5 rounded-xl border border-slate-200 text-xs">
-                <span className="font-semibold text-ink">
+            /* Embedded PDF Viewer */
+            <div className="flex flex-col gap-3 h-[540px]">
+              <div className="flex items-center justify-between bg-slate-50 p-2.5 rounded-lg border border-slate-200 text-xs dark:bg-slate-800 dark:border-slate-700">
+                <span className="font-medium text-slate-800 dark:text-slate-200">
                   {doc.pdf_filename} — {doc.gazette_ref}
                 </span>
                 <a
                   href={doc.pdf_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-teal font-bold hover:underline"
+                  className="inline-flex items-center gap-1 text-slate-700 font-medium hover:text-slate-900 hover:underline dark:text-slate-300"
                 >
                   <span>{t("Open in separate window")}</span>
                   <ExternalLink className="size-3" />
                 </a>
               </div>
-              <div className="flex-1 rounded-xl overflow-hidden border border-slate-300 bg-slate-100 shadow-inner">
+              <div className="flex-1 rounded-lg overflow-hidden border border-slate-300 bg-slate-100 dark:border-slate-700">
                 <iframe
                   src={`${doc.pdf_url}#page=${doc.page_number}`}
                   title={doc.title}
@@ -300,21 +260,21 @@ export function StatuteModal({ statute, onClose }: StatuteModalProps) {
         </div>
 
         {/* Modal Actions Footer */}
-        <div className="flex items-center justify-between border-t border-slate-200/90 bg-slate-50/80 px-6 py-3.5">
+        <div className="flex items-center justify-between border-t border-slate-200 bg-slate-50 px-6 py-3.5 dark:border-slate-800 dark:bg-slate-900">
           <button
             type="button"
             onClick={copyCitation}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-card px-3 py-1.5 text-xs font-semibold text-body hover:bg-surface hover:text-ink active:scale-95 transition-all shadow-2xs"
+            className="inline-flex items-center gap-1.5 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 active:scale-[0.99] transition-colors shadow-2xs dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
           >
             {copied ? (
               <>
                 <Check className="size-3.5 text-emerald-600" />
-                <span className="text-emerald-700">{t("Citation & line copied!")}</span>
+                <span className="text-emerald-700 dark:text-emerald-400">{t("Citation copied")}</span>
               </>
             ) : (
               <>
-                <Copy className="size-3.5 text-muted" />
-                <span>{t("Copy Deduced Citation")}</span>
+                <Copy className="size-3.5 text-slate-400" />
+                <span>{t("Copy Citation")}</span>
               </>
             )}
           </button>
@@ -324,17 +284,17 @@ export function StatuteModal({ statute, onClose }: StatuteModalProps) {
               href={doc.pdf_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-300 bg-emerald-50 px-3.5 py-1.5 text-xs font-bold text-emerald-800 hover:bg-emerald-600 hover:text-white transition-all active:scale-95 shadow-2xs"
+              className="inline-flex items-center gap-1.5 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-800 hover:bg-slate-50 transition-colors shadow-2xs dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
             >
               <span>{t("Open Official PDF (New Tab)")}</span>
-              <ExternalLink className="size-3" />
+              <ExternalLink className="size-3 text-slate-400" />
             </a>
             <button
               type="button"
               onClick={onClose}
-              className="rounded-lg bg-primary px-4 py-1.5 text-xs font-bold text-white hover:bg-primary-ink active:scale-95 transition-all shadow-2xs"
+              className="rounded-md bg-slate-900 px-4 py-1.5 text-xs font-medium text-white hover:bg-slate-800 transition-colors shadow-2xs dark:bg-slate-100 dark:text-slate-900"
             >
-              {t("Done")}
+              {t("Close")}
             </button>
           </div>
         </div>

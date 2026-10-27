@@ -55,7 +55,7 @@ def get_messages() -> List[Dict[str, Any]]:
             "id": "msg_welcome",
             "userId": "usr_1",
             "role": "assistant",
-            "content": "Hello! I am the MoukawilOS Regulatory AI Assistant, grounded in verified official Algerian legislation (Law 22-23, Executive Decrees 23-196, 23-197, and CIDTA).\n\nAsk me any question regarding your turnover ceiling, 0% VAT exemption, flat 0.5% IFU tax calculation, or compliant invoicing rules.\n\n💡 **How to view the official legislation & PDF:** Click on any statutory button below (e.g. *Loi 22-23 · Art. 2*) or in the **Legal Vault** on the right to open the interactive viewer, see the exact legal line highlighted in gold, or view the original Republic Gazette PDF scan.",
+            "content": "Welcome to the Al-Moukawil Regulatory Intelligence Workspace.\n\nThis system provides legal and fiscal guidance grounded strictly in the official legislation of the People's Democratic Republic of Algeria (Law n° 22-23, Executive Decrees 23-196 and 23-197, and the Direct Tax Code CIDTA).\n\nEnter an inquiry regarding the 5,000,000 DZD revenue threshold, the 0.5% IFU flat tax calculation, 0% VAT exemption rules, or statutory invoicing requirements. Each response includes direct citations to inspect codified articles and authentic Gazette (JORADP) PDF documents.",
             "citations": ["JORADP-2022-085:art-2", "JORADP-2023-197:art-4"],
             "createdAt": datetime.now(timezone.utc).isoformat(),
         }

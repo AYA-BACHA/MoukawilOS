@@ -12,6 +12,8 @@ import {
   User as UserIcon,
   BookOpen,
   Scale,
+  ExternalLink,
+  FileText,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import type { AssistantMessage, Statute } from "@/types/models";
@@ -91,19 +93,19 @@ export function ChatPanel({ messages, statutes, pending, onAsk, onInspectStatute
   return (
     <section className="col-span-12 lg:col-span-8 flex h-[calc(100dvh-14rem)] min-h-[460px] lg:h-[680px] flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-card shadow-xs">
       {/* Copilot Header */}
-      <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/70 px-5 py-3">
+      <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50/80 px-5 py-3 dark:border-slate-800 dark:bg-slate-900/60">
         <div className="flex items-center gap-2.5">
-          <div className="flex size-7 items-center justify-center rounded-lg bg-mint text-accent">
-            <Sparkles className="size-3.5" />
+          <div className="flex size-7 items-center justify-center rounded-md bg-slate-200 text-slate-800 dark:bg-slate-800 dark:text-slate-200">
+            <Scale className="size-3.5" />
           </div>
           <div>
-            <h3 className="text-xs font-bold text-ink">{t("Al-Moukawil Statutory Copilot")}</h3>
-            <p className="text-[10px] text-muted">{t("Audited with official JORADP Algerian legal codifications")}</p>
+            <h3 className="text-xs font-semibold text-slate-900 dark:text-slate-100">{t("Regulatory Legal Counsel")}</h3>
+            <p className="text-[10px] text-slate-500">{t("JORADP codifications · Law 22-23 & Executive Decrees")}</p>
           </div>
         </div>
-        <div className="flex items-center gap-1.5 rounded-full border border-emerald-200/60 bg-emerald-50 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-700">
-          <span className="size-1.5 animate-pulse rounded-full bg-emerald-500" />
-          {t("Law 22-23 Active")}
+        <div className="flex items-center gap-1.5 rounded bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+          <span className="size-1.5 rounded-full bg-emerald-600" />
+          {t("Law 22-23 Grounded")}
         </div>
       </div>
 
@@ -145,33 +147,23 @@ export function ChatPanel({ messages, statutes, pending, onAsk, onInspectStatute
 
                 {/* Citations Badges: Clickable & Inspectable */}
                 {message.citations.length > 0 && (
-                  <div className="mt-2.5 rounded-xl border border-teal/30 bg-mint/30 p-2.5 sm:p-3">
-                    <div className="flex flex-wrap items-center justify-between gap-1 mb-2">
-                      <span className="text-[11px] font-bold text-teal flex items-center gap-1.5">
-                        <Scale className="size-3.5 text-accent" />
-                        {t("Official Algerian Republic Gazette Sources & Evidence:")}
-                      </span>
-                      <span className="text-[10px] text-muted hidden sm:inline">
-                        {t("Click any source to view authentic Gazette PDF & highlighted line")}
-                      </span>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {message.citations.map((id) => (
-                        <button
-                          key={id}
-                          type="button"
-                          onClick={() => handleStatuteClick(id)}
-                          title={t("Click to view authentic Gazette PDF and exact deduced line for {title}", { title: titleOf(id) })}
-                          className="group/badge inline-flex items-center gap-2 rounded-xl border border-teal/40 bg-card px-3 py-1.5 text-xs font-bold text-teal shadow-2xs transition-all hover:bg-mint hover:border-teal hover:scale-[1.02] active:scale-95"
-                        >
-                          <BookOpen className="size-3.5 text-accent group-hover/badge:scale-110 transition-transform" />
-                          <span className="font-num">{codeOf(id)}</span>
-                          <span className="inline-flex items-center gap-1 rounded-md bg-teal/10 px-1.5 py-0.5 text-[10px] font-semibold text-teal group-hover/badge:bg-teal group-hover/badge:text-white transition-colors">
-                            {t("View PDF & Article ↗")}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
+                  <div className="flex flex-wrap items-center gap-2 pt-1.5">
+                    <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+                      {t("Statutory Sources:")}
+                    </span>
+                    {message.citations.map((id) => (
+                      <button
+                        key={id}
+                        type="button"
+                        onClick={() => handleStatuteClick(id)}
+                        title={t("Open official gazette text & PDF for {title}", { title: titleOf(id) })}
+                        className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-2xs hover:border-slate-400 hover:bg-slate-50 active:scale-[0.99] transition-all dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+                      >
+                        <FileText className="size-3 text-slate-400" />
+                        <span className="font-mono text-[11px] font-semibold">{codeOf(id)}</span>
+                        <ExternalLink className="size-2.5 text-slate-400" />
+                      </button>
+                    ))}
                   </div>
                 )}
               </div>
