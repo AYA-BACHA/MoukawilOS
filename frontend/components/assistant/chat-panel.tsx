@@ -14,6 +14,8 @@ import {
   Scale,
   ExternalLink,
   FileText,
+  ShieldCheck,
+  ShieldAlert,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import type { AssistantMessage, Statute } from "@/types/models";
@@ -146,10 +148,11 @@ export function ChatPanel({ messages, statutes, pending, onAsk, onInspectStatute
                 </div>
 
                 {/* Citations Badges: Clickable & Inspectable */}
-                {message.citations.length > 0 && (
+                {message.citations.length > 0 ? (
                   <div className="flex flex-wrap items-center gap-2 pt-1.5">
-                    <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
-                      {t("Statutory Sources:")}
+                    <span className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+                      <ShieldCheck className="size-3 text-emerald-600 dark:text-emerald-400" />
+                      {t("Verified Statutory Grounding:")}
                     </span>
                     {message.citations.map((id) => (
                       <button
@@ -165,7 +168,12 @@ export function ChatPanel({ messages, statutes, pending, onAsk, onInspectStatute
                       </button>
                     ))}
                   </div>
-                )}
+                ) : message.id !== "msg_welcome" ? (
+                  <div className="flex items-center gap-1.5 pt-1 text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                    <ShieldAlert className="size-3.5 text-amber-600 dark:text-amber-500" />
+                    <span>{t("Anti-Hallucination Guardrail · Out-of-Scope Statutory Refusal")}</span>
+                  </div>
+                ) : null}
               </div>
             </div>
           ),
