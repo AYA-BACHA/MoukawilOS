@@ -46,10 +46,11 @@ export function ClientCard({ clientType, client, onTypeChange, onClientChange }:
         {clientTypes.map(({ value, label, icon: Icon }) => (
           <button
             key={value}
+            type="button"
             onClick={() => onTypeChange(value)}
             className={cn(
-              "flex flex-1 items-center justify-center gap-1 rounded py-1.5 text-sm",
-              clientType === value ? "bg-mint font-semibold text-accent shadow-[0_1px_1px_rgba(0,0,0,0.05)]" : "font-medium text-body",
+              "flex flex-1 min-h-[44px] items-center justify-center gap-1 rounded py-1.5 text-xs font-bold transition-all active:scale-95",
+              clientType === value ? "bg-mint text-accent shadow-xs" : "font-medium text-body",
             )}
           >
             <Icon className="size-3.5" />
@@ -62,15 +63,15 @@ export function ClientCard({ clientType, client, onTypeChange, onClientChange }:
           <input className={inputClass} value={client.name} onChange={(event) => onClientChange({ name: event.target.value })} />
         </Field>
         {isCompany && (
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
             <Field label={t("NIF")} hint={t("15 Digits")}>
-              <input className={cn(inputClass, "h-9 px-2 font-num text-xs tracking-[0.05em]")} inputMode="numeric" maxLength={15} value={client.nif} onChange={(event) => onClientChange({ nif: event.target.value })} />
+              <input className={cn(inputClass, "font-num")} inputMode="numeric" maxLength={15} value={client.nif} onChange={(event) => onClientChange({ nif: event.target.value })} />
             </Field>
             <Field label={t("NIS")} hint={t("13 Digits")}>
-              <input className={cn(inputClass, "h-9 px-2 font-num text-xs tracking-[0.05em]")} inputMode="numeric" maxLength={13} value={client.nis} onChange={(event) => onClientChange({ nis: event.target.value })} />
+              <input className={cn(inputClass, "font-num")} inputMode="numeric" maxLength={13} value={client.nis} onChange={(event) => onClientChange({ nis: event.target.value })} />
             </Field>
             <Field label={t("RC Number")} hint={t("Wilaya/Num")}>
-              <input className={cn(inputClass, "h-9 px-2 font-num text-xs tracking-[0.05em]")} value={client.rc} onChange={(event) => onClientChange({ rc: event.target.value })} />
+              <input className={cn(inputClass, "font-num")} value={client.rc} onChange={(event) => onClientChange({ rc: event.target.value })} />
             </Field>
           </div>
         )}
@@ -103,7 +104,7 @@ export function MetadataCard({ number, issueDate, paymentTermsDays, onChange }: 
           </span>
         }
       />
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <Field label={t("Issue Date")}>
           <span className="relative">
             <input type="date" className={cn(inputClass, "pe-10")} value={issueDate} onChange={(event) => onChange({ issueDate: event.target.value })} />
@@ -144,24 +145,33 @@ export function ItemsCard({ items, onChange }: ItemsCardProps) {
       <CardHeader icon={ListChecks} title={t("Itemized Deliverables")} aside={<span className="text-xs font-medium tracking-[0.02em] text-muted">{t("DZD Denominated")}</span>} />
       <div className="flex flex-col gap-3">
         {items.map((item) => (
-          <div key={item.id} className="flex flex-col gap-2 rounded bg-surface-low p-3">
+          <div key={item.id} className="flex flex-col gap-2 rounded-xl border border-slate-200/80 bg-surface-low p-3 shadow-2xs">
             <div className="flex items-center gap-2">
               <input
-                className={cn(inputClass, "h-9 px-2")}
+                className={cn(inputClass, "h-10")}
                 placeholder={t("Deliverable description")}
                 value={item.description}
                 onChange={(event) => update(item.id, { description: event.target.value })}
               />
-              <button aria-label={t("Remove item")} onClick={() => remove(item.id)} disabled={items.length === 1} className="p-1 text-body disabled:opacity-40">
-                <X className="size-3.5" />
+              <button
+                type="button"
+                aria-label={t("Remove item")}
+                onClick={() => remove(item.id)}
+                disabled={items.length === 1}
+                className="flex size-11 shrink-0 items-center justify-center rounded-lg text-body hover:bg-slate-200 disabled:opacity-40 active:scale-95"
+              >
+                <X className="size-4" />
               </button>
             </div>
-            <div className="grid grid-cols-12 items-end gap-2">
+
+            {/* Desktop items layout (sm:grid) */}
+            <div className="hidden sm:grid grid-cols-12 items-end gap-2">
               <Field label={<span className="text-muted">{t("Qty")}</span>} className="col-span-3">
                 <input
                   type="number"
+                  inputMode="numeric"
                   min={1}
-                  className={cn(inputClass, "h-8 px-2 font-num text-xs")}
+                  className={cn(inputClass, "h-9 px-2 font-num text-xs")}
                   value={item.quantity}
                   onChange={(event) => update(item.id, { quantity: Math.max(0, Number(event.target.value)) })}
                 />
@@ -169,9 +179,10 @@ export function ItemsCard({ items, onChange }: ItemsCardProps) {
               <Field label={<span className="text-muted">{t("Rate (DZD)")}</span>} className="col-span-5">
                 <input
                   type="number"
+                  inputMode="decimal"
                   min={0}
                   step="0.01"
-                  className={cn(inputClass, "h-8 px-2 text-end font-num text-xs")}
+                  className={cn(inputClass, "h-9 px-2 text-end font-num text-xs")}
                   value={item.unitPrice}
                   onChange={(event) => update(item.id, { unitPrice: Math.max(0, Number(event.target.value)) })}
                 />
@@ -181,11 +192,47 @@ export function ItemsCard({ items, onChange }: ItemsCardProps) {
                 <span className="font-num text-sm font-bold text-primary-ink">{t("{v1} DZD", { v1: formatAmount(lineTotal(item)) })}</span>
               </div>
             </div>
+
+            {/* Mobile items stacked card (< sm) */}
+            <div className="flex flex-col gap-2 sm:hidden pt-1">
+              <div className="grid grid-cols-2 gap-2">
+                <Field label={<span className="text-muted text-[11px]">{t("Quantity")}</span>}>
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    min={1}
+                    className={cn(inputClass, "h-10 px-2 font-num")}
+                    value={item.quantity}
+                    onChange={(event) => update(item.id, { quantity: Math.max(0, Number(event.target.value)) })}
+                  />
+                </Field>
+                <Field label={<span className="text-muted text-[11px]">{t("Unit Rate (DZD)")}</span>}>
+                  <input
+                    type="number"
+                    inputMode="decimal"
+                    min={0}
+                    step="0.01"
+                    className={cn(inputClass, "h-10 px-2 text-end font-num")}
+                    value={item.unitPrice}
+                    onChange={(event) => update(item.id, { unitPrice: Math.max(0, Number(event.target.value)) })}
+                  />
+                </Field>
+              </div>
+              <div className="flex items-center justify-between border-t border-slate-200/60 pt-2">
+                <span className="text-xs text-muted">{t("Line Total:")}</span>
+                <span className="font-num text-base font-bold text-primary-ink">{t("{v1} DZD", { v1: formatAmount(lineTotal(item)) })}</span>
+              </div>
+            </div>
           </div>
         ))}
       </div>
-      <button onClick={add} className="flex items-center justify-center gap-1 rounded bg-surface-low py-2.5 text-sm font-semibold text-accent">
-        <CirclePlus className="size-[15px]" />{t("+ Add Item")}
+      <button
+        type="button"
+        onClick={add}
+        className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-dashed border-primary/30 bg-mint/30 py-2.5 text-xs font-bold text-accent hover:bg-mint/50 active:scale-95 transition-all"
+      >
+        <CirclePlus className="size-4" />
+        {t("+ Add Item")}
       </button>
     </section>
   );

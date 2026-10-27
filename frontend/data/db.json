@@ -29,7 +29,7 @@
       "nextInvoiceNumber": 44,
       "paymentTermsDays": 30,
       "appendExemptionClause": true,
-      "exemptionClause": "Invoice issued under the Algerian Auto-Entrepreneur statutory regime (Law 22-23) — Exempt from VAT pursuant to Executive Decree 23-197."
+      "exemptionClause": "Invoice issued under the Algerian Auto-Entrepreneur statutory regime (Law 22-23) — TVA Non-Assujetti (Art. 282 bis CIDTA)."
     }
   ],
   "clients": [
@@ -134,7 +134,7 @@
       "dueDate": "2026-10-22",
       "amount": 1250000,
       "status": "pending",
-      "statutoryClause": "0% VAT (Art. 6 Law 22-23)",
+      "statutoryClause": "TVA Non-Assujetti (Art. 282 bis CIDTA)",
       "paidAt": null,
       "paymentRail": null
     },
@@ -147,7 +147,7 @@
       "dueDate": "2026-10-02",
       "amount": 80000,
       "status": "paid",
-      "statutoryClause": "0% VAT (Art. 6 Law 22-23)",
+      "statutoryClause": "TVA Non-Assujetti (Art. 282 bis CIDTA)",
       "paidAt": "2026-10-02",
       "paymentRail": "Bank Transfer (BNA / CPA / CCP)"
     },
@@ -160,7 +160,7 @@
       "dueDate": "2026-10-12",
       "amount": 45000,
       "status": "draft",
-      "statutoryClause": "0% VAT (Art. 6 Law 22-23)",
+      "statutoryClause": "TVA Non-Assujetti (Art. 282 bis CIDTA)",
       "paidAt": null,
       "paymentRail": null
     },
@@ -173,7 +173,7 @@
       "dueDate": "2026-09-30",
       "amount": 420000,
       "status": "paid",
-      "statutoryClause": "0% VAT (Art. 6 Law 22-23)",
+      "statutoryClause": "TVA Non-Assujetti (Art. 282 bis CIDTA)",
       "paidAt": "2026-09-30",
       "paymentRail": "Bank Transfer (BNA / CPA / CCP)"
     },
@@ -186,7 +186,7 @@
       "dueDate": "2026-09-04",
       "amount": 150000,
       "status": "paid",
-      "statutoryClause": "0% VAT (Art. 6 Law 22-23)",
+      "statutoryClause": "TVA Non-Assujetti (Art. 282 bis CIDTA)",
       "paidAt": "2026-09-04",
       "paymentRail": "Bank Transfer (BNA / CPA / CCP)"
     },
@@ -197,11 +197,11 @@
       "number": "2026-0037",
       "issueDate": "2026-08-21",
       "dueDate": "2026-09-05",
-      "amount": 320000,
-      "status": "pending",
-      "statutoryClause": "0% VAT (Art. 6 Law 22-23)",
-      "paidAt": null,
-      "paymentRail": null
+      "amount": 220000,
+      "status": "paid",
+      "statutoryClause": "TVA Non-Assujetti (Art. 282 bis CIDTA)",
+      "paidAt": "2026-09-05",
+      "paymentRail": "Bank Transfer (BNA / CPA / CCP)"
     },
     {
       "id": "inv_0036",
@@ -210,9 +210,9 @@
       "number": "2026-0036",
       "issueDate": "2026-08-10",
       "dueDate": "2026-08-25",
-      "amount": 400000,
+      "amount": 300000,
       "status": "paid",
-      "statutoryClause": "0% VAT (Art. 6 Law 22-23)",
+      "statutoryClause": "TVA Non-Assujetti (Art. 282 bis CIDTA)",
       "paidAt": "2026-08-25",
       "paymentRail": "Bank Transfer (BNA / CPA / CCP)"
     },
@@ -225,7 +225,7 @@
       "dueDate": "2026-08-13",
       "amount": 250000,
       "status": "paid",
-      "statutoryClause": "0% VAT (Art. 6 Law 22-23)",
+      "statutoryClause": "TVA Non-Assujetti (Art. 282 bis CIDTA)",
       "paidAt": "2026-08-13",
       "paymentRail": "Bank Transfer (BNA / CPA / CCP)"
     },
@@ -237,10 +237,10 @@
       "issueDate": "2026-07-18",
       "dueDate": "2026-08-02",
       "amount": 80000,
-      "status": "pending",
-      "statutoryClause": "0% VAT (Art. 6 Law 22-23)",
-      "paidAt": null,
-      "paymentRail": null
+      "status": "paid",
+      "statutoryClause": "TVA Non-Assujetti (Art. 282 bis CIDTA)",
+      "paidAt": "2026-08-02",
+      "paymentRail": "BaridiMob"
     },
     {
       "id": "inv_0033",
@@ -249,9 +249,9 @@
       "number": "2026-0033",
       "issueDate": "2026-07-07",
       "dueDate": "2026-07-22",
-      "amount": 300000,
+      "amount": 200000,
       "status": "paid",
-      "statutoryClause": "0% VAT (Art. 6 Law 22-23)",
+      "statutoryClause": "TVA Non-Assujetti (Art. 282 bis CIDTA)",
       "paidAt": "2026-07-22",
       "paymentRail": "Bank Transfer (BNA / CPA / CCP)"
     },
@@ -262,9 +262,9 @@
       "number": "2026-0032",
       "issueDate": "2026-06-24",
       "dueDate": "2026-06-24",
-      "amount": 200000,
+      "amount": 150000,
       "status": "paid",
-      "statutoryClause": "0% VAT (Art. 6 Law 22-23)",
+      "statutoryClause": "TVA Non-Assujetti (Art. 282 bis CIDTA)",
       "paidAt": "2026-06-24",
       "paymentRail": "Bank Transfer (BNA / CPA / CCP)"
     },
@@ -275,9 +275,9 @@
       "number": "2026-0031",
       "issueDate": "2026-06-10",
       "dueDate": "2026-06-25",
-      "amount": 200000,
+      "amount": 150000,
       "status": "paid",
-      "statutoryClause": "0% VAT (Art. 6 Law 22-23)",
+      "statutoryClause": "TVA Non-Assujetti (Art. 282 bis CIDTA)",
       "paidAt": "2026-06-25",
       "paymentRail": "Bank Transfer (BNA / CPA / CCP)"
     }
@@ -287,7 +287,7 @@
       "id": "dl_1",
       "userId": "usr_1",
       "dueDate": "2026-06-30",
-      "description": "Annual G50-A Turnover Declaration (0.5% IFU flat tax obligation)"
+      "description": "Annual G12 bis Turnover Declaration (0.5% IFU flat tax obligation)"
     }
   ],
   "invoiceDrafts": [
@@ -419,11 +419,12 @@
       "summary": "Eligible activities are taxed at a flat 0.5% of collected turnover under the IFU regime."
     },
     {
-      "id": "g50-a",
-      "code": "G50-A · Declaration",
+      "id": "g12-bis",
+      "code": "G12 bis · Declaration",
       "title": "Annual turnover declaration",
       "keywords": [
-        "g50",
+        "g12",
+        "g12 bis",
         "declaration",
         "deadline",
         "file",
@@ -431,7 +432,7 @@
         "annual",
         "due"
       ],
-      "summary": "The annual G50-A turnover declaration settles the flat IFU obligation and must be filed before the published deadline."
+      "summary": "The annual G12 bis turnover declaration settles the flat IFU obligation and must be filed before the published deadline."
     },
     {
       "id": "nif",

@@ -125,21 +125,131 @@ body {
   letter-spacing: -0.015em;
 }
 
+/* Screen mode: hide print portal completely */
+#moukawil-print-mount {
+  display: none !important;
+}
+
 @media print {
-  body * {
-    visibility: hidden;
+  @page {
+    size: A4 portrait;
+    margin: 8mm;
   }
+
+  html, body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    height: auto !important;
+    min-height: auto !important;
+    overflow: visible !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* When printing via Moukawil portal: hide everything except #moukawil-print-mount */
+  body.moukawil-printing > *:not(#moukawil-print-mount) {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  body.moukawil-printing #moukawil-print-mount {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    max-width: 800px !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+
+  body.moukawil-printing #moukawil-print-mount * {
+    visibility: visible !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Fallback: When printing directly via browser shortcut (Ctrl+P) while modal is open */
+  body:not(.moukawil-printing):has(#invoice-sheet) > *:not(:has(#invoice-sheet)),
+  body:not(.moukawil-printing):has(#receipt-voucher-sheet) > *:not(:has(#receipt-voucher-sheet)),
+  body:not(.moukawil-printing):has(#declaration-preview-sheet) > *:not(:has(#declaration-preview-sheet)) {
+    display: none !important;
+  }
+
+  /* Prevent Chromium from repeating fixed backdrops across multi-page layouts */
+  body:not(.moukawil-printing) .fixed {
+    position: static !important;
+    background: transparent !important;
+    padding: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  .no-print,
+  .no-print *,
+  button,
+  header,
+  nav,
+  aside,
+  footer {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
   #invoice-sheet,
-  #invoice-sheet * {
-    visibility: visible;
+  #receipt-voucher-sheet,
+  #declaration-preview-sheet,
+  .printable-invoice {
+    visibility: visible !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
   }
-  #invoice-sheet {
-    position: absolute;
-    inset: 0 auto auto 0;
-    width: 100%;
-    max-width: none;
-    zoom: 1 !important;
+
+  #invoice-sheet,
+  .printable-invoice {
+    display: block !important;
+    position: relative !important;
+    width: 100% !important;
+    max-width: 800px !important;
+    height: auto !important;
+    margin: 0 auto !important;
+    padding: 16px !important;
+    background: #ffffff !important;
+    color: #000000 !important;
     box-shadow: none !important;
+    border: none !important;
+    zoom: 1 !important;
+  }
+
+  #receipt-voucher-sheet,
+  #declaration-preview-sheet {
+    display: block !important;
+    position: relative !important;
+    width: 100% !important;
+    max-width: 520px !important;
+    height: auto !important;
+    margin: 20px auto !important;
+    padding: 24px !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 12px !important;
+    box-shadow: none !important;
+  }
+
+  #receipt-voucher-sheet button,
+  #invoice-sheet button,
+  #declaration-preview-sheet button {
+    display: none !important;
+    visibility: hidden !important;
   }
 }
 

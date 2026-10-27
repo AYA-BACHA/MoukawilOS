@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     supabase_service_role_key: str = ""
     supabase_jwt_secret: str = ""
     rag_service_url: str = "http://localhost:8001"
+    test_user_id: str = ""
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 

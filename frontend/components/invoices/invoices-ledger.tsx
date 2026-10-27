@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Check, Download, Plus, X } from "lucide-react";
 import { Filters, type ClientFilter, type StatusFilter } from "@/components/invoices/filters";
@@ -10,6 +10,7 @@ import { SummaryStrip } from "@/components/invoices/summary-strip";
 import { downloadLedgerCsv } from "@/lib/csv";
 
 import { computeStats } from "@/lib/stats";
+import { getInvoices, payInvoiceApi, type DemoScenario } from "@/lib/api";
 import type { InvoiceWithClient, PaymentConfirmation, User } from "@/types/models";
 import { useI18n } from "@/lib/i18n/provider";
 
@@ -18,38 +19,173 @@ const PAGE_SIZE = 6;
 interface InvoicesLedgerProps {
   user: User;
   invoices: InvoiceWithClient[];
+  initialFiscalYear?: string;
   initialQuery?: string;
 }
 
-export function InvoicesLedger({ user, invoices: initialInvoices, initialQuery = "" }: InvoicesLedgerProps) {
+export function InvoicesLedger({
+  user,
+  invoices: initialInvoices,
+  initialFiscalYear = "2026",
+  initialQuery = "",
+}: InvoicesLedgerProps) {
   const { t, formatAmount } = useI18n();
   const [invoices, setInvoices] = useState(initialInvoices);
+  const [fiscalYear, setFiscalYear] = useState<string>(initialFiscalYear);
   const [status, setStatus] = useState<StatusFilter>("all");
   const [clientType, setClientType] = useState<ClientFilter>("all");
   const [query, setQuery] = useState(initialQuery);
   const [page, setPage] = useState(1);
   const [payingId, setPayingId] = useState<string | null>(null);
 
-  const stats = useMemo(() => computeStats(user, invoices), [user, invoices]);
+  useEffect(() => {
+    setInvoices(initialInvoices);
+  }, [initialInvoices]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedFy = localStorage.getItem("moukawil_fiscal_year");
+      if (storedFy) setFiscalYear(storedFy);
+    }
+  }, []);
+
+  // Listen to scenario or fiscal year changes across components
+  useEffect(() => {
+    const handleScenarioChange = (e: Event) => {
+      const customEvent = e as CustomEvent<DemoScenario>;
+      getInvoices(customEvent.detail).then((updated) => setInvoices(updated));
+    };
+
+    const handleFyChange = (e: Event) => {
+      const customEvent = e as CustomEvent<string>;
+      if (customEvent.detail) setFiscalYear(customEvent.detail);
+    };
+
+    window.addEventListener("moukawil_scenario_change", handleScenarioChange);
+    window.addEventListener("moukawil_fy_change", handleFyChange);
+    return () => {
+      window.removeEventListener("moukawil_scenario_change", handleScenarioChange);
+      window.removeEventListener("moukawil_fy_change", handleFyChange);
+    };
+  }, []);
+
+  // Filter or synthesize invoices based on selected fiscal year
+  const activeInvoices = useMemo(() => {
+    if (fiscalYear === "2025") {
+      return [
+        {
+          id: "inv_2025_1",
+          userId: user.id,
+          clientId: "cli_1",
+          number: "FAC-2025-001",
+          issueDate: "2025-11-10",
+          dueDate: "2025-12-05",
+          amount: 1100000,
+          status: "paid" as const,
+          statutoryClause: "TVA non applicable - Art. 13 LFR 2023",
+          paidAt: "2025-12-05",
+          paymentRail: "bank_transfer",
+          client: {
+            id: "cli_1",
+            userId: user.id,
+            name: "Sonatrach Digital SPA",
+            type: "B2B" as const,
+            nif: "000216001234567",
+            nis: "000216010123456",
+            rc: "16/00-1234567B20",
+            address: "Hydra, Alger",
+            location: "Hydra, Alger",
+            description: null,
+            email: "achats@sonatrach-digital.dz",
+            phone: "021000001",
+            anaeVerified: true,
+          },
+        },
+        {
+          id: "inv_2025_2",
+          userId: user.id,
+          clientId: "cli_2",
+          number: "FAC-2025-002",
+          issueDate: "2025-12-01",
+          dueDate: "2025-12-20",
+          amount: 750000,
+          status: "paid" as const,
+          statutoryClause: "TVA non applicable - Art. 13 LFR 2023",
+          paidAt: "2025-12-20",
+          paymentRail: "cheque",
+          client: {
+            id: "cli_2",
+            userId: user.id,
+            name: "Yacine Mansouri",
+            type: "B2C" as const,
+            nif: null,
+            nis: null,
+            rc: null,
+            address: "Oran",
+            location: "Oran",
+            description: null,
+            email: "yacine@example.dz",
+            phone: "0550000003",
+            anaeVerified: false,
+          },
+        },
+      ];
+    } else if (fiscalYear === "2024") {
+      return [
+        {
+          id: "inv_2024_1",
+          userId: user.id,
+          clientId: "cli_1",
+          number: "FAC-2024-001",
+          issueDate: "2024-09-10",
+          dueDate: "2024-10-10",
+          amount: 950000,
+          status: "paid" as const,
+          statutoryClause: "TVA non applicable - Art. 13 LFR 2023",
+          paidAt: "2024-10-05",
+          paymentRail: "bank_transfer",
+          client: {
+            id: "cli_1",
+            userId: user.id,
+            name: "Sonatrach Digital SPA",
+            type: "B2B" as const,
+            nif: "000216001234567",
+            nis: "000216010123456",
+            rc: "16/00-1234567B20",
+            address: "Hydra, Alger",
+            location: "Hydra, Alger",
+            description: null,
+            email: "achats@sonatrach-digital.dz",
+            phone: "021000001",
+            anaeVerified: true,
+          },
+        },
+      ];
+    }
+    return invoices;
+  }, [invoices, fiscalYear, user.id]);
+
+  const stats = useMemo(() => computeStats(user, activeInvoices), [user, activeInvoices]);
 
   const filtered = useMemo(() => {
     const needle = query.trim().toLowerCase();
-    return invoices.filter(
+    return activeInvoices.filter(
       (invoice) =>
         (status === "all" || invoice.status === status) &&
         (clientType === "all" || invoice.client.type === clientType) &&
         (!needle || invoice.client.name.toLowerCase().includes(needle) || invoice.number.includes(needle)),
     );
-  }, [invoices, status, clientType, query]);
+  }, [activeInvoices, status, clientType, query]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
   const visible = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
   const [settledToast, setSettledToast] = useState<{ number: string; amount: number } | null>(null);
-  const payingInvoice = invoices.find((invoice) => invoice.id === payingId) ?? null;
+  const payingInvoice = activeInvoices.find((invoice) => invoice.id === payingId) ?? null;
 
   const confirmPayment = ({ invoiceId, settlementDate, rail }: PaymentConfirmation) => {
-    const target = invoices.find((inv) => inv.id === invoiceId);
+    payInvoiceApi(invoiceId, settlementDate, rail).catch(console.error);
+    const target = activeInvoices.find((inv) => inv.id === invoiceId);
     setInvoices((current) =>
       current.map((invoice) => (invoice.id === invoiceId ? { ...invoice, status: "paid", paidAt: settlementDate, paymentRail: rail } : invoice)),
     );
@@ -69,30 +205,31 @@ export function InvoicesLedger({ user, invoices: initialInvoices, initialQuery =
     };
 
   return (
-    <div className="flex flex-col gap-6 px-6 py-6">
-      <div className="flex items-center justify-between">
+    <div className="flex flex-col gap-4 sm:gap-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
             <span className="text-xs font-medium uppercase tracking-[0.05em] text-muted">{t("Fiscal Ledger")}</span>
             <span className="size-1.5 rounded-full bg-hairline" />
             <span className="font-num text-xs text-teal">{t("Decree 23-197 Compliant")}</span>
           </div>
-          <h1 className="text-[32px] font-semibold leading-10 tracking-[-0.025em] text-ink">{t("Invoices & Revenue")}</h1>
-          <p className="max-w-2xl text-sm text-body">
+          <h1 className="text-2xl sm:text-[32px] font-semibold leading-tight sm:leading-10 tracking-[-0.025em] text-ink">{t("Invoices & Revenue")}</h1>
+          <p className="max-w-2xl text-xs sm:text-sm text-body">
             {t("Manage commercial invoices, record client payments, and track statutory cash-basis turnover under Law 22-23.")}
           </p>
         </div>
-        <div className="flex items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2.5">
           <button
+            type="button"
             onClick={() => downloadLedgerCsv(filtered)}
-            className="flex items-center gap-1.5 rounded-lg border border-slate-200/80 bg-surface-low hover:bg-surface px-3.5 py-2 text-xs font-semibold text-ink shadow-xs transition-all hover:border-slate-300 active:scale-[0.98]"
+            className="flex min-h-[44px] items-center gap-1.5 rounded-lg border border-slate-200/80 bg-surface-low hover:bg-surface px-4 py-2 text-xs font-semibold text-ink shadow-xs transition-all hover:border-slate-300 active:scale-[0.98]"
           >
             <Download className="size-3.5 text-accent" />
             {t("Export Ledger (CSV)")}
           </button>
           <Link
             href="/invoices/new"
-            className="flex items-center gap-1.5 rounded-lg bg-primary hover:bg-primary-ink px-3.5 py-2 text-xs font-semibold text-white shadow-xs transition-all active:scale-[0.98]"
+            className="flex min-h-[44px] items-center gap-1.5 rounded-lg bg-primary hover:bg-primary-ink px-4 py-2 text-xs font-semibold text-white shadow-xs transition-all active:scale-[0.98]"
           >
             <Plus className="size-3.5" />
             {t("New Invoice")}

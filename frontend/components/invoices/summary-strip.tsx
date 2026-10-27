@@ -20,7 +20,7 @@ export function SummaryStrip({ stats }: SummaryStripProps) {
   const impact = (pending / ceiling) * 100;
 
   return (
-    <div className="flex items-stretch gap-3">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
       <article className={cardClass}>
         <div className="flex items-start justify-between">
           <div>

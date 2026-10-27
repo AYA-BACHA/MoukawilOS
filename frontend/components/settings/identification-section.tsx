@@ -27,7 +27,7 @@ export function IdentificationSection({ user }: { user: User }) {
         </Pill>
       }
     >
-      <div className="grid grid-cols-2 gap-4 pt-1">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
         <SettingField
           label={t("Full legal name")}
           hint={t("Legal identity matches national ID and tax records.")}
@@ -64,11 +64,11 @@ export function IdentificationSection({ user }: { user: User }) {
             <span className="font-num">{user.nis}</span>
           </ReadOnly>
         </SettingField>
-        <SettingField label={t("Approved statutory activity")} className="col-span-2">
+        <SettingField label={t("Approved statutory activity")} className="col-span-1 sm:col-span-2">
           <ReadOnly>{user.statutoryActivity}</ReadOnly>
-          <div className="flex items-center justify-between pt-1 text-xs tracking-[0.01em]">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pt-1 text-xs tracking-[0.01em]">
             <p className="text-muted">
-              {t("Statutory Activity Classification:")} <span className="text-primary-ink">{user.activityCode}</span>
+              {t("Statutory Activity Classification:")} <span className="text-primary-ink font-semibold">{user.activityCode}</span>
             </p>
             <p className="font-medium tracking-[0.02em] text-teal">{t("Eligible for Flat {v1}% IFU", { v1: user.ifuRate * 100 })}</p>
           </div>
@@ -80,10 +80,12 @@ export function IdentificationSection({ user }: { user: User }) {
           </ReadOnly>
         </SettingField>
         <SettingField label={t("Auto-entrepreneur card status")}>
-          <ReadOnly className="bg-mint">
-            <ShieldCheck className="size-[15px] text-mint-ink" />
-            <span className="font-semibold text-mint-ink">{t("Active & Compliant")}</span>
-            <span className="ps-6 text-xs tracking-[0.01em] text-accent">{t("Valid through {v1}", { v1: formatDate(user.cardValidUntil) })}</span>
+          <ReadOnly className="bg-mint flex-wrap gap-1.5">
+            <span className="flex items-center gap-1.5 font-semibold text-mint-ink">
+              <ShieldCheck className="size-[15px]" />
+              {t("Active & Compliant")}
+            </span>
+            <span className="text-xs tracking-[0.01em] text-accent">{t("Valid through {v1}", { v1: formatDate(user.cardValidUntil) })}</span>
           </ReadOnly>
         </SettingField>
       </div>

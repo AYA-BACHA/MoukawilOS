@@ -51,15 +51,98 @@ interface ClientsTableProps {
 export function ClientsTable({ rows, total, selectedId, onSelect, page, pageCount, onPageChange }: ClientsTableProps) {
   const { t, formatAmount, formatDate } = useI18n();
   return (
-    <section className="col-span-8 flex flex-col overflow-hidden rounded-lg bg-card shadow-[0_1px_4px_rgba(0,0,0,0.02)]">
+    <section className="col-span-12 lg:col-span-8 flex flex-col overflow-hidden rounded-lg bg-card shadow-[0_1px_4px_rgba(0,0,0,0.02)]">
       <div className="flex items-center justify-between bg-surface-low px-4 py-3">
         <h2 className="text-xs font-semibold uppercase tracking-[0.05em] text-body">{t("Registered client entities (Algerian jurisdiction)")}</h2>
         <p className="text-xs font-medium tracking-[0.02em] text-teal">
           {t("Showing {length} of {total} records", { length: rows.length, total })}
         </p>
       </div>
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-[800px] text-start">
+
+      {/* Mobile Stacked Card View (< md) */}
+      <div className="flex flex-col divide-y divide-slate-100 md:hidden">
+        {rows.length === 0 ? (
+          <div className="p-8 text-center">
+            <div className="mx-auto flex size-10 items-center justify-center rounded-full bg-mint text-accent">
+              <Users className="size-5" />
+            </div>
+            <p className="mt-2 text-sm font-semibold text-ink">{t("No client records found")}</p>
+            <p className="mt-1 text-xs text-muted">
+              {t("No registered client entities match your current search query.")}
+            </p>
+          </div>
+        ) : (
+          rows.map((row) => {
+            const { client } = row;
+            const business = client.type === "B2B";
+            const active = row.standing === "active";
+            const isSelected = client.id === selectedId;
+
+            return (
+              <div
+                key={client.id}
+                onClick={() => onSelect(client.id)}
+                className={cn(
+                  "p-4 flex flex-col gap-3 transition-colors cursor-pointer",
+                  isSelected ? "bg-surface-low/80 ring-1 ring-primary/20" : "hover:bg-slate-50/70",
+                )}
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className={cn("grid size-9 shrink-0 place-items-center rounded text-xs font-bold", business ? "bg-surface text-primary-ink" : "bg-surface-high text-ink")}>
+                      {initials(client.name)}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-sm font-bold text-ink truncate">{client.name}</p>
+                      <div className="flex items-center gap-1.5 pt-0.5">
+                        <span className={cn("rounded px-1.5 py-0.2 text-[10px] font-semibold", business ? "bg-mint text-mint-ink" : "bg-surface text-body")}>
+                          {business ? t("B2B") : t("B2C")}
+                        </span>
+                        {client.anaeVerified && (
+                          <span className="inline-flex items-center gap-0.5 text-[10px] text-teal font-medium">
+                            <BadgeCheck className="size-3" />
+                            {t("ANAE")}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <span className={cn("inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold shrink-0", active ? "bg-mint text-mint-ink" : "bg-surface-high text-body")}>
+                    <span className={cn("size-1.5 rounded-full", active ? "bg-primary" : "bg-muted")} />
+                    {active ? t("Active") : t("Pending")}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 rounded bg-surface-low/60 p-2 text-xs">
+                  <div>
+                    <span className="text-[10px] uppercase text-muted block">{business ? t("Tax Identifier") : t("Status")}</span>
+                    <span className="font-num text-ink font-medium">{business ? (client.nif || client.rc || "—") : t("Consumer")}</span>
+                  </div>
+                  <div className="text-end">
+                    <span className="text-[10px] uppercase text-muted block">{t("Total Invoiced")}</span>
+                    <span className="font-num text-ink font-bold">{formatAmount(row.invoiced)} <span className="text-[10px] text-muted">{t("DZD")}</span></span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-100">
+                  <span className="text-xs text-muted truncate">{client.location || client.email || "Algeria"}</span>
+                  <Link
+                    href={`/invoices/new?client=${client.id}`}
+                    onClick={(e) => e.stopPropagation()}
+                    className="inline-flex min-h-[44px] items-center gap-1 rounded-lg bg-surface px-3 py-2 text-xs font-semibold text-primary-ink active:scale-95"
+                  >
+                    {t("Invoice")}
+                  </Link>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* Desktop Table View (>= md) */}
+      <div className="hidden overflow-x-auto md:block">
+        <table className="w-full min-w-[700px] text-start">
           <thead>
             <tr>
               <th className={cn(headClass, "px-4")}>{t("Client / Corporate Profile")}</th>

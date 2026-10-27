@@ -1,7 +1,7 @@
 import { cn } from "@/lib/cn";
 
 export const controlClass =
-  "h-10 w-full rounded-lg border border-slate-300 bg-slate-50/70 px-3.5 text-sm font-medium text-ink shadow-xs outline-none transition-all duration-150 placeholder:text-muted hover:border-slate-400 hover:bg-card focus:border-primary focus:bg-card focus:ring-2 focus:ring-primary/20";
+  "min-h-[44px] sm:min-h-10 h-11 sm:h-10 w-full rounded-lg border border-slate-300 bg-slate-50/70 px-3.5 text-base sm:text-sm font-medium text-ink shadow-xs outline-none transition-all duration-150 placeholder:text-muted hover:border-slate-400 hover:bg-card focus:border-primary focus:bg-card focus:ring-2 focus:ring-primary/20";
 
 interface SettingFieldProps {
   label: string;

@@ -53,14 +53,14 @@ export function Filters({
   return (
     <div className="flex flex-wrap items-center gap-3 rounded-xl border border-slate-100 bg-card p-3 shadow-xs">
       {/* Status Filter Tabs */}
-      <div className="flex rounded-lg bg-surface-low p-1">
+      <div className="flex w-full sm:w-auto overflow-x-auto rounded-lg bg-surface-low p-1">
         {tabs.map(({ value, label }) => (
           <button
             key={value}
             type="button"
             onClick={() => onStatusChange(value)}
             className={cn(
-              "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-all",
+              "flex min-h-[36px] shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-all active:scale-95",
               status === value
                 ? "bg-card font-bold text-ink shadow-xs"
                 : "text-body hover:text-ink",
@@ -80,14 +80,14 @@ export function Filters({
       </div>
 
       {/* Search & Custom Dropdowns */}
-      <div className="flex flex-1 flex-wrap items-center justify-end gap-2.5">
-        <label className="relative min-w-56 flex-1 max-w-md">
+      <div className="flex w-full flex-1 flex-wrap items-center justify-start sm:justify-end gap-2.5">
+        <label className="relative min-w-full sm:min-w-56 flex-1 max-w-md">
           <Search className="absolute start-3 top-1/2 size-3.5 -translate-y-1/2 text-muted" />
           <input
             value={query}
             onChange={(event) => onQueryChange(event.target.value)}
             placeholder={t("Search client or invoice ref...")}
-            className="h-10 w-full rounded-lg border border-slate-200/80 bg-surface-low ps-9 pe-3 text-xs text-ink placeholder:text-muted transition-all focus:border-primary/40 focus:bg-card focus:outline-none focus:ring-2 focus:ring-primary/20"
+            className="h-10 w-full rounded-lg border border-slate-200/80 bg-surface-low ps-9 pe-3 text-base sm:text-xs text-ink placeholder:text-muted transition-all focus:border-primary/40 focus:bg-card focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
         </label>
 

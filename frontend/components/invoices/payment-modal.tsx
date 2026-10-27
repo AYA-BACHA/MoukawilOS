@@ -31,32 +31,37 @@ export function PaymentModal({ invoice, stats, onClose, onConfirm }: PaymentModa
   const percent = (value: number) => Math.round((value / ceiling) * 100);
 
   return (
-    <div className="fixed inset-0 z-30 grid place-items-center bg-slate-900/40 p-4 backdrop-blur-xs" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-3 sm:p-4 backdrop-blur-sm animate-in fade-in" onClick={onClose}>
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="payment-modal-title"
         onClick={(event) => event.stopPropagation()}
-        className="w-full max-w-lg overflow-hidden rounded-2xl bg-card shadow-2xl border border-slate-100 animate-in fade-in zoom-in-95 duration-200"
+        className="flex max-h-[92dvh] w-full max-w-lg flex-col overflow-hidden rounded-2xl bg-card shadow-2xl border border-slate-100 animate-in zoom-in-95 duration-200"
       >
         <div className="flex items-start gap-3 bg-surface-low p-4">
-          <span className="grid size-10 place-items-center rounded-xl bg-mint text-accent">
+          <span className="grid size-10 place-items-center rounded-xl bg-mint text-accent shrink-0">
             <BadgeCheck className="size-[22px]" />
           </span>
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between">
-              <h2 id="payment-modal-title" className="text-xl font-semibold leading-7 tracking-[-0.025em] text-ink">
+              <h2 id="payment-modal-title" className="text-base sm:text-lg font-semibold leading-7 tracking-[-0.025em] text-ink truncate">
                 {t("Confirm Payment Receipt")}
               </h2>
-              <button aria-label={t("Close")} onClick={onClose} className="rounded p-1 text-body">
-                <X className="size-3.5" />
+              <button
+                type="button"
+                aria-label={t("Close")}
+                onClick={onClose}
+                className="flex size-11 items-center justify-center rounded-lg text-body hover:bg-slate-100 active:scale-95"
+              >
+                <X className="size-5" />
               </button>
             </div>
             <p className="pt-0.5 text-xs font-medium tracking-[0.02em] text-body">{t("Statutory Law 22-23 Cash-Basis Realization")}</p>
           </div>
         </div>
 
-        <div className="flex flex-col gap-4 p-4">
+        <div className="flex flex-1 flex-col gap-4 p-4 overflow-y-auto">
           <div className="flex flex-col gap-1 rounded bg-surface-low p-3 text-xs font-medium tracking-[0.02em] text-body">
             <p className="flex items-baseline justify-between">
               {t("Incoming Amount:")}
@@ -68,7 +73,7 @@ export function PaymentModal({ invoice, stats, onClose, onConfirm }: PaymentModa
             </p>
             <p className="flex items-center justify-between">
               {t("Debtor:")}
-              <span className="text-ink">
+              <span className="text-ink truncate max-w-[200px]">
                 {invoice.client.name} ({invoice.client.type})
               </span>
             </p>
@@ -105,7 +110,7 @@ export function PaymentModal({ invoice, stats, onClose, onConfirm }: PaymentModa
                   value={settlementDate}
                   max={today()}
                   onChange={(event) => setSettlementDate(event.target.value)}
-                  className="h-full w-full bg-transparent ps-9 pe-3 text-sm font-medium text-ink outline-none"
+                  className="h-full w-full bg-transparent ps-9 pe-3 text-base sm:text-sm font-medium text-ink outline-none"
                 />
               </span>
               <span className="text-xs tracking-[0.01em] text-muted">{t("Date bank transfer or CCP check was credited.")}</span>
@@ -117,7 +122,7 @@ export function PaymentModal({ invoice, stats, onClose, onConfirm }: PaymentModa
                 <select
                   value={rail}
                   onChange={(event) => setRail(event.target.value)}
-                  className="h-full w-full appearance-none bg-transparent ps-9 pe-8 text-sm font-medium text-ink outline-none"
+                  className="h-full w-full appearance-none bg-transparent ps-9 pe-8 text-base sm:text-sm font-medium text-ink outline-none"
                 >
                   {rails.map((option) => (
                     <option key={option} value={option}>{t(option)}</option>
@@ -133,14 +138,14 @@ export function PaymentModal({ invoice, stats, onClose, onConfirm }: PaymentModa
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl border border-slate-200 bg-card px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-2xs transition-all hover:bg-slate-50 active:scale-95"
+            className="flex min-h-[44px] items-center justify-center rounded-xl border border-slate-200 bg-card px-4 py-2 text-xs font-semibold text-slate-700 shadow-2xs transition-all hover:bg-slate-50 active:scale-95"
           >
             {t("Cancel")}
           </button>
           <button
             type="button"
             onClick={() => onConfirm({ invoiceId: invoice.id, settlementDate, rail })}
-            className="flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs transition-all hover:bg-primary-ink active:scale-95"
+            className="flex min-h-[44px] items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs transition-all hover:bg-primary-ink active:scale-95"
           >
             <BadgeCheck className="size-4" />
             {t("Confirm & Record Payment")}

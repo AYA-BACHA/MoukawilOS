@@ -22,6 +22,8 @@ interface HowItWorksModalProps {
   onClose: () => void;
 }
 
+const TOTAL_STEPS = 6;
+
 export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
   const { t } = useI18n();
   const [currentStep, setCurrentStep] = useState(0);
@@ -31,7 +33,7 @@ export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") onClose();
       if (event.key === "ArrowRight") {
-        setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
+        setCurrentStep((prev) => Math.min(prev + 1, TOTAL_STEPS - 1));
       }
       if (event.key === "ArrowLeft") {
         setCurrentStep((prev) => Math.max(prev - 1, 0));
@@ -82,7 +84,7 @@ export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
       description:
         "Unlike standard corporations that pay taxes on invoices issued (accrual accounting), your auto-entrepreneur status strictly operates on cash receipts. Unpaid client invoices NEVER count toward your ceiling or tax bill until they are settled into your bank or CCP.",
       demo: (
-        <div className="grid grid-cols-2 gap-3 text-xs">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
           <div className="rounded-xl border border-emerald-200 bg-emerald-50/70 p-3">
             <span className="font-bold text-emerald-800">{t("Cashed Receipts")}</span>
             <p className="font-num text-sm font-extrabold text-emerald-900 mt-1">{t("2,000,000 DZD")}</p>
@@ -101,9 +103,9 @@ export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
       icon: Calculator,
       tag: "Statutory Rule 03",
       title: "How Your Tax is Calculated (0.5% Flat IFU)",
-      lawRef: "Code des Impôts Directs • Formulaire G50-A",
+      lawRef: "Code des Impôts Directs • Formulaire G12 bis",
       description:
-        "Your sole tax obligation is the Impôt Forfaitaire Unique (IFU) at an ultra-low rate of 0.5% on collected turnover. You declare this once a year using official form G50-A before June 30th directly to your tax inspection.",
+        "Your sole tax obligation is the Impôt Forfaitaire Unique (IFU) at an ultra-low rate of 0.5% on collected turnover. You regularize this annually using official form G12 bis by January 20th directly to your tax inspection (following the provisional G12 declaration on June 30th).",
       demo: (
         <div className="rounded-xl border border-slate-200/90 bg-slate-50 p-4 font-mono text-xs">
           <div className="flex justify-between py-1 border-b border-slate-200">
@@ -186,8 +188,8 @@ export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
   const Icon = step.icon;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/75 p-4 backdrop-blur-xl animate-in fade-in duration-200">
-      <div className="relative w-full max-w-xl overflow-hidden rounded-3xl border border-white/20 bg-card p-7 shadow-2xl animate-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/75 p-3 sm:p-4 backdrop-blur-xl animate-in fade-in duration-200">
+      <div className="relative w-full max-w-xl max-h-[90dvh] overflow-y-auto rounded-3xl border border-white/20 bg-card p-4 sm:p-7 shadow-2xl animate-in zoom-in-95 duration-200">
         {/* Header Bar */}
         <div className="flex items-center justify-between border-b border-slate-100 pb-4">
           <div className="flex items-center gap-2">
@@ -202,7 +204,7 @@ export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
             type="button"
             onClick={onClose}
             aria-label={t("Close guide")}
-            className="rounded-full p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
+            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
           >
             <X className="size-5" />
           </button>
@@ -231,7 +233,7 @@ export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
         </div>
 
         {/* Navigation & Progress Footer */}
-        <div className="mt-8 flex items-center justify-between border-t border-slate-100 pt-5">
+        <div className="mt-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-slate-100 pt-5">
           {/* Progress Dots */}
           <div className="flex items-center gap-1.5">
             {steps.map((_, index) => (
@@ -248,12 +250,12 @@ export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
             <button
               type="button"
               disabled={currentStep === 0}
               onClick={() => setCurrentStep((prev) => prev - 1)}
-              className="inline-flex items-center gap-1 rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 transition-all hover:bg-slate-50 disabled:opacity-30 disabled:pointer-events-none active:scale-95"
+              className="inline-flex min-h-[44px] items-center gap-1 rounded-xl border border-slate-200 px-3.5 py-2 text-xs font-semibold text-slate-700 transition-all hover:bg-slate-50 disabled:opacity-30 disabled:pointer-events-none active:scale-95"
             >
               <ArrowLeft className="rtl:-scale-x-100 size-3.5" />
               {t("Previous")}
@@ -263,7 +265,7 @@ export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
               <button
                 type="button"
                 onClick={() => setCurrentStep((prev) => prev + 1)}
-                className="inline-flex items-center gap-1 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs transition-all hover:bg-primary-ink active:scale-95"
+                className="inline-flex min-h-[44px] items-center gap-1 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs transition-all hover:bg-primary-ink active:scale-95"
               >
                 {t("Next Step")}
                 <ArrowRight className="rtl:-scale-x-100 size-3.5" />
@@ -272,7 +274,7 @@ export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
               <button
                 type="button"
                 onClick={onClose}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs transition-all hover:bg-primary-ink active:scale-95"
+                className="inline-flex min-h-[44px] items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs transition-all hover:bg-primary-ink active:scale-95"
               >
                 <CheckCircle2 className="size-3.5" />
                 {t("Start Using MoukawilOS")}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { X } from "lucide-react";
 
@@ -34,9 +34,9 @@ const TOUR_STEPS: TourStep[] = [
   },
   {
     targetId: "tour-statutory-deadline",
-    title: "Step 3: 0.5% Flat IFU Tax & G50-A Deadline",
+    title: "Step 3: 0.5% Flat IFU Tax & G12 bis Deadline",
     description:
-      "Your sole fiscal obligation is a single flat 0.5% IFU rate on collected turnover. MoukawilOS tracks your annual G50-A declaration deadline (June 30th) to ensure timely filing without audits or penalties.",
+      "Your sole fiscal obligation is a single flat 0.5% IFU rate on collected turnover. MoukawilOS tracks your statutory G12 and G12 bis declaration deadlines to ensure timely filing without audits or penalties.",
     placement: "top",
     path: "/dashboard",
   },
@@ -78,15 +78,22 @@ const TOUR_STEPS: TourStep[] = [
     placement: "bottom",
   },
   {
+    targetId: "tour-demo-switcher",
+    title: "Step 9: Interactive Evaluator Scenarios",
+    description:
+      "Judges & Evaluators: test MoukawilOS across different fiscal conditions in real time! Switch between Standard (40%), Near Ceiling Warning (94% - Art. 13 Sentinel), and Fresh Slate (0%) to observe live reactive calculations.",
+    placement: "bottom",
+  },
+  {
     targetId: "tour-sidebar-nav",
-    title: "Step 9: Ledger, Clients & AI Legal Assistant",
+    title: "Step 10: Ledger, Clients & AI Legal Assistant",
     description:
       "Navigate your complete commercial operations: the Invoices Ledger, client dossiers with NIF validation, and the AI Assistant trained on Algerian tax legislation to answer any legal question.",
     placement: "right",
   },
   {
     targetId: "tour-how-it-works",
-    title: "Step 10: Permanent Interactive Help",
+    title: "Step 11: Permanent Interactive Help",
     description:
       "Whenever you have a doubt about tax rates, invoice rules, or ceiling limits, click 'How Moukawil Works' to reopen this guided walkthrough anytime. You are ready to succeed!",
     placement: "right",
@@ -134,7 +141,8 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
   // Always reset to step 0 when tour is opened
   useEffect(() => {
     if (isOpen) {
-      setCurrentStep(0);
+      const timer = setTimeout(() => setCurrentStep(0), 0);
+      return () => clearTimeout(timer);
     }
   }, [isOpen]);
 
@@ -151,8 +159,10 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
       const el = document.getElementById(step.targetId);
       if (el) {
         if (!isElementInViewport(el)) {
-          el.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
-          const scrollTimer = setTimeout(updateRect, 400);
+          const scrollBlock: ScrollLogicalPosition =
+            step.placement === "bottom" ? "start" : step.placement === "top" ? "end" : "center";
+          el.scrollIntoView({ behavior: "smooth", block: scrollBlock, inline: "nearest" });
+          const scrollTimer = setTimeout(updateRect, 350);
           return () => clearTimeout(scrollTimer);
         } else {
           updateRect();
@@ -214,13 +224,13 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
 
   // Calculate popover coordinates
   const PADDING = 8;
-  const TOOLTIP_WIDTH = 340;
-  const TOOLTIP_HEIGHT = 160;
+  const TOOLTIP_WIDTH = typeof window !== "undefined" ? Math.min(350, window.innerWidth - 32) : 340;
+  const TOOLTIP_HEIGHT = 280; // Safe height including header, multi-line description, step indicator, and 44px buttons
 
   let tooltipStyle: React.CSSProperties = {
     position: "fixed",
     zIndex: 60,
-    transition: "top 400ms cubic-bezier(0.16, 1, 0.3, 1), left 400ms cubic-bezier(0.16, 1, 0.3, 1), opacity 200ms ease",
+    transition: "top 350ms cubic-bezier(0.16, 1, 0.3, 1), left 350ms cubic-bezier(0.16, 1, 0.3, 1), opacity 200ms ease",
   };
 
   let arrowPlacement: "top" | "bottom" | "left" | "right" = "top";
@@ -229,38 +239,49 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
   if (targetRect) {
     let placement = step.placement ?? "bottom";
 
-    // Auto-flip if tooltip would exceed screen boundary
-    if (placement === "bottom" && targetRect.bottom + PADDING + 12 + TOOLTIP_HEIGHT > window.innerHeight - 16) {
+    const spaceAbove = targetRect.top - PADDING - 12;
+    const spaceBelow = (typeof window !== "undefined" ? window.innerHeight : 800) - (targetRect.bottom + PADDING + 12);
+    const spaceLeft = targetRect.left - PADDING - 12;
+    const spaceRight = (typeof window !== "undefined" ? window.innerWidth : 1200) - (targetRect.right + PADDING + 12);
+
+    // Auto-flip if selected side does not have sufficient space
+    if (placement === "bottom" && spaceBelow < TOOLTIP_HEIGHT && spaceAbove > spaceBelow) {
       placement = "top";
-    } else if (placement === "top" && targetRect.top - PADDING - TOOLTIP_HEIGHT - 12 < 16) {
+    } else if (placement === "top" && spaceAbove < TOOLTIP_HEIGHT && spaceBelow > spaceAbove) {
       placement = "bottom";
-    } else if (placement === "right" && targetRect.right + PADDING + 12 + TOOLTIP_WIDTH > window.innerWidth - 16) {
+    } else if (placement === "right" && spaceRight < TOOLTIP_WIDTH && spaceLeft > spaceRight) {
       placement = "left";
-    } else if (placement === "left" && targetRect.left - PADDING - TOOLTIP_WIDTH - 12 < 16) {
+    } else if (placement === "left" && spaceLeft < TOOLTIP_WIDTH && spaceRight > spaceLeft) {
       placement = "right";
     }
 
+    const winHeight = typeof window !== "undefined" ? window.innerHeight : 800;
+    const winWidth = typeof window !== "undefined" ? window.innerWidth : 1200;
+    const maxTop = Math.max(16, winHeight - TOOLTIP_HEIGHT - 24);
+
     if (placement === "bottom") {
-      const top = targetRect.bottom + PADDING + 12;
-      const left = Math.max(16, Math.min(window.innerWidth - TOOLTIP_WIDTH - 16, targetRect.left + targetRect.width / 2 - TOOLTIP_WIDTH / 2));
+      const rawTop = targetRect.bottom + PADDING + 12;
+      const top = Math.max(16, Math.min(maxTop, rawTop));
+      const left = Math.max(16, Math.min(winWidth - TOOLTIP_WIDTH - 16, targetRect.left + targetRect.width / 2 - TOOLTIP_WIDTH / 2));
       tooltipStyle = { ...tooltipStyle, top, left };
       arrowPlacement = "top";
       arrowOffset = Math.max(16, Math.min(TOOLTIP_WIDTH - 24, targetRect.left + targetRect.width / 2 - left));
     } else if (placement === "top") {
-      const top = Math.max(16, targetRect.top - PADDING - TOOLTIP_HEIGHT - 12);
-      const left = Math.max(16, Math.min(window.innerWidth - TOOLTIP_WIDTH - 16, targetRect.left + targetRect.width / 2 - TOOLTIP_WIDTH / 2));
+      const rawTop = targetRect.top - PADDING - TOOLTIP_HEIGHT - 12;
+      const top = Math.max(16, Math.min(maxTop, rawTop));
+      const left = Math.max(16, Math.min(winWidth - TOOLTIP_WIDTH - 16, targetRect.left + targetRect.width / 2 - TOOLTIP_WIDTH / 2));
       tooltipStyle = { ...tooltipStyle, top, left };
       arrowPlacement = "bottom";
       arrowOffset = Math.max(16, Math.min(TOOLTIP_WIDTH - 24, targetRect.left + targetRect.width / 2 - left));
     } else if (placement === "right") {
-      const left = targetRect.right + PADDING + 12;
-      const top = Math.max(16, Math.min(window.innerHeight - TOOLTIP_HEIGHT - 16, targetRect.top + targetRect.height / 2 - TOOLTIP_HEIGHT / 2));
+      const left = Math.max(16, Math.min(winWidth - TOOLTIP_WIDTH - 16, targetRect.right + PADDING + 12));
+      const top = Math.max(16, Math.min(maxTop, targetRect.top + targetRect.height / 2 - TOOLTIP_HEIGHT / 2));
       tooltipStyle = { ...tooltipStyle, top, left };
       arrowPlacement = "left";
       arrowOffset = Math.max(16, Math.min(TOOLTIP_HEIGHT - 24, targetRect.top + targetRect.height / 2 - top));
     } else if (placement === "left") {
-      const left = Math.max(16, targetRect.left - PADDING - TOOLTIP_WIDTH - 12);
-      const top = Math.max(16, Math.min(window.innerHeight - TOOLTIP_HEIGHT - 16, targetRect.top + targetRect.height / 2 - TOOLTIP_HEIGHT / 2));
+      const left = Math.max(16, Math.min(winWidth - TOOLTIP_WIDTH - 16, targetRect.left - PADDING - TOOLTIP_WIDTH - 12));
+      const top = Math.max(16, Math.min(maxTop, targetRect.top + targetRect.height / 2 - TOOLTIP_HEIGHT / 2));
       tooltipStyle = { ...tooltipStyle, top, left };
       arrowPlacement = "right";
       arrowOffset = Math.max(16, Math.min(TOOLTIP_HEIGHT - 24, targetRect.top + targetRect.height / 2 - top));
@@ -273,7 +294,7 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
       left: "50%",
       transform: "translate(-50%, -50%)",
       zIndex: 60,
-      transition: "top 400ms cubic-bezier(0.16, 1, 0.3, 1), left 400ms cubic-bezier(0.16, 1, 0.3, 1), opacity 200ms ease",
+      transition: "top 350ms cubic-bezier(0.16, 1, 0.3, 1), left 350ms cubic-bezier(0.16, 1, 0.3, 1), opacity 200ms ease",
     };
   }
 
@@ -282,6 +303,7 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
       setCurrentStep((prev) => prev + 1);
     } else {
       if (typeof window !== "undefined") {
+        sessionStorage.setItem("moukawil_session_tour_shown", "true");
         localStorage.setItem("moukawil_spotlight_tour_done", "true");
       }
       onClose();
@@ -327,7 +349,7 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
       {/* Popover Card (matching user screenshot) */}
       <div
         style={tooltipStyle}
-        className="pointer-events-auto w-[340px] rounded-2xl border border-slate-100 bg-card p-5 shadow-2xl animate-in fade-in zoom-in-95 duration-200"
+        className="pointer-events-auto flex max-h-[calc(100dvh-32px)] w-[350px] max-w-[calc(100vw-32px)] flex-col justify-between rounded-2xl border border-slate-100 bg-card p-4 sm:p-5 shadow-2xl animate-in fade-in zoom-in-95 duration-200 overflow-hidden"
       >
         {/* Caret Arrow pointing to target */}
         {targetRect && (
@@ -360,14 +382,14 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
         )}
 
         {/* Card Content with crossfade */}
-        <div key={currentStep} className="animate-in fade-in duration-200">
+        <div key={currentStep} className="flex-1 overflow-y-auto pe-1 animate-in fade-in duration-200">
           <div className="flex items-start justify-between">
-            <h4 className="text-sm font-bold tracking-tight text-slate-900">{t(step.title)}</h4>
+            <h4 className="text-sm font-bold tracking-tight text-slate-900 pe-2">{t(step.title)}</h4>
             <button
               type="button"
               onClick={onClose}
               aria-label={t("Close walkthrough")}
-              className="rounded-full p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
+              className="flex min-h-[44px] min-w-[44px] items-center justify-center -me-2 -mt-2 rounded-full p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
             >
               <X className="size-4" />
             </button>
@@ -377,7 +399,7 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
         </div>
 
         {/* Card Footer: Step Counter + Progress Dots + Pill Buttons */}
-        <div className="mt-4 flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-3">
+        <div className="mt-4 flex shrink-0 items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-3">
           <div className="flex flex-col gap-1">
             <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400">
               {t("Step {v1} of {length}", { v1: currentStep + 1, length: TOUR_STEPS.length })}
@@ -400,7 +422,7 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
               <button
                 type="button"
                 onClick={handleBack}
-                className="rounded-full border border-slate-200 bg-card px-3 py-1 text-xs font-semibold text-slate-700 dark:text-slate-200 shadow-2xs transition-all hover:bg-slate-50 active:scale-95"
+                className="flex min-h-[44px] items-center justify-center rounded-full border border-slate-200 bg-card px-4 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 shadow-2xs transition-all hover:bg-slate-50 active:scale-95"
               >
                 {t("Back")}
               </button>
@@ -408,7 +430,7 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
             <button
               type="button"
               onClick={handleNext}
-              className="rounded-full bg-primary px-3.5 py-1 text-xs font-semibold text-white shadow-xs transition-all hover:bg-primary-ink active:scale-95"
+              className="flex min-h-[44px] items-center justify-center rounded-full bg-primary px-5 py-2 text-xs font-semibold text-white shadow-xs transition-all hover:bg-primary-ink active:scale-95"
             >
               {currentStep === TOUR_STEPS.length - 1 ? t("Finish") : t("Next")}
             </button>

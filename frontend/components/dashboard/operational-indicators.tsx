@@ -29,28 +29,37 @@ function Indicator({ icon: Icon, label, value, description }: IndicatorProps) {
 
 export function OperationalIndicators({ user, stats }: { user: User; stats: TurnoverStats }) {
   const { t, formatAmount } = useI18n();
-  const ifuDue = stats.collected * user.ifuRate;
+  const rawIfu = stats.collected * user.ifuRate;
+  const ifuDue = Math.max(10000, rawIfu);
   const ifuPercent = user.ifuRate * 100;
+  const isFloor = stats.collected > 0 && rawIfu < 10000;
 
   return (
-    <div id="tour-operational-indicators" className="flex items-start gap-3 pb-8">
+    <div id="tour-operational-indicators" className="grid grid-cols-1 md:grid-cols-3 gap-3 pb-8">
       <Indicator
         icon={Percent}
         label={t("TVA Exemption Status")}
-        value={<span className="text-lg font-semibold leading-6 tracking-[-0.01em] text-ink">{t("0.00% VAT Certified")}</span>}
-        description={t("Law 22-23 legal exemption strictly active on all generated vouchers.")}
+        value={<span className="text-lg font-semibold leading-6 tracking-[-0.01em] text-ink">{t("0.00% VAT Exemption (Law 22-23)")}</span>}
+        description={t("Statutory exemption notice automatically appended to all generated invoices.")}
       />
       <Indicator
         icon={ShieldCheck}
         label={t("CASNOS Social Security")}
-        value={<span className="text-lg font-semibold leading-6 tracking-[-0.01em] text-ink">{t("Coverage Active")}</span>}
-        description={t("Full healthcare, maternity, and independent retirement recognized.")}
+        value={<span className="text-lg font-semibold leading-6 tracking-[-0.01em] text-ink">{t("Annual CASNOS Tracking")}</span>}
+        description={t("Fixed 24,000 DZD annual contribution tracked for auto-entrepreneur status.")}
       />
       <Indicator
         icon={Calculator}
         label={t("Estimated IFU Due")}
         value={<span className="font-num text-xl font-bold leading-7 tracking-[-0.01em] text-ink">{t("{v1} DZD", { v1: formatAmount(ifuDue) })}</span>}
-        description={t("Calculated at flat {pct}% against collected turnover of {amount}M DZD.", { pct: ifuPercent, amount: (stats.collected / 1_000_000).toFixed(1) })}
+        description={
+          isFloor
+            ? t("Statutory minimum floor of 10,000 DZD applied under CIDTA Art. 282 quater.")
+            : t("Calculated at flat {pct}% against collected turnover of {amount}M DZD.", {
+                pct: ifuPercent,
+                amount: (stats.collected / 1_000_000).toFixed(1),
+              })
+        }
       />
     </div>
   );
