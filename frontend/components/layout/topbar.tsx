@@ -257,6 +257,7 @@ export function Topbar({ utilization }: { utilization: number }) {
                   if (typeof window !== "undefined") {
                     sessionStorage.removeItem("moukawil_session_tour_shown");
                     sessionStorage.removeItem("moukawil_demo_login");
+                    localStorage.removeItem("moukawil_paid_invoices");
                   }
                 }}
               >

@@ -31,6 +31,7 @@ export function getDemoScenario(): DemoScenario {
 
 export function setDemoScenario(scenario: DemoScenario) {
   if (typeof window !== "undefined") {
+    localStorage.removeItem("moukawil_paid_invoices");
     localStorage.setItem("moukawil_demo_scenario", scenario);
     document.cookie = `moukawil_demo_scenario=${scenario}; path=/; max-age=31536000`;
     window.dispatchEvent(new CustomEvent("moukawil_scenario_change", { detail: scenario }));
