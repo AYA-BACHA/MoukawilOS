@@ -15,6 +15,7 @@ Statutory compliance under Law 22-23 and Executive Decree 23-197 &nbsp;|&nbsp; S
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
 ![Python](https://img.shields.io/badge/Python_3.11-3776AB?logo=python&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL_16-4169E1?logo=postgresql&logoColor=white)
+![Tests](https://img.shields.io/badge/Tests-228%20Passing%20(100%25)-brightgreen.svg)
 ![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?logo=supabase&logoColor=white)
 ![Google Gemini](https://img.shields.io/badge/Google_Gemini-Gemini_1.5_Flash-4285F4?logo=googlegemini&logoColor=white)
 ![Vercel](https://img.shields.io/badge/Vercel-Frontend_Deployment-000000?logo=vercel&logoColor=white)
@@ -374,7 +375,7 @@ The retrieval corpus is restricted to verified Algerian statutory texts:
 | Legal Document | Official Citation | Key Subject Matter Covered | Verification Status |
 |---|---|---|---|
 | **Loi n° 22-23** | 18 December 2022 (*JORA n° 85*) | Auto-entrepreneur status, rights, obligations, 5,000,000 DZD ceiling, 3-consecutive-years radiation rule (*art. 13-14*). | Verified Official |
-| **Décret exécutif n° 23-196** | 25 May 2023 (*JORA n° 37*) | Organization of ANAE, National Auto-Entrepreneur Registry, registration portal, card issuance. | Pending Source Verification |
+| **Décret exécutif n° 23-196** | 25 May 2023 (*JORA n° 37*) | Organization of ANAE, National Auto-Entrepreneur Registry, registration portal, card issuance. | Verified Official |
 | **Décret exécutif n° 23-197** | 25 May 2023 (*JORA n° 37*) | Official nomenclature of the 7 approved activity sectors and individual eligibility codes. | Verified Official |
 | **Loi de Finances 2024 (Loi 23-22)** | 24 December 2023 (*JORA n° 86*) | Reduced 0.5% IFU rate (*CIDTA art. 282 sexies*), 10,000 DZD minimum floor (*art. 365 bis*). | Verified Official |
 | **Décret exécutif n° 26-257** | 15 July 2026 (*JORA n° 53*) | Flat 24,000 DZD annual CASNOS social security contribution for auto-entrepreneurs. | Verified Official |
@@ -440,7 +441,7 @@ MoukawilOS standardizes on a modern, decoupled web architecture:
 | **Relational Database** | **PostgreSQL 15+** | Supabase Managed Relational Store | Multi-tenant schema with 10 incremental migrations, strict triggers, and Row-Level Security (RLS). |
 | **Vector Search Engine** | **pgvector** | HNSW cosine index (`vector(768)`) | Semantic legal similarity search over chunked Algerian statutory texts embedded directly inside PostgreSQL. |
 | **Document Compilation** | **Multilingual A4 Renderer & PDF Engine** | DIN 476 / ISO 216 Engine, ReportLab | Standardized legal invoice export supporting Arabic bidirectional text shaping (`arabic-reshaper`, `python-bidi`), French, and English. |
-| **Testing & CI/CD** | **Pytest & TypeScript** | 96 Automated Tests (100% Pass) | Comprehensive unit and API test suite covering statutory boundaries, credit notes, and numbering. |
+| **Testing & CI/CD** | **Pytest & TypeScript** | 228 Automated Tests (100% Pass) | Comprehensive unit and API test suite covering statutory boundaries, credit notes, and numbering. |
 | **CI/CD & Deployment** | **Vercel, Render & GitHub Actions** | Production Cloud Pipelines | Deployment: Frontend on Vercel · Backend API on Cloud/Render · Automated CI via GitHub Actions (.github/workflows/ci.yml) |
 
 ---
@@ -639,7 +640,7 @@ MoukawilOS/
 * **Core Flow Works End-to-End:** Create invoice → Issue with sequential `FA-YYYY-NNN` → Record payment → Live cash-basis turnover & 0.5% IFU / CASNOS recalculation.
 * **Credit Notes (Avoirs):** Issue `AV-YYYY-NNN` credit notes directly from invoice views, automatically updating net turnover and filtering under the 'Credited' ledger tab (*Décret 05-468 art. 11*).
 * **Live FastAPI Compliance Engine:** Server-side endpoints (`/api/analytics/turnover`, `/api/compliance/calendar`, `/api/compliance/simulate`, `/api/invoices/{id}/credit-note`) backed by strict `Decimal` mathematics.
-* **Comprehensive Test Suite:** **96/96 passing automated tests (100%)** spanning calculation boundary conditions, credit note lifecycle, sequential numbering invariants, and onboarding security.
+* **Comprehensive Test Suite:** **228/228 passing automated tests (100%)** spanning calculation boundary conditions, credit note lifecycle, sequential numbering invariants, and onboarding security.
 * **Regulatory Legal AI:** Zero-hallucination assistant with authentic JORADP Gazette PDF auditing, verbatim clause highlighting, and bilingual Arabic (RTL) / French / English document generation.
 
 <a id="team"></a>
@@ -652,6 +653,7 @@ MoukawilOS/
 | **Kawther Yakoub** | Backend Developer | FastAPI microservices, PostgreSQL schemas, and deterministic 0.5% fiscal engine |
 | **Rahima Hamouda** | Data & ML Engineer | Regulatory RAG corpus, JORADP Gazette indexing, and anti-hallucination guardrails |
 | **Ilyes Guebabi** | Business & Operations | ANAE/CASNOS compliance, enterprise billing models, and freelancer field interviews |
+| **Achouri Dalia** | QA & Statutory Compliance | User journey validation, calculation boundary stress testing, and legal compliance audit |
 
 ---
 
@@ -711,6 +713,7 @@ flowchart LR
   - **Official DGI Pixel-Perfect PDF Overlay:** Direct PDF overlay on government Série G n° 12 and G n° 12 bis tax declarations pre-populated directly from the annual cash-basis ledger.
   - **Automated Bank Statement Ingestion:** Ingestion pipeline for parsing domestic bank and postal statements (BaridiMob / CCP / SATIM CSV and PDF exports) to automatically match bank credits to issued invoices.
   - **Accountant Export Package:** Annual fiscal and ledger audit export package for certified accountants.
+  - **B2B Enterprise Contractor Portal:** Enterprise compliance pilot enabling corporate clients to onboard ANAE freelancers, verify NIFs, and maintain tax-deductible invoice archives.
 
 - **Future Scope: Official Digital Tax Portal Integration (2027):**
   - Direct integration with emerging national tax platforms (DGI Jibayatic) as public administrative APIs become available.
