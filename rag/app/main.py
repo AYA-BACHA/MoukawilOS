@@ -1,8 +1,15 @@
+﻿import logging
 import os
-from fastapi import FastAPI
+
 from dotenv import load_dotenv
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel, Field
+
+from app.retrieval.search import search
 
 load_dotenv()
+
+logger = logging.getLogger(__name__)
 
 app = FastAPI(
     title="MoukawilOS RAG Service",
@@ -11,11 +18,40 @@ app = FastAPI(
 )
 
 
+class RetrieveRequest(BaseModel):
+    question: str = Field(min_length=1, max_length=2000)
+    top_k: int = Field(default=5, ge=1, le=20)
+
+
 @app.get("/health")
 def health_check():
     return {
         "status": "ok",
         "service": "moukawilos-rag",
+    }
+
+
+@app.post("/retrieve")
+def retrieve_passages(request: RetrieveRequest):
+    if not request.question.strip():
+        raise HTTPException(
+            status_code=422,
+            detail="The question must not be empty.",
+        )
+
+    try:
+        results = search(request.question, top_k=request.top_k)
+    except Exception as exc:
+        logger.exception("Retrieval failed")
+        raise HTTPException(
+            status_code=500,
+            detail="The retrieval service could not process the request.",
+        ) from exc
+
+    return {
+        "question": request.question,
+        "results_count": len(results),
+        "results": results,
     }
 
 
