@@ -848,4 +848,10 @@ export const ar: Record<string, string> = {
   "0% VAT Certified": "معتمد 0% رسم على القيمة المضافة",
   "Algerian Ministry of Knowledge Economy, Start-ups and Micro-enterprises": "وزارة اقتصاد المعرفة والمؤسسات الناشئة والمصغرة",
   "National Agency of the Auto-Entrepreneur": "الوكالة الوطنية للمقاول الذاتي",
+  "Pre-filled Sample Ready": "بيانات نموذجية جاهزة مسبقاً",
+  "Reset Sample": "استعادة النموذج",
+  "Restore pre-filled sample data": "استعادة البيانات النموذجية المعدّة مسبقاً",
+  "Sample invoice data restored.": "تمت استعادة البيانات النموذجية للفاتورة بنجاح.",
+  "Mandatory Statutory Reason:": "السبب القانوني الإلزامي:",
+  "100% (5M DZD)": "100% (5 ملايين دج)",
 };

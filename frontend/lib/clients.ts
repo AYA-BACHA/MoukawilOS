@@ -14,7 +14,15 @@ export interface ClientRow {
 
 export function buildClientRows(clients: Client[], invoices: InvoiceWithClient[]): ClientRow[] {
   return clients.map((client) => {
-    const own = invoices.filter((invoice) => invoice.clientId === client.id);
+    const own = invoices.filter(
+      (invoice) =>
+        invoice.clientId === client.id ||
+        (invoice.client && (
+          invoice.client.id === client.id ||
+          (invoice.client.name && client.name && invoice.client.name.trim().toLowerCase() === client.name.trim().toLowerCase()) ||
+          (invoice.client.nif && client.nif && invoice.client.nif === client.nif)
+        ))
+    );
     const issued = own.filter((invoice) => invoice.status !== "draft");
     return {
       client,
@@ -37,15 +45,15 @@ export function sortRows(rows: ClientRow[], sort: ClientSort) {
 }
 
 export function computeClientMetrics(rows: ClientRow[], invoices: InvoiceWithClient[]) {
-  const business = invoices.filter((invoice) => invoice.client.type === "B2B");
-  const revenue = business.reduce((total, invoice) => total + invoice.amount, 0);
+  const businessClients = rows.filter(({ client }) => client.type === "B2B");
+  const businessRevenue = businessClients.reduce((total, row) => total + row.invoiced, 0);
   const compliant = rows.filter(({ client }) => client.type === "B2C" || client.nif);
   return {
     total: rows.length,
-    business: rows.filter(({ client }) => client.type === "B2B").length,
+    business: businessClients.length,
     individual: rows.filter(({ client }) => client.type === "B2C").length,
-    businessRevenue: revenue,
-    averageDeal: business.length ? revenue / business.length : 0,
+    businessRevenue,
+    averageDeal: businessClients.length ? businessRevenue / businessClients.length : 0,
     compliance: rows.length ? Math.round((compliant.length / rows.length) * 100) : 0,
   };
 }

@@ -36,10 +36,46 @@ export function InvoiceBuilder({ user, draft: initialDraft }: { user: User; draf
     }, 250);
   };
 
+  const handleResetSample = () => {
+    setDraft({
+      id: "new",
+      userId: user.id,
+      number: `FAC-2026-${String(Math.floor(Math.random() * 800) + 100).padStart(3, "0")}`,
+      clientType: "B2B",
+      client: {
+        name: "Sonatrach Digital SPA",
+        nif: "000216001234567",
+        nis: "000216010123456",
+        rc: "16/00-1234567B20",
+        address: "Hydra, Alger",
+      },
+      issueDate: new Date().toISOString().slice(0, 10),
+      paymentTermsDays: 30,
+      items: [
+        {
+          id: "itm_default_1",
+          description: "Prestation de développement logiciel & architecture cloud",
+          details: "Sous le régime de l'auto-entrepreneur (Loi 22-23 Art. 4) — Exonération TVA Art. 282 bis CIDTA",
+          quantity: 1,
+          unitPrice: 350000,
+        },
+      ],
+      savedAt: null,
+    });
+    setToast(t("Sample invoice data restored."));
+    setTimeout(() => setToast(null), 2500);
+  };
+
   return (
     <>
       <div className="no-print">
-        <BuilderStrip number={draft.number} saved={draft.savedAt !== null} onSave={save} onIssue={handleIssue} />
+        <BuilderStrip
+          number={draft.number}
+          saved={draft.savedAt !== null}
+          onSave={save}
+          onIssue={handleIssue}
+          onResetSample={handleResetSample}
+        />
       </div>
 
       {/* Mobile Segmented Tab Control (< lg) */}

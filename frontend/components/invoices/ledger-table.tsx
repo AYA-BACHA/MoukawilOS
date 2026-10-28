@@ -400,10 +400,17 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
 
       {/* Official Receipt Voucher Modal */}
       {viewingReceipt && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-3 sm:p-4 backdrop-blur-sm animate-in fade-in">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+          {/* Clickable Backdrop Overlay */}
+          <div
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm animate-in fade-in transition-opacity cursor-pointer"
+            onClick={() => setViewingReceipt(null)}
+            aria-hidden="true"
+          />
           <div
             id="receipt-voucher-sheet"
-            className="relative flex max-h-[92dvh] w-full max-w-md flex-col rounded-2xl border border-slate-200 bg-card p-4 sm:p-6 shadow-2xl animate-in zoom-in-95 overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+            className="relative z-10 flex max-h-[92dvh] w-full max-w-md flex-col rounded-2xl border border-slate-200 bg-card p-4 sm:p-6 shadow-2xl animate-in zoom-in-95 overflow-hidden"
           >
             <div className="flex items-start justify-between border-b border-slate-100 pb-3">
               <div>

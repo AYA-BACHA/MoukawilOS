@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Bookmark, ChevronRight, ShieldCheck } from "lucide-react";
+import { Bookmark, ChevronRight, RotateCcw, ShieldCheck, Sparkles } from "lucide-react";
 import { buttonClass } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n/provider";
 
@@ -10,9 +10,10 @@ interface BuilderStripProps {
   saved: boolean;
   onSave: () => void;
   onIssue: () => void;
+  onResetSample?: () => void;
 }
 
-export function BuilderStrip({ number, saved, onSave, onIssue }: BuilderStripProps) {
+export function BuilderStrip({ number, saved, onSave, onIssue, onResetSample }: BuilderStripProps) {
   const { t } = useI18n();
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-card px-4 sm:px-6 py-3 shadow-[0_1px_1px_rgba(0,0,0,0.05)]">
@@ -30,9 +31,26 @@ export function BuilderStrip({ number, saved, onSave, onIssue }: BuilderStripPro
             {t("{v1} • 0% VAT Applied", { v1: saved ? t("Draft saved") : t("Unsaved changes") })}
           </span>
         </div>
-        <span className="w-fit rounded bg-surface-low px-1 py-0.5 font-num text-xs uppercase text-muted">{t("Law 22-23 Compliant")}</span>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="w-fit rounded bg-surface-low px-1.5 py-0.5 font-num text-xs uppercase text-muted">{t("Law 22-23 Compliant")}</span>
+          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-800 border border-emerald-200">
+            <Sparkles className="size-3 text-emerald-600" />
+            {t("Pre-filled Sample Ready")}
+          </span>
+        </div>
       </div>
       <div className="flex items-center gap-2 w-full sm:w-auto">
+        {onResetSample && (
+          <button
+            type="button"
+            onClick={onResetSample}
+            title={t("Restore pre-filled sample data")}
+            className="hidden sm:inline-flex items-center gap-1 min-h-[44px] rounded-lg border border-slate-200 bg-surface-low hover:bg-surface px-2.5 py-2 text-xs font-medium text-muted hover:text-ink active:scale-95 transition-all"
+          >
+            <RotateCcw className="size-3.5" />
+            <span>{t("Reset Sample")}</span>
+          </button>
+        )}
         <button
           type="button"
           onClick={onSave}

@@ -98,7 +98,7 @@ export function ReferenceVault({ statutes, cited, user, stats, onInspectStatute 
         </div>
 
         {/* Statutes List */}
-        <ul className="flex max-h-[400px] flex-col gap-2.5 overflow-y-auto pe-1">
+        <ul className="flex max-h-[400px] flex-col gap-2.5 overflow-y-auto px-1 py-0.5 [scrollbar-width:thin] [scrollbar-color:theme(colors.slate.200)_transparent]">
           {filteredStatutes.map((statute) => {
             const isCited = cited.includes(statute.id);
             return (
@@ -109,7 +109,7 @@ export function ReferenceVault({ statutes, cited, user, stats, onInspectStatute 
                   "cursor-pointer rounded-xl p-3 border transition-all duration-200 hover:shadow-xs hover:border-teal/40 group/statute",
                   isCited
                     ? "border-primary/40 bg-mint/40 shadow-xs ring-1 ring-primary/20"
-                    : "border-slate-100 bg-slate-50/60 hover:bg-slate-50 hover:border-slate-200",
+                    : "border-slate-200/60 bg-white hover:bg-slate-50/90 hover:border-slate-300",
                 )}
               >
                 <div className="flex items-center justify-between mb-1.5">
@@ -120,8 +120,9 @@ export function ReferenceVault({ statutes, cited, user, stats, onInspectStatute 
                         {t("Cited")}
                       </span>
                     )}
-                    <span className="text-[11px] text-slate-400 group-hover/statute:text-slate-700 font-medium transition-colors">
-                      {t("View text")} →
+                    <span className="text-[11px] text-slate-400 group-hover/statute:text-slate-700 font-medium transition-colors flex items-center gap-0.5">
+                      <span>{t("View text")}</span>
+                      <span className="rtl:rotate-180 inline-block">→</span>
                     </span>
                   </div>
                 </div>

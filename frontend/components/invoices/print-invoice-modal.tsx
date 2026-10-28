@@ -65,6 +65,14 @@ export function PrintInvoiceModal({
   };
 
   useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
+
+  useEffect(() => {
     if (autoPrint) {
       const timer = setTimeout(() => {
         handlePrint();
@@ -75,13 +83,16 @@ export function PrintInvoiceModal({
 
   return (
     <>
-      <div
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 sm:p-4 backdrop-blur-sm animate-in fade-in overflow-y-auto"
-        onClick={onClose}
-      >
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        {/* Clickable Backdrop Overlay */}
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in transition-opacity cursor-pointer"
+          onClick={onClose}
+          aria-hidden="true"
+        />
         <div
           onClick={(e) => e.stopPropagation()}
-          className="relative flex max-h-[96dvh] w-full max-w-3xl flex-col rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 shadow-2xl animate-in zoom-in-95 overflow-y-auto"
+          className="relative z-10 flex max-h-[96dvh] w-full max-w-3xl flex-col rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 shadow-2xl animate-in zoom-in-95 overflow-y-auto"
         >
           {/* Modal Controls (Hidden in Print) */}
           <div className="no-print flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3 mb-4">

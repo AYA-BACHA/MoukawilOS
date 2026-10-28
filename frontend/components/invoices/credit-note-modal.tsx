@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AlertCircle, Check, Loader2, RotateCcw, ShieldCheck, X } from "lucide-react";
 import { useI18n } from "@/lib/i18n/provider";
 import { issueCreditNoteApi } from "@/lib/api";
@@ -46,6 +46,14 @@ export function CreditNoteModal({ invoice, onClose, onSuccess }: CreditNoteModal
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
+
   const isFullRefund = creditAmount >= maxCreditAllowed;
   const isValidAmount = creditAmount > 0 && creditAmount <= maxCreditAllowed;
   const isValidReason = reason.trim().length >= 10;
@@ -86,16 +94,20 @@ export function CreditNoteModal({ invoice, onClose, onSuccess }: CreditNoteModal
   };
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 sm:p-4 backdrop-blur-sm animate-in fade-in overflow-y-auto"
-      onClick={onClose}
-    >
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+      {/* Clickable Backdrop Overlay */}
+      <div
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in transition-opacity cursor-pointer"
+        onClick={onClose}
+        aria-hidden="true"
+      />
+
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="credit-note-modal-title"
         onClick={(e) => e.stopPropagation()}
-        className="relative flex max-h-[94dvh] w-full max-w-lg flex-col rounded-2xl border border-slate-200 bg-card p-5 sm:p-6 shadow-2xl animate-in zoom-in-95 overflow-y-auto"
+        className="relative z-10 flex max-h-[94dvh] w-full max-w-lg flex-col rounded-2xl border border-slate-200 bg-card p-5 sm:p-6 shadow-2xl animate-in zoom-in-95 overflow-y-auto"
       >
         {/* Header */}
         <div className="flex items-start justify-between border-b border-slate-100 pb-3.5">
@@ -203,7 +215,7 @@ export function CreditNoteModal({ invoice, onClose, onSuccess }: CreditNoteModal
           {/* Reason Input & Presets */}
           <div className="flex flex-col gap-1.5">
             <label htmlFor="credit-reason-input" className="text-xs font-semibold text-ink">
-              {t("Mandatory Statutory Reason (Motif légal):")}
+              {t("Mandatory Statutory Reason:")}
             </label>
             <textarea
               id="credit-reason-input"
@@ -279,4 +291,3 @@ export function CreditNoteModal({ invoice, onClose, onSuccess }: CreditNoteModal
     </div>
   );
 }
-

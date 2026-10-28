@@ -77,20 +77,21 @@ export function CeilingCard({ stats }: { stats: TurnoverStats }) {
               <div className="absolute inset-y-0 start-2/4 w-px bg-card/70" />
               <div className="absolute inset-y-0 start-3/4 w-px bg-card/70" />
             </div>
-            {/* Desktop Milestones */}
-            <div className="hidden sm:flex justify-between px-1 pt-1 font-num text-xs">
-              {milestones.map(({ label, ratio }) => (
-                <span key={label} className={ratio === 0.5 ? "font-semibold text-body" : "text-muted"}>
-                  {t(label)}
-                </span>
-              ))}
-              <span className="font-bold text-primary-ink">{t("100% ({v1} DZD Ceiling)", { v1: formatAmount(ceiling) })}</span>
+            {/* Desktop Milestones: Exact coordinate alignment with bar dividers */}
+            <div className="relative hidden sm:block h-5 w-full pt-1 font-num text-xs">
+              <span className="absolute start-0 text-muted whitespace-nowrap">0 DZD</span>
+              <span className="absolute start-1/4 -translate-x-1/2 rtl:translate-x-1/2 text-muted whitespace-nowrap">25% (1.25M)</span>
+              <span className="absolute start-2/4 -translate-x-1/2 rtl:translate-x-1/2 font-semibold text-body whitespace-nowrap">50% (2.50M)</span>
+              <span className="absolute start-3/4 -translate-x-1/2 rtl:translate-x-1/2 text-muted whitespace-nowrap">75% (3.75M)</span>
+              <span className="absolute end-0 font-bold text-primary-ink whitespace-nowrap">
+                {t("100% ({v1} DZD Ceiling)", { v1: formatAmount(ceiling) })}
+              </span>
             </div>
             {/* Mobile Milestones */}
-            <div className="flex sm:hidden justify-between px-1 pt-1 font-num text-[11px]">
-              <span className="text-muted">0 DZD</span>
-              <span className="font-semibold text-body">50% (2.5M)</span>
-              <span className="font-bold text-primary-ink">100% (5M DZD)</span>
+            <div className="relative flex sm:hidden h-5 w-full pt-1 font-num text-[11px]">
+              <span className="absolute start-0 text-muted">0 DZD</span>
+              <span className="absolute start-2/4 -translate-x-1/2 rtl:translate-x-1/2 font-semibold text-body">50% (2.5M)</span>
+              <span className="absolute end-0 font-bold text-primary-ink">100% (5M DZD)</span>
             </div>
           </div>
 

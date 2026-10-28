@@ -58,16 +58,19 @@ export function StatuteModal({ statute, onClose }: StatuteModalProps) {
       : doc.deduction_rule_en;
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-3 sm:p-5 backdrop-blur-xs animate-in fade-in duration-150"
-      onClick={onClose}
-    >
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5">
+      {/* Clickable Backdrop Overlay */}
+      <div
+        className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-150 cursor-pointer"
+        onClick={onClose}
+        aria-hidden="true"
+      />
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="statute-modal-title"
         onClick={(e) => e.stopPropagation()}
-        className="relative flex w-full max-w-3xl max-h-[92vh] flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xl animate-in zoom-in-95 duration-150 dark:bg-slate-900 dark:border-slate-800"
+        className="relative z-10 flex w-full max-w-3xl max-h-[92vh] flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xl animate-in zoom-in-95 duration-150 dark:bg-slate-900 dark:border-slate-800"
       >
         {/* Header */}
         <div className="flex flex-col border-b border-slate-200 bg-slate-50/80 px-6 py-4 dark:bg-slate-900/90 dark:border-slate-800">
