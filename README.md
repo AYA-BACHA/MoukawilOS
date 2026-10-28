@@ -43,14 +43,14 @@ Statutory compliance under Law 22-23 and Executive Decree 23-197 &nbsp;|&nbsp; S
 8. [Technical Stack](#8-technical-stack)
 9. [Local Development Setup](#9-local-development-setup)
 10. [Project Structure](#10-project-structure)
-11. [Project Status & Team](#project-status)
+11. [Project Status & Team](#11-project-status--team)
 12. [AI Transparency & Attribution](#12-ai-transparency--attribution)
 13. [Known Limitations & Engineering Trade-Offs](#13-known-limitations--engineering-trade-offs)
 14. [Roadmap & Future Scope](#14-roadmap--future-scope)
 15. [Security & Multi-Tenancy Architecture](#15-security--multi-tenancy-architecture)
 16. [Regulatory & Legal Disclaimer](#16-regulatory--legal-disclaimer)
 17. [License](#17-license)
-18. [Statutory & Regulatory Sources](#18-sources)
+18. [Statutory & Regulatory Sources](#18-statutory--regulatory-sources)
 
 ---
 
@@ -628,7 +628,11 @@ MoukawilOS/
 
 ---
 
-## Project Status
+<a id="project-status"></a>
+<a id="11-project-status--team"></a>
+## 11. Project Status & Team
+
+### Project Status
 
 **Live MVP Deployed & Tested:** https://moukawil-os.vercel.app/dashboard (accessible instantly with pre-seeded demo auto-entrepreneur data or live Supabase authentication).  
 
@@ -638,7 +642,8 @@ MoukawilOS/
 * **Comprehensive Test Suite:** **96/96 passing automated tests (100%)** spanning calculation boundary conditions, credit note lifecycle, sequential numbering invariants, and onboarding security.
 * **Regulatory Legal AI:** Zero-hallucination assistant with authentic JORADP Gazette PDF auditing, verbatim clause highlighting, and bilingual Arabic (RTL) / French / English document generation.
 
-## Team
+<a id="team"></a>
+### Team
 
 | Name | Role | Responsibilities & Core Modules |
 |---|---|---|
@@ -755,6 +760,7 @@ No license or permission is granted to copy, reproduce, modify, redistribute, fo
 ---
 
 <a id="18-sources"></a>
+<a id="18-statutory--regulatory-sources"></a>
 ## 18. Statutory & Regulatory Sources
 
 The compliance logic and regulatory citations in MoukawilOS are grounded in the following official publications of the People's Democratic Republic of Algeria:
