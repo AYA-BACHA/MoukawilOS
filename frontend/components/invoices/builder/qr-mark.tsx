@@ -1,40 +1,51 @@
 "use client";
 
-import { hashSeed } from "@/lib/hash";
+import { useState } from "react";
 import { useI18n } from "@/lib/i18n/provider";
-
-const SIZE = 21;
-
-const inFinder = (x: number, y: number) => (x < 7 && y < 7) || (x > SIZE - 8 && y < 7) || (x < 7 && y > SIZE - 8);
-
-function finderCell(x: number, y: number) {
-  const fx = x < 7 ? x : x - (SIZE - 7);
-  const fy = y < 7 ? y : y - (SIZE - 7);
-  const ring = Math.max(Math.abs(fx - 3), Math.abs(fy - 3));
-  return ring !== 2;
-}
 
 export function QrMark({ seed }: { seed: string }) {
   const { t } = useI18n();
-  let state = hashSeed(seed) || 1;
-  const next = () => {
-    state ^= state << 13;
-    state ^= state >>> 17;
-    state ^= state << 5;
-    return (state >>> 0) / 4294967296;
-  };
+  const [imgError, setImgError] = useState(false);
 
-  const cells: React.ReactNode[] = [];
-  for (let y = 0; y < SIZE; y++) {
-    for (let x = 0; x < SIZE; x++) {
-      const filled = inFinder(x, y) ? finderCell(x, y) : next() > 0.52;
-      if (filled) cells.push(<rect key={`${x}-${y}`} x={x} y={y} width={1} height={1} />);
-    }
-  }
+  // Encode real verification payload that smartphone cameras can scan and open
+  const verifyData = `https://moukawil-os.vercel.app/invoices/verify?ref=${encodeURIComponent(seed)}`;
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(
+    verifyData
+  )}&margin=1`;
 
   return (
-    <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="size-full fill-primary-ink" shapeRendering="crispEdges" role="img" aria-label={t("Authenticity code")}>
-      {cells}
-    </svg>
+    <div className="relative size-full flex items-center justify-center overflow-hidden bg-white">
+      {!imgError ? (
+        <img
+          src={qrUrl}
+          alt={t("Authenticity QR Code for {seed}", { seed })}
+          className="size-full object-contain"
+          onError={() => setImgError(true)}
+          loading="lazy"
+        />
+      ) : (
+        /* Scannable-like SVG finder pattern fallback if offline */
+        <svg
+          viewBox="0 0 21 21"
+          className="size-full fill-slate-900"
+          shapeRendering="crispEdges"
+          role="img"
+          aria-label={t("Authenticity code")}
+        >
+          <rect x="0" y="0" width="7" height="7" fill="none" stroke="currentColor" strokeWidth="1" />
+          <rect x="2" y="2" width="3" height="3" fill="currentColor" />
+          <rect x="14" y="0" width="7" height="7" fill="none" stroke="currentColor" strokeWidth="1" />
+          <rect x="16" y="2" width="3" height="3" fill="currentColor" />
+          <rect x="0" y="14" width="7" height="7" fill="none" stroke="currentColor" strokeWidth="1" />
+          <rect x="2" y="16" width="3" height="3" fill="currentColor" />
+          <rect x="8" y="2" width="1" height="1" fill="currentColor" />
+          <rect x="10" y="4" width="2" height="1" fill="currentColor" />
+          <rect x="8" y="8" width="5" height="5" fill="currentColor" />
+          <rect x="15" y="9" width="2" height="2" fill="currentColor" />
+          <rect x="9" y="15" width="3" height="1" fill="currentColor" />
+          <rect x="14" y="14" width="5" height="5" fill="currentColor" />
+        </svg>
+      )}
+    </div>
   );
 }

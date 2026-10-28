@@ -70,8 +70,14 @@ export function TaxSimulatorModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+      onClick={onClose}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150"
+      >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4 bg-slate-50/80">
           <div className="flex items-center gap-2.5">
@@ -83,7 +89,7 @@ export function TaxSimulatorModal({
                 Statutory Tax & Social Security Simulator
               </h2>
               <p className="text-xs text-slate-500">
-                Loi 22-23 · CIDTA Art. 282 quater · Décret 26-257
+                Loi 22-23 · CIDTA Art. 282 quater · Décret exécutif 24-49
               </p>
             </div>
           </div>

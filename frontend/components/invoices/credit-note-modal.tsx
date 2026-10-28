@@ -12,15 +12,30 @@ interface CreditNoteModalProps {
   onSuccess: (creditNote: CreditNoteDetail) => void;
 }
 
-const REASON_PRESETS = [
-  "Remise commerciale exceptionnelle accordée a posteriori",
-  "Avoir partiel pour ajustement de prestation livrée",
-  "Erreur matérielle de facturation sur le montant initial",
-  "Annulation d'un commun accord de la prestation contractuelle",
-];
+const REASON_PRESETS: Record<string, string[]> = {
+  en: [
+    "Post-delivery commercial discount or volume rebate",
+    "Partial credit for adjusted service deliverable",
+    "Billing clerical error on initial invoice amount",
+    "Mutual agreement cancellation of contracted service",
+  ],
+  fr: [
+    "Remise commerciale exceptionnelle accordée a posteriori",
+    "Avoir partiel pour ajustement de prestation livrée",
+    "Erreur matérielle de facturation sur le montant initial",
+    "Annulation d'un commun accord de la prestation contractuelle",
+  ],
+  ar: [
+    "خصم تجاري استثنائي ممنوح لاحقاً",
+    "فاتورة تسوية جزئية لتعديل الخدمة المقدمة",
+    "خطأ مادي في مبلغ الفاتورة الأصلية",
+    "إلغاء الخدمة التعاقدية بالتراضي",
+  ],
+};
 
 export function CreditNoteModal({ invoice, onClose, onSuccess }: CreditNoteModalProps) {
-  const { t, formatAmount } = useI18n();
+  const { t, formatAmount, lang } = useI18n();
+  const currentPresets = REASON_PRESETS[lang] || REASON_PRESETS.en;
 
   const totalAmount = invoice.amount;
   const alreadyCredited = invoice.creditedAmount || 0;
@@ -71,11 +86,15 @@ export function CreditNoteModal({ invoice, onClose, onSuccess }: CreditNoteModal
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 sm:p-4 backdrop-blur-sm animate-in fade-in overflow-y-auto">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 sm:p-4 backdrop-blur-sm animate-in fade-in overflow-y-auto"
+      onClick={onClose}
+    >
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="credit-note-modal-title"
+        onClick={(e) => e.stopPropagation()}
         className="relative flex max-h-[94dvh] w-full max-w-lg flex-col rounded-2xl border border-slate-200 bg-card p-5 sm:p-6 shadow-2xl animate-in zoom-in-95 overflow-y-auto"
       >
         {/* Header */}
@@ -204,14 +223,14 @@ export function CreditNoteModal({ invoice, onClose, onSuccess }: CreditNoteModal
 
             {/* Quick Reason Suggestions */}
             <div className="flex flex-wrap gap-1 pt-1">
-              {REASON_PRESETS.map((preset) => (
+              {currentPresets.map((preset) => (
                 <button
                   key={preset}
                   type="button"
                   onClick={() => setReason(preset)}
                   className="rounded-md border border-slate-200/70 bg-surface px-2 py-1 text-[10px] text-muted hover:border-slate-300 hover:text-ink active:scale-95 transition-all text-start"
                 >
-                  {t(preset)}
+                  {preset}
                 </button>
               ))}
             </div>

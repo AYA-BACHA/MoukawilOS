@@ -163,8 +163,8 @@ export function StatuteModal({ statute, onClose }: StatuteModalProps) {
               </div>
 
               {/* Statutory Interpretation Note */}
-              <div className="rounded-lg border-l-4 border-emerald-600 bg-slate-50 p-4 border border-slate-200/80 dark:bg-slate-850 dark:border-slate-800">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">
+              <div className="rounded-xl bg-emerald-50/70 p-4 border border-emerald-200/80 dark:bg-emerald-950/20 dark:border-emerald-800/40">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800 block mb-1 dark:text-emerald-300">
                   {t("Statutory Deduction & Application")}
                 </span>
                 <p className="text-xs leading-relaxed text-slate-800 font-medium dark:text-slate-200">
@@ -190,7 +190,7 @@ export function StatuteModal({ statute, onClose }: StatuteModalProps) {
                         key={lineObj.line}
                         className={`pt-1 flex items-start gap-3 ${
                           lineObj.isDeduced
-                            ? "bg-amber-50/90 -mx-3 px-3 py-2 rounded-md border-l-4 border-amber-600 dark:bg-amber-950/30"
+                            ? "bg-amber-50/80 -mx-3 px-3 py-2 rounded-lg border border-amber-200/80 dark:bg-amber-950/20 dark:border-amber-800/40"
                             : "text-slate-700 dark:text-slate-300"
                         }`}
                       >

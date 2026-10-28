@@ -509,6 +509,69 @@ export async function updateClient(client: Client, input: ClientInput): Promise<
   return updatedClient;
 }
 
+function applyLocalOverrides(invoices: InvoiceWithClient[]): InvoiceWithClient[] {
+  let resList = [...invoices];
+  if (typeof window !== "undefined") {
+    try {
+      const storedCredits = localStorage.getItem("moukawil_credited_invoices");
+      if (storedCredits) {
+        const creditsMap = JSON.parse(storedCredits);
+        resList = resList.map((inv) => {
+          const cn = creditsMap[inv.id];
+          if (cn) {
+            const cnAmount = Number(cn.amount || cn.credit_amount || 0);
+            const existingCns = inv.creditNotes || [];
+            const combinedCns = existingCns.some((c) => c.credit_note_number === cn.credit_note_number)
+              ? existingCns
+              : [
+                  ...existingCns,
+                  {
+                    id: String(cn.id || `cn_${Date.now()}`),
+                    credit_note_number: cn.credit_note_number,
+                    amount: cnAmount,
+                    reason: cn.reason || "Avoir commercial",
+                    issue_date: cn.issue_date || new Date().toISOString().slice(0, 10),
+                  },
+                ];
+            const totCred = combinedCns.reduce((a, b) => a + b.amount, 0);
+            return {
+              ...inv,
+              status: totCred >= inv.amount ? ("credited" as const) : inv.status,
+              creditNoteNumber: combinedCns[0]?.credit_note_number,
+              creditedAmount: totCred,
+              creditNotes: combinedCns,
+            };
+          }
+          return inv;
+        });
+      }
+    } catch {
+      // ignore
+    }
+
+    try {
+      const storedPayments = localStorage.getItem("moukawil_paid_invoices");
+      if (storedPayments) {
+        const paymentsMap: Record<string, { paidAt: string; paymentRail: string }> = JSON.parse(storedPayments);
+        resList = resList.map((inv) =>
+          paymentsMap[inv.id]
+            ? {
+                ...inv,
+                status: "paid" as const,
+                paidAt: paymentsMap[inv.id].paidAt,
+                paymentRail: paymentsMap[inv.id].paymentRail,
+              }
+            : inv,
+        );
+      }
+    } catch {
+      // ignore
+    }
+  }
+
+  return resList.sort((a, b) => b.issueDate.localeCompare(a.issueDate));
+}
+
 export async function getInvoices(explicitScenario?: DemoScenario): Promise<InvoiceWithClient[]> {
   const scenario = explicitScenario || getDemoScenario();
   const clients = await getClients();
@@ -518,28 +581,17 @@ export async function getInvoices(explicitScenario?: DemoScenario): Promise<Invo
     return [];
   }
 
-  if (scenario === "near_ceiling") {
-    const b2bClient: Client = clients.find((c) => c.type === "B2B") || {
-      id: "cli_b2b_demo",
-      userId: CURRENT_USER_ID,
-      name: "Sonatrach Digital SPA",
-      type: "B2B",
-      nif: "000216001234567",
-      nis: "000216010123456",
-      rc: "16/00-1234567B20",
-      address: "Hydra, Alger",
-      location: "Hydra, Alger",
-      description: null,
-      email: "achats@sonatrach-digital.dz",
-      phone: "021000001",
-      anaeVerified: true,
-    };
+  const sonatrach = clients.find((c) => c.name.includes("Sonatrach")) || clients[0];
+  const ooredoo = clients.find((c) => c.name.includes("Ooredoo")) || clients[1] || sonatrach;
+  const cevital = clients.find((c) => c.name.includes("Cevital")) || clients[2] || sonatrach;
+  const yacine = clients.find((c) => c.name.includes("Mansouri")) || clients[3] || sonatrach;
 
-    return [
+  if (scenario === "near_ceiling") {
+    const nearCapInvoices: InvoiceWithClient[] = [
       {
         id: "inv_cap_1",
         userId: CURRENT_USER_ID,
-        clientId: b2bClient.id,
+        clientId: sonatrach.id,
         number: "FAC-2026-008",
         issueDate: "2026-09-15",
         dueDate: "2026-10-15",
@@ -548,12 +600,12 @@ export async function getInvoices(explicitScenario?: DemoScenario): Promise<Invo
         statutoryClause: "TVA non applicable - Art. 13 de la LFR 2023",
         paidAt: "2026-10-01",
         paymentRail: "bank_transfer",
-        client: b2bClient,
+        client: sonatrach,
       },
       {
         id: "inv_cap_2",
         userId: CURRENT_USER_ID,
-        clientId: b2bClient.id,
+        clientId: ooredoo.id,
         number: "FAC-2026-007",
         issueDate: "2026-06-10",
         dueDate: "2026-07-10",
@@ -562,12 +614,12 @@ export async function getInvoices(explicitScenario?: DemoScenario): Promise<Invo
         statutoryClause: "TVA non applicable - Art. 13 de la LFR 2023",
         paidAt: "2026-07-01",
         paymentRail: "bank_transfer",
-        client: b2bClient,
+        client: ooredoo,
       },
       {
         id: "inv_cap_3",
         userId: CURRENT_USER_ID,
-        clientId: b2bClient.id,
+        clientId: cevital.id,
         number: "FAC-2026-009",
         issueDate: "2026-10-10",
         dueDate: "2026-11-10",
@@ -576,9 +628,10 @@ export async function getInvoices(explicitScenario?: DemoScenario): Promise<Invo
         statutoryClause: "TVA non applicable - Art. 13 de la LFR 2023",
         paidAt: null,
         paymentRail: null,
-        client: b2bClient,
+        client: cevital,
       },
     ];
+    return applyLocalOverrides(nearCapInvoices);
   }
 
   const res = await fetchBackend<{ items: BackendInvoiceOut[]; total: number }>("/invoices?limit=100");
@@ -644,72 +697,70 @@ export async function getInvoices(explicitScenario?: DemoScenario): Promise<Invo
         };
       });
 
-    // Merge persistent client-side credit notes
-    if (typeof window !== "undefined") {
-      try {
-        const storedCredits = localStorage.getItem("moukawil_credited_invoices");
-        if (storedCredits) {
-          const creditsMap = JSON.parse(storedCredits);
-          resList = resList.map((inv) => {
-            const cn = creditsMap[inv.id];
-            if (cn) {
-              const cnAmount = Number(cn.amount || cn.credit_amount || 0);
-              const existingCns = inv.creditNotes || [];
-              const combinedCns = existingCns.some((c) => c.credit_note_number === cn.credit_note_number)
-                ? existingCns
-                : [
-                    ...existingCns,
-                    {
-                      id: String(cn.id || `cn_${Date.now()}`),
-                      credit_note_number: cn.credit_note_number,
-                      amount: cnAmount,
-                      reason: cn.reason || "Avoir commercial",
-                      issue_date: cn.issue_date || new Date().toISOString().slice(0, 10),
-                    },
-                  ];
-              const totCred = combinedCns.reduce((a, b) => a + b.amount, 0);
-              return {
-                ...inv,
-                status: totCred >= inv.amount ? ("credited" as const) : inv.status,
-                creditNoteNumber: combinedCns[0]?.credit_note_number,
-                creditedAmount: totCred,
-                creditNotes: combinedCns,
-              };
-            }
-            return inv;
-          });
-        }
-      } catch {
-        // ignore
-      }
-    }
-
-    // Merge persistent client-side payments so payments never reset on page navigation
-    if (typeof window !== "undefined") {
-      try {
-        const storedPayments = localStorage.getItem("moukawil_paid_invoices");
-        if (storedPayments) {
-          const paymentsMap: Record<string, { paidAt: string; paymentRail: string }> = JSON.parse(storedPayments);
-          resList = resList.map((inv) =>
-            paymentsMap[inv.id]
-              ? {
-                  ...inv,
-                  status: "paid" as const,
-                  paidAt: paymentsMap[inv.id].paidAt,
-                  paymentRail: paymentsMap[inv.id].paymentRail,
-                }
-              : inv,
-          );
-        }
-      } catch {
-        // ignore
-      }
-    }
-
-    return resList.sort((a, b) => b.issueDate.localeCompare(a.issueDate));
+    return applyLocalOverrides(resList);
   }
 
-  return [];
+  // Standard Active Freelancer (40% Statutory Cap Scenario: 2,000,000 DZD Paid)
+  const standardInvoices: InvoiceWithClient[] = [
+    {
+      id: "inv_std_1",
+      userId: CURRENT_USER_ID,
+      clientId: sonatrach.id,
+      number: "FAC-2026-001",
+      issueDate: "2026-02-15",
+      dueDate: "2026-03-15",
+      amount: 1200000,
+      status: "paid",
+      statutoryClause: "TVA non applicable - Art. 13 de la LFR 2023",
+      paidAt: "2026-03-10",
+      paymentRail: "bank_transfer",
+      client: sonatrach,
+    },
+    {
+      id: "inv_std_2",
+      userId: CURRENT_USER_ID,
+      clientId: ooredoo.id,
+      number: "FAC-2026-002",
+      issueDate: "2026-05-20",
+      dueDate: "2026-06-20",
+      amount: 800000,
+      status: "paid",
+      statutoryClause: "TVA non applicable - Art. 13 de la LFR 2023",
+      paidAt: "2026-06-15",
+      paymentRail: "bank_transfer",
+      client: ooredoo,
+    },
+    {
+      id: "inv_std_3",
+      userId: CURRENT_USER_ID,
+      clientId: cevital.id,
+      number: "FAC-2026-003",
+      issueDate: "2026-09-01",
+      dueDate: "2026-10-01",
+      amount: 1250000,
+      status: "pending",
+      statutoryClause: "TVA non applicable - Art. 13 de la LFR 2023",
+      paidAt: null,
+      paymentRail: null,
+      client: cevital,
+    },
+    {
+      id: "inv_std_4",
+      userId: CURRENT_USER_ID,
+      clientId: yacine.id,
+      number: "FAC-2026-004",
+      issueDate: "2026-10-01",
+      dueDate: "2026-11-01",
+      amount: 150000,
+      status: "draft",
+      statutoryClause: "TVA non applicable - Art. 13 de la LFR 2023",
+      paidAt: null,
+      paymentRail: null,
+      client: yacine,
+    },
+  ];
+
+  return applyLocalOverrides(standardInvoices);
 }
 
 export async function issueCreditNoteApi(

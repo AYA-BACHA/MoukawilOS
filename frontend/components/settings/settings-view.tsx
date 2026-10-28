@@ -7,7 +7,8 @@ import { IdentificationSection } from "@/components/settings/identification-sect
 import { InvoicingSection } from "@/components/settings/invoicing-section";
 import { AuditPanel, CeilingPanel, PassCard } from "@/components/settings/side-panels";
 import { cn } from "@/lib/cn";
-import { updateUserSettings } from "@/lib/api";
+import { getInvoices, updateUserSettings } from "@/lib/api";
+import { computeStats } from "@/lib/stats";
 import type { TurnoverStats, User, UserSettings } from "@/types/models";
 import { useI18n } from "@/lib/i18n/provider";
 
@@ -34,12 +35,20 @@ const pickSettings = (user: User): UserSettings => ({
 
 export function SettingsView({ user, stats }: { user: User; stats: TurnoverStats }) {
   const { t } = useI18n();
+  const [currentStats, setCurrentStats] = useState<TurnoverStats>(stats);
   const [saved, setSaved] = useState(() => pickSettings(user));
   const [values, setValues] = useState(saved);
   const [activeTab, setActiveTab] = useState(tabs[0].id);
   const [synced, setSynced] = useState(false);
   const [toast, setToast] = useState(false);
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    getInvoices().then((invList) => {
+      const active = invList.filter((i) => !i.issueDate || i.issueDate.startsWith("2026"));
+      setCurrentStats(computeStats(user, active));
+    });
+  }, [user]);
 
   const dirty = JSON.stringify(values) !== JSON.stringify(saved);
 
@@ -116,7 +125,7 @@ export function SettingsView({ user, stats }: { user: User; stats: TurnoverStats
           <InvoicingSection values={values} onChange={update} />
         </div>
         <div className="col-span-1 lg:col-span-4 flex flex-col gap-6">
-          <CeilingPanel user={user} stats={stats} />
+          <CeilingPanel user={user} stats={currentStats} />
           <PassCard user={user} />
           <AuditPanel user={user} />
         </div>
