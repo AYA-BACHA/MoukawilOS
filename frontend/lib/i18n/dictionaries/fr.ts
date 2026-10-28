@@ -854,4 +854,12 @@ export const fr: Record<string, string> = {
   "Sample invoice data restored.": "Données de la facture d'exemple rétablies.",
   "Mandatory Statutory Reason:": "Motif légal obligatoire :",
   "100% (5M DZD)": "100% (5M DZD)",
+  "Save as Draft": "Enregistrer comme brouillon",
+  "Draft #{number} saved to your Invoices Ledger!": "Brouillon n° #{number} enregistré dans votre registre !",
+  "Invoice #{number} officially issued under Law 22-23!": "Facture n° #{number} officiellement émise selon la Loi 22-23 !",
+  "Ready to finalize this invoice?": "Prêt à finaliser cette facture ?",
+  "Save as draft to finish later, or issue officially under Law 22-23.": "Enregistrez-la en brouillon pour plus tard, ou émettez-la selon la Loi 22-23.",
+  "Saving Draft...": "Enregistrement du brouillon...",
+  "Go to Invoices Ledger": "Aller au registre des factures",
+  "Edit Draft": "Modifier le brouillon",
 };

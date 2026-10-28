@@ -854,4 +854,12 @@ export const ar: Record<string, string> = {
   "Sample invoice data restored.": "تمت استعادة البيانات النموذجية للفاتورة بنجاح.",
   "Mandatory Statutory Reason:": "السبب القانوني الإلزامي:",
   "100% (5M DZD)": "100% (5 ملايين دج)",
+  "Save as Draft": "حفظ كمسودة",
+  "Draft #{number} saved to your Invoices Ledger!": "تم حفظ المسودة #{number} في سجل الفواتير الخاص بك!",
+  "Invoice #{number} officially issued under Law 22-23!": "تم إصدار الفاتورة #{number} رسمياً وفق القانون 22-23!",
+  "Ready to finalize this invoice?": "هل أنت جاهز لتأكيد هذه الفاتورة؟",
+  "Save as draft to finish later, or issue officially under Law 22-23.": "احفظها كمسودة للمتابعة لاحقاً، أو أصدرها رسمياً وفق القانون 22-23.",
+  "Saving Draft...": "جارٍ حفظ المسودة...",
+  "Go to Invoices Ledger": "الذهاب إلى سجل الفواتير",
+  "Edit Draft": "تعديل المسودة",
 };

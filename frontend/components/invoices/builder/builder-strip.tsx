@@ -54,18 +54,18 @@ export function BuilderStrip({ number, saved, onSave, onIssue, onResetSample }: 
         <button
           type="button"
           onClick={onSave}
-          className={buttonClass("soft", "flex-1 sm:flex-initial min-h-[44px] rounded-lg border border-slate-200/80 bg-surface-low hover:bg-surface px-3 py-2 text-xs font-semibold tracking-normal transition-all")}
+          className="flex-1 sm:flex-initial min-h-[44px] inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-surface-low hover:bg-surface px-4 py-2 text-xs font-semibold text-ink shadow-2xs active:scale-95 transition-all cursor-pointer"
         >
           <Bookmark className="size-3.5 text-accent" />
-          {saved ? t("Draft Saved") : t("Save Draft")}
+          <span>{saved ? t("Draft Saved") : t("Save as Draft")}</span>
         </button>
         <button
           type="button"
           onClick={onIssue}
-          className={buttonClass("primary", "flex-1 sm:flex-initial min-h-[44px] rounded-lg px-4 py-2 text-xs font-semibold shadow-xs transition-all hover:bg-primary-ink active:scale-95")}
+          className={buttonClass("primary", "flex-1 sm:flex-initial min-h-[44px] rounded-lg px-4 py-2 text-xs font-semibold shadow-xs transition-all hover:bg-primary-ink active:scale-95 cursor-pointer")}
         >
           <ShieldCheck className="size-3.5" />
-          {t("Issue & Download PDF")}
+          <span>{t("Issue & Download PDF")}</span>
         </button>
       </div>
     </div>

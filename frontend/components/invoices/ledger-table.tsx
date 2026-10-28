@@ -167,7 +167,7 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
                   {isDraft && (
                     <>
                       <Link
-                        href={`/invoices/new?client=${invoice.client.id}`}
+                        href={`/invoices/new?draft=${encodeURIComponent(invoice.id)}`}
                         className="inline-flex min-h-[40px] items-center rounded-lg border border-slate-200 bg-surface-low px-3.5 py-1.5 text-xs font-medium text-body active:scale-95"
                       >
                         {t("Edit Draft")}
@@ -362,7 +362,7 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
 
                         {isDraft && (
                           <Link
-                            href="/invoices/new"
+                            href={`/invoices/new?draft=${encodeURIComponent(invoice.id)}`}
                             className="rounded-lg border border-slate-200/80 bg-surface-low px-2.5 py-1 text-xs font-medium text-body transition-colors hover:bg-surface hover:text-ink"
                           >
                             {t("Resume")}

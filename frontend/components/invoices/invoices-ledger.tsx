@@ -126,16 +126,25 @@ export function InvoicesLedger({
       }
     };
 
+    const handleInvoicesUpdated = () => {
+      getInvoices().then((updated) => setInvoices(updated));
+    };
+
     window.addEventListener("moukawil_scenario_change", handleScenarioChange);
     window.addEventListener("moukawil_fy_change", handleFyChange);
     window.addEventListener("moukawil_invoice_paid", handlePaidEvent);
     window.addEventListener("moukawil_invoice_credited", handleCreditedEvent);
+    window.addEventListener("moukawil_invoices_updated", handleInvoicesUpdated);
+
+    // Refresh on mount to pick up any freshly saved drafts or issued invoices
+    getInvoices().then((updated) => setInvoices(updated));
 
     return () => {
       window.removeEventListener("moukawil_scenario_change", handleScenarioChange);
       window.removeEventListener("moukawil_fy_change", handleFyChange);
       window.removeEventListener("moukawil_invoice_paid", handlePaidEvent);
       window.removeEventListener("moukawil_invoice_credited", handleCreditedEvent);
+      window.removeEventListener("moukawil_invoices_updated", handleInvoicesUpdated);
     };
   }, []);
 
@@ -283,7 +292,19 @@ export function InvoicesLedger({
     setPayingId(null);
   };
 
-  const deleteDraft = (invoiceId: string) => setInvoices((current) => current.filter((invoice) => invoice.id !== invoiceId));
+  const deleteDraft = (invoiceId: string) => {
+    setInvoices((current) => current.filter((invoice) => invoice.id !== invoiceId));
+    if (typeof window !== "undefined") {
+      try {
+        const stored = JSON.parse(localStorage.getItem("moukawil_user_invoices") || "[]");
+        const filtered = stored.filter((inv: InvoiceWithClient) => inv.id !== invoiceId);
+        localStorage.setItem("moukawil_user_invoices", JSON.stringify(filtered));
+        window.dispatchEvent(new CustomEvent("moukawil_invoices_updated"));
+      } catch {
+        // ignore
+      }
+    }
+  };
 
   const changeFilter =
     <T,>(setter: (value: T) => void) =>

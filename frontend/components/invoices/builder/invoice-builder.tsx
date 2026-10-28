@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Bookmark, Check, ShieldCheck, X } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, Bookmark, Check, ShieldCheck, X } from "lucide-react";
 import { BuilderStrip } from "@/components/invoices/builder/builder-strip";
 import { ClientCard, ItemsCard, MetadataCard, SummaryCard } from "@/components/invoices/builder/form-cards";
 import { InvoicePreview } from "@/components/invoices/builder/invoice-preview";
 import { cn } from "@/lib/cn";
-import { issueInvoiceApi } from "@/lib/api";
+import { issueInvoiceApi, saveDraftApi } from "@/lib/api";
 import { printElementById } from "@/lib/print";
 import type { InvoiceDraft, User } from "@/types/models";
 import { useI18n } from "@/lib/i18n/provider";
@@ -15,25 +16,51 @@ export function InvoiceBuilder({ user, draft: initialDraft }: { user: User; draf
   const { t } = useI18n();
   const [draft, setDraft] = useState(initialDraft);
   const [activeTab, setActiveTab] = useState<"edit" | "preview">("edit");
-  const [toast, setToast] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isIssuing, setIsIssuing] = useState(false);
+  const [toast, setToast] = useState<{ message: string; actionText?: string; actionHref?: string } | null>(null);
 
   const edit = (patch: Partial<InvoiceDraft>) => setDraft((current) => ({ ...current, ...patch, savedAt: null }));
-  const save = () => {
-    setDraft((current) => ({ ...current, savedAt: new Date().toISOString() }));
-    setToast(t("Draft #{number} saved with Law 22-23 compliance.", { number: draft.number }));
-    setTimeout(() => setToast(null), 3500);
+
+  const save = async () => {
+    setIsSaving(true);
+    try {
+      await saveDraftApi(draft);
+      setDraft((current) => ({ ...current, savedAt: new Date().toISOString() }));
+      setToast({
+        message: t("Draft #{number} saved to your Invoices Ledger!", { number: draft.number }),
+        actionText: t("View in Ledger"),
+        actionHref: "/invoices",
+      });
+      setTimeout(() => setToast(null), 5000);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleIssue = async () => {
+    setIsIssuing(true);
     try {
-      await issueInvoiceApi(draft);
+      const res = await issueInvoiceApi(draft);
+      if (res.invoiceNumber) {
+        setDraft((cur) => ({ ...cur, number: res.invoiceNumber }));
+      }
+      setToast({
+        message: t("Invoice #{number} officially issued under Law 22-23!", { number: res.invoiceNumber || draft.number }),
+        actionText: t("View in Ledger"),
+        actionHref: "/invoices",
+      });
+      setActiveTab("preview");
+      setTimeout(() => {
+        printElementById("invoice-sheet", `Facture-${res.invoiceNumber || draft.number}`);
+      }, 300);
     } catch (e) {
       console.error(e);
+    } finally {
+      setIsIssuing(false);
     }
-    setActiveTab("preview");
-    setTimeout(() => {
-      printElementById("invoice-sheet", `Facture-${draft.number}`);
-    }, 250);
   };
 
   const handleResetSample = () => {
@@ -62,7 +89,9 @@ export function InvoiceBuilder({ user, draft: initialDraft }: { user: User; draf
       ],
       savedAt: null,
     });
-    setToast(t("Sample invoice data restored."));
+    setToast({
+      message: t("Sample invoice data restored."),
+    });
     setTimeout(() => setToast(null), 2500);
   };
 
@@ -117,7 +146,38 @@ export function InvoiceBuilder({ user, draft: initialDraft }: { user: User; draf
           <MetadataCard number={draft.number} issueDate={draft.issueDate} paymentTermsDays={draft.paymentTermsDays} onChange={edit} />
           <ItemsCard items={draft.items} onChange={(items) => edit({ items })} />
           <SummaryCard items={draft.items} />
+
+          {/* Prominent Action Bar Card at the Bottom of the Form */}
+          <div className="rounded-xl border border-slate-200/90 bg-card p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div className="flex flex-col">
+              <span className="text-xs font-bold text-ink">{t("Ready to finalize this invoice?")}</span>
+              <span className="text-[11px] text-muted">
+                {t("Save as draft to finish later, or issue officially under Law 22-23.")}
+              </span>
+            </div>
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <button
+                type="button"
+                onClick={save}
+                disabled={isSaving}
+                className="flex-1 sm:flex-initial min-h-[44px] inline-flex items-center justify-center gap-1.5 rounded-xl border border-slate-300 bg-surface-low hover:bg-surface px-4 py-2.5 text-xs font-semibold text-ink shadow-2xs active:scale-95 transition-all cursor-pointer"
+              >
+                <Bookmark className="size-4 text-accent" />
+                <span>{isSaving ? t("Saving Draft...") : draft.savedAt ? t("Draft Saved") : t("Save as Draft")}</span>
+              </button>
+              <button
+                type="button"
+                onClick={handleIssue}
+                disabled={isIssuing}
+                className="flex-1 sm:flex-initial min-h-[44px] inline-flex items-center justify-center gap-1.5 rounded-xl bg-primary hover:bg-primary-ink px-5 py-2.5 text-xs font-bold text-white shadow-xs active:scale-95 transition-all cursor-pointer"
+              >
+                <ShieldCheck className="size-4" />
+                <span>{isIssuing ? t("Issuing...") : t("Issue & Download PDF")}</span>
+              </button>
+            </div>
+          </div>
         </div>
+
         <div className={cn("overflow-x-auto max-w-full", activeTab !== "preview" && "hidden lg:block")}>
           <InvoicePreview user={user} draft={draft} />
         </div>
@@ -128,31 +188,42 @@ export function InvoiceBuilder({ user, draft: initialDraft }: { user: User; draf
         <button
           type="button"
           onClick={save}
+          disabled={isSaving}
           className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-surface-low px-3 py-2 text-xs font-semibold text-ink active:scale-95"
         >
           <Bookmark className="size-3.5 text-accent" />
-          {draft.savedAt ? t("Draft Saved") : t("Save Draft")}
+          {isSaving ? t("Saving...") : draft.savedAt ? t("Draft Saved") : t("Save as Draft")}
         </button>
         <button
           type="button"
           onClick={handleIssue}
-          className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-xs font-semibold text-white shadow-xs active:scale-95 hover:bg-primary-ink"
+          disabled={isIssuing}
+          className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-xs font-bold text-white shadow-xs active:scale-95 hover:bg-primary-ink"
         >
           <ShieldCheck className="size-3.5" />
-          {t("Issue PDF")}
+          {isIssuing ? t("Issuing...") : t("Issue & Print")}
         </button>
       </div>
 
-      {/* Save Draft Toast */}
+      {/* Save Draft & Issue Toast with Direct Navigation Link */}
       {toast && (
-        <div className="fixed bottom-6 end-6 z-50 flex items-center gap-3 rounded-2xl border border-slate-200 bg-card p-3.5 shadow-2xl animate-in slide-in-from-bottom-2">
-          <span className="flex size-7 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+        <div className="fixed bottom-6 end-6 z-50 flex items-center gap-3 rounded-2xl border border-emerald-300 bg-emerald-50 px-4 py-3 shadow-2xl animate-in slide-in-from-bottom-2">
+          <span className="flex size-7 items-center justify-center rounded-full bg-emerald-600 text-white shrink-0">
             <Check className="size-4" strokeWidth={2.5} />
           </span>
-          <p className="text-xs font-semibold text-ink">{toast}</p>
+          <p className="text-xs font-bold text-emerald-950">{toast.message}</p>
+          {toast.actionHref && (
+            <Link
+              href={toast.actionHref}
+              className="ms-2 inline-flex items-center gap-1 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-3 py-1.5 text-xs shadow-2xs active:scale-95 transition-all whitespace-nowrap"
+            >
+              <span>{toast.actionText}</span>
+              <ArrowRight className="size-3 rtl:rotate-180" />
+            </Link>
+          )}
           <button
             onClick={() => setToast(null)}
-            className="ms-2 rounded-lg p-1 text-muted hover:bg-slate-100 hover:text-ink"
+            className="ms-1 rounded-lg p-1 text-emerald-800 hover:bg-emerald-100"
           >
             <X className="size-3.5" />
           </button>

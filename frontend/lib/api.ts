@@ -512,6 +512,27 @@ export async function updateClient(client: Client, input: ClientInput): Promise<
 function applyLocalOverrides(invoices: InvoiceWithClient[]): InvoiceWithClient[] {
   let resList = [...invoices];
   if (typeof window !== "undefined") {
+    // 1. Merge persistent user-created invoices and drafts
+    try {
+      const storedUserInvoices = localStorage.getItem("moukawil_user_invoices");
+      if (storedUserInvoices) {
+        const userInvs: InvoiceWithClient[] = JSON.parse(storedUserInvoices);
+        if (Array.isArray(userInvs) && userInvs.length > 0) {
+          for (const uInv of userInvs) {
+            const idx = resList.findIndex((item) => item.number === uInv.number || item.id === uInv.id);
+            if (idx >= 0) {
+              resList[idx] = { ...resList[idx], ...uInv };
+            } else {
+              resList.unshift(uInv);
+            }
+          }
+        }
+      }
+    } catch {
+      // ignore
+    }
+
+    // 2. Apply persistent credit note overrides
     try {
       const storedCredits = localStorage.getItem("moukawil_credited_invoices");
       if (storedCredits) {
@@ -549,6 +570,7 @@ function applyLocalOverrides(invoices: InvoiceWithClient[]): InvoiceWithClient[]
       // ignore
     }
 
+    // 3. Apply persistent settlement overrides
     try {
       const storedPayments = localStorage.getItem("moukawil_paid_invoices");
       if (storedPayments) {
@@ -866,57 +888,154 @@ export async function payInvoiceApi(
   return { success: true, invoiceId };
 }
 
-export async function issueInvoiceApi(draft: InvoiceDraft): Promise<{ success: boolean; invoiceNumber?: string }> {
-  let clientId: number | null = null;
-  const clients = await getClients();
-  const matchedClient = clients.find((c) => c.name.toLowerCase() === draft.client.name.toLowerCase());
-
-  if (matchedClient && /^\d+$/.test(matchedClient.id)) {
-    clientId = parseInt(matchedClient.id, 10);
-  } else {
-    const created = await createClient({
-      name: draft.client.name,
+export async function saveDraftApi(draft: InvoiceDraft): Promise<{ success: boolean; invoice: InvoiceWithClient }> {
+  const totalAmount = draft.items.reduce((acc, it) => acc + (it.quantity * it.unitPrice), 0);
+  const draftInvoice: InvoiceWithClient = {
+    id: draft.id && draft.id !== "new" ? draft.id : `draft_${Date.now()}`,
+    userId: draft.userId || CURRENT_USER_ID,
+    clientId: draft.clientType === "B2B" ? "cli_1" : "cli_4",
+    number: draft.number,
+    issueDate: draft.issueDate || new Date().toISOString().slice(0, 10),
+    dueDate: new Date(Date.now() + (draft.paymentTermsDays || 30) * 86400000).toISOString().slice(0, 10),
+    amount: totalAmount,
+    status: "draft",
+    statutoryClause: "TVA non applicable - Art. 13 de la LFR 2023",
+    paidAt: null,
+    paymentRail: null,
+    client: {
+      id: "cli_custom",
+      userId: CURRENT_USER_ID,
+      name: draft.client.name || "Client",
       type: draft.clientType,
       nif: draft.client.nif || null,
       nis: draft.client.nis || null,
       rc: draft.client.rc || null,
-      address: draft.client.address || "Alger",
+      address: draft.client.address || null,
+      location: draft.client.address || "Alger",
+      description: null,
       email: null,
       phone: null,
-    });
-    if (/^\d+$/.test(created.id)) {
-      clientId = parseInt(created.id, 10);
+      anaeVerified: Boolean(draft.client.nif && draft.client.nif.length === 15),
+    },
+  };
+
+  if (typeof window !== "undefined") {
+    try {
+      const stored: InvoiceWithClient[] = JSON.parse(localStorage.getItem("moukawil_user_invoices") || "[]");
+      const filtered = stored.filter((inv) => inv.number !== draftInvoice.number && inv.id !== draftInvoice.id);
+      filtered.unshift(draftInvoice);
+      localStorage.setItem("moukawil_user_invoices", JSON.stringify(filtered));
+      window.dispatchEvent(new CustomEvent("moukawil_invoices_updated"));
+    } catch {
+      // ignore
     }
   }
 
-  if (clientId) {
-    const items = draft.items.map((it) => ({
-      description: it.description || "Prestation de service",
-      quantity: it.quantity,
-      unit_price: it.unitPrice,
-      unit: "unité",
-    }));
+  return { success: true, invoice: draftInvoice };
+}
 
-    const newInv = await fetchBackend<BackendInvoiceOut>("/invoices", {
-      method: "POST",
-      body: JSON.stringify({
-        client_id: clientId,
-        due_date: new Date(Date.now() + draft.paymentTermsDays * 86400000).toISOString().slice(0, 10),
-        items,
-      }),
-    });
+export async function issueInvoiceApi(draft: InvoiceDraft): Promise<{ success: boolean; invoiceNumber: string; invoice: InvoiceWithClient }> {
+  let clientId: number | null = null;
+  let issuedNumber = draft.number;
 
-    if (newInv && newInv.id) {
-      const issued = await fetchBackend<BackendInvoiceOut>(`/invoices/${newInv.id}/issue`, {
-        method: "POST",
+  try {
+    const clients = await getClients();
+    const matchedClient = clients.find((c) => c.name.toLowerCase() === draft.client.name.toLowerCase());
+
+    if (matchedClient && /^\d+$/.test(matchedClient.id)) {
+      clientId = parseInt(matchedClient.id, 10);
+    } else {
+      const created = await createClient({
+        name: draft.client.name,
+        type: draft.clientType,
+        nif: draft.client.nif || null,
+        nis: draft.client.nis || null,
+        rc: draft.client.rc || null,
+        address: draft.client.address || "Alger",
+        email: null,
+        phone: null,
       });
-      if (issued && issued.number) {
-        return { success: true, invoiceNumber: issued.number };
+      if (/^\d+$/.test(created.id)) {
+        clientId = parseInt(created.id, 10);
       }
     }
+
+    if (clientId) {
+      const items = draft.items.map((it) => ({
+        description: it.description || "Prestation de service",
+        quantity: it.quantity,
+        unit_price: it.unitPrice,
+        unit: "unité",
+      }));
+
+      const newInv = await fetchBackend<BackendInvoiceOut>("/invoices", {
+        method: "POST",
+        body: JSON.stringify({
+          client_id: clientId,
+          due_date: new Date(Date.now() + draft.paymentTermsDays * 86400000).toISOString().slice(0, 10),
+          items,
+        }),
+      });
+
+      if (newInv && newInv.id) {
+        const issued = await fetchBackend<BackendInvoiceOut>(`/invoices/${newInv.id}/issue`, {
+          method: "POST",
+        });
+        if (issued && issued.number) {
+          issuedNumber = issued.number;
+        }
+      }
+    }
+  } catch {
+    // offline or demo mode
   }
 
-  return { success: true, invoiceNumber: draft.number };
+  const totalAmount = draft.items.reduce((acc, it) => acc + (it.quantity * it.unitPrice), 0);
+
+  const issuedInvoice: InvoiceWithClient = {
+    id: draft.id && draft.id !== "new" && !draft.id.startsWith("draft_") ? draft.id : `inv_${Date.now()}`,
+    userId: draft.userId || CURRENT_USER_ID,
+    clientId: draft.clientType === "B2B" ? "cli_1" : "cli_4",
+    number: issuedNumber,
+    issueDate: draft.issueDate || new Date().toISOString().slice(0, 10),
+    dueDate: new Date(Date.now() + (draft.paymentTermsDays || 30) * 86400000).toISOString().slice(0, 10),
+    amount: totalAmount,
+    status: "pending",
+    statutoryClause: "TVA non applicable - Art. 13 de la LFR 2023",
+    paidAt: null,
+    paymentRail: null,
+    client: {
+      id: "cli_custom",
+      userId: CURRENT_USER_ID,
+      name: draft.client.name || "Client",
+      type: draft.clientType,
+      nif: draft.client.nif || null,
+      nis: draft.client.nis || null,
+      rc: draft.client.rc || null,
+      address: draft.client.address || null,
+      location: draft.client.address || "Alger",
+      description: null,
+      email: null,
+      phone: null,
+      anaeVerified: Boolean(draft.client.nif && draft.client.nif.length === 15),
+    },
+  };
+
+  if (typeof window !== "undefined") {
+    try {
+      const stored: InvoiceWithClient[] = JSON.parse(localStorage.getItem("moukawil_user_invoices") || "[]");
+      const filtered = stored.filter(
+        (inv) => inv.number !== draft.number && inv.number !== issuedNumber && inv.id !== draft.id
+      );
+      filtered.unshift(issuedInvoice);
+      localStorage.setItem("moukawil_user_invoices", JSON.stringify(filtered));
+      window.dispatchEvent(new CustomEvent("moukawil_invoices_updated"));
+    } catch {
+      // ignore
+    }
+  }
+
+  return { success: true, invoiceNumber: issuedNumber, invoice: issuedInvoice };
 }
 
 export async function getLookups(): Promise<Lookups> {
@@ -943,7 +1062,43 @@ export async function getNextDeadline(): Promise<ExtendedDeadline> {
   return computeNextDeadline(new Date(), CURRENT_USER_ID);
 }
 
-export async function getInvoiceDraft(clientId?: string): Promise<InvoiceDraft> {
+export async function getInvoiceDraft(clientId?: string, draftId?: string): Promise<InvoiceDraft> {
+  if (draftId && typeof window !== "undefined") {
+    try {
+      const stored: InvoiceWithClient[] = JSON.parse(localStorage.getItem("moukawil_user_invoices") || "[]");
+      const found = stored.find((inv) => inv.id === draftId || inv.number === draftId);
+      if (found) {
+        return {
+          id: found.id,
+          userId: found.userId,
+          number: found.number,
+          clientType: found.client.type || "B2B",
+          client: {
+            name: found.client.name,
+            nif: found.client.nif || "",
+            nis: found.client.nis || "",
+            rc: found.client.rc || "",
+            address: found.client.address || found.client.location || "",
+          },
+          issueDate: found.issueDate,
+          paymentTermsDays: 30,
+          items: [
+            {
+              id: "itm_resumed_1",
+              description: "Prestation de développement logiciel & architecture cloud",
+              details: "Sous le régime de l'auto-entrepreneur (Loi 22-23 Art. 4) — Exonération TVA Art. 282 bis CIDTA",
+              quantity: 1,
+              unitPrice: found.amount,
+            },
+          ],
+          savedAt: new Date().toISOString(),
+        };
+      }
+    } catch {
+      // ignore
+    }
+  }
+
   const clients = await getClients();
   let matchedClient: Client | undefined;
   if (clientId) {
