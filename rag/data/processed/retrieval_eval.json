@@ -1,0 +1,122 @@
+﻿[
+  {
+    "id": "Q01",
+    "question": "Quelle loi définit le statut de l'auto-entrepreneur en Algérie ?",
+    "targets": ["JORADP-2022-085:art-1"],
+    "category": "identification"
+  },
+  {
+    "id": "Q02",
+    "question": "Quelles conditions faut-il remplir pour être éligible au statut d'auto-entrepreneur ?",
+    "targets": ["JORADP-2022-085:art-3"],
+    "category": "eligibilite"
+  },
+  {
+    "id": "Q03",
+    "question": "Quelles professions ou activités sont exclues du statut d'auto-entrepreneur ?",
+    "targets": ["JORADP-2022-085:art-2", "JORADP-2023-197:art-3"],
+    "category": "eligibilite"
+  },
+  {
+    "id": "Q04",
+    "question": "Comment une personne peut-elle demander son inscription au registre national de l'auto-entrepreneur ?",
+    "targets": ["JORADP-2022-085:art-4", "JORADP-2023-197:art-15", "JORADP-2023-197:art-16"],
+    "category": "inscription"
+  },
+  {
+    "id": "Q05",
+    "question": "Quel est le délai maximal de traitement d'une demande d'inscription ?",
+    "targets": ["JORADP-2023-197:art-17"],
+    "category": "delais"
+  },
+  {
+    "id": "Q06",
+    "question": "Comment le demandeur est-il informé de l'acceptation ou du rejet de son inscription ?",
+    "targets": ["JORADP-2023-197:art-18"],
+    "category": "inscription"
+  },
+  {
+    "id": "Q07",
+    "question": "Un auto-entrepreneur peut-il exercer plusieurs activités individualisées dans le même domaine ?",
+    "targets": ["JORADP-2023-197:art-19"],
+    "category": "activites"
+  },
+  {
+    "id": "Q08",
+    "question": "Quelles informations figurent sur les deux faces de la carte de l'auto-entrepreneur ?",
+    "targets": ["JORADP-2023-198:art-2"],
+    "category": "carte"
+  },
+  {
+    "id": "Q09",
+    "question": "Comment la carte de l'auto-entrepreneur est-elle confectionnée ?",
+    "targets": ["JORADP-2023-198:art-3"],
+    "category": "carte"
+  },
+  {
+    "id": "Q10",
+    "question": "Quel organisme tient le registre national de l'auto-entrepreneur ?",
+    "targets": ["JORADP-2022-085:art-5", "JORADP-2023-197:art-13"],
+    "category": "registre"
+  },
+  {
+    "id": "Q11",
+    "question": "Quelles sont les principales missions de l'Agence nationale de l'auto-entrepreneur ?",
+    "targets": ["JORADP-2023-196:art-5"],
+    "category": "agence"
+  },
+  {
+    "id": "Q12",
+    "question": "De quel ministère l'Agence nationale de l'auto-entrepreneur est-elle placée sous la tutelle ?",
+    "targets": ["JORADP-2023-196:art-3"],
+    "category": "agence"
+  },
+  {
+    "id": "Q13",
+    "question": "Comment l'Agence nationale de l'auto-entrepreneur est-elle administrée et dirigée ?",
+    "targets": ["JORADP-2023-196:art-6"],
+    "category": "agence"
+  },
+  {
+    "id": "Q14",
+    "question": "Quels avantages sont accordés à l'auto-entrepreneur par la loi ?",
+    "targets": ["JORADP-2022-085:art-9"],
+    "category": "avantages"
+  },
+  {
+    "id": "Q15",
+    "question": "Où l'auto-entrepreneur peut-il domicilier son activité ?",
+    "targets": ["JORADP-2022-085:art-7"],
+    "category": "domiciliation"
+  },
+  {
+    "id": "Q16",
+    "question": "Que prévoit la loi si le chiffre d'affaires annuel dépasse le seuil autorisé pendant trois années consécutives ?",
+    "targets": ["JORADP-2022-085:art-13"],
+    "category": "fiscalite"
+  },
+  {
+    "id": "Q17",
+    "question": "Dans quels cas l'auto-entrepreneur peut-il être radié du registre national ?",
+    "targets": ["JORADP-2022-085:art-14", "JORADP-2023-197:art-22"],
+    "category": "radiation"
+  },
+  {
+    "id": "Q18",
+    "question": "Quel est le délai pour introduire un recours après le rejet d'une inscription ou une radiation ?",
+    "targets": ["JORADP-2023-197:art-24"],
+    "category": "recours"
+  },
+  {
+    "id": "Q19",
+    "question": "À quelles conditions un auto-entrepreneur radié peut-il demander sa réinscription ?",
+    "targets": ["JORADP-2022-085:art-16", "JORADP-2023-197:art-25"],
+    "category": "reinscription"
+  },
+  {
+    "id": "Q20",
+    "question": "Quelles obligations fiscales et sociales s'appliquent à l'auto-entrepreneur ?",
+    "targets": ["JORADP-2022-085:art-10", "JORADP-2022-085:art-11"],
+    "category": "obligations"
+  }
+]

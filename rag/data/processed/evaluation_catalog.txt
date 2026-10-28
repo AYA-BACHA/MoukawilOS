@@ -1,0 +1,490 @@
+================================================================================
+ID: JORADP-2023-196:art-1
+DOCUMENT: JORADP-2023-196
+TITRE: Décret exécutif n° 23-196 du 25 mai 2023 fixant l'organisation et le fonctionnement de l'Agence nationale de l'auto-entrepreneur
+ARTICLE: Article 1er.
+TEXTE: Article 1er. — En application des dispositions de l'article 5 de la loi n° 22-23 du 24 Joumada El Oula 1444 correspondant au 18 décembre 2022 susvisée, le présent décret a pour objet de fixer l'organisation et le fonctionnement de l'établissement public de l'auto-entrepreneur qui prend la dénomination d' « Agence nationale de l'auto-entrepreneur », par abréviation « ANAE », désignée ci-après l' « agence ».
+
+================================================================================
+ID: JORADP-2023-196:art-2
+DOCUMENT: JORADP-2023-196
+TITRE: Décret exécutif n° 23-196 du 25 mai 2023 fixant l'organisation et le fonctionnement de l'Agence nationale de l'auto-entrepreneur
+ARTICLE: Art. 2.
+TEXTE: Art. 2. — L'agence est un établissement public à caractère administratif, dotée de la personnalité morale et de l'autonomie financière.
+
+================================================================================
+ID: JORADP-2023-196:art-3
+DOCUMENT: JORADP-2023-196
+TITRE: Décret exécutif n° 23-196 du 25 mai 2023 fixant l'organisation et le fonctionnement de l'Agence nationale de l'auto-entrepreneur
+ARTICLE: Art. 3.
+TEXTE: Art. 3. — L'agence est placée sous la tutelle du ministre chargé des start-up.
+
+================================================================================
+ID: JORADP-2023-196:art-4
+DOCUMENT: JORADP-2023-196
+TITRE: Décret exécutif n° 23-196 du 25 mai 2023 fixant l'organisation et le fonctionnement de l'Agence nationale de l'auto-entrepreneur
+ARTICLE: Art. 4.
+TEXTE: Art. 4. — Le siège de l'agence est fixé à Alger. Il peut être créé des annexes de l'agence par arrêté conjoint du ministre chargé des start-up, du ministre chargé des finances et de l'autorité chargée de la fonction publique.
+
+================================================================================
+ID: JORADP-2023-196:art-5
+DOCUMENT: JORADP-2023-196
+TITRE: Décret exécutif n° 23-196 du 25 mai 2023 fixant l'organisation et le fonctionnement de l'Agence nationale de l'auto-entrepreneur
+ARTICLE: Art. 5.
+TEXTE: Art. 5. — Conformément aux dispositions des articles 5 et 6 de la loi n° 22-23 du 24 Joumada El Oula 1444 correspondant au 18 décembre 2022 susvisée, l'agence est chargée, notamment : — de mettre en place le registre national de l'auto-entrepreneur ; — de tenir et de mettre à jour le registre national de l'auto-entrepreneur ; — de tenir et de gérer la plate-forme électronique d'inscription au registre national de l'auto-entrepreneur ; — de recevo
+
+================================================================================
+ID: JORADP-2023-196:art-6
+DOCUMENT: JORADP-2023-196
+TITRE: Décret exécutif n° 23-196 du 25 mai 2023 fixant l'organisation et le fonctionnement de l'Agence nationale de l'auto-entrepreneur
+ARTICLE: Art. 6.
+TEXTE: Art. 6. — L'agence est administrée par un conseil d'administration et dirigée par un directeur général.
+
+================================================================================
+ID: JORADP-2023-196:art-7
+DOCUMENT: JORADP-2023-196
+TITRE: Décret exécutif n° 23-196 du 25 mai 2023 fixant l'organisation et le fonctionnement de l'Agence nationale de l'auto-entrepreneur
+ARTICLE: Art. 7.
+TEXTE: Art. 7. — Le conseil d'administration est chargé de délibérer, notamment sur : — les plans et programmes d'action annuels et pluriannuels de l'agence ; — l'organisation interne et le règlement intérieur de l'agence ; — le projet de budget et le compte administratif de l'agence ; — les projets de marchés, de conventions, d'accords et de contrats ; — la création des annexes de l'agence ; — les projets d'acquisition ou de location de biens immobilie
+
+================================================================================
+ID: JORADP-2023-196:art-8
+DOCUMENT: JORADP-2023-196
+TITRE: Décret exécutif n° 23-196 du 25 mai 2023 fixant l'organisation et le fonctionnement de l'Agence nationale de l'auto-entrepreneur
+ARTICLE: Art. 8.
+TEXTE: Art. 8. — Le conseil d'administration, présidé par le représentant du ministre chargé des start-up, est composé : — du représentant du ministère de la défense nationale ; — du représentant du ministre chargé de l'intérieur et des collectivités locales ; — du représentant du ministre de la justice, garde des sceaux ; — du représentant du ministre chargé des finances ; — du représentant du ministre chargé de la poste et des télécommunications ; — d
+
+================================================================================
+ID: JORADP-2023-196:art-9
+DOCUMENT: JORADP-2023-196
+TITRE: Décret exécutif n° 23-196 du 25 mai 2023 fixant l'organisation et le fonctionnement de l'Agence nationale de l'auto-entrepreneur
+ARTICLE: Art. 9.
+TEXTE: Art. 9. — Les membres du conseil d'administration sont nommés par arrêté du ministre chargé des start-up pour une période de trois (3) ans renouvelable une seule fois, sur proposition de l'autorité dont ils relèvent. En cas d'interruption du mandat d'un membre du conseil, il est remplacé dans les mêmes formes pour la durée restante du mandat.
+
+================================================================================
+ID: JORADP-2023-196:art-10
+DOCUMENT: JORADP-2023-196
+TITRE: Décret exécutif n° 23-196 du 25 mai 2023 fixant l'organisation et le fonctionnement de l'Agence nationale de l'auto-entrepreneur
+ARTICLE: Art. 10.
+TEXTE: Art. 10. — Le conseil d'administration se réunit en session ordinaire quatre (4) fois par an. Il peut, également, se réunir en sessions extraordinaires, sur demande soit de son président, soit du directeur général de l'agence, soit à la demande des deux tiers (2/3) de ses membres. Les convocations individuelles, accompagnées de l'ordre du jour, sont adressées aux membres du conseil d'administration, quinze (15) jours, au moins, avant la date prév
+
+================================================================================
+ID: JORADP-2023-196:art-11
+DOCUMENT: JORADP-2023-196
+TITRE: Décret exécutif n° 23-196 du 25 mai 2023 fixant l'organisation et le fonctionnement de l'Agence nationale de l'auto-entrepreneur
+ARTICLE: Art. 11.
+TEXTE: Art. 11. — Le conseil d'administration ne peut délibérer valablement qu'en présence de la moitié, au moins, de ses membres. Lorsque le quorum n'est pas atteint, une nouvelle réunion a lieu dans les huit (8) jours qui suivent la date de la réunion reportée. Dans ce cas, les délibérations du conseil sont valables quel que soit le nombre des membres présents. Les délibérations du conseil d'administration sont prises à la majorité des voix des membre
+
+================================================================================
+ID: JORADP-2023-196:art-12
+DOCUMENT: JORADP-2023-196
+TITRE: Décret exécutif n° 23-196 du 25 mai 2023 fixant l'organisation et le fonctionnement de l'Agence nationale de l'auto-entrepreneur
+ARTICLE: Art. 12.
+TEXTE: Art. 12. — Les délibérations du conseil d'administration, signées par le président et le secrétaire de séance, sont consignées dans des procès-verbaux, inscrits sur un registre spécial. Les procès-verbaux des réunions du conseil d'administration sont adressés au ministre chargé des start-up ainsi qu'à chaque membre du conseil, dans les quinze (15) jours qui suivent la date de la réunion.
+
+================================================================================
+ID: JORADP-2023-196:art-13
+DOCUMENT: JORADP-2023-196
+TITRE: Décret exécutif n° 23-196 du 25 mai 2023 fixant l'organisation et le fonctionnement de l'Agence nationale de l'auto-entrepreneur
+ARTICLE: Art. 13.
+TEXTE: Art. 13. — Les délibérations du conseil d'administration sont exécutoires dans un délai de trente (30) jours, après leur transmission au ministre chargé des start-up, sauf opposition expresse signifiée par l'autorité de tutelle dans ce délai. Les délibérations du conseil d'administration portant sur le budget, le compte administratif, les acquisitions, ventes ou location d'immeubles, l'acceptation des dons et legs et le règlement intérieur ne son
+
+================================================================================
+ID: JORADP-2023-196:art-14
+DOCUMENT: JORADP-2023-196
+TITRE: Décret exécutif n° 23-196 du 25 mai 2023 fixant l'organisation et le fonctionnement de l'Agence nationale de l'auto-entrepreneur
+ARTICLE: Art. 14.
+TEXTE: Art. 14. — Le directeur général de l'agence est nommé par décret conformément à la réglementation en vigueur, sur proposition du ministre chargé des start-up. Il est mis fin à ses fonctions dans les mêmes formes.
+
+================================================================================
+ID: JORADP-2023-196:art-15
+DOCUMENT: JORADP-2023-196
+TITRE: Décret exécutif n° 23-196 du 25 mai 2023 fixant l'organisation et le fonctionnement de l'Agence nationale de l'auto-entrepreneur
+ARTICLE: Art. 15.
+TEXTE: Art. 15. — Le directeur général assure le bon fonctionnement de l'agence. A ce titre, il est chargé, notamment : — de représenter l'agence en justice et dans tous les actes de la vie civile ; — d'élaborer les plans et programmes d'action de l'agence ; — d'assurer l'exécution des délibérations du conseil d'administration ; — d'élaborer les prévisions budgétaires annuelles et de procéder à leur actualisation ; — d'établir le compte administratif de
+
+================================================================================
+ID: JORADP-2023-196:art-16
+DOCUMENT: JORADP-2023-196
+TITRE: Décret exécutif n° 23-196 du 25 mai 2023 fixant l'organisation et le fonctionnement de l'Agence nationale de l'auto-entrepreneur
+ARTICLE: Art. 16.
+TEXTE: Art. 16. — Pour l'accomplissement de ses missions, l'agence dispose des structures centrales suivantes : — la direction des systèmes d'information ; — la direction de l'accompagnement et du contrôle ; — la direction de l'administration générale et des moyens.
+
+================================================================================
+ID: JORADP-2023-196:art-17
+DOCUMENT: JORADP-2023-196
+TITRE: Décret exécutif n° 23-196 du 25 mai 2023 fixant l'organisation et le fonctionnement de l'Agence nationale de l'auto-entrepreneur
+ARTICLE: Art. 17.
+TEXTE: Art. 17. — L'organisation interne de l'agence est fixée par arrêté conjoint du ministre chargé des start-up, du ministre des finances et de l'autorité chargée de la fonction publique.
+
+================================================================================
+ID: JORADP-2023-196:art-18
+DOCUMENT: JORADP-2023-196
+TITRE: Décret exécutif n° 23-196 du 25 mai 2023 fixant l'organisation et le fonctionnement de l'Agence nationale de l'auto-entrepreneur
+ARTICLE: Art. 18.
+TEXTE: Art. 18. — Le directeur général prépare le projet de budget de l'agence et le présente au conseil d'administration pour délibération. Il est soumis pour approbation conjointe du ministre chargé des start-up et du ministre des finances.
+
+================================================================================
+ID: JORADP-2023-196:art-19
+DOCUMENT: JORADP-2023-196
+TITRE: Décret exécutif n° 23-196 du 25 mai 2023 fixant l'organisation et le fonctionnement de l'Agence nationale de l'auto-entrepreneur
+ARTICLE: Art. 19.
+TEXTE: Art. 19. — Le budget de l'agence comporte un titre de recettes et un titre de dépenses. Au titre des recettes : — les subventions de l'Etat ; — les dons et legs ; — les contributions éventuelles d'organismes nationaux et internationaux, conformément à la législation et à la réglementation en vigueur ; — toutes autres recettes liées à ses activités. Au titre des dépenses : — les dépenses de personnel ; — les dépenses de fonctionnement des services
+
+================================================================================
+ID: JORADP-2023-196:art-20
+DOCUMENT: JORADP-2023-196
+TITRE: Décret exécutif n° 23-196 du 25 mai 2023 fixant l'organisation et le fonctionnement de l'Agence nationale de l'auto-entrepreneur
+ARTICLE: Art. 20.
+TEXTE: Art. 20. — La comptabilité de l'agence est tenue conformément aux règles de la comptabilité publique et le maniement des fonds, et confié à un agent comptable nommé ou agréé par le ministre chargé des finances.
+
+================================================================================
+ID: JORADP-2023-196:art-21
+DOCUMENT: JORADP-2023-196
+TITRE: Décret exécutif n° 23-196 du 25 mai 2023 fixant l'organisation et le fonctionnement de l'Agence nationale de l'auto-entrepreneur
+ARTICLE: Art. 21.
+TEXTE: Art. 21. — Le contrôle financier de l'agence est assuré par un contrôleur financier, désigné par le ministre chargé des finances.
+
+================================================================================
+ID: JORADP-2023-196:art-22
+DOCUMENT: JORADP-2023-196
+TITRE: Décret exécutif n° 23-196 du 25 mai 2023 fixant l'organisation et le fonctionnement de l'Agence nationale de l'auto-entrepreneur
+ARTICLE: Art. 22.
+TEXTE: Art. 22. — L'agence est soumise au contrôle conformément à la législation et à la réglementation en vigueur.
+
+================================================================================
+ID: JORADP-2023-196:art-23
+DOCUMENT: JORADP-2023-196
+TITRE: Décret exécutif n° 23-196 du 25 mai 2023 fixant l'organisation et le fonctionnement de l'Agence nationale de l'auto-entrepreneur
+ARTICLE: Art. 23.
+TEXTE: Art. 23. — Le présent décret sera publié au Journal officiel de la République algérienne démocratique et populaire.
+
+================================================================================
+ID: JORADP-2023-197:art-1
+DOCUMENT: JORADP-2023-197
+TITRE: Décret exécutif n° 23-197 du 25 mai 2023 fixant la liste des activités éligibles au statut de l'auto-entrepreneur et les modalités d'inscription au registre national de l'auto-entrepreneur
+ARTICLE: Article 1er.
+TEXTE: Article 1er. — En application des dispositions des articles 2 et 4 de la loi n° 22-23 du 24 Joumada El Oula 1444 correspondant au 18 décembre 2022 portant statut de l'auto-entrepreneur, le présent décret a pour objet de fixer la liste des activités éligibles au statut de l'auto-entrepreneur et les modalités d'inscription au registre national de l'auto-entrepreneur.
+
+================================================================================
+ID: JORADP-2023-197:art-2
+DOCUMENT: JORADP-2023-197
+TITRE: Décret exécutif n° 23-197 du 25 mai 2023 fixant la liste des activités éligibles au statut de l'auto-entrepreneur et les modalités d'inscription au registre national de l'auto-entrepreneur
+ARTICLE: Art. 2.
+TEXTE: Art. 2. — La liste des activités éligibles au statut de l'auto-entrepreneur, désignée ci-après « la liste des activités », comprend les activités lucratives exercées par toute personne physique, à titre individuel.
+
+================================================================================
+ID: JORADP-2023-197:art-3
+DOCUMENT: JORADP-2023-197
+TITRE: Décret exécutif n° 23-197 du 25 mai 2023 fixant la liste des activités éligibles au statut de l'auto-entrepreneur et les modalités d'inscription au registre national de l'auto-entrepreneur
+ARTICLE: Art. 3.
+TEXTE: Art. 3. — Sont exclues de la liste des activités prévues à l'article 2 ci-dessus, les professions libérales, les professions et les activités réglementées et artisanales, conformément aux dispositions de l'article 2 (alinéa 2) de la loi n° 22-23 du 24 Joumada El Oula 1444 correspondant au 18 décembre 2022 susvisée.
+
+================================================================================
+ID: JORADP-2023-197:art-4
+DOCUMENT: JORADP-2023-197
+TITRE: Décret exécutif n° 23-197 du 25 mai 2023 fixant la liste des activités éligibles au statut de l'auto-entrepreneur et les modalités d'inscription au registre national de l'auto-entrepreneur
+ARTICLE: Art. 4.
+TEXTE: Art. 4. — La liste des activités est organisée en sept (7) domaines d'activités : — conseil, expertise et formation ; — services numériques et activités connexes ; — prestations à domicile ; — services à la personne ; — services de loisirs et de récréation ; — services aux entreprises ; — services culturels, de communication et d'audiovisuel. Chacun des domaines d'activités prévus ci-dessus, comprend des activités individualisées appartenant au m
+
+================================================================================
+ID: JORADP-2023-197:art-5
+DOCUMENT: JORADP-2023-197
+TITRE: Décret exécutif n° 23-197 du 25 mai 2023 fixant la liste des activités éligibles au statut de l'auto-entrepreneur et les modalités d'inscription au registre national de l'auto-entrepreneur
+ARTICLE: Art. 5.
+TEXTE: Art. 5. — Chaque domaine d'activités et activité individualisée porte un code et une dénomination.
+
+================================================================================
+ID: JORADP-2023-197:art-6
+DOCUMENT: JORADP-2023-197
+TITRE: Décret exécutif n° 23-197 du 25 mai 2023 fixant la liste des activités éligibles au statut de l'auto-entrepreneur et les modalités d'inscription au registre national de l'auto-entrepreneur
+ARTICLE: Art. 6.
+TEXTE: Art. 6. — Le code numérique de chaque activité est composé de six (6) chiffres : — les deux (2) premiers chiffres indiquent le domaine d'activité ; — les quatre (4) chiffres suivants indiquent l'activité individualisée.
+
+================================================================================
+ID: JORADP-2023-197:art-7
+DOCUMENT: JORADP-2023-197
+TITRE: Décret exécutif n° 23-197 du 25 mai 2023 fixant la liste des activités éligibles au statut de l'auto-entrepreneur et les modalités d'inscription au registre national de l'auto-entrepreneur
+ARTICLE: Art. 7.
+TEXTE: Art. 7. — La liste des activités constitue une référence normative unique obligatoire pour la définition de chaque activité intégrée dans cette liste. A ce titre, chaque personne demandant son inscription au registre national de l'auto-entrepreneur est tenue d'utiliser, obligatoirement, la liste des activités de référence.
+
+================================================================================
+ID: JORADP-2023-197:art-8
+DOCUMENT: JORADP-2023-197
+TITRE: Décret exécutif n° 23-197 du 25 mai 2023 fixant la liste des activités éligibles au statut de l'auto-entrepreneur et les modalités d'inscription au registre national de l'auto-entrepreneur
+ARTICLE: Art. 8.
+TEXTE: Art. 8. — Le contenu de la liste des activités relatif aux activités individualisées et sa mise à jour, est fixé par arrêté du ministre chargé des start-up après avis du comité des activités de l'auto-entrepreneur prévu à l'article 10 ci-dessous.
+
+================================================================================
+ID: JORADP-2023-197:art-9
+DOCUMENT: JORADP-2023-197
+TITRE: Décret exécutif n° 23-197 du 25 mai 2023 fixant la liste des activités éligibles au statut de l'auto-entrepreneur et les modalités d'inscription au registre national de l'auto-entrepreneur
+ARTICLE: Art. 9.
+TEXTE: Art. 9. — La gestion de la liste des activités, notamment les domaines d'activités et les activités individualisées, s'effectue par voie électronique par l'agence nationale de l'auto-entrepreneur prévue par les dispositions du décret exécutif n° 23-196 du 5 Dhou El Kaâda 1444 correspondant au 25 mai 2023 susvisé, qui en assure également la reproduction, la diffusion et la mise à la disposition des usagers. L'agence assure également le suivi des p
+
+================================================================================
+ID: JORADP-2023-197:art-10
+DOCUMENT: JORADP-2023-197
+TITRE: Décret exécutif n° 23-197 du 25 mai 2023 fixant la liste des activités éligibles au statut de l'auto-entrepreneur et les modalités d'inscription au registre national de l'auto-entrepreneur
+ARTICLE: Art. 10.
+TEXTE: Art. 10. — Il est créé, un comité chargé des activités de l'auto-entrepreneur. Le comité a pour missions d'examiner, d'émettre des avis et de formuler des propositions et des recommandations concernant les activités éligibles au statut de l'auto-entrepreneur, désigné ci après le « comité ». A ce titre, le comité est chargé, notamment : — d'examiner et de proposer l'insertion de nouvelles activités individualisées à l'initiative des secteurs et de
+
+================================================================================
+ID: JORADP-2023-197:art-11
+DOCUMENT: JORADP-2023-197
+TITRE: Décret exécutif n° 23-197 du 25 mai 2023 fixant la liste des activités éligibles au statut de l'auto-entrepreneur et les modalités d'inscription au registre national de l'auto-entrepreneur
+ARTICLE: Art. 11.
+TEXTE: Art. 11. — Le comité, présidé par le ministre chargé des start-up ou son représentant, est composé : — du représentant du ministre chargé des finances ; — du représentant du ministre chargé de la numérisation et des statistiques ; — du représentant du ministre chargé de l'habitat, de l'urbanisme et de la ville ; — du représentant du ministre chargé des travaux publics et des infrastructures de base ; — du représentant du ministre chargé de l'hydr
+
+================================================================================
+ID: JORADP-2023-197:art-12
+DOCUMENT: JORADP-2023-197
+TITRE: Décret exécutif n° 23-197 du 25 mai 2023 fixant la liste des activités éligibles au statut de l'auto-entrepreneur et les modalités d'inscription au registre national de l'auto-entrepreneur
+ARTICLE: Art. 12.
+TEXTE: Art. 12. — Est inscrit au registre national de l'auto-entrepreneur, désigné ci-après « registre national », toute personne physique exerçant une activité intégrée dans la liste des activités éligibles au statut de l'auto-entrepreneur, prévue par les dispositions du présent décret.
+
+================================================================================
+ID: JORADP-2023-197:art-13
+DOCUMENT: JORADP-2023-197
+TITRE: Décret exécutif n° 23-197 du 25 mai 2023 fixant la liste des activités éligibles au statut de l'auto-entrepreneur et les modalités d'inscription au registre national de l'auto-entrepreneur
+ARTICLE: Art. 13.
+TEXTE: Art. 13. — Le registre national est tenu par l'agence nationale de l'auto-entrepreneur, prévue à l'article 9 ci-dessus. Ce registre est interopérable avec les autres institutions publiques concernées, notamment les services fiscaux et l'organisme de la sécurité sociale des non-salariés.
+
+================================================================================
+ID: JORADP-2023-197:art-14
+DOCUMENT: JORADP-2023-197
+TITRE: Décret exécutif n° 23-197 du 25 mai 2023 fixant la liste des activités éligibles au statut de l'auto-entrepreneur et les modalités d'inscription au registre national de l'auto-entrepreneur
+ARTICLE: Art. 14.
+TEXTE: Art. 14. — Le registre national est centralisé à travers un support numérique qui comprend tous les auto-entrepreneurs ainsi que les modifications, la radiation ou la réinscription dans ce registre.
+
+================================================================================
+ID: JORADP-2023-197:art-15
+DOCUMENT: JORADP-2023-197
+TITRE: Décret exécutif n° 23-197 du 25 mai 2023 fixant la liste des activités éligibles au statut de l'auto-entrepreneur et les modalités d'inscription au registre national de l'auto-entrepreneur
+ARTICLE: Art. 15.
+TEXTE: Art. 15. — Toute personne physique désirant s'inscrire au registre national est tenue de satisfaire aux conditions prévues par les dispositions de l'article 3 de la loi n° 22-23 du 24 Joumada El Oula 1444 correspondant au 18 décembre 2022 susvisée : — atteindre l'âge légal du travail ; — être de nationalité algérienne et résidant en Algérie ou étranger résidant, conformément à la législation et à la réglementation en vigueur ; — exercer une activ
+
+================================================================================
+ID: JORADP-2023-197:art-16
+DOCUMENT: JORADP-2023-197
+TITRE: Décret exécutif n° 23-197 du 25 mai 2023 fixant la liste des activités éligibles au statut de l'auto-entrepreneur et les modalités d'inscription au registre national de l'auto-entrepreneur
+ARTICLE: Art. 16.
+TEXTE: Art. 16. — La demande d'inscription au registre national prévue par les dispositions de l'article15 ci-dessus, est introduite contre récépissé de dépôt.
+
+================================================================================
+ID: JORADP-2023-197:art-17
+DOCUMENT: JORADP-2023-197
+TITRE: Décret exécutif n° 23-197 du 25 mai 2023 fixant la liste des activités éligibles au statut de l'auto-entrepreneur et les modalités d'inscription au registre national de l'auto-entrepreneur
+ARTICLE: Art. 17.
+TEXTE: Art. 17. — La demande d'inscription au registre national est traitée dans un délai, maximum, de trois (3) jours ouvrables, à compter de la date de son dépôt.
+
+================================================================================
+ID: JORADP-2023-197:art-18
+DOCUMENT: JORADP-2023-197
+TITRE: Décret exécutif n° 23-197 du 25 mai 2023 fixant la liste des activités éligibles au statut de l'auto-entrepreneur et les modalités d'inscription au registre national de l'auto-entrepreneur
+ARTICLE: Art. 18.
+TEXTE: Art. 18. — Le demandeur est notifié par voie électronique de l'acceptation de son inscription au registre national ou de son rejet.
+
+================================================================================
+ID: JORADP-2023-197:art-19
+DOCUMENT: JORADP-2023-197
+TITRE: Décret exécutif n° 23-197 du 25 mai 2023 fixant la liste des activités éligibles au statut de l'auto-entrepreneur et les modalités d'inscription au registre national de l'auto-entrepreneur
+ARTICLE: Art. 19.
+TEXTE: Art. 19. — Dans le cadre du respect de l'homogénéité et de la cohérence des domaines d'activités prévus à l'article 4 ci-dessus, l'auto-entrepreneur est immatriculé dans le registre national pour l'exercice d'une activité individualisée appartenant à l'un de ces domaines d'activités. Il peut, également, s'inscrire pour exercer d'autres activités individualisées appartenant au même domaine d'activités.
+
+================================================================================
+ID: JORADP-2023-197:art-20
+DOCUMENT: JORADP-2023-197
+TITRE: Décret exécutif n° 23-197 du 25 mai 2023 fixant la liste des activités éligibles au statut de l'auto-entrepreneur et les modalités d'inscription au registre national de l'auto-entrepreneur
+ARTICLE: Art. 20.
+TEXTE: Art. 20. — Après acceptation de son inscription, il est délivré à l'auto-entrepreneur par l'agence nationale de l'auto-entrepreneur, une carte d'auto-entrepreneur portant un numéro d'immatriculation national, unique au registre national.
+
+================================================================================
+ID: JORADP-2023-197:art-21
+DOCUMENT: JORADP-2023-197
+TITRE: Décret exécutif n° 23-197 du 25 mai 2023 fixant la liste des activités éligibles au statut de l'auto-entrepreneur et les modalités d'inscription au registre national de l'auto-entrepreneur
+ARTICLE: Art. 21.
+TEXTE: Art. 21. — L'auto-entrepreneur peut accéder à un extrait du registre national le concernant, téléchargeable par voie électronique de la plate-forme citée à l'article 15 ci-dessus. L'extrait du registre national indique le domaine d'activités, l'activité ou les activités individualisées au titre de ce domaine, sous réserve des dispositions de l'article 19 ci-dessus.
+
+================================================================================
+ID: JORADP-2023-197:art-22
+DOCUMENT: JORADP-2023-197
+TITRE: Décret exécutif n° 23-197 du 25 mai 2023 fixant la liste des activités éligibles au statut de l'auto-entrepreneur et les modalités d'inscription au registre national de l'auto-entrepreneur
+ARTICLE: Art. 22.
+TEXTE: Art. 22. — Conformément à la législation en vigueur, l'auto-entrepreneur est radié du registre national de l'auto-entrepreneur par l'agence nationale de l'auto-entrepreneur, notamment dans les cas suivants : — sur sa demande déposée auprès de l'agence nationale de l'auto-entrepreneur ou à travers la plate-forme électronique, prévue à l'article 15 ci-dessus ; — en cas de non déclaration du chiffre d'affaires ou de déclaration d'un chiffre d'affair
+
+================================================================================
+ID: JORADP-2023-197:art-23
+DOCUMENT: JORADP-2023-197
+TITRE: Décret exécutif n° 23-197 du 25 mai 2023 fixant la liste des activités éligibles au statut de l'auto-entrepreneur et les modalités d'inscription au registre national de l'auto-entrepreneur
+ARTICLE: Art. 23.
+TEXTE: Art. 23. — Conformément à la législation en vigueur, la décision de radiation est notifiée par l'agence nationale de l'auto-entrepreneur par tout moyen possible, dans un délai de quinze (15) jours, à compter de la date de radiation à l'auto-entrepreneur, aux services fiscaux, à l'organisme de sécurité sociale des non-salariés et à l'établissement bancaire et/ou postal concerné(s). La radiation du registre national entraîne l'annulation de la cart
+
+================================================================================
+ID: JORADP-2023-197:art-24
+DOCUMENT: JORADP-2023-197
+TITRE: Décret exécutif n° 23-197 du 25 mai 2023 fixant la liste des activités éligibles au statut de l'auto-entrepreneur et les modalités d'inscription au registre national de l'auto-entrepreneur
+ARTICLE: Art. 24.
+TEXTE: Art. 24. — L'auto-entrepreneur dispose d'un délai de trente (30) jours pour introduire son recours, en cas de rejet de son inscription ou de sa radiation, auprès des services compétents du ministre chargé des start-up. Le ministre chargé des start-up dispose d'un délai de trente (30) jours pour répondre au recours introduit par l'auto-entrepreneur.
+
+================================================================================
+ID: JORADP-2023-197:art-25
+DOCUMENT: JORADP-2023-197
+TITRE: Décret exécutif n° 23-197 du 25 mai 2023 fixant la liste des activités éligibles au statut de l'auto-entrepreneur et les modalités d'inscription au registre national de l'auto-entrepreneur
+ARTICLE: Art. 25.
+TEXTE: Art. 25. — L'auto-entrepreneur qui a été radié du registre national peut demander sa réinscription au registre national après la levée des motifs à l'origine de sa radiation et le paiement des dettes fiscales et parafiscales dues, le cas échéant, conformément à la législation en vigueur.
+
+================================================================================
+ID: JORADP-2023-197:art-26
+DOCUMENT: JORADP-2023-197
+TITRE: Décret exécutif n° 23-197 du 25 mai 2023 fixant la liste des activités éligibles au statut de l'auto-entrepreneur et les modalités d'inscription au registre national de l'auto-entrepreneur
+ARTICLE: Art. 26.
+TEXTE: Art. 26. — Le présent décret sera publié au Journal officiel de la République algérienne démocratique et populaire.
+
+================================================================================
+ID: JORADP-2023-198:art-1
+DOCUMENT: JORADP-2023-198
+TITRE: Décret exécutif n° 23-198 du 25 mai 2023 fixant le modèle de la carte de l'auto-entrepreneur
+ARTICLE: Article 1er.
+TEXTE: Article 1er. — En application des dispositions de l'article 6 de la loi n° 22-23 du 24 Joumada El Oula 1444 correspondant au 18 décembre 2022 susvisée, le présent décret a pour objet de fixer le modèle de la carte de l'auto-entrepreneur, conformément à l'annexe jointe au présent décret.
+
+================================================================================
+ID: JORADP-2023-198:art-2
+DOCUMENT: JORADP-2023-198
+TITRE: Décret exécutif n° 23-198 du 25 mai 2023 fixant le modèle de la carte de l'auto-entrepreneur
+ARTICLE: Art. 2.
+TEXTE: Art. 2. — Le modèle de la carte de l'auto-entrepreneur comporte deux faces, il mentionne dans la face recto : la mention « République Algérienne Démocratique et Populaire », le code QR, ainsi que la photo et les informations concernant l'auto-entrepreneur. Ce modèle mentionne dans la face verso : le nom de l'agence nationale de l'auto-entrepreneur, l'espace dédié au logo y associé, les données sur l'utilisation de la carte ainsi que le site web d
+
+================================================================================
+ID: JORADP-2023-198:art-3
+DOCUMENT: JORADP-2023-198
+TITRE: Décret exécutif n° 23-198 du 25 mai 2023 fixant le modèle de la carte de l'auto-entrepreneur
+ARTICLE: Art. 3.
+TEXTE: Art. 3. — La carte de l'auto-entrepreneur est confectionnée électroniquement, conformément aux normes techniques en vigueur en la matière. Les caractéristiques techniques de la carte de l'auto-entrepreneur sont fixées par arrêté du ministre chargé des start-up.
+
+================================================================================
+ID: JORADP-2023-198:art-4
+DOCUMENT: JORADP-2023-198
+TITRE: Décret exécutif n° 23-198 du 25 mai 2023 fixant le modèle de la carte de l'auto-entrepreneur
+ARTICLE: Art. 4.
+TEXTE: Art. 4. — Le présent décret sera publié au Journal officiel de la République algérienne démocratique et populaire.
+
+================================================================================
+ID: JORADP-2022-085:art-1
+DOCUMENT: JORADP-2022-085
+TITRE: Loi n° 22-23 du 18 décembre 2022 portant statut de l’auto-entrepreneur
+ARTICLE: Article 1er.
+TEXTE: Article 1er. — La présente loi portant statut de l'auto-entrepreneur a pour objet de définir les règles et les conditions applicables à l'exercice de l'activité de l'auto-entrepreneur.
+
+================================================================================
+ID: JORADP-2022-085:art-2
+DOCUMENT: JORADP-2022-085
+TITRE: Loi n° 22-23 du 18 décembre 2022 portant statut de l’auto-entrepreneur
+ARTICLE: Art. 2.
+TEXTE: Art. 2. — Il est entendu par auto-entrepreneur, toute personne physique exerçant à titre individuel une activité lucrative figurant dans la liste des activités éligibles au statut de l'auto-entrepreneur et dont le chiffre d'affaires annuel n'excède pas un seuil fixé conformément à la législation en vigueur. Sont exclues de la liste des activités prévue à l'alinéa ci-dessus, les fonctions libérales, les professions et les activités réglementées et
+
+================================================================================
+ID: JORADP-2022-085:art-3
+DOCUMENT: JORADP-2022-085
+TITRE: Loi n° 22-23 du 18 décembre 2022 portant statut de l’auto-entrepreneur
+ARTICLE: Art. 3.
+TEXTE: Art. 3. — Est éligible au statut de l'auto-entrepreneur, toute personne physique remplissant les conditions suivantes : — atteindre l'âge légal du travail ; — être de nationalité algérienne et résidant en Algérie, ou étranger résidant, conformément à la législation et à la réglementation en vigueur ; — exercer une activité inclue dans la liste des activités éligibles au statut de l'auto-entrepreneur.
+
+================================================================================
+ID: JORADP-2022-085:art-4
+DOCUMENT: JORADP-2022-085
+TITRE: Loi n° 22-23 du 18 décembre 2022 portant statut de l’auto-entrepreneur
+ARTICLE: Art. 4.
+TEXTE: Art. 4. — Toute personne physique ayant répondu aux conditions fixées par l'article 3 ci-dessus, doit présenter une demande d'inscription au registre national de l'auto-entrepreneur. Les modalités d'application du présent article sont fixées par voie réglementaire.
+
+================================================================================
+ID: JORADP-2022-085:art-5
+DOCUMENT: JORADP-2022-085
+TITRE: Loi n° 22-23 du 18 décembre 2022 portant statut de l’auto-entrepreneur
+ARTICLE: Art. 5.
+TEXTE: Art. 5. — Le registre national de l'auto-entrepreneur est tenu par un établissement public, désigné ci-après l' « établissement ». L'établissement est chargé, notamment de tenir ledit registre, du suivi et du contrôle des activités de l'auto-entrepreneur. L'organisation et le fonctionnement de l'établissement sont fixés par voie réglementaire.
+
+================================================================================
+ID: JORADP-2022-085:art-6
+DOCUMENT: JORADP-2022-085
+TITRE: Loi n° 22-23 du 18 décembre 2022 portant statut de l’auto-entrepreneur
+ARTICLE: Art. 6.
+TEXTE: Art. 6. — « Une carte de l'auto-entrepreneur » portant un numéro d'immatriculation national unique, est délivrée à l'auto-entrepreneur par l'établissement. Le modèle de la carte de l'auto-entrepreneur est fixé par voie réglementaire.
+
+================================================================================
+ID: JORADP-2022-085:art-7
+DOCUMENT: JORADP-2022-085
+TITRE: Loi n° 22-23 du 18 décembre 2022 portant statut de l’auto-entrepreneur
+ARTICLE: Art. 7.
+TEXTE: Art. 7. — L'auto-entrepreneur peut domicilier son activité dans son lieu de résidence ou dans des espaces de travail communs.
+
+================================================================================
+ID: JORADP-2022-085:art-8
+DOCUMENT: JORADP-2022-085
+TITRE: Loi n° 22-23 du 18 décembre 2022 portant statut de l’auto-entrepreneur
+ARTICLE: Art. 8.
+TEXTE: Art. 8. — Lorsqu'elle sert de domicile à l'activité de l'auto-entrepreneur, la résidence personnelle et familiale ne peut faire l'objet de saisie, en raison des dettes ou des préjudices liés à ladite activité.
+
+================================================================================
+ID: JORADP-2022-085:art-9
+DOCUMENT: JORADP-2022-085
+TITRE: Loi n° 22-23 du 18 décembre 2022 portant statut de l’auto-entrepreneur
+ARTICLE: Art. 9.
+TEXTE: Art. 9. — L'auto-entrepreneur bénéficie des avantages suivants : — de la tenue d'une comptabilité simplifiée sur un registre coté et paraphé par les services des impôts, territorialement compétents, retraçant les recettes et les dépenses liées à l'activité ; — de la dispense de l'obligation d'inscription au registre du commerce ; — d'un régime fiscal préférentiel ; — de l'ouverture d'un compte bancaire commercial.
+
+================================================================================
+ID: JORADP-2022-085:art-10
+DOCUMENT: JORADP-2022-085
+TITRE: Loi n° 22-23 du 18 décembre 2022 portant statut de l’auto-entrepreneur
+ARTICLE: Art. 10.
+TEXTE: Art. 10. — L'auto-entrepreneur est soumis à l'obligation d'obtention d'un numéro d'identification fiscale et de déclaration auprès de l'organisme de sécurité sociale des non-salariés.
+
+================================================================================
+ID: JORADP-2022-085:art-11
+DOCUMENT: JORADP-2022-085
+TITRE: Loi n° 22-23 du 18 décembre 2022 portant statut de l’auto-entrepreneur
+ARTICLE: Art. 11.
+TEXTE: Art. 11. — Tout auto-entrepreneur est dans l'obligation : — de déposer auprès de l'établissement ou à travers la plate-forme électronique de l'auto-entrepreneur créée à cet effet par l'établissement, une demande d'inscription au registre national de l'auto-entrepreneur ; — d'effectuer une déclaration d'existence auprès des services fiscaux, territorialement compétents, pour l'obtention d'un numéro d'identification fiscale dans les trente (30) jou
+
+================================================================================
+ID: JORADP-2022-085:art-12
+DOCUMENT: JORADP-2022-085
+TITRE: Loi n° 22-23 du 18 décembre 2022 portant statut de l’auto-entrepreneur
+ARTICLE: Art. 12.
+TEXTE: Art. 12. — Dans l'exercice de ses activités, l'auto-entrepreneur est soumis aux dispositions législatives et réglementaires en vigueur.
+
+================================================================================
+ID: JORADP-2022-085:art-13
+DOCUMENT: JORADP-2022-085
+TITRE: Loi n° 22-23 du 18 décembre 2022 portant statut de l’auto-entrepreneur
+ARTICLE: Art. 13.
+TEXTE: Art. 13. — En cas de dépassement du chiffre d'affaires annuel défini par la législation en vigueur durant trois (3) années de suite, l'auto-entrepreneur est tenu de s'inscrire au registre du commerce, s'il souhaite poursuivre l'exercice de son activité.
+
+================================================================================
+ID: JORADP-2022-085:art-14
+DOCUMENT: JORADP-2022-085
+TITRE: Loi n° 22-23 du 18 décembre 2022 portant statut de l’auto-entrepreneur
+ARTICLE: Art. 14.
+TEXTE: Art. 14. — L'auto-entrepreneur est radié du registre national de l'auto-entrepreneur par l'établissement, notamment dans les cas suivants : — sur sa demande déposée auprès de l'établissement ou à travers la plate-forme électronique ; — en cas de non déclaration du chiffre d'affaires ou de déclaration d'un chiffre d'affaires néant, durant les trois (3) années suivant l'inscription au registre national de l'auto-entrepreneur ; — en cas de dépasseme
+
+================================================================================
+ID: JORADP-2022-085:art-15
+DOCUMENT: JORADP-2022-085
+TITRE: Loi n° 22-23 du 18 décembre 2022 portant statut de l’auto-entrepreneur
+ARTICLE: Art. 15.
+TEXTE: Art. 15. — La décision de radiation est notifiée par l'établissement par tout moyen possible, dans un délai de quinze (15) jours, à compter de la date de radiation à l'auto-entrepreneur, aux services fiscaux, à l'organisme de sécurité sociale et à l'établissement bancaire et/ou postal concerné(s). La radiation du registre national de l'auto-entrepreneur entraîne l'annulation de la carte de l'auto-entrepreneur.
+
+================================================================================
+ID: JORADP-2022-085:art-16
+DOCUMENT: JORADP-2022-085
+TITRE: Loi n° 22-23 du 18 décembre 2022 portant statut de l’auto-entrepreneur
+ARTICLE: Art. 16.
+TEXTE: Art. 16. — L'auto-entrepreneur peut demander sa réinscription au registre national de l'auto-entrepreneur après la levée des motifs à l'origine de la radiation et le paiement de la dette fiscale et parafiscale, le cas échéant.
+
+================================================================================
+ID: JORADP-2022-085:art-17
+DOCUMENT: JORADP-2022-085
+TITRE: Loi n° 22-23 du 18 décembre 2022 portant statut de l’auto-entrepreneur
+ARTICLE: Art. 17.
+TEXTE: Art. 17. — La présente loi sera publiée au Journal officiel de la République algérienne démocratique et populaire.
+
