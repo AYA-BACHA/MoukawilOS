@@ -66,7 +66,8 @@ def patch(fid: int, data: ProfileUpdate) -> dict:
                 f"update public.freelancers set {', '.join(sets)} where id = %s",
                 (*values, fid),
             )
-    
+    return get(fid)
+
 
 
 def get_preferences(fid: int) -> dict:

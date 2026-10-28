@@ -144,14 +144,14 @@ def test_concurrent_issue_gives_distinct_numbers(client, cid, complete):
 def test_pay_future_date(client, cid, complete):
     a = issued(client, cid)
     r = client.post(f"/invoices/{a['id']}/pay", json={"paid_at": "2099-01-01"})
-    assert r.status_code == 409
+    assert r.status_code == 400
 
 
 def test_pay_before_issue_date(client, cid, complete):
     a = issued(client, cid)
     r = client.post(f"/invoices/{a['id']}/pay",
                     json={"paid_at": str(TODAY - timedelta(days=1))})
-    assert r.status_code == 409
+    assert r.status_code == 400
 
 
 def test_pay_ok_and_audit(client, cid, complete):

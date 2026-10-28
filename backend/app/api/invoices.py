@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 
 from app.core.security import get_current_freelancer_id
-from app.repositories import invoices as repo
+from app.services import invoices as repo
 from app.schemas.invoices import (
     CancelRequest, InvoiceCreate, InvoiceOut, InvoiceUpdate, InvoicePage ,
      PayRequest,
@@ -52,7 +52,7 @@ def list_invoices(
     offset: int = Query(0, ge=0),
     fid: int = Depends(get_current_freelancer_id),
 ):
-    items, total = repo.list_all(fid, status_, client_id, q, date_from, date_to, limit, offset)
+    items, total = repo.list_invoices(fid, status_, client_id, q, date_from, date_to, limit, offset)
     return {"items": items, "total": total, "limit": limit, "offset": offset}
 
 

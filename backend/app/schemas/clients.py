@@ -6,7 +6,7 @@ import re
 from app.core.lookups import ClientType
 
 class ClientBase(BaseModel):
-    
+    client_type: ClientType
     name: str = Field(min_length=1, max_length=200)
     address: str = Field(min_length=1, max_length=255)
     rc: str | None = Field(default=None, max_length=50)
