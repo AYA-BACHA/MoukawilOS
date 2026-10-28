@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
 from app.core.db import pool
-from app.repositories.invoices import _money
+from app.services.invoices import _money
 from decimal import Decimal
 
 from tests.api.conftest import wipe  # noqa: F401

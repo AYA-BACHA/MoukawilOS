@@ -1,45 +1,26 @@
-from datetime import date, datetime
-from decimal import ROUND_HALF_UP, Decimal
-from zoneinfo import ZoneInfo
+"""app/repositories/invoices.py
+
+SQL only. No business rules, no validation, no "today", no money maths.
+Functions that take `conn` run inside a transaction owned by the service.
+"""
+from datetime import date
 
 from psycopg.errors import UniqueViolation
-
-from app.core.db import pool
-from app.repositories import clients as clients_repo
-from app.schemas.invoices import (
-    InvoiceCreate, InvoiceOut, InvoiceUpdate, ItemOut, SnapshotOut, AuditEventOut
-)
-from app.services.profile import completeness
 from psycopg.types.json import Jsonb
 
-
-TZ = ZoneInfo("Africa/Algiers")
-CENT = Decimal("0.01")
-
-
-class InvalidState(Exception):
-    pass
-
-
-class ClientInvalid(Exception):
-    pass
-
-
-class ProfileIncomplete(Exception):
-    def __init__(self, missing):
-        self.missing = missing
+from app.core.db import pool
+from app.schemas.invoices import (
+    AuditEventOut, InvoiceCreate, InvoiceOut, ItemOut, SnapshotOut,
+)
 
 
 class NumberTaken(Exception):
-    pass
+    """The (freelancer, year, sequence) unique index was violated."""
 
 
-def _today() -> date:
-    return datetime.now(TZ).date()
-
-
-def _money(x: Decimal) -> Decimal:
-    return x.quantize(CENT, rounding=ROUND_HALF_UP)
+def transaction():
+    """`with transaction() as conn:` commits on success, rolls back on error."""
+    return pool.connection()
 
 
 COLUMNS = """i.id, i.client_id, coalesce(s.client_name, c.name), i.status,
@@ -52,9 +33,10 @@ FROM = """public.invoices i
           left join public.invoice_snapshots s on s.invoice_id = i.id"""
 
 
-
+# ---------------- mapping helpers ----------------
 def _number(seq, year):
     return f"FAC-{year}-{seq:03d}" if seq else None
+
 
 def _escape_like(text: str) -> str:
     """Make %, _ and \\ behave as normal characters in LIKE."""
@@ -63,19 +45,14 @@ def _escape_like(text: str) -> str:
                 .replace("_", "\\_"))
 
 
-def _write_items(conn, invoice_id, items) -> Decimal:
-    conn.execute("delete from public.invoice_items where invoice_id = %s", (invoice_id,))
-    total = Decimal("0")
-    for it in items:
-        line = _money(it.quantity * it.unit_price)
-        total += line
-        conn.execute(
-            """insert into public.invoice_items
-               (invoice_id, description, quantity, unit, unit_price, line_total)
-               values (%s,%s,%s,%s,%s,%s)""",
-            (invoice_id, it.description, it.quantity, it.unit, it.unit_price, line),
-        )
-    return total
+def _to_out(r, items: list[ItemOut]) -> InvoiceOut:
+    return InvoiceOut(
+        id=r[0], client_id=r[1], client_name=r[2], status=r[3],
+        number=_number(r[4], r[5]), sequence_number=r[4], number_year=r[5],
+        issue_date=r[6], due_date=r[7], currency=r[8], total=r[9],
+        paid_at=r[10], cancelled_at=r[11], cancellation_reason=r[12],
+        note=r[13], created_at=r[14], items=items, payment_rail=r[15],
+    )
 
 
 def _items_by_invoice(conn, invoice_ids: list[int]) -> dict[int, list[ItemOut]]:
@@ -97,15 +74,6 @@ def _items_by_invoice(conn, invoice_ids: list[int]) -> dict[int, list[ItemOut]]:
     return grouped
 
 
-def _to_out(r, items: list[ItemOut]) -> InvoiceOut:
-    return InvoiceOut(
-        id=r[0], client_id=r[1], client_name=r[2], status=r[3],
-        number=_number(r[4], r[5]), sequence_number=r[4], number_year=r[5],
-        issue_date=r[6], due_date=r[7], currency=r[8], total=r[9],
-        paid_at=r[10], cancelled_at=r[11], cancellation_reason=r[12],
-        note=r[13], created_at=r[14], items=items, payment_rail=r[15] ,
-    )
-
 def _snapshot(conn, invoice_id) -> SnapshotOut | None:
     r = conn.execute(
         """select seller_name, seller_address, seller_nif, seller_ai,
@@ -124,21 +92,6 @@ def _snapshot(conn, invoice_id) -> SnapshotOut | None:
     )
 
 
-def _check_client(freelancer_id, client_id):
-    c = clients_repo.get(freelancer_id, client_id)
-    if c is None or c.archived_at is not None:
-        raise ClientInvalid()
-
-
-def _event(conn, invoice_id, freelancer_id, event_type, paid_at=None, details=None):
-    conn.execute(
-        """insert into public.invoice_audit_events
-           (invoice_id, freelancer_id, event_type, paid_at, details)
-           values (%s,%s,%s,%s,%s)""",
-        (invoice_id, freelancer_id, event_type, paid_at, Jsonb(details or {})),
-    )
-
-
 def _audit_log(conn, invoice_id) -> list[AuditEventOut]:
     rows = conn.execute(
         """select id, event_type, details, created_at
@@ -150,7 +103,7 @@ def _audit_log(conn, invoice_id) -> list[AuditEventOut]:
                           created_at=r[3]) for r in rows]
 
 
-# ---------------- read ----------------
+# ---------------- reads (own connection) ----------------
 def get(freelancer_id: int, invoice_id: int) -> InvoiceOut | None:
     with pool.connection() as conn:
         r = conn.execute(
@@ -200,225 +153,167 @@ def list_all(freelancer_id: int, status: str | None, client_id: int | None,
         ).fetchall()
         items = _items_by_invoice(conn, [r[0] for r in rows])
         return [_to_out(r, items[r[0]]) for r in rows], total
-    
 
 
-# ---------------- drafts ----------------
-def create(freelancer_id: int, d: InvoiceCreate) -> InvoiceOut:
-    _check_client(freelancer_id, d.client_id)
-    with pool.connection() as conn:
-        new_id = conn.execute(
-            """insert into public.invoices
-               (freelancer_id, client_id, due_date, note, currency)
-               values (%s,%s,%s,%s,%s) returning id""",
-            (freelancer_id, d.client_id, d.due_date, d.note, d.currency),
-        ).fetchone()[0]
-        total = _write_items(conn, new_id, d.items)
-        conn.execute("update public.invoices set total=%s where id=%s", (total, new_id))
-    return get(freelancer_id, new_id)
+# ---------------- locking reads (inside a service transaction) ----------------
+def lock_freelancer(conn, freelancer_id: int) -> dict | None:
+    """Row lock on the freelancer: serializes invoice numbering."""
+    cur = conn.execute(
+        """select first_name, last_name, trade_address, nif, ai_number,
+                  rib, anae_card_number, anae_card_issue_date,
+                  last_invoice_number, last_invoice_year
+           from public.freelancers where id=%s for update""",
+        (freelancer_id,),
+    )
+    row = cur.fetchone()
+    return dict(zip([d.name for d in cur.description], row)) if row else None
 
 
-def update_draft(freelancer_id: int, invoice_id: int, d: InvoiceUpdate) -> InvoiceOut | None:
-    _check_client(freelancer_id, d.client_id)
-    with pool.connection() as conn:
-        row = conn.execute(
-            "select status from public.invoices where id=%s and freelancer_id=%s for update",
-            (invoice_id, freelancer_id),
-        ).fetchone()
-        if row is None:
-            return None
-        if row[0] != "draft":
-            raise InvalidState("only drafts can be edited")
-        total = _write_items(conn, invoice_id, d.items)
+def lock_invoice(conn, freelancer_id: int, invoice_id: int) -> dict | None:
+    row = conn.execute(
+        """select status, client_id, total, issue_date, paid_at, payment_rail
+           from public.invoices
+           where id=%s and freelancer_id=%s for update""",
+        (invoice_id, freelancer_id),
+    ).fetchone()
+    if row is None:
+        return None
+    return dict(status=row[0], client_id=row[1], total=row[2],
+                issue_date=row[3], paid_at=row[4], payment_rail=row[5])
+
+
+def count_items(conn, invoice_id: int) -> int:
+    return conn.execute(
+        "select count(*) from public.invoice_items where invoice_id=%s",
+        (invoice_id,),
+    ).fetchone()[0]
+
+
+def highest_sequence(conn, freelancer_id: int, year: int) -> int:
+    return conn.execute(
+        """select coalesce(max(sequence_number), 0) from public.invoices
+           where freelancer_id=%s and number_year=%s""",
+        (freelancer_id, year),
+    ).fetchone()[0]
+
+
+def get_active_client(conn, freelancer_id: int, client_id: int) -> dict | None:
+    r = conn.execute(
+        """select t.code, c.name, c.address, c.rc, c.nif, c.nis
+           from public.clients c
+           join public.client_types t on t.id = c.client_type_id
+           where c.id=%s and c.freelancer_id=%s and c.archived_at is null""",
+        (client_id, freelancer_id),
+    ).fetchone()
+    if r is None:
+        return None
+    return dict(type=r[0], name=r[1], address=r[2], rc=r[3], nif=r[4], nis=r[5])
+
+
+# ---------------- writes (inside a service transaction) ----------------
+def insert_draft(conn, freelancer_id: int, d: InvoiceCreate) -> int:
+    return conn.execute(
+        """insert into public.invoices
+           (freelancer_id, client_id, due_date, note, currency)
+           values (%s,%s,%s,%s,%s) returning id""",
+        (freelancer_id, d.client_id, d.due_date, d.note, d.currency),
+    ).fetchone()[0]
+
+
+def update_draft_header(conn, invoice_id: int, d, total) -> None:
+    conn.execute(
+        """update public.invoices
+           set client_id=%s, due_date=%s, note=%s, currency=%s, total=%s
+           where id=%s""",
+        (d.client_id, d.due_date, d.note, d.currency, total, invoice_id),
+    )
+
+
+def set_total(conn, invoice_id: int, total) -> None:
+    conn.execute("update public.invoices set total=%s where id=%s", (total, invoice_id))
+
+
+def replace_items(conn, invoice_id: int, lines: list[dict]) -> None:
+    """`lines` already priced by the service (each has line_total)."""
+    conn.execute("delete from public.invoice_items where invoice_id = %s", (invoice_id,))
+    for ln in lines:
+        conn.execute(
+            """insert into public.invoice_items
+               (invoice_id, description, quantity, unit, unit_price, line_total)
+               values (%s,%s,%s,%s,%s,%s)""",
+            (invoice_id, ln["description"], ln["quantity"], ln["unit"],
+             ln["unit_price"], ln["line_total"]),
+        )
+
+
+def delete_invoice(conn, invoice_id: int) -> None:
+    conn.execute("delete from public.invoices where id=%s", (invoice_id,))
+
+
+def insert_snapshot(conn, invoice_id: int, seller: dict, client: dict) -> None:
+    conn.execute(
+        """insert into public.invoice_snapshots
+           (invoice_id, seller_name, seller_address, seller_nif, seller_ai,
+            seller_card_number, seller_rib, client_type, client_name,
+            client_address, client_rc, client_nif, client_nis)
+           values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
+        (invoice_id, seller["name"], seller["address"], seller["nif"],
+         seller["ai"], seller["card_number"], seller["rib"],
+         client["type"], client["name"], client["address"],
+         client["rc"], client["nif"], client["nis"]),
+    )
+
+
+def mark_issued(conn, invoice_id: int, seq: int, year: int, issue_date: date) -> None:
+    try:
         conn.execute(
             """update public.invoices
-               set client_id=%s, due_date=%s, note=%s, currency=%s, total=%s
+               set status='issued', sequence_number=%s, number_year=%s, issue_date=%s
                where id=%s""",
-            (d.client_id, d.due_date, d.note, d.currency, total, invoice_id),
+            (seq, year, issue_date, invoice_id),
         )
-    return get(freelancer_id, invoice_id)
-
-
-def delete_draft(freelancer_id: int, invoice_id: int) -> bool:
-    with pool.connection() as conn:
-        row = conn.execute(
-            "select status from public.invoices where id=%s and freelancer_id=%s for update",
-            (invoice_id, freelancer_id),
-        ).fetchone()
-        if row is None:
-            return False
-        if row[0] != "draft":
-            raise InvalidState("only drafts can be deleted, cancel it instead")
-        conn.execute("delete from public.invoices where id=%s", (invoice_id,))
-    return True
-
-
-# ---------------- issue ----------------
-def issue(freelancer_id: int, invoice_id: int) -> InvoiceOut | None:
-    today = _today()
-    year = today.year
-    try:
-        with pool.connection() as conn:
-            # 1. lock the freelancer: serializes numbering
-            cur = conn.execute(
-                """select first_name, last_name, trade_address, nif, ai_number,
-                          rib, anae_card_number, anae_card_issue_date,
-                          last_invoice_number, last_invoice_year
-                   from public.freelancers where id=%s for update""",
-                (freelancer_id,),
-            )
-            f = dict(zip([d.name for d in cur.description], cur.fetchone()))
-
-            report = completeness(f)
-            if not report["can_issue_invoices"]:
-                raise ProfileIncomplete(report["missing_for_invoicing"])
-
-            inv = conn.execute(
-                """select status, client_id, total from public.invoices
-                   where id=%s and freelancer_id=%s for update""",
-                (invoice_id, freelancer_id),
-            ).fetchone()
-            if inv is None:
-                return None
-            if inv[0] != "draft":
-                raise InvalidState("invoice already issued")
-
-            n_items = conn.execute(
-                "select count(*) from public.invoice_items where invoice_id=%s",
-                (invoice_id,),
-            ).fetchone()[0]
-            if n_items == 0:
-                raise InvalidState("add at least one item before issuing")
-
-            # 2. next number: counter (restarts each year), never below the
-            #    highest number already used this year
-            counter = f["last_invoice_number"] if f["last_invoice_year"] == year else 0
-            highest = conn.execute(
-                """select coalesce(max(sequence_number), 0) from public.invoices
-                   where freelancer_id=%s and number_year=%s""",
-                (freelancer_id, year),
-            ).fetchone()[0]
-            seq = max(counter, highest) + 1
-
-            # 3. snapshot (immutable)
-                        
-            c = conn.execute(
-                """select t.code, c.name, c.address, c.rc, c.nif, c.nis
-                   from public.clients c
-                   join public.client_types t on t.id = c.client_type_id
-                   where c.id=%s and c.freelancer_id=%s and c.archived_at is null""",
-                (inv[1], freelancer_id),
-            ).fetchone()
-            if c is None:
-                raise ClientInvalid()
-            conn.execute(
-                """insert into public.invoice_snapshots
-                   (invoice_id, seller_name, seller_address, seller_nif, seller_ai,
-                    seller_card_number, seller_rib, client_type, client_name,
-                    client_address, client_rc, client_nif, client_nis)
-                   values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
-                (invoice_id, f"{f['first_name']} {f['last_name']}",
-                 f["trade_address"], f["nif"], f["ai_number"],
-                 f["anae_card_number"], f["rib"],
-                 c[0], c[1], c[2], c[3], c[4], c[5]),
-            )
-
-            # 4. issue + advance the counter
-            conn.execute(
-                """update public.invoices
-                   set status='issued', sequence_number=%s, number_year=%s, issue_date=%s
-                   where id=%s""",
-                (seq, year, today, invoice_id),
-            )
-            conn.execute(
-                """update public.freelancers
-                   set last_invoice_number=%s, last_invoice_year=%s where id=%s""",
-                (seq, year, freelancer_id),
-            )
-            _event(conn, invoice_id, freelancer_id, "issued", details={
-                "number": _number(seq, year),
-                "issue_date": today.isoformat(),
-                "total": str(inv[2]),
-            })
     except UniqueViolation as exc:
         raise NumberTaken() from exc
-    return get(freelancer_id, invoice_id)
 
 
-# ---------------- status changes ----------------
-def _transition(freelancer_id, invoice_id, allowed, fn):
-    with pool.connection() as conn:
-        row = conn.execute(
-             """select status, issue_date, paid_at, payment_rail from public.invoices
-               where id=%s and freelancer_id=%s for update""",
-            (invoice_id, freelancer_id),
-        ).fetchone()
-        if row is None:
-            return None
-        if row[0] not in allowed:
-            raise InvalidState(f"not allowed from status '{row[0]}'")
-        fn(conn, row)
-    return get(freelancer_id, invoice_id)
+def set_freelancer_counter(conn, freelancer_id: int, seq: int, year: int) -> None:
+    conn.execute(
+        """update public.freelancers
+           set last_invoice_number=%s, last_invoice_year=%s where id=%s""",
+        (seq, year, freelancer_id),
+    )
 
 
-class InvalidPaymentDate(Exception):
-    def __init__(self, code: str, message: str):
-        self.code = code
-        self.message = message
-        
-def mark_paid(freelancer_id, invoice_id, paid_at: date, payment_rail: str | None = None):
-    def run(conn, row):
-        if paid_at > _today():
-            raise InvalidPaymentDate(
-                "PAYMENT_DATE_IN_FUTURE",
-                "The payment date cannot be in the future.")
-        if paid_at < row[1]:
-            raise InvalidPaymentDate(
-                "PAYMENT_DATE_BEFORE_ISSUE_DATE",
-                "The payment date cannot be before the invoice issue date.")
-        conn.execute(
-            """update public.invoices
-               set status='paid', paid_at=%s, payment_rail=%s where id=%s""",
-            (paid_at, payment_rail, invoice_id),
-        )
-        _event(conn, invoice_id, freelancer_id, "paid", details={
-            "paid_at": paid_at.isoformat(),
-            "payment_rail": payment_rail,
-        })
-    return _transition(freelancer_id, invoice_id, {"issued"}, run)
+def mark_paid(conn, invoice_id: int, paid_at: date, payment_rail: str | None) -> None:
+    conn.execute(
+        """update public.invoices
+           set status='paid', paid_at=%s, payment_rail=%s where id=%s""",
+        (paid_at, payment_rail, invoice_id),
+    )
 
 
-def revert_payment(freelancer_id, invoice_id):
-    removed = {}
-
-    def run(conn, row):
-        removed["paid_at"] = row[2]
-        conn.execute(
-            """update public.invoices
-               set status='issued', paid_at=null, payment_rail=null where id=%s""",
-            (invoice_id,),
-        )
-        _event(conn, invoice_id, freelancer_id, "unpaid", row[2], details={
-            "removed_paid_at": row[2].isoformat(),
-            "removed_payment_rail": row[3],
-        })  # the removed date
-    out = _transition(freelancer_id, invoice_id, {"paid"}, run)
-    if out and removed["paid_at"].year < _today().year:
-        out.warning = ("This payment belongs to a previous year, "
-                       "it may no longer match your declaration.")
-    return out
+def mark_unpaid(conn, invoice_id: int) -> None:
+    conn.execute(
+        """update public.invoices
+           set status='issued', paid_at=null, payment_rail=null where id=%s""",
+        (invoice_id,),
+    )
 
 
-def cancel(freelancer_id, invoice_id, reason: str):
-    def run(conn, row):
-        conn.execute(
-            """update public.invoices
-               set status='cancelled', cancelled_at=now(), cancellation_reason=%s
-               where id=%s""",
-            (reason, invoice_id),
-        )
-        _event(conn, invoice_id, freelancer_id, "cancelled",
-               details={"reason": reason})
-    return _transition(freelancer_id, invoice_id, {"issued"}, run)   # not from paid
+def mark_cancelled(conn, invoice_id: int, reason: str) -> None:
+    conn.execute(
+        """update public.invoices
+           set status='cancelled', cancelled_at=now(), cancellation_reason=%s
+           where id=%s""",
+        (reason, invoice_id),
+    )
 
 
+def add_event(conn, invoice_id: int, freelancer_id: int, event_type: str,
+              paid_at: date | None = None, details: dict | None = None) -> None:
+    conn.execute(
+        """insert into public.invoice_audit_events
+           (invoice_id, freelancer_id, event_type, paid_at, details)
+           values (%s,%s,%s,%s,%s)""",
+        (invoice_id, freelancer_id, event_type, paid_at, Jsonb(details or {})),
+    )

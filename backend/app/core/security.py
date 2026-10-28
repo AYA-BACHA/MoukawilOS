@@ -1,3 +1,5 @@
+from functools import lru_cache
+
 import jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -8,8 +10,13 @@ from app.core.db import pool
 
 bearer = HTTPBearer(auto_error=False)
 
-# Public keys are fetched once and cached
-_jwks = PyJWKClient(f"{settings.supabase_url}/auth/v1/.well-known/jwks.json")
+
+@lru_cache
+def _jwks() -> PyJWKClient:
+    """Created on first use (not at import), so a missing SUPABASE_URL is reported
+    by settings.check_required() at startup instead of crashing the import.
+    Public keys are fetched once and cached by the client."""
+    return PyJWKClient(f"{settings.supabase_url}/auth/v1/.well-known/jwks.json")
 
 
 def get_current_user_id(
@@ -19,13 +26,16 @@ def get_current_user_id(
     if creds is None:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "missing token")
     try:
-        key = _jwks.get_signing_key_from_jwt(creds.credentials)
+        key = _jwks().get_signing_key_from_jwt(creds.credentials)
         payload = jwt.decode(
             creds.credentials,
             key.key,
             algorithms=["ES256"],
             audience="authenticated",
         )
+    except jwt.PyJWKClientConnectionError as exc:      # Supabase unreachable: not the user's fault
+        raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE,
+                            "authentication service unavailable") from exc
     except jwt.PyJWTError as exc:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "invalid token") from exc
     return payload["sub"]

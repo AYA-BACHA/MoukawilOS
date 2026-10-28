@@ -14,5 +14,14 @@ class Settings(BaseSettings):
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
+    def check_required(self) -> None:
+        """Fail at startup, with the variable names, instead of at the first request."""
+        missing = [n.upper() for n in ("database_url", "supabase_url") if not getattr(self, n)]
+        if self.app_env != "development":
+            missing += [n.upper() for n in ("supabase_anon_key", "supabase_service_role_key")
+                        if not getattr(self, n)]
+        if missing:
+            raise RuntimeError(f"missing environment variables: {', '.join(missing)}")
+
 
 settings = Settings()
