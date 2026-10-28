@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Response, status
 
 from app.core.security import get_current_freelancer_id
 from app.repositories import invoices as repo
+from app.schemas.compliance import CreditNoteCreateRequest, CreditNoteResponse
 from app.schemas.invoices import (
     CancelRequest, InvoiceCreate, InvoiceOut, InvoiceUpdate, InvoicePage ,
      PayRequest,
@@ -31,7 +32,7 @@ def _guard(fn):
     except repo.NumberTaken:
         raise HTTPException(409, "this invoice number already exists, retry")
     except repo.InvalidPaymentDate as e:
-        raise HTTPException(400, {"code": e.code, "message": e.message})
+        raise HTTPException(409, {"code": e.code, "message": e.message})
     if r is None:
         raise _nf()
     return r
@@ -93,3 +94,15 @@ def revert_payment(invoice_id: int, fid: int = Depends(get_current_freelancer_id
 def cancel_invoice(invoice_id: int, data: CancelRequest,
                    fid: int = Depends(get_current_freelancer_id)):
     return _guard(lambda: repo.cancel(fid, invoice_id, data.reason))
+
+
+@router.post("/{invoice_id}/credit-note", response_model=CreditNoteResponse, status_code=status.HTTP_201_CREATED)
+def issue_credit_note(
+    invoice_id: int,
+    data: CreditNoteCreateRequest,
+    fid: int = Depends(get_current_freelancer_id),
+):
+    cn = _guard(lambda: repo.create_credit_note(fid, invoice_id, data.reason, data.credit_amount))
+    if cn is None:
+        raise _nf()
+    return {"success": True, "data": cn}

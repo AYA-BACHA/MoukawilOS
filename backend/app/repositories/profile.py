@@ -66,7 +66,21 @@ def patch(fid: int, data: ProfileUpdate) -> dict:
                 f"update public.freelancers set {', '.join(sets)} where id = %s",
                 (*values, fid),
             )
-    
+
+    res = get(fid)
+    can_issue = res["completeness"]["can_issue_invoices"]
+    current_completed_at = res["profile"].get("onboarding_completed_at")
+
+    if can_issue and not current_completed_at:
+        with pool.connection() as conn:
+            conn.execute("update public.freelancers set onboarding_completed_at = now() where id = %s", (fid,))
+        res = get(fid)
+    elif not can_issue and current_completed_at:
+        with pool.connection() as conn:
+            conn.execute("update public.freelancers set onboarding_completed_at = null where id = %s", (fid,))
+        res = get(fid)
+
+    return res
 
 
 def get_preferences(fid: int) -> dict:

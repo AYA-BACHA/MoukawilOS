@@ -1,4 +1,3 @@
-import db from "@/data/db.json";
 import { computeNextDeadline, type ExtendedDeadline } from "@/lib/deadline";
 import { supabase } from "@/lib/supabase";
 import type {
@@ -91,6 +90,15 @@ interface BackendInvoiceOut {
   note: string | null;
   created_at: string;
   items: BackendItemOut[];
+  has_credit_notes?: boolean;
+  total_credited?: number | string;
+  credit_notes?: {
+    id: string;
+    credit_note_number: string;
+    amount: number | string;
+    reason: string;
+    issue_date: string;
+  }[];
   snapshot?: {
     seller_name: string;
     client_type: string;
@@ -156,10 +164,40 @@ export async function checkBackendHealth(): Promise<boolean> {
   return res?.status === "ok";
 }
 
-const ownClients = () => (db.clients as Client[]).filter((client) => client.userId === CURRENT_USER_ID);
+const DEFAULT_USER: User = {
+  id: CURRENT_USER_ID,
+  firstName: "Sara",
+  displayName: "Sara Benali",
+  registration: "26-123456",
+  fullName: "Sara Benali",
+  profession: "Digital Consultant & Software Architect",
+  activity: "Conseil en systèmes informatiques",
+  nif: "123456789012345",
+  city: "Alger Centre",
+  phone: "0550 12 34 56",
+  ceiling: 5000000,
+  ifuRate: 0.005,
+  email: "sara.benali@moukawil.dz",
+  address: "Didouche Mourad, Alger",
+  wilaya: "16 - Alger",
+  postalCode: "16000",
+  nis: "000216010123456",
+  statutoryActivity: "Conseil en technologies de l'information",
+  activityCode: "62.02",
+  registeredAt: "2024-02-15",
+  cardValidUntil: "2029-02-15",
+  fiscalAuthority: "Inspection des Impôts d'Alger Centre",
+  casnosVerifiedYear: 2026,
+  certificateValidUntil: 2026,
+  invoicePrefix: "FAC",
+  nextInvoiceNumber: 1,
+  paymentTermsDays: 30,
+  appendExemptionClause: true,
+  exemptionClause: "TVA non applicable - Art. 13 de la LFR 2023 / Art. 282 ter du CIDTA",
+};
 
 export async function getCurrentUser(): Promise<User> {
-  const fallbackUser = db.users.find((item) => item.id === CURRENT_USER_ID) || (db.users[0] as unknown as User);
+  const fallbackUser = DEFAULT_USER;
 
   const [profileData, preferencesData] = await Promise.all([
     fetchBackend<{
@@ -273,7 +311,7 @@ export async function getClients(): Promise<Client[]> {
     }
   }
 
-  return ownClients();
+  return [];
 }
 
 export async function createClient(input: ClientInput): Promise<Client> {
@@ -467,8 +505,21 @@ export async function getInvoices(explicitScenario?: DemoScenario): Promise<Invo
     let resList = res.items
       .filter((inv) => inv.status !== "cancelled")
       .map((item) => {
-        const status: InvoiceStatus =
+        const cns = (item.credit_notes || []).map((cn) => ({
+          id: String(cn.id),
+          credit_note_number: cn.credit_note_number,
+          amount: Number(cn.amount || 0),
+          reason: cn.reason,
+          issue_date: cn.issue_date,
+        }));
+        const totalCredited = Number(item.total_credited || cns.reduce((acc, c) => acc + c.amount, 0));
+        const hasCredit = Boolean(item.has_credit_notes || cns.length > 0 || totalCredited > 0);
+
+        let status: InvoiceStatus =
           item.status === "paid" ? "paid" : item.status === "draft" ? "draft" : "pending";
+        if (hasCredit && totalCredited >= Number(item.total || 0) && Number(item.total || 0) > 0) {
+          status = "credited";
+        }
 
         const client: Client = clientMap.get(String(item.client_id)) || {
           id: String(item.client_id),
@@ -504,9 +555,52 @@ export async function getInvoices(explicitScenario?: DemoScenario): Promise<Invo
           statutoryClause: "TVA non applicable - Art. 13 de la LFR 2023",
           paidAt: item.paid_at,
           paymentRail: item.payment_rail,
+          creditNoteNumber: cns[0]?.credit_note_number ?? null,
+          creditedAmount: totalCredited,
+          creditNotes: cns,
           client,
         };
       });
+
+    // Merge persistent client-side credit notes
+    if (typeof window !== "undefined") {
+      try {
+        const storedCredits = localStorage.getItem("moukawil_credited_invoices");
+        if (storedCredits) {
+          const creditsMap = JSON.parse(storedCredits);
+          resList = resList.map((inv) => {
+            const cn = creditsMap[inv.id];
+            if (cn) {
+              const cnAmount = Number(cn.amount || cn.credit_amount || 0);
+              const existingCns = inv.creditNotes || [];
+              const combinedCns = existingCns.some((c) => c.credit_note_number === cn.credit_note_number)
+                ? existingCns
+                : [
+                    ...existingCns,
+                    {
+                      id: String(cn.id || `cn_${Date.now()}`),
+                      credit_note_number: cn.credit_note_number,
+                      amount: cnAmount,
+                      reason: cn.reason || "Avoir commercial",
+                      issue_date: cn.issue_date || new Date().toISOString().slice(0, 10),
+                    },
+                  ];
+              const totCred = combinedCns.reduce((a, b) => a + b.amount, 0);
+              return {
+                ...inv,
+                status: totCred >= inv.amount ? ("credited" as const) : inv.status,
+                creditNoteNumber: combinedCns[0]?.credit_note_number,
+                creditedAmount: totCred,
+                creditNotes: combinedCns,
+              };
+            }
+            return inv;
+          });
+        }
+      } catch {
+        // ignore
+      }
+    }
 
     // Merge persistent client-side payments so payments never reset on page navigation
     if (typeof window !== "undefined") {
@@ -533,27 +627,64 @@ export async function getInvoices(explicitScenario?: DemoScenario): Promise<Invo
     return resList.sort((a, b) => b.issueDate.localeCompare(a.issueDate));
   }
 
-  let baseInvoices = (db.invoices as InvoiceWithClient[])
-    .filter((invoice) => invoice.userId === CURRENT_USER_ID && clientMap.has(invoice.clientId))
-    .map((invoice) => ({ ...invoice, client: clientMap.get(invoice.clientId)! }));
+  return [];
+}
+
+export async function issueCreditNoteApi(
+  invoiceId: string,
+  data: { reason: string; credit_amount: number }
+): Promise<{ success: boolean; data?: any; error?: string }> {
+  let backendData: any = null;
+  if (/^\d+$/.test(invoiceId)) {
+    try {
+      const res = await fetchBackend<{ success: boolean; data: any }>(
+        `/api/invoices/${invoiceId}/credit-note`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            reason: data.reason,
+            credit_amount: data.credit_amount,
+          }),
+        }
+      );
+      if (res && res.success && res.data) {
+        backendData = {
+          id: res.data.id,
+          credit_note_number: res.data.credit_note_number,
+          amount: Number(res.data.amount),
+          reason: data.reason,
+          issue_date: res.data.issue_date,
+        };
+      }
+    } catch (e) {
+      console.error("Backend credit-note error:", e);
+    }
+  }
+
+  const resultData = backendData || {
+    id: `cn_${Date.now()}`,
+    credit_note_number: `AV-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 900) + 100).padStart(3, "0")}`,
+    amount: data.credit_amount,
+    reason: data.reason,
+    issue_date: new Date().toISOString().slice(0, 10),
+  };
 
   if (typeof window !== "undefined") {
     try {
-      const storedPayments = localStorage.getItem("moukawil_paid_invoices");
-      if (storedPayments) {
-        const paymentsMap: Record<string, { paidAt: string; paymentRail: string }> = JSON.parse(storedPayments);
-        baseInvoices = baseInvoices.map((inv) =>
-          paymentsMap[inv.id]
-            ? { ...inv, status: "paid", paidAt: paymentsMap[inv.id].paidAt, paymentRail: paymentsMap[inv.id].paymentRail }
-            : inv,
-        );
-      }
+      const stored = JSON.parse(localStorage.getItem("moukawil_credited_invoices") || "{}");
+      stored[invoiceId] = resultData;
+      localStorage.setItem("moukawil_credited_invoices", JSON.stringify(stored));
+      window.dispatchEvent(
+        new CustomEvent("moukawil_invoice_credited", {
+          detail: { invoiceId, creditNote: resultData },
+        })
+      );
     } catch {
       // ignore
     }
   }
 
-  return baseInvoices.sort((a, b) => b.issueDate.localeCompare(a.issueDate));
+  return { success: true, data: resultData };
 }
 
 export async function payInvoiceApi(
@@ -673,36 +804,28 @@ export async function getNextDeadline(): Promise<ExtendedDeadline> {
 }
 
 export async function getInvoiceDraft(clientId?: string): Promise<InvoiceDraft> {
-  const stored = (db.invoiceDrafts as InvoiceDraft[]).find((item) => item.userId === CURRENT_USER_ID);
-  const lastNumber = Math.max(
-    0,
-    ...db.invoices
-      .filter((invoice) => invoice.userId === CURRENT_USER_ID)
-      .map((invoice) => Number(invoice.number.split("-")[1])),
-  );
-  const draft: InvoiceDraft = stored ?? {
+  let matchedClient: Client | undefined;
+  if (clientId) {
+    const clients = await getClients();
+    matchedClient = clients.find((c) => c.id === clientId);
+  }
+
+  return {
     id: "new",
     userId: CURRENT_USER_ID,
-    number: `${new Date().getFullYear()}-${String(lastNumber + 1).padStart(4, "0")}`,
-    clientType: "B2B",
-    client: { name: "", nif: "", nis: "", rc: "", address: "" },
+    number: `${new Date().getFullYear()}-0001`,
+    clientType: matchedClient?.type || "B2B",
+    client: {
+      name: matchedClient?.name || "",
+      nif: matchedClient?.nif || "",
+      nis: matchedClient?.nis || "",
+      rc: matchedClient?.rc || "",
+      address: matchedClient?.address || "",
+    },
     issueDate: new Date().toISOString().slice(0, 10),
     paymentTermsDays: 30,
     items: [{ id: "itm_new", description: "", details: null, quantity: 1, unitPrice: 0 }],
     savedAt: null,
-  };
-  const client = ownClients().find((item) => item.id === clientId);
-  if (!client) return draft;
-  return {
-    ...draft,
-    clientType: client.type,
-    client: {
-      name: client.name,
-      nif: client.nif ?? "",
-      nis: client.nis ?? "",
-      rc: client.rc ?? "",
-      address: client.address ?? "",
-    },
   };
 }
 

@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Check, Download, FileDown, FileText, Plus, Printer, Trash2, X } from "lucide-react";
+import { Check, Eye, FileDown, FileText, Plus, Printer, RotateCcw, Trash2, X } from "lucide-react";
 import { clientDetail } from "@/lib/format";
 import { cn } from "@/lib/cn";
+import { CreditNoteModal } from "@/components/invoices/credit-note-modal";
 import { PrintInvoiceModal } from "@/components/invoices/print-invoice-modal";
 import { printElementById } from "@/lib/print";
 import type { InvoiceStatus, InvoiceWithClient } from "@/types/models";
@@ -14,6 +15,8 @@ const statusStyles: Record<InvoiceStatus, { label: string; pill: string; dot: st
   pending: { label: "Pending", pill: "bg-surface-high text-body", dot: "bg-teal" },
   paid: { label: "Paid", pill: "bg-mint font-semibold text-accent", dot: "bg-primary" },
   draft: { label: "Draft", pill: "bg-surface text-muted", dot: "bg-muted" },
+  credited: { label: "Credited", pill: "bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 font-semibold", dot: "bg-amber-500" },
+  cancelled: { label: "Cancelled", pill: "bg-rose-100 text-rose-800 dark:bg-rose-950/40 dark:text-rose-300", dot: "bg-rose-500" },
 };
 
 const headClass = "px-3 py-3 text-[11px] font-bold uppercase tracking-wider text-muted";
@@ -30,6 +33,7 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
   const { t, formatAmount, formatDate } = useI18n();
   const [viewingReceipt, setViewingReceipt] = useState<InvoiceWithClient | null>(null);
   const [printingInvoice, setPrintingInvoice] = useState<InvoiceWithClient | null>(null);
+  const [creditingInvoice, setCreditingInvoice] = useState<InvoiceWithClient | null>(null);
 
   return (
     <>
@@ -54,7 +58,7 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
           </div>
         ) : (
           invoices.map((invoice) => {
-            const status = statusStyles[invoice.status];
+            const status = statusStyles[invoice.status] || statusStyles.pending;
             const isDraft = invoice.status === "draft";
             return (
               <div
@@ -65,16 +69,29 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
                 )}
               >
                 <div className="flex items-center justify-between gap-2">
-                  <span className="font-num text-sm font-bold text-ink">{invoice.number}</span>
-                  <span
-                    className={cn(
-                      "inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-medium",
-                      status.pill,
-                    )}
+                  <button
+                    type="button"
+                    onClick={() => setPrintingInvoice(invoice)}
+                    className="font-num text-sm font-bold text-ink hover:text-primary transition-colors text-start"
                   >
-                    <span className={cn("size-1.5 rounded-full", status.dot)} />
-                    {t(status.label)}
-                  </span>
+                    {invoice.number}
+                  </button>
+                  <div className="flex items-center gap-1.5">
+                    {invoice.creditNoteNumber && (
+                      <span className="rounded bg-amber-100 dark:bg-amber-950/60 px-2 py-0.5 text-[10px] font-bold text-amber-800 dark:text-amber-300">
+                        {invoice.creditNoteNumber}
+                      </span>
+                    )}
+                    <span
+                      className={cn(
+                        "inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-medium",
+                        status.pill,
+                      )}
+                    >
+                      <span className={cn("size-1.5 rounded-full", status.dot)} />
+                      {t(status.label)}
+                    </span>
+                  </div>
                 </div>
 
                 <div className="flex items-start justify-between gap-2">
@@ -91,6 +108,11 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
                     <p className="font-num text-base font-bold text-ink">
                       {formatAmount(invoice.amount)} <span className="text-xs font-normal text-muted">{t("DZD")}</span>
                     </p>
+                    {invoice.creditedAmount ? (
+                      <p className="font-num text-[11px] font-medium text-amber-700 dark:text-amber-400">
+                        -{formatAmount(invoice.creditedAmount)} DZD
+                      </p>
+                    ) : null}
                   </div>
                 </div>
 
@@ -100,38 +122,60 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
                 </div>
 
                 <div className="flex flex-wrap items-center justify-end gap-2 border-t border-slate-100 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setPrintingInvoice(invoice)}
+                    className="inline-flex min-h-[40px] items-center gap-1 rounded-lg border border-slate-200 bg-surface-low px-3 py-1.5 text-xs font-medium text-body active:scale-95"
+                  >
+                    <Eye className="size-3.5 text-muted" />
+                    {t("View")}
+                  </button>
+
                   {invoice.status === "pending" && (
                     <button
                       type="button"
                       onClick={() => onMarkPaid(invoice.id)}
-                      className="inline-flex min-h-[44px] items-center gap-1 rounded-lg bg-primary px-3.5 py-2 text-xs font-semibold text-white shadow-xs active:scale-95"
+                      className="inline-flex min-h-[40px] items-center gap-1 rounded-lg bg-primary px-3.5 py-1.5 text-xs font-semibold text-white shadow-xs active:scale-95"
                     >
                       <Check className="size-3.5" />
                       {t("Mark Paid")}
                     </button>
                   )}
+
+                  {(invoice.status === "paid" || invoice.status === "pending" || invoice.status === "credited") && (
+                    <button
+                      type="button"
+                      onClick={() => setCreditingInvoice(invoice)}
+                      className="inline-flex min-h-[40px] items-center gap-1 rounded-lg border border-amber-300 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/40 px-3 py-1.5 text-xs font-semibold text-amber-900 dark:text-amber-200 shadow-2xs active:scale-95 transition-colors"
+                    >
+                      <RotateCcw className="size-3.5 text-amber-600 dark:text-amber-400" />
+                      {t("Issue Credit Note")}
+                    </button>
+                  )}
+
                   {invoice.status === "paid" && (
                     <button
                       type="button"
                       onClick={() => setViewingReceipt(invoice)}
-                      className="inline-flex min-h-[44px] items-center gap-1 rounded-lg border border-slate-200 bg-surface-low px-3.5 py-2 text-xs font-medium text-body active:scale-95"
+                      className="inline-flex min-h-[40px] items-center gap-1 rounded-lg border border-slate-200 bg-surface-low px-3 py-1.5 text-xs font-medium text-body active:scale-95"
                     >
                       <FileDown className="size-3.5 text-accent" />
                       {t("Receipt")}
                     </button>
                   )}
+
                   {isDraft && (
                     <>
                       <Link
                         href={`/invoices/new?client=${invoice.client.id}`}
-                        className="inline-flex min-h-[44px] items-center rounded-lg border border-slate-200 bg-surface-low px-3.5 py-2 text-xs font-medium text-body active:scale-95"
+                        className="inline-flex min-h-[40px] items-center rounded-lg border border-slate-200 bg-surface-low px-3.5 py-1.5 text-xs font-medium text-body active:scale-95"
                       >
                         {t("Edit Draft")}
                       </Link>
                       <button
                         type="button"
                         onClick={() => onDeleteDraft(invoice.id)}
-                        className="inline-flex min-h-[44px] items-center rounded-lg p-2.5 text-red-600 hover:bg-red-50 active:scale-95"
+                        className="inline-flex min-h-[40px] items-center rounded-lg p-2.5 text-red-600 hover:bg-red-50 active:scale-95"
                         aria-label={t("Delete Draft")}
                       >
                         <Trash2 className="size-4" />
@@ -183,137 +227,173 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
               </tr>
             ) : (
               invoices.map((invoice) => {
-              const status = statusStyles[invoice.status];
-              const isDraft = invoice.status === "draft";
-              const isActive = invoice.id === activeId;
+                const status = statusStyles[invoice.status] || statusStyles.pending;
+                const isDraft = invoice.status === "draft";
+                const isActive = invoice.id === activeId;
 
-              return (
-                <tr
-                  key={invoice.id}
-                  className={cn(
-                    "transition-colors hover:bg-slate-50/70",
-                    isActive && "bg-surface-high/30",
-                    isDraft && "opacity-80",
-                  )}
-                >
-                  {/* Invoice Ref */}
-                  <td className={cn(cellClass, "font-num text-xs font-bold text-ink whitespace-nowrap")}>
-                    {invoice.number}
-                  </td>
-
-                  {/* Client & Legal Type */}
-                  <td className={cellClass}>
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-xs font-bold text-ink">{invoice.client.name}</span>
-                      <span
-                        className={cn(
-                          "rounded px-1.5 py-0.2 text-[10px] font-bold",
-                          invoice.client.type === "B2B" ? "bg-surface text-teal" : "bg-surface-low text-body",
-                        )}
+                return (
+                  <tr
+                    key={invoice.id}
+                    className={cn(
+                      "transition-colors hover:bg-slate-50/70",
+                      isActive && "bg-surface-high/30",
+                      isDraft && "opacity-80",
+                    )}
+                  >
+                    {/* Invoice Ref */}
+                    <td className={cn(cellClass, "font-num text-xs font-bold text-ink whitespace-nowrap")}>
+                      <button
+                        type="button"
+                        onClick={() => setPrintingInvoice(invoice)}
+                        className="hover:text-primary transition-colors flex items-center gap-1.5 text-start"
                       >
-                        {invoice.client.type}
-                      </span>
-                    </div>
-                    <p className="font-num text-[11px] text-muted truncate max-w-[200px]">
-                      {clientDetail(invoice.client)}
-                    </p>
-                  </td>
+                        <span>{invoice.number}</span>
+                        {invoice.creditNoteNumber && (
+                          <span className="rounded bg-amber-100 dark:bg-amber-950/60 px-1.5 py-0.2 text-[10px] font-bold text-amber-800 dark:text-amber-300">
+                            {invoice.creditNoteNumber}
+                          </span>
+                        )}
+                      </button>
+                    </td>
 
-                  {/* Dates */}
-                  <td className={cellClass}>
-                    <div className="text-xs font-medium text-ink">{formatDate(invoice.issueDate)}</div>
-                    <div className="text-[11px] text-muted">{t("Due {v1}", { v1: formatDate(invoice.dueDate) })}</div>
-                  </td>
-
-                  {/* Amount */}
-                  <td className={cn(cellClass, "text-end font-num text-xs font-bold", isDraft ? "text-muted" : "text-ink")}>
-                    {formatAmount(invoice.amount)}
-                  </td>
-
-                  {/* Statutory Clause */}
-                  <td className={cellClass}>
-                    <span className="inline-block rounded-md border border-slate-200/60 bg-surface px-2 py-0.5 text-[10px] font-medium text-body">
-                      {invoice.statutoryClause}
-                    </span>
-                  </td>
-
-                  {/* Status Pill */}
-                  <td className={cn(cellClass, "text-center whitespace-nowrap")}>
-                    <span
-                      className={cn(
-                        "inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-medium",
-                        status.pill,
-                      )}
-                    >
-                      <span className={cn("size-1.5 rounded-full", status.dot)} />
-                      {t(status.label)}
-                    </span>
-                  </td>
-
-                  {/* Actions */}
-                  <td className={cellClass}>
-                    <div className="flex items-center justify-end gap-1.5 whitespace-nowrap">
-                      {invoice.status === "pending" && (
-                        <button
-                          type="button"
-                          onClick={() => onMarkPaid(invoice.id)}
+                    {/* Client & Legal Type */}
+                    <td className={cellClass}>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-xs font-bold text-ink">{invoice.client.name}</span>
+                        <span
                           className={cn(
-                            "rounded-lg px-2.5 py-1 text-xs font-semibold transition-all",
-                            isActive
-                              ? "bg-primary text-white shadow-xs"
-                              : "border border-slate-200/80 bg-surface text-ink hover:bg-slate-200",
+                            "rounded px-1.5 py-0.2 text-[10px] font-bold",
+                            invoice.client.type === "B2B" ? "bg-surface text-teal" : "bg-surface-low text-body",
                           )}
                         >
-                          {t("Mark Paid")}
-                        </button>
-                      )}
+                          {invoice.client.type}
+                        </span>
+                      </div>
+                      <p className="font-num text-[11px] text-muted truncate max-w-[200px]">
+                        {clientDetail(invoice.client)}
+                      </p>
+                    </td>
 
-                      {invoice.status === "paid" && (
+                    {/* Dates */}
+                    <td className={cellClass}>
+                      <div className="text-xs font-medium text-ink">{formatDate(invoice.issueDate)}</div>
+                      <div className="text-[11px] text-muted">{t("Due {v1}", { v1: formatDate(invoice.dueDate) })}</div>
+                    </td>
+
+                    {/* Amount */}
+                    <td className={cn(cellClass, "text-end font-num text-xs font-bold", isDraft ? "text-muted" : "text-ink")}>
+                      <div>{formatAmount(invoice.amount)}</div>
+                      {invoice.creditedAmount ? (
+                        <div className="text-[10px] text-amber-700 dark:text-amber-400 font-medium">
+                          -{formatAmount(invoice.creditedAmount)}
+                        </div>
+                      ) : null}
+                    </td>
+
+                    {/* Statutory Clause */}
+                    <td className={cellClass}>
+                      <span className="inline-block rounded-md border border-slate-200/60 bg-surface px-2 py-0.5 text-[10px] font-medium text-body">
+                        {invoice.statutoryClause}
+                      </span>
+                    </td>
+
+                    {/* Status Pill */}
+                    <td className={cn(cellClass, "text-center whitespace-nowrap")}>
+                      <span
+                        className={cn(
+                          "inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-medium",
+                          status.pill,
+                        )}
+                      >
+                        <span className={cn("size-1.5 rounded-full", status.dot)} />
+                        {t(status.label)}
+                      </span>
+                    </td>
+
+                    {/* Actions */}
+                    <td className={cellClass}>
+                      <div className="flex items-center justify-end gap-1.5 whitespace-nowrap">
                         <button
                           type="button"
-                          onClick={() => setViewingReceipt(invoice)}
-                          className="rounded-lg border border-slate-200/80 bg-surface-low px-2.5 py-1 text-xs font-medium text-body transition-colors hover:bg-surface hover:text-ink"
+                          onClick={() => setPrintingInvoice(invoice)}
+                          title={t("View invoice")}
+                          className="rounded-lg border border-slate-200/80 bg-surface-low px-2 py-1 text-xs font-medium text-body transition-colors hover:bg-surface hover:text-ink flex items-center gap-1"
                         >
-                          {t("Receipt")}
+                          <Eye className="size-3 text-muted" />
+                          <span>{t("View")}</span>
                         </button>
-                      )}
 
-                      {isDraft && (
-                        <Link
-                          href="/invoices/new"
-                          className="rounded-lg border border-slate-200/80 bg-surface-low px-2.5 py-1 text-xs font-medium text-body transition-colors hover:bg-surface hover:text-ink"
-                        >
-                          {t("Resume")}
-                        </Link>
-                      )}
+                        {invoice.status === "pending" && (
+                          <button
+                            type="button"
+                            onClick={() => onMarkPaid(invoice.id)}
+                            className={cn(
+                              "rounded-lg px-2.5 py-1 text-xs font-semibold transition-all",
+                              isActive
+                                ? "bg-primary text-white shadow-xs"
+                                : "border border-slate-200/80 bg-surface text-ink hover:bg-slate-200",
+                            )}
+                          >
+                            {t("Mark Paid")}
+                          </button>
+                        )}
 
-                      {isDraft ? (
-                        <button
-                          type="button"
-                          aria-label={t("Delete draft")}
-                          onClick={() => onDeleteDraft(invoice.id)}
-                          className="rounded-lg p-1.5 text-danger transition-colors hover:bg-red-50"
-                        >
-                          <Trash2 className="size-3.5" />
-                        </button>
-                      ) : (
-                        <button
-                          type="button"
-                          aria-label={t("Download PDF")}
-                          onClick={() => {
-                            if (invoice.status === "paid") setViewingReceipt(invoice);
-                            else setPrintingInvoice(invoice);
-                          }}
-                          className="rounded-lg p-1.5 text-body transition-colors hover:bg-surface hover:text-ink"
-                        >
-                          <FileDown className="size-3.5 text-accent" />
-                        </button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              );
-            }))}
+                        {(invoice.status === "paid" || invoice.status === "pending" || invoice.status === "credited") && (
+                          <button
+                            type="button"
+                            onClick={() => setCreditingInvoice(invoice)}
+                            className="rounded-lg border border-amber-300 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/40 px-2 py-1 text-xs font-semibold text-amber-900 dark:text-amber-200 transition-colors active:scale-95 flex items-center gap-1 shadow-2xs"
+                            title={t("Issue Credit Note (Facture d'Avoir)")}
+                          >
+                            <RotateCcw className="size-3 text-amber-600 dark:text-amber-400" />
+                            <span>{t("Avoir")}</span>
+                          </button>
+                        )}
+
+                        {invoice.status === "paid" && (
+                          <button
+                            type="button"
+                            onClick={() => setViewingReceipt(invoice)}
+                            className="rounded-lg border border-slate-200/80 bg-surface-low px-2 py-1 text-xs font-medium text-body transition-colors hover:bg-surface hover:text-ink"
+                          >
+                            {t("Receipt")}
+                          </button>
+                        )}
+
+                        {isDraft && (
+                          <Link
+                            href="/invoices/new"
+                            className="rounded-lg border border-slate-200/80 bg-surface-low px-2.5 py-1 text-xs font-medium text-body transition-colors hover:bg-surface hover:text-ink"
+                          >
+                            {t("Resume")}
+                          </Link>
+                        )}
+
+                        {isDraft ? (
+                          <button
+                            type="button"
+                            aria-label={t("Delete draft")}
+                            onClick={() => onDeleteDraft(invoice.id)}
+                            className="rounded-lg p-1.5 text-danger transition-colors hover:bg-red-50"
+                          >
+                            <Trash2 className="size-3.5" />
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            aria-label={t("Download PDF")}
+                            onClick={() => setPrintingInvoice(invoice)}
+                            className="rounded-lg p-1.5 text-body transition-colors hover:bg-surface hover:text-ink"
+                          >
+                            <FileDown className="size-3.5 text-accent" />
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })
+            )}
           </tbody>
         </table>
       </div>
@@ -388,12 +468,23 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
         </div>
       )}
 
-      {/* Invoice Print Modal */}
+      {/* Invoice Print & View Modal */}
       {printingInvoice && (
         <PrintInvoiceModal
           invoice={printingInvoice}
           onClose={() => setPrintingInvoice(null)}
-          autoPrint={true}
+          autoPrint={false}
+        />
+      )}
+
+      {/* Issue Credit Note Modal */}
+      {creditingInvoice && (
+        <CreditNoteModal
+          invoice={creditingInvoice}
+          onClose={() => setCreditingInvoice(null)}
+          onSuccess={() => {
+            setCreditingInvoice(null);
+          }}
         />
       )}
     </>

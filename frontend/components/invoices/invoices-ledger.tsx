@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { Check, Download, Plus, X } from "lucide-react";
+import { Check, Download, Plus, RotateCcw, X } from "lucide-react";
 import { Filters, type ClientFilter, type StatusFilter } from "@/components/invoices/filters";
 import { LedgerTable } from "@/components/invoices/ledger-table";
 import { PaymentModal } from "@/components/invoices/payment-modal";
@@ -11,7 +11,7 @@ import { downloadLedgerCsv } from "@/lib/csv";
 
 import { computeStats } from "@/lib/stats";
 import { getInvoices, payInvoiceApi, type DemoScenario } from "@/lib/api";
-import type { InvoiceWithClient, PaymentConfirmation, User } from "@/types/models";
+import type { CreditNoteDetail, InvoiceWithClient, PaymentConfirmation, User } from "@/types/models";
 import { useI18n } from "@/lib/i18n/provider";
 
 const PAGE_SIZE = 6;
@@ -69,7 +69,7 @@ export function InvoicesLedger({
     }
   }, []);
 
-  // Listen to scenario, fiscal year, or payment events across components
+  // Listen to scenario, fiscal year, payment, or credit note events across components
   useEffect(() => {
     const handleScenarioChange = (e: Event) => {
       const customEvent = e as CustomEvent<DemoScenario>;
@@ -95,13 +95,47 @@ export function InvoicesLedger({
       }
     };
 
+    const handleCreditedEvent = (e: Event) => {
+      const customEvent = e as CustomEvent<{ invoiceId: string; creditNote: CreditNoteDetail }>;
+      if (customEvent.detail) {
+        const { invoiceId, creditNote } = customEvent.detail;
+        setInvoices((prev) =>
+          prev.map((item) => {
+            if (item.id === invoiceId) {
+              const existing = item.creditNotes || [];
+              const updatedCns = existing.some((c) => c.credit_note_number === creditNote.credit_note_number)
+                ? existing
+                : [...existing, creditNote];
+              const totalCredited = updatedCns.reduce((a, b) => a + Number(b.amount || 0), 0);
+              return {
+                ...item,
+                status: totalCredited >= item.amount ? ("credited" as const) : item.status,
+                creditNoteNumber: creditNote.credit_note_number,
+                creditedAmount: totalCredited,
+                creditNotes: updatedCns,
+              };
+            }
+            return item;
+          })
+        );
+        setSettledToast({
+          number: creditNote.credit_note_number,
+          amount: Number(creditNote.amount || 0),
+          isCreditNote: true,
+        });
+      }
+    };
+
     window.addEventListener("moukawil_scenario_change", handleScenarioChange);
     window.addEventListener("moukawil_fy_change", handleFyChange);
     window.addEventListener("moukawil_invoice_paid", handlePaidEvent);
+    window.addEventListener("moukawil_invoice_credited", handleCreditedEvent);
+
     return () => {
       window.removeEventListener("moukawil_scenario_change", handleScenarioChange);
       window.removeEventListener("moukawil_fy_change", handleFyChange);
       window.removeEventListener("moukawil_invoice_paid", handlePaidEvent);
+      window.removeEventListener("moukawil_invoice_credited", handleCreditedEvent);
     };
   }, []);
 
@@ -205,18 +239,36 @@ export function InvoicesLedger({
 
   const filtered = useMemo(() => {
     const needle = query.trim().toLowerCase();
-    return activeInvoices.filter(
-      (invoice) =>
-        (status === "all" || invoice.status === status) &&
-        (clientType === "all" || invoice.client.type === clientType) &&
-        (!needle || invoice.client.name.toLowerCase().includes(needle) || invoice.number.includes(needle)),
-    );
+    return activeInvoices.filter((invoice) => {
+      const isCredited =
+        invoice.status === "credited" ||
+        Boolean(invoice.creditNoteNumber || (invoice.creditNotes && invoice.creditNotes.length > 0));
+
+      const matchesStatus =
+        status === "all" ||
+        (status === "credited" ? isCredited : invoice.status === status);
+
+      const matchesClient =
+        clientType === "all" || invoice.client.type === clientType;
+
+      const matchesQuery =
+        !needle ||
+        invoice.client.name.toLowerCase().includes(needle) ||
+        invoice.number.toLowerCase().includes(needle) ||
+        (invoice.creditNoteNumber && invoice.creditNoteNumber.toLowerCase().includes(needle));
+
+      return matchesStatus && matchesClient && matchesQuery;
+    });
   }, [activeInvoices, status, clientType, query]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
   const visible = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
-  const [settledToast, setSettledToast] = useState<{ number: string; amount: number } | null>(null);
+  const [settledToast, setSettledToast] = useState<{
+    number: string;
+    amount: number;
+    isCreditNote?: boolean;
+  } | null>(null);
   const payingInvoice = activeInvoices.find((invoice) => invoice.id === payingId) ?? null;
 
   const confirmPayment = ({ invoiceId, settlementDate, rail }: PaymentConfirmation) => {
@@ -226,7 +278,7 @@ export function InvoicesLedger({
       current.map((invoice) => (invoice.id === invoiceId ? { ...invoice, status: "paid", paidAt: settlementDate, paymentRail: rail } : invoice)),
     );
     if (target) {
-      setSettledToast({ number: target.number, amount: target.amount });
+      setSettledToast({ number: target.number, amount: target.amount, isCreditNote: false });
     }
     setPayingId(null);
   };
@@ -251,7 +303,7 @@ export function InvoicesLedger({
           </div>
           <h1 className="text-2xl sm:text-[32px] font-semibold leading-tight sm:leading-10 tracking-[-0.025em] text-ink">{t("Invoices & Revenue")}</h1>
           <p className="max-w-2xl text-xs sm:text-sm text-body">
-            {t("Manage commercial invoices, record client payments, and track statutory cash-basis turnover under Law 22-23.")}
+            {t("Manage commercial invoices, record client payments, issue credit notes, and track statutory cash-basis turnover under Law 22-23.")}
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2.5">
@@ -324,13 +376,28 @@ export function InvoicesLedger({
       {payingInvoice && <PaymentModal invoice={payingInvoice} stats={stats} onClose={() => setPayingId(null)} onConfirm={confirmPayment} />}
       {settledToast && (
         <div className="fixed bottom-6 end-6 z-50 flex items-center gap-3 rounded-2xl border border-slate-200 bg-card p-4 shadow-2xl animate-in slide-in-from-bottom-3 duration-300">
-          <span className="flex size-8 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
-            <Check className="size-4" strokeWidth={2.5} />
+          <span
+            className={`flex size-8 items-center justify-center rounded-full ${
+              settledToast.isCreditNote ? "bg-amber-100 text-amber-700" : "bg-emerald-100 text-emerald-600"
+            }`}
+          >
+            {settledToast.isCreditNote ? (
+              <RotateCcw className="size-4" strokeWidth={2.5} />
+            ) : (
+              <Check className="size-4" strokeWidth={2.5} />
+            )}
           </span>
           <div>
-            <p className="text-xs font-bold text-ink">{t("Payment Recorded for {number}", { number: settledToast.number })}</p>
+            <p className="text-xs font-bold text-ink">
+              {settledToast.isCreditNote
+                ? t("Credit Note Issued: {number}", { number: settledToast.number })
+                : t("Payment Recorded for {number}", { number: settledToast.number })}
+            </p>
             <p className="text-[11px] text-body">
-              <strong className="font-num text-ink">{t("{v1} DZD", { v1: formatAmount(settledToast.amount) })}</strong> {t("cleared & realized under FY 2026 cash-basis turnover.")}
+              <strong className="font-num text-ink">{t("{v1} DZD", { v1: formatAmount(settledToast.amount) })}</strong>{" "}
+              {settledToast.isCreditNote
+                ? t("officially deducted from FY 2026 cash-basis legal turnover.")
+                : t("cleared & realized under FY 2026 cash-basis turnover.")}
             </p>
           </div>
           <button

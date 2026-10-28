@@ -6,8 +6,6 @@ from app.core.lookups import PaymentRail
 from pydantic import BaseModel, Field
 
 
-#PaymentRail = Literal["cash", "bank_transfer", "cheque", "ccp", "card"]
-
 class ItemIn(BaseModel):
     description: str = Field(min_length=1, max_length=500)
     quantity: Decimal = Field(gt=0, max_digits=10, decimal_places=2)
@@ -31,22 +29,18 @@ class InvoiceBase(BaseModel):
     currency: Literal["DZD"] = "DZD"
     items: list[ItemIn] = []
 
-# PaymentRail = Literal["cash", "bank_transfer", "cheque", "ccp", "card"]
 
 class PayRequest(BaseModel):
     paid_at: date
     payment_rail: PaymentRail | None = None
+
+
 class InvoiceCreate(InvoiceBase):
     pass
 
 
 class InvoiceUpdate(InvoiceBase):
     """Full replacement of a draft (items included)."""
-
-
-
-
-
 
 
 class CancelRequest(BaseModel):
@@ -66,12 +60,14 @@ class SnapshotOut(BaseModel):
     client_rc: str | None
     client_nif: str | None
     client_nis: str | None
-    
+
+
 class AuditEventOut(BaseModel):
     id: int
     event_type: str            # issued | paid | unpaid | cancelled
     details: dict = {}
     created_at: datetime
+
 
 class InvoiceOut(BaseModel):
     id: int
@@ -95,8 +91,9 @@ class InvoiceOut(BaseModel):
     warning: str | None = None
     snapshot: SnapshotOut | None = None
     audit_log: list[AuditEventOut] | None = None
-    
-
+    credit_notes: list[dict] = []
+    has_credit_notes: bool = False
+    total_credited: Decimal = Decimal("0.00")
 
 
 class InvoicePage(BaseModel):
@@ -104,5 +101,3 @@ class InvoicePage(BaseModel):
     total: int
     limit: int
     offset: int
-
-

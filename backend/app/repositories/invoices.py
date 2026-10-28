@@ -97,13 +97,37 @@ def _items_by_invoice(conn, invoice_ids: list[int]) -> dict[int, list[ItemOut]]:
     return grouped
 
 
-def _to_out(r, items: list[ItemOut]) -> InvoiceOut:
+def _credit_notes_by_invoice(conn, invoice_ids: list[int]) -> dict[int, list[dict]]:
+    grouped: dict[int, list[dict]] = {i: [] for i in invoice_ids}
+    if not invoice_ids:
+        return grouped
+    rows = conn.execute(
+        '''select invoice_id, id, credit_note_number, amount, reason, issue_date
+           from public.credit_notes
+           where invoice_id = any(%s) order by id''',
+        (invoice_ids,),
+    ).fetchall()
+    for r in rows:
+        grouped[r[0]].append({
+            "id": f"cn_{r[1]}",
+            "credit_note_number": r[2],
+            "amount": str(r[3]),
+            "reason": r[4],
+            "issue_date": r[5].isoformat() if r[5] else None,
+        })
+    return grouped
+
+
+def _to_out(r, items: list[ItemOut], credit_notes: list[dict] | None = None) -> InvoiceOut:
+    cns = credit_notes or []
+    tot_cred = sum((Decimal(str(c["amount"])) for c in cns), Decimal("0.00"))
     return InvoiceOut(
         id=r[0], client_id=r[1], client_name=r[2], status=r[3],
         number=_number(r[4], r[5]), sequence_number=r[4], number_year=r[5],
         issue_date=r[6], due_date=r[7], currency=r[8], total=r[9],
         paid_at=r[10], cancelled_at=r[11], cancellation_reason=r[12],
-        note=r[13], created_at=r[14], items=items, payment_rail=r[15] ,
+        note=r[13], created_at=r[14], items=items, payment_rail=r[15],
+        credit_notes=cns, has_credit_notes=len(cns) > 0, total_credited=tot_cred,
     )
 
 def _snapshot(conn, invoice_id) -> SnapshotOut | None:
@@ -159,7 +183,9 @@ def get(freelancer_id: int, invoice_id: int) -> InvoiceOut | None:
         ).fetchone()
         if not r:
             return None
-        out = _to_out(r, _items_by_invoice(conn, [r[0]])[r[0]])
+        items = _items_by_invoice(conn, [r[0]])[r[0]]
+        cns = _credit_notes_by_invoice(conn, [invoice_id])[invoice_id]
+        out = _to_out(r, items, cns)
         out.snapshot = _snapshot(conn, invoice_id)
         out.audit_log = _audit_log(conn, invoice_id)
         return out
@@ -199,7 +225,8 @@ def list_all(freelancer_id: int, status: str | None, client_id: int | None,
             (*params, limit, offset),
         ).fetchall()
         items = _items_by_invoice(conn, [r[0] for r in rows])
-        return [_to_out(r, items[r[0]]) for r in rows], total
+        cns = _credit_notes_by_invoice(conn, [r[0] for r in rows])
+        return [_to_out(r, items[r[0]], cns[r[0]]) for r in rows], total
     
 
 
@@ -420,5 +447,65 @@ def cancel(freelancer_id, invoice_id, reason: str):
         _event(conn, invoice_id, freelancer_id, "cancelled",
                details={"reason": reason})
     return _transition(freelancer_id, invoice_id, {"issued"}, run)   # not from paid
+
+
+def create_credit_note(freelancer_id: int, invoice_id: int, reason: str, credit_amount: Decimal) -> dict:
+    today = _today()
+    year = today.year
+    with pool.connection() as conn:
+        inv = conn.execute(
+            """select id, status, sequence_number, number_year, total
+               from public.invoices
+               where id = %s and freelancer_id = %s
+               for update""",
+            (invoice_id, freelancer_id),
+        ).fetchone()
+        if inv is None:
+            return None
+        if inv[1] not in ("issued", "paid"):
+            raise InvalidState(f"Cannot issue credit note for invoice in status '{inv[1]}'. Must be issued or paid.")
+
+        # Check existing credited amount
+        credited_row = conn.execute(
+            "select coalesce(sum(amount), 0) from public.credit_notes where invoice_id = %s",
+            (invoice_id,),
+        ).fetchone()
+        already_credited = Decimal(str(credited_row[0]))
+        invoice_total = Decimal(str(inv[4]))
+
+        if already_credited + credit_amount > invoice_total:
+            raise InvalidState(
+                f"Credit amount {credit_amount:,.2f} exceeds remaining balance ({invoice_total - already_credited:,.2f} DZD)"
+            )
+
+        # Get next sequence number for this freelancer & year
+        seq_row = conn.execute(
+            """select coalesce(max(sequence_number), 0) from public.credit_notes
+               where freelancer_id = %s and number_year = %s""",
+            (freelancer_id, year),
+        ).fetchone()
+        next_seq = seq_row[0] + 1
+        credit_note_num = f"AV-{year}-{next_seq:03d}"
+
+        cn_row = conn.execute(
+            """insert into public.credit_notes (
+                   freelancer_id, invoice_id, credit_note_number, sequence_number,
+                   number_year, amount, reason, issue_date
+               ) values (%s, %s, %s, %s, %s, %s, %s, %s)
+               returning id, created_at""",
+            (freelancer_id, invoice_id, credit_note_num, next_seq, year, credit_amount, reason, today),
+        ).fetchone()
+        cn_id = cn_row[0]
+
+        orig_num = _number(inv[2], inv[3]) or f"FAC-{inv[0]}"
+
+        return {
+            "id": f"cn_{cn_id}",
+            "credit_note_number": credit_note_num,
+            "original_invoice_id": str(invoice_id),
+            "original_invoice_number": orig_num,
+            "amount": credit_amount,
+            "issue_date": today.isoformat(),
+        }
 
 

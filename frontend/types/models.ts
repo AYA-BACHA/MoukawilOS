@@ -1,4 +1,4 @@
-export type InvoiceStatus = "pending" | "paid" | "draft";
+export type InvoiceStatus = "pending" | "paid" | "draft" | "credited" | "cancelled";
 export type ClientType = "B2B" | "B2C";
 
 export interface User {
@@ -56,6 +56,14 @@ export interface Client {
 
 export type ClientInput = Pick<Client, "name" | "type" | "nif" | "nis" | "rc" | "email" | "phone" | "address">;
 
+export interface CreditNoteDetail {
+  id: string;
+  credit_note_number: string;
+  amount: number;
+  reason: string;
+  issue_date: string;
+}
+
 export interface Invoice {
   id: string;
   userId: string;
@@ -68,6 +76,9 @@ export interface Invoice {
   statutoryClause: string;
   paidAt: string | null;
   paymentRail: string | null;
+  creditNoteNumber?: string | null;
+  creditedAmount?: number | null;
+  creditNotes?: CreditNoteDetail[];
 }
 
 export interface Deadline {

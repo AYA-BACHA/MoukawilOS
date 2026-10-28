@@ -7,7 +7,7 @@ import { SelectDropdown, type Option } from "@/components/ui/select-dropdown";
 import type { ClientType } from "@/types/models";
 import { useI18n } from "@/lib/i18n/provider";
 
-export type StatusFilter = "all" | "paid" | "pending" | "draft";
+export type StatusFilter = "all" | "paid" | "pending" | "draft" | "credited";
 export type ClientFilter = ClientType | "all";
 
 interface FiltersProps {
@@ -25,6 +25,7 @@ const tabs: { value: StatusFilter; label: string }[] = [
   { value: "paid", label: "Paid" },
   { value: "pending", label: "Pending" },
   { value: "draft", label: "Drafts" },
+  { value: "credited", label: "Credited" },
 ];
 
 const clientOptions: Option<ClientFilter>[] = [
@@ -73,7 +74,7 @@ export function Filters({
                 status === value ? "bg-slate-100 text-ink font-semibold" : "text-muted",
               )}
             >
-              {counts[value]}
+              {counts[value] ?? 0}
             </span>
           </button>
         ))}

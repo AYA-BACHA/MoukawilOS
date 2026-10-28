@@ -17,6 +17,8 @@ const statusStyles: Record<InvoiceStatus, { label: string; pill: string; dot: st
   pending: { label: "Pending / Issued", pill: "bg-surface text-ink", dot: "bg-teal" },
   paid: { label: "Paid", pill: "bg-mint font-semibold text-accent", dot: "bg-primary" },
   draft: { label: "Draft", pill: "bg-surface text-body", dot: "bg-muted" },
+  credited: { label: "Credited", pill: "bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 font-semibold", dot: "bg-amber-500" },
+  cancelled: { label: "Cancelled", pill: "bg-rose-100 text-rose-800 dark:bg-rose-950/40 dark:text-rose-300", dot: "bg-rose-500" },
 };
 
 const headClass = "px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted";
@@ -53,7 +55,7 @@ export function RecentInvoices({
     utilization: 0.4,
     pending: subtotalPending,
     totalInvoiced: 2000000 + subtotalPending,
-    counts: { all: invoices.length, paid: 1, pending: 1, draft: 1 },
+    counts: { all: invoices.length, paid: 1, pending: 1, draft: 1, credited: 0, cancelled: 0 },
   };
 
   const confirmPayment = ({ invoiceId, settlementDate, rail }: PaymentConfirmation) => {

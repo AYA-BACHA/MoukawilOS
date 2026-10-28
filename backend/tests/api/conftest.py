@@ -26,6 +26,8 @@ COMPLETE_PROFILE = {
 
 def wipe(user_id: str):
     """Delete every row of the test user. Test data only."""
+    if pool.closed:
+        pool.open(wait=True, timeout=10)
     with pool.connection() as conn:
         row = conn.execute(
             "select id from public.freelancers where profile_id = %s", (user_id,)
@@ -37,6 +39,7 @@ def wipe(user_id: str):
         conn.execute("alter table public.invoice_items disable trigger items_frozen")
         conn.execute("alter table public.invoice_snapshots disable trigger snapshots_immutable")
         inv = "select id from public.invoices where freelancer_id = %s"
+        conn.execute("delete from public.credit_notes where freelancer_id = %s", (fid,))
         conn.execute("delete from public.invoice_audit_events where freelancer_id = %s", (fid,))
         conn.execute(f"delete from public.invoice_snapshots where invoice_id in ({inv})", (fid,))
         conn.execute(f"delete from public.invoice_items where invoice_id in ({inv})", (fid,))

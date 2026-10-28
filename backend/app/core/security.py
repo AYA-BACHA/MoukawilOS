@@ -1,3 +1,4 @@
+import os
 import jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -41,7 +42,12 @@ def get_current_freelancer_id(user_id: str = Depends(get_current_user_id)) -> in
         row = conn.execute(
             "select id from public.freelancers where profile_id = %s", (user_id,)
         ).fetchone()
-        if row is None and settings.app_env == "development":
+        if (
+            row is None
+            and settings.app_env == "development"
+            and not os.getenv("PYTEST_CURRENT_TEST")
+            and user_id != settings.test_user_id
+        ):
             # In development fallback to the populated demo freelancer (Sara Benali / id 399)
             row = conn.execute(
                 "select id from public.freelancers order by (select count(*) from public.invoices where freelancer_id = public.freelancers.id) desc limit 1"
