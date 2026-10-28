@@ -6,7 +6,7 @@
 
 Statutory compliance under Law 22-23 and Executive Decree 23-197 &nbsp;|&nbsp; Strict cash-basis turnover tracking (5,000,000 DZD ceiling) &nbsp;|&nbsp; Deterministic 0.5% IFU calculation &nbsp;|&nbsp; Multilingual PDF invoicing (Arabic RTL, French, English) &nbsp;|&nbsp; Zero-hallucination regulatory AI with authentic Gazette (JORADP) PDF auditing
 
-[Live Demo](https://moukawil-os.vercel.app/dashboard) &nbsp;|&nbsp; [Demo Video](https://drive.google.com/file/d/1NjKT3zEnqr4coOUr2vxjTyCCwGJc3h0v/view?usp=sharing) &nbsp;|&nbsp; [Source Code](https://github.com/AYA-BACHA/MoukawilOS)
+[Live Demo](https://moukawil-os.vercel.app/dashboard) &nbsp;|&nbsp; [Demo Video](https://drive.google.com/file/d/17I50LRwzxnFCT-UQKXkBn7wEJ_jsdgkT/view?usp=sharing) &nbsp;|&nbsp; [Source Code](https://github.com/AYA-BACHA/MoukawilOS)
 
 ![Next.js](https://img.shields.io/badge/Next.js_16.3-000000?logo=nextdotjs&logoColor=white)
 ![React](https://img.shields.io/badge/React_19-61DAFB?logo=react&logoColor=black)
@@ -645,6 +645,7 @@ MoukawilOS/
 | **Bacha Aya** | Founder & Project Lead | System architecture, regulatory domain modeling, sprint direction, and full-stack integration |
 | **Yasmine Hamaili** | Frontend Developer | Design system implementation, client dashboard UI, and invoice builder |
 | **Kawther Yakoub** | Backend Developer | FastAPI microservices, PostgreSQL schemas, and deterministic 0.5% fiscal engine |
+| **Rahima Hamouda** | Data & ML Engineer | Regulatory RAG corpus, JORADP Gazette indexing, and anti-hallucination guardrails |
 | **Ilyes Guebabi** | Business & Operations | ANAE/CASNOS compliance, enterprise billing models, and freelancer field interviews |
 
 ---
