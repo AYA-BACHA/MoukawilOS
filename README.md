@@ -90,7 +90,7 @@ MoukawilOS unifies cash-basis accounting, sequential invoicing, automated fiscal
 | **Statutory Credit Notes (Avoirs)** | Generates linked credit notes (`AV-YYYY-NNN`) to correct billing errors or process refunds on finalized invoices without breaking sequential numbering or deleting historical records. | Workspace & PDF: Multilingual | Completed |
 | **Instant Guest Sandbox** | Zero-friction evaluation mode providing a pre-seeded, isolated test account with realistic clients, invoices, and turnover data for instant reviewer verification. | Workspace: English UI | Completed |
 | **Automated Bank Statement Ingestion** | Ingestion pipeline for parsing domestic bank and postal statements (BaridiMob / CCP / SATIM) to automatically match bank credits to issued invoices. | Integrations: Ingest / Parser | Target Milestone / Post-MVP (Month 1 Closed Beta) |
-| **Pre-filled G12 / G12 bis Tax Forms** | Direct PDF compilation of official Direction Générale des Impôts (DGI) tax forms pre-populated from the annual cash-basis ledger. | Export Output: Official DGI Forms | Target Milestone / Post-MVP (Month 1 Closed Beta) |
+| **Statutory G12 bis Declaration Preview** | Printable Formulaire G12 bis summary sheet pre-populated from the annual cash-basis ledger (0.5% IFU, 10,000 DZD floor, 24,000 DZD CASNOS). | Export Output: French / Official DGI Layout | Completed (Official DGI pixel-perfect PDF overlay in Month 1 Beta) |
 
 ---
 
@@ -180,7 +180,7 @@ To guarantee zero-friction evaluator accessibility without requiring database se
 - **Live Vercel Web App (`moukawil-os.vercel.app`):** Runs the Next.js 16 presentation tier connected to the live FastAPI backend API and Supabase PostgreSQL instance. All user interactions (creating invoices, issuing credit notes, recording payments, recalculating turnover) communicate with live REST API endpoints with persistent database synchronization.
 - **Standalone Evaluation Seed (`scripts/seed_demo_data.py`):** Populates the live Supabase database with realistic multi-status invoices, B2B/B2C clients, and linked credit notes for instant reviewer inspection.
 - **Backend REST Service (`backend/`):** A standalone Python FastAPI application using Pydantic v2 exact decimal types and endpoints designed for multi-tenant PostgreSQL / Supabase persistence.
-- **Regulatory Intelligence (`rag/`):** A microservice architecture skeleton targeting Google Gemini legal embeddings (text-embedding-004) and retrieval (Gemini 1.5 Flash), complemented by the live frontend's deterministic keyword search over indexed Algerian statutes.
+- **Regulatory Intelligence (`rag/`):** Grounded legal retrieval pipeline pairing Google Gemini (gemini-1.5-flash & text-embedding-004) with deterministic statutory keyword and article lookup over indexed JORADP Gazette PDFs (F2022085.pdf).
 
 ---
 
@@ -687,7 +687,7 @@ We believe rigorous engineering requires transparently documenting technical con
 flowchart LR
     P1["<strong>Phase 1: MVP Core</strong><br/><em>[Completed]</em><br/>• Cash-basis turnover tracker<br/>• 5M DA ceiling & 80% warning<br/>• Multilingual PDF invoices<br/>• Regulatory RAG assistant"]
     
-    P2["<strong>Target Milestone / Post-MVP</strong><br/><em>[Month 1 Closed Beta]</em><br/>• Pre-filled DGI G12 / G12 bis<br/>• Bank statement ingestion<br/>• Accountant fiscal package"]
+    P2["<strong>Target Milestone / Post-MVP</strong><br/><em>[Month 1 Closed Beta]</em><br/>• Official DGI PDF overlay<br/>• Bank statement ingestion<br/>• Accountant fiscal package"]
     
     P3["<strong>Future Integrations</strong><br/><em>[2027]</em><br/>• DGI Jibayatic API integration<br/>• Direct CASNOS portal bridge<br/>• Multi-operator workspaces"]
 
@@ -702,7 +702,7 @@ flowchart LR
   - Regulatory RAG microservice with legal citations and deterministic refusal fallback.
 
 - **Target Milestone / Post-MVP (Month 1 Closed Beta):**
-  - **Pre-filled G12 / G12 bis Tax Forms:** One-click compilation of pre-filled official Direction Générale des Impôts (DGI) Série G n° 12 and G n° 12 bis PDF tax declarations pre-populated directly from the annual cash-basis ledger.
+  - **Official DGI Pixel-Perfect PDF Overlay:** Direct PDF overlay on government Série G n° 12 and G n° 12 bis tax declarations pre-populated directly from the annual cash-basis ledger.
   - **Automated Bank Statement Ingestion:** Ingestion pipeline for parsing domestic bank and postal statements (BaridiMob / CCP / SATIM CSV and PDF exports) to automatically match bank credits to issued invoices.
   - **Accountant Export Package:** Annual fiscal and ledger audit export package for certified accountants.
 
