@@ -40,14 +40,17 @@ interface ChatPanelProps {
 export function ChatPanel({ messages, statutes, pending, onAsk, onInspectStatute }: ChatPanelProps) {
   const { t } = useI18n();
   // Assistant answers are "<statute code>: <summary>" blocks (or a fixed fallback); translate the summary part.
-  const answerText = (content: string) =>
-    content
+  const answerText = (content: string) => {
+    const translatedFull = t(content);
+    if (translatedFull !== content) return translatedFull;
+    return content
       .split("\n\n")
       .map((part) => {
         const match = /^([^:\n]{1,40}): ([\s\S]+)$/.exec(part);
         return match ? `${match[1]}: ${t(match[2])}` : t(part);
       })
       .join("\n\n");
+  };
   const [draft, setDraft] = useState("");
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -203,7 +206,7 @@ export function ChatPanel({ messages, statutes, pending, onAsk, onInspectStatute
               <button
                 key={suggestion}
                 type="button"
-                onClick={() => onAsk(suggestion)}
+                onClick={() => onAsk(t(suggestion))}
                 className="whitespace-nowrap sm:whitespace-normal shrink-0 sm:shrink rounded-lg border border-slate-200/80 bg-card px-2.5 py-1 text-xs text-body transition-all hover:border-slate-300 hover:bg-surface hover:text-ink active:scale-[0.98]"
               >
                 {t(suggestion)}

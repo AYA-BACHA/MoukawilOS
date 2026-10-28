@@ -13,6 +13,7 @@ router = APIRouter(prefix="/assistant", tags=["assistant"])
 
 class AskRequest(BaseModel):
     question: str = Field(..., min_length=1, max_length=1000)
+    locale: Optional[str] = None
 
 
 class AssistantMessageOut(BaseModel):
@@ -29,7 +30,7 @@ class AssistantMessageOut(BaseModel):
 
 @router.post("/ask", response_model=AssistantMessageOut)
 def ask_assistant(req: AskRequest) -> Dict[str, Any]:
-    res = query_regulatory_assistant(req.question)
+    res = query_regulatory_assistant(req.question, locale=req.locale)
     return {
         "id": res["id"],
         "userId": "usr_1",

@@ -164,9 +164,9 @@ def detect_language(text: str) -> str:
     return "en"
 
 
-def query_regulatory_assistant(question: str) -> Dict[str, Any]:
+def query_regulatory_assistant(question: str, locale: Optional[str] = None) -> Dict[str, Any]:
     load_corpus()
-    lang = detect_language(question)
+    lang = locale if locale in ("ar", "fr", "en") else detect_language(question)
     norm_q = _normalize(question)
     q_tokens = set(_tokenize(question))
     out_of_scope_patterns = [

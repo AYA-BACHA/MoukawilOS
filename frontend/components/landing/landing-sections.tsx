@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Bot, CalendarClock, ChevronDown, FileText, Gauge, LogIn, Percent, Sparkles, UserPlus, Wallet } from "lucide-react";
+import { ArrowRight, Bot, CalendarClock, ChevronDown, FileText, Gauge, LogIn, Percent, ShieldCheck, Sparkles, UserPlus, Wallet } from "lucide-react";
 import { buttonClass } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n/provider";
 import { demoSignInAction } from "@/lib/auth-actions";
@@ -44,13 +44,20 @@ export function LandingSections({ signedIn }: { signedIn: boolean }) {
   return (
     <>
       {/* Trust strip */}
-      <section className="border-y border-slate-200/70 bg-surface-low">
-        <div className={`${container} flex flex-col items-center justify-between gap-4 py-6 md:flex-row`}>
-          <p className="text-xs font-semibold uppercase text-muted">{t("Built around")}</p>
-          <ul className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2">
+      <section className="border-y border-slate-200/80 bg-slate-50/60 dark:bg-slate-900/40 dark:border-slate-800">
+        <div className={`${container} flex flex-col items-center justify-between gap-4 py-5 md:flex-row`}>
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted">
+            <ShieldCheck className="size-4 text-emerald-600 dark:text-emerald-400" />
+            <span>{t("Built around")}</span>
+          </div>
+          <ul className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3">
             {trust.map((item) => (
-              <li key={item} className="text-sm font-bold text-body">
-                {t(item)}
+              <li
+                key={item}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200/80 bg-card px-3 py-1.5 text-xs font-bold text-ink shadow-2xs backdrop-blur-xs transition-colors hover:border-slate-300 dark:border-slate-700/80"
+              >
+                <span className="size-1.5 rounded-full bg-emerald-600 dark:bg-emerald-400" />
+                <span>{t(item)}</span>
               </li>
             ))}
           </ul>
@@ -65,12 +72,15 @@ export function LandingSections({ signedIn }: { signedIn: boolean }) {
         </div>
         <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {features.map(({ icon: Icon, title, text }) => (
-            <article key={title} className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-card p-6 shadow-xs transition-shadow hover:shadow-lg hover:shadow-black/5">
-              <span className="grid size-11 place-items-center rounded-xl bg-mint text-mint-ink">
+            <article
+              key={title}
+              className="group relative flex flex-col gap-3 rounded-2xl border border-slate-200/80 bg-card p-6 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-emerald-500/40 hover:shadow-lg hover:shadow-emerald-950/5 dark:border-slate-800 dark:hover:border-emerald-500/30"
+            >
+              <span className="grid size-12 place-items-center rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200/60 transition-transform duration-200 group-hover:scale-105 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-900/50">
                 <Icon className="size-5" />
               </span>
-              <h3 className="text-base font-bold text-ink">{t(title)}</h3>
-              <p className="text-sm leading-6 text-body">{t(text)}</p>
+              <h3 className="text-base font-bold text-ink tracking-tight">{t(title)}</h3>
+              <p className="text-sm leading-relaxed text-body">{t(text)}</p>
             </article>
           ))}
         </div>
@@ -85,10 +95,18 @@ export function LandingSections({ signedIn }: { signedIn: boolean }) {
           </div>
           <ol className="mt-14 grid gap-5 md:grid-cols-3">
             {steps.map((step, index) => (
-              <li key={step.title} className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-card p-6">
-                <span className="grid size-9 place-items-center rounded-full bg-primary font-num text-sm font-bold text-white">{index + 1}</span>
-                <h3 className="text-base font-bold text-ink">{t(step.title)}</h3>
-                <p className="text-sm leading-6 text-body">{t(step.text)}</p>
+              <li
+                key={step.title}
+                className="relative flex flex-col gap-3.5 rounded-2xl border border-slate-200/80 bg-card p-6 shadow-xs hover:border-slate-300 transition-all dark:border-slate-800"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="grid size-9 place-items-center rounded-xl bg-primary font-num text-sm font-extrabold text-white shadow-xs">
+                    0{index + 1}
+                  </span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted font-num">Step {index + 1}</span>
+                </div>
+                <h3 className="text-base font-bold text-ink tracking-tight">{t(step.title)}</h3>
+                <p className="text-sm leading-relaxed text-body">{t(step.text)}</p>
               </li>
             ))}
           </ol>
@@ -97,11 +115,13 @@ export function LandingSections({ signedIn }: { signedIn: boolean }) {
 
       {/* Numbers */}
       <section className={`${container} py-16 lg:py-20`}>
-        <dl className="grid grid-cols-2 gap-y-10 text-center lg:grid-cols-4">
+        <dl className="grid grid-cols-2 gap-y-8 gap-x-6 text-center lg:grid-cols-4">
           {stats.map((stat) => (
-            <div key={stat.label} className="flex flex-col gap-1.5">
-              <dt className="order-2 text-sm font-medium text-body">{t(stat.label)}</dt>
-              <dd className="font-num text-3xl font-extrabold text-accent sm:text-4xl">{stat.value}</dd>
+            <div key={stat.label} className="flex flex-col gap-2 rounded-2xl border border-slate-200/60 bg-surface-low/60 p-5 backdrop-blur-xs dark:border-slate-800/80">
+              <dd className="font-num text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-ink">
+                {stat.value}
+              </dd>
+              <dt className="text-xs sm:text-sm font-semibold text-muted">{t(stat.label)}</dt>
             </div>
           ))}
         </dl>

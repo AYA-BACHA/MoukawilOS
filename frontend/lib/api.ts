@@ -1038,10 +1038,10 @@ export async function getAssistantMessages(): Promise<AssistantMessage[]> {
   ];
 }
 
-export async function askAssistant(question: string): Promise<AssistantMessage> {
+export async function askAssistant(question: string, lang?: string): Promise<AssistantMessage> {
   const backend = await fetchBackend<AssistantMessage>("/assistant/ask", {
     method: "POST",
-    body: JSON.stringify({ question }),
+    body: JSON.stringify({ question, locale: lang }),
   });
 
   if (backend && backend.content) {
@@ -1053,8 +1053,8 @@ export async function askAssistant(question: string): Promise<AssistantMessage> 
 
   // High-fidelity fallback grounded directly in Algerian official legislation (Law 22-23 / Decrees 23-196, 23-197)
   const q = question.toLowerCase();
-  const isAr = /[\u0600-\u06ff]/.test(question);
-  const isFr = /(plafond|chiffre|affaires|comment|quelle|quel|droit|impot|facture|activite|statut)/.test(q);
+  const isAr = lang === "ar" || /[\u0600-\u06ff]/.test(question);
+  const isFr = !isAr && (lang === "fr" || /(plafond|chiffre|affaires|comment|quelle|quel|droit|impot|facture|activite|statut)/.test(q));
 
   // 1. Explicit Out-of-Scope Anti-Hallucination Guardrail
   const outOfScopePattern = /(sarl|eurl|spa\b|snc\b|scs\b|soci[eé]t[eé]|corporate|ibs\b|tap\b|dividende|dividend|actionnaire|capital social|crypto|cryptocurrency|bitcoin|ethereum|trading|forex|binance|usdt|import|export|importation|exportation|import-export|commerce de gros|douane|m[eé]decin|avocat|notaire|architecte|pharmacie|pharmacien|laboratoire|clinique|boulangerie|restaurant|restauration|شرك|عملات مشفر|بيتكوين|تداول|استيراد|تصدير|جمارك|محام|طبيب|صيدل)/i;

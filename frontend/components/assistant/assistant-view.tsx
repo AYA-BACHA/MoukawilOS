@@ -17,7 +17,7 @@ interface AssistantViewProps {
 }
 
 export function AssistantView({ user, stats, statutes, initialMessages }: AssistantViewProps) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const [messages, setMessages] = useState(initialMessages);
   const [pending, setPending] = useState(false);
   const [inspectingStatute, setInspectingStatute] = useState<Statute | null>(null);
@@ -35,7 +35,7 @@ export function AssistantView({ user, stats, statutes, initialMessages }: Assist
       },
     ]);
     setPending(true);
-    const reply = await askAssistant(question);
+    const reply = await askAssistant(question, lang);
     setMessages((current) => [...current, reply]);
     setPending(false);
   };
