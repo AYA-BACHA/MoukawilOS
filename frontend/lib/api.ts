@@ -2,6 +2,9 @@ import { computeNextDeadline, type ExtendedDeadline } from "@/lib/deadline";
 import { supabase } from "@/lib/supabase";
 import type {
   AssistantMessage,
+  BackendComplianceAlert,
+  BackendDashboardSummary,
+  BackendSimulationResult,
   Client,
   ClientInput,
   ClientType,
@@ -1029,4 +1032,43 @@ export async function askAssistant(question: string): Promise<AssistantMessage> 
     citations: [],
     createdAt: new Date().toISOString(),
   };
+}
+
+
+export async function getDashboardSummary(year?: number): Promise<BackendDashboardSummary | null> {
+  const query = year ? `?year=${year}` : "";
+  return await fetchBackend<BackendDashboardSummary>(`/dashboard/summary${query}`);
+}
+
+export async function getComplianceAlerts(): Promise<BackendComplianceAlert[]> {
+  const res = await fetchBackend<{ items: BackendComplianceAlert[]; total: number }>("/compliance/alerts");
+  return res?.items || [];
+}
+
+export async function completeObligation(code: string, periodYear: number): Promise<boolean> {
+  const res = await fetchBackend(`/obligations/${code}/complete?period_year=${periodYear}`, {
+    method: "POST",
+  });
+  return res !== null;
+}
+
+export async function undoObligation(code: string, periodYear: number): Promise<boolean> {
+  const res = await fetchBackend(`/obligations/${code}/complete?period_year=${periodYear}`, {
+    method: "DELETE",
+  });
+  return res !== null;
+}
+
+export async function simulateTaxAndSocial(
+  annualTurnover: number,
+  casnosRegime: "forfait" | "general" = "forfait"
+): Promise<BackendSimulationResult | null> {
+  const res = await fetchBackend<{ success: boolean; data: BackendSimulationResult }>("/api/compliance/simulate", {
+    method: "POST",
+    body: JSON.stringify({
+      annual_turnover: annualTurnover,
+      casnos_regime: casnosRegime,
+    }),
+  });
+  return res?.data || null;
 }

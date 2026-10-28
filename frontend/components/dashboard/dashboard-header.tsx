@@ -1,15 +1,21 @@
 "use client";
 
-import { Plus } from "lucide-react";
+import { Calculator, Plus } from "lucide-react";
 import Link from "next/link";
 import { Pill } from "@/components/ui/pill";
 import type { User } from "@/types/models";
 import { useI18n } from "@/lib/i18n/provider";
 
-export function DashboardHeader({ user }: { user: User }) {
+export function DashboardHeader({
+  user,
+  onOpenSimulator,
+}: {
+  user: User;
+  onOpenSimulator?: () => void;
+}) {
   const { t } = useI18n();
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
       <div>
         <h1 className="text-2xl font-semibold leading-8 tracking-[-0.025em] text-ink">
           {t("Welcome back, {firstName}", { firstName: user.firstName })}
@@ -18,14 +24,24 @@ export function DashboardHeader({ user }: { user: User }) {
           <span className="font-num text-body">
             {t("ANAE Registration: {registration}", { registration: user.registration })}
           </span>
-          <span className="text-muted">•</span>
+          <span className="text-muted">·</span>
           <span className="font-medium tracking-[0.01em] text-body">{user.activity}</span>
           <Pill dot="size-2 bg-teal" className="ms-1 bg-mint px-2.5 py-0.5 text-mint-ink shadow-[0_1px_1px_rgba(0,0,0,0.05)]">
             {t("Active Registry")}
           </Pill>
         </div>
       </div>
-      <div className="flex items-center gap-2.5">
+      <div className="flex flex-wrap items-center gap-2.5">
+        {onOpenSimulator && (
+          <button
+            type="button"
+            onClick={onOpenSimulator}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-300 bg-emerald-50 px-3.5 py-2 text-xs font-semibold text-emerald-900 shadow-xs transition-all hover:bg-emerald-100 hover:border-emerald-400"
+          >
+            <Calculator className="size-3.5 text-emerald-700" />
+            <span>{t("Tax Simulator")}</span>
+          </button>
+        )}
         <Link
           href="/invoices"
           className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200/80 bg-card px-3.5 py-2 text-xs font-semibold text-ink shadow-xs transition-all hover:bg-slate-50 hover:border-slate-300"

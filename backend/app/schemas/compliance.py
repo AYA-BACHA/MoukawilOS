@@ -117,3 +117,69 @@ class CreditNoteResponse(BaseModel):
     success: bool = True
     data: CreditNoteData
 
+
+# ---------------- Dashboard & Statutory Compliance Schemas (Kawther) ----------------
+
+class ObligationOut(BaseModel):
+    code: str
+    period_year: int
+    start_date: date
+    end_date: date
+    status: Literal["upcoming", "open", "overdue", "done"]
+    days_left: Optional[int] = None
+    official_link: Optional[str] = None
+    note: Optional[str] = None
+    verified: bool
+    amount_da: Optional[Decimal] = None
+
+
+class CalendarOut(BaseModel):
+    year: int
+    items: List[ObligationOut]
+    total: int
+    data: Optional[List[ObligationOut]] = None
+    success: bool = True
+
+
+class SummaryOut(BaseModel):
+    year: int
+    collected_da: Decimal
+    ceiling_da: Optional[Decimal] = None
+    percent_of_ceiling: Optional[Decimal] = None
+    remaining_da: Optional[Decimal] = None
+    over_ceiling: bool
+    ifu_estimate_da: Optional[Decimal] = None
+    casnos_flat_da: Optional[Decimal] = None
+    total_estimate_da: Optional[Decimal] = None
+    missing_rules: List[str] = Field(default_factory=list)
+    sources: Dict[str, str] = Field(default_factory=dict)
+    note: str
+    ifu_rate_percent: Optional[Decimal] = None
+    ifu_minimum_da: Optional[Decimal] = None
+    ceiling_level: Optional[Literal["ok", "warning", "high", "exceeded"]] = None
+
+
+class DashboardSummaryOut(SummaryOut):
+    pending_da: Decimal
+    invoice_counts: Dict[str, int]
+
+
+class AlertOut(BaseModel):
+    id: str
+    kind: Literal["deadline", "ceiling"] = "deadline"
+    code: str
+    title: str
+    message: str
+    severity: Literal["info", "warning", "overdue", "critical"]
+    due_date: Optional[date] = None
+    days_left: Optional[int] = None
+    period_year: int
+    amount_da: Optional[Decimal] = None
+    verified: bool
+
+
+class AlertList(BaseModel):
+    items: List[AlertOut]
+    total: int
+
+

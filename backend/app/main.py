@@ -11,6 +11,7 @@ from app.api import (
     health,
     invoices,
     lookups,
+    manual_income,
     me,
     onboarding,
     profile,
@@ -54,10 +55,12 @@ app.include_router(lookups.router)
 app.include_router(assistant.router)
 app.include_router(analytics.router)
 app.include_router(compliance.router)
+app.include_router(manual_income.router)
 
 # Mount /api aliases to match docs/api.md specifications
 app.include_router(analytics.router, prefix="/api")
 app.include_router(compliance.router, prefix="/api")
+app.include_router(manual_income.router, prefix="/api")
 app.include_router(invoices.router, prefix="/api")
 app.include_router(clients.router, prefix="/api")
 app.include_router(profile.router, prefix="/api")

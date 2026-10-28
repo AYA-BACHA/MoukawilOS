@@ -8,6 +8,11 @@ import { RecentInvoices } from "@/components/dashboard/recent-invoices";
 import { SecondaryKpis } from "@/components/dashboard/secondary-kpis";
 import { computeStats } from "@/lib/stats";
 import { getInvoices, type DemoScenario } from "@/lib/api";
+import { TaxSimulatorModal } from "@/components/dashboard/tax-simulator-modal";
+import { getDashboardSummary, getComplianceAlerts, completeObligation } from "@/lib/api";
+import type { BackendComplianceAlert } from "@/types/models";
+import { AlertCircle, CheckCircle2 } from "lucide-react";
+
 import type { ExtendedDeadline } from "@/lib/deadline";
 import type { InvoiceWithClient, PaymentConfirmation, User } from "@/types/models";
 
@@ -24,6 +29,26 @@ export function DashboardView({
 }) {
   const [invoices, setInvoices] = useState<InvoiceWithClient[]>(initialInvoices);
   const [fiscalYear, setFiscalYear] = useState<string>(initialFiscalYear);
+  const [isSimulatorOpen, setIsSimulatorOpen] = useState(false);
+  const [backendAlerts, setBackendAlerts] = useState<BackendComplianceAlert[]>([]);
+  const [completedCodes, setCompletedCodes] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    getComplianceAlerts().then((alerts) => {
+      if (alerts && alerts.length > 0) setBackendAlerts(alerts);
+    }).catch(() => {});
+    getDashboardSummary(Number(fiscalYear)).catch(() => {});
+  }, [fiscalYear]);
+
+  const handleCompleteObligation = async (code: string) => {
+    try {
+      await completeObligation(code, Number(fiscalYear));
+      setCompletedCodes((prev) => new Set(prev).add(code));
+    } catch {
+      // ignore
+    }
+  };
+
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -236,7 +261,7 @@ export function DashboardView({
 
   return (
     <div className="flex flex-col gap-4 sm:gap-6">
-      <DashboardHeader user={user} />
+      <DashboardHeader user={user} onOpenSimulator={() => setIsSimulatorOpen(true)} />
       <CeilingCard stats={stats} />
       <SecondaryKpis deadline={deadline} stats={stats} />
       <RecentInvoices
@@ -245,6 +270,46 @@ export function DashboardView({
         onPaymentConfirmed={handlePayment}
       />
       <OperationalIndicators user={user} stats={stats} />
+      {backendAlerts.length > 0 && (
+        <div className="flex flex-col gap-2">
+          {backendAlerts.slice(0, 2).map((alert) => (
+            <div
+              key={alert.id}
+              className={`flex items-center justify-between p-3.5 rounded-xl border text-xs font-medium ${
+                alert.severity === "critical" || alert.severity === "overdue"
+                  ? "bg-rose-50 border-rose-200 text-rose-900"
+                  : "bg-amber-50 border-amber-200 text-amber-900"
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                <AlertCircle className="size-4 shrink-0" />
+                <div>
+                  <span className="font-bold">{alert.title}: </span>
+                  <span>{alert.message}</span>
+                </div>
+              </div>
+              {!completedCodes.has(alert.code) ? (
+                <button
+                  type="button"
+                  onClick={() => handleCompleteObligation(alert.code)}
+                  className="px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-[11px] font-semibold text-slate-700 hover:bg-slate-50 transition-colors shrink-0 shadow-xs"
+                >
+                  Mark Done
+                </button>
+              ) : (
+                <span className="flex items-center gap-1 text-emerald-700 font-bold text-[11px]">
+                  <CheckCircle2 className="size-3.5" /> Done
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      <TaxSimulatorModal
+        isOpen={isSimulatorOpen}
+        onClose={() => setIsSimulatorOpen(false)}
+      />
     </div>
   );
 }
