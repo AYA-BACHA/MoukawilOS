@@ -60,6 +60,7 @@ app.include_router(manual_income.router)
 app.include_router(auth.router)
 
 # Mount /api aliases to match docs/api.md specifications
+app.include_router(health.router, prefix="/api")
 app.include_router(analytics.router, prefix="/api")
 app.include_router(compliance.router, prefix="/api")
 app.include_router(manual_income.router, prefix="/api")

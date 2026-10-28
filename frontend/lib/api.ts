@@ -164,7 +164,7 @@ async function fetchBackend<T>(endpoint: string, options: RequestInit = {}): Pro
 
 export async function checkBackendHealth(): Promise<boolean> {
   const res = await fetchBackend<{ status: string }>("/health");
-  return res?.status === "ok";
+  return res?.status === "healthy" || res?.status === "ok";
 }
 
 const DEFAULT_USER: User = {

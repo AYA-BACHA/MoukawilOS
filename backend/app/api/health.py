@@ -1,13 +1,49 @@
-from fastapi import APIRouter, HTTPException
+from datetime import datetime, timezone
+import logging
+from typing import Any
 
-from app.core.db import pool
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import JSONResponse
+
+from app.core.db import get_db, pool
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(tags=["health"])
 
 
-@router.get("/health")
-def health():
-    return {"status": "ok"}
+@router.get("/health", status_code=status.HTTP_200_OK)
+def health(db: Any = Depends(get_db)):
+    try:
+        if db is None:
+            raise ConnectionError("Database connection pool unavailable or closed")
+
+        # Execute lightweight check: SELECT 1
+        # Supports both SQLAlchemy Session and psycopg Connection
+        try:
+            from sqlalchemy import text
+            try:
+                db.execute(text("SELECT 1"))
+            except Exception:
+                db.execute("SELECT 1")
+        except ImportError:
+            db.execute("SELECT 1")
+
+        return {
+            "status": "healthy",
+            "database": "connected",
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+        }
+    except Exception as e:
+        logger.error("Health check database probe failed: %s", e)
+        return JSONResponse(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            content={
+                "status": "unhealthy",
+                "database": "disconnected",
+                "error": str(e),
+            },
+        )
 
 
 @router.get("/health/db")
