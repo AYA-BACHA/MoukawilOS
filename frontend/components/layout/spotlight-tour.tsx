@@ -225,7 +225,7 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
   // Calculate popover coordinates
   const PADDING = 8;
   const TOOLTIP_WIDTH = typeof window !== "undefined" ? Math.min(350, window.innerWidth - 32) : 340;
-  const TOOLTIP_HEIGHT = 280; // Safe height including header, multi-line description, step indicator, and 44px buttons
+  const TOOLTIP_HEIGHT = 220; // Safe height including header, multi-line description, step indicator, and 44px buttons
 
   let tooltipStyle: React.CSSProperties = {
     position: "fixed",
@@ -339,7 +339,7 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
             width: targetRect.width + PADDING * 2,
             height: targetRect.height + PADDING * 2,
             borderRadius: "18px",
-            boxShadow: "0 0 0 3.5px #ffffff, 0 0 0 9999px rgba(15, 23, 42, 0.68), 0 12px 35px -8px rgba(0, 0, 0, 0.45)",
+            boxShadow: "0 0 0 3px #10b981, 0 0 30px 4px rgba(16, 185, 129, 0.35), 0 0 0 9999px rgba(15, 23, 42, 0.72)",
             zIndex: 50,
             transition: "top 400ms cubic-bezier(0.16, 1, 0.3, 1), left 400ms cubic-bezier(0.16, 1, 0.3, 1), width 400ms cubic-bezier(0.16, 1, 0.3, 1), height 400ms cubic-bezier(0.16, 1, 0.3, 1)",
           }}

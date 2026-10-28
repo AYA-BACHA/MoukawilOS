@@ -280,6 +280,85 @@ export async function updateUserSettings(settings: UserSettings): Promise<User> 
   return { ...current, ...settings };
 }
 
+
+export const DEFAULT_CLIENTS: Client[] = [
+  {
+    id: "cli_1",
+    userId: CURRENT_USER_ID,
+    name: "Sonatrach Digital SPA",
+    type: "B2B",
+    nif: "000216001234567",
+    nis: "000216010123456",
+    rc: "16/00-1234567B20",
+    address: "Hydra, Alger",
+    location: "Hydra, Alger",
+    description: "National hydrocarbon and digital engineering subsidiary",
+    email: "achats@sonatrach-digital.dz",
+    phone: "021 54 00 01",
+    anaeVerified: true,
+  },
+  {
+    id: "cli_2",
+    userId: CURRENT_USER_ID,
+    name: "Ooredoo Algérie Télécom",
+    type: "B2B",
+    nif: "000016001234567",
+    nis: "000016010123456",
+    rc: "16/00-7654321B21",
+    address: "Ouled Fayet, Alger",
+    location: "Ouled Fayet, Alger",
+    description: "Mobile network operator and corporate cloud services vendor",
+    email: "procurement@ooredoo.dz",
+    phone: "021 99 00 00",
+    anaeVerified: true,
+  },
+  {
+    id: "cli_3",
+    userId: CURRENT_USER_ID,
+    name: "Cevital Agro-Industrie",
+    type: "B2B",
+    nif: "000316001234567",
+    nis: "000316010123456",
+    rc: "06/00-9876543B19",
+    address: "Quai Arrière-Port, Béjaïa",
+    location: "Béjaïa",
+    description: "Private agribusiness and supply chain conglomerate",
+    email: "finance@cevital.com",
+    phone: "034 21 00 00",
+    anaeVerified: true,
+  },
+  {
+    id: "cli_4",
+    userId: CURRENT_USER_ID,
+    name: "Yacine Mansouri",
+    type: "B2C",
+    nif: null,
+    nis: null,
+    rc: null,
+    address: "Hai El Khemisti, Oran",
+    location: "Oran",
+    description: "Individual private client for mobile UI/UX engineering",
+    email: "yacine.mansouri@gmail.com",
+    phone: "0550 12 34 88",
+    anaeVerified: false,
+  },
+  {
+    id: "cli_5",
+    userId: CURRENT_USER_ID,
+    name: "Amina Khelif",
+    type: "B2C",
+    nif: null,
+    nis: null,
+    rc: null,
+    address: "Belle Vue, Constantine",
+    location: "Constantine",
+    description: "Independent creative director and brand consultant",
+    email: "amina.khelif@outlook.dz",
+    phone: "0661 22 33 44",
+    anaeVerified: false,
+  },
+];
+
 export async function getClients(): Promise<Client[]> {
   const res = await fetchBackend<{ items: BackendClientOut[]; total: number }>("/clients?limit=100");
   if (res && res.items && res.items.length > 0) {
@@ -314,7 +393,7 @@ export async function getClients(): Promise<Client[]> {
     }
   }
 
-  return [];
+  return DEFAULT_CLIENTS;
 }
 
 export async function createClient(input: ClientInput): Promise<Client> {
