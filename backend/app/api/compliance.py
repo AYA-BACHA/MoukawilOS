@@ -74,6 +74,8 @@ def compliance_calendar(
     amounts = _amounts_by_year(fid, items, today)
     for i in items:
         i["amount_da"] = svc.amount_for(i["code"], i["period_year"], amounts)
+        i["due_date"] = str(i["end_date"])
+        i["legal_reference"] = i.get("note") or i.get("official_link") or "Law 22-23"
     return {
         "year": y,
         "items": items,

@@ -125,7 +125,9 @@ class ObligationOut(BaseModel):
     period_year: int
     start_date: date
     end_date: date
-    status: Literal["upcoming", "open", "overdue", "done"]
+    due_date: Optional[str] = None
+    legal_reference: Optional[str] = None
+    status: Literal["upcoming", "open", "overdue", "done", "pending", "due_soon", "completed"]
     days_left: Optional[int] = None
     official_link: Optional[str] = None
     note: Optional[str] = None

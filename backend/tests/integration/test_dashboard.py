@@ -4,7 +4,7 @@ from decimal import Decimal
 
 import pytest
 
-from tests.conftest import FROZEN_TODAY, make_token
+from tests.integration.conftest import FROZEN_TODAY, make_token
 
 D = lambda x: None if x is None else Decimal(str(x))  # noqa: E731
 
