@@ -2,519 +2,452 @@
 
 ## 1. Overview
 
-MoukawilOS aims to provide an AI-powered regulatory assistant that helps Algerian auto-entrepreneurs find reliable information about their legal, administrative, and fiscal obligations.
+MoukawilOS is an AI-powered regulatory assistant designed to help Algerian auto-entrepreneurs understand their legal, administrative, and fiscal obligations.
 
-The Regulatory RAG Service is designed to retrieve relevant passages from official Algerian legal texts and use them as evidence when answering user questions.
+The Regulatory RAG Service retrieves relevant passages from official Algerian regulatory documents and uses them as evidence to generate answers.
 
-The project follows a retrieval-augmented generation (RAG) approach to ground answers in regulatory documents rather than relying exclusively on the language model's internal knowledge.
+The service combines:
 
-**Current scope:** regulatory document processing, article-aware chunking, local embedding generation, and retrieval experimentation.
+- **Document processing:** extraction, normalization, and article-aware chunking of regulatory documents.
+- **Semantic retrieval:** multilingual embeddings generated with `intfloat/multilingual-e5-small`.
+- **Retrieval experimentation:** vector search, BM25 lexical search, and hybrid Reciprocal Rank Fusion (RRF).
+- **Answer generation:** Google Gemini through the `google-genai` SDK.
+- **REST API:** FastAPI endpoints for health checks and question answering.
+- **Retrieval evaluation:** a labeled evaluation dataset and a script for comparing retrieval methods.
 
-**Target scope:** an evidence-grounded regulatory intelligence service with source citations, controlled answer generation, and deterministic refusal when the available evidence is insufficient.
+The current implementation uses a local vector index stored in NumPy and JSON files. PostgreSQL/pgvector integration is not part of the tested local retrieval path described here.
 
-> Implementation status is documented explicitly throughout this README. A planned feature must not be interpreted as an already implemented capability.
+## 2. Implementation Status
 
----
-
-## 2. Current Implementation Status
-
-| Component | Status | Description |
+| Component | Status | Details |
 |---|---|---|
-| Regulatory corpus | Implemented for the current MVP | Four target legal texts processed |
-| Text extraction | Implemented | Extracted text and source metadata stored locally |
-| Article-aware chunking | Implemented | Regulatory content segmented into retrievable chunks |
-| Chunk review | Implemented | Review file generated for manual inspection |
-| Multilingual embeddings | Implemented | `intfloat/multilingual-e5-small` |
+| Regulatory corpus | Implemented | Four target regulatory documents |
+| Text extraction and normalization | Implemented | Processed regulatory text |
+| Article-aware chunking | Implemented | Article and structural chunks |
+| Local embeddings | Implemented | `intfloat/multilingual-e5-small`, 384 dimensions |
 | Local vector index | Implemented | NumPy vectors and JSON metadata |
-| BM25 retrieval | Implemented experimentally | Lexical retrieval baseline |
-| Reciprocal Rank Fusion (RRF) | Implemented experimentally | Combines rankings from retrieval methods |
-| Two-stage retrieval | Implemented experimentally | Document selection followed by chunk retrieval |
-| Retrieval evaluation | Partially implemented | Initial tests on a small set of manually defined questions |
-| FastAPI health endpoint | Implemented | Basic service health check |
-| Regulatory answer-generation endpoint | Not yet integrated | Requires retrieval, evidence handling, and generation |
-| Source citations in generated answers | Planned | Answers should identify supporting legal provisions |
-| Calibrated refusal mechanism | Planned | Requires evaluation and integration |
-| Full anti-hallucination protocol | Planned | Requires end-to-end validation |
-
----
+| Vector retrieval | Implemented | Semantic similarity search |
+| BM25 retrieval | Implemented | Lexical retrieval |
+| Hybrid retrieval | Implemented | Reciprocal Rank Fusion (RRF) |
+| Retrieval evaluation | Implemented | 20 labeled evaluation questions |
+| FastAPI health endpoint | Implemented | `GET /health` |
+| Retrieval and answer endpoint | Implemented | `POST /retrieve` |
+| Gemini integration | Implemented | Generates answers using retrieved passages |
+| Source information in responses | Implemented | Retrieved source information is returned by the API |
+| Automated API tests | Implemented | Six tests passed in the latest recorded run |
+| Citation validation | Needs further validation | Source references should be checked against the retrieved evidence |
+| Calibrated refusal and confidence thresholds | Requires further work | Not established by the current evaluation |
+| Production deployment and frontend integration | Outside the scope of these local test results | Must be verified in the target environment |
 
 ## 3. Regulatory Corpus
 
-### 3.1 Currently processed legal texts
+The current corpus contains four target regulatory documents.
 
-The current MVP processes four target legal texts:
+| Document ID | Document |
+|---|---|
+| `JORADP-2022-085` | Law No. 22-23 on the status of the auto-entrepreneur |
+| `JORADP-2023-196` | Executive Decree No. 23-196 |
+| `JORADP-2023-197` | Executive Decree No. 23-197 |
+| `JORADP-2023-198` | Executive Decree No. 23-198 |
 
-| Legal text | Main subject | Processing status |
-|---|---|---|
-| Law No. 22-23 of 18 December 2022 | Status of the auto-entrepreneur | Processed |
-| Executive Decree No. 23-196 of 25 May 2023 | Organization and functioning of ANAE | Processed |
-| Executive Decree No. 23-197 of 25 May 2023 | Activities eligible for auto-entrepreneur status | Processed |
-| Executive Decree No. 23-198 of 25 May 2023 | Auto-entrepreneur card model | Processed |
+Official legal documents are the intended primary sources for regulatory answers. Secondary sources should not be treated as equivalent to the official legal text.
 
-The repository also contains other raw regulatory PDFs. Their presence in the raw-data directory does not, by itself, mean they have been segmented, indexed, or evaluated for retrieval.
+### Current corpus statistics
 
-### 3.2 Current corpus statistics
-
-| Metric | Current result |
+| Metric | Value |
 |---|---:|
-| Target legal texts processed | 4 |
 | Total chunks | 79 |
 | Indexable chunks | 70 |
-| Structural, non-indexed chunks | 9 |
-| Embedding model | `intfloat/multilingual-e5-small` |
-| Embedding dimension | 384 |
-| Configured maximum chunk length | 2,400 characters |
+| Non-indexable structural chunks | 9 |
+| Embedding dimensions | 384 |
+| Maximum chunk length configured for the corpus | 2,400 characters |
 
-Structural chunks, such as preambles, closing sections, and annexes, are retained in the corpus but excluded from the current vector index where configured as non-indexable.
+The corpus contains article chunks as well as structural chunks such as preambles, closing sections, and annexes. Only the 70 indexable chunks are represented in the current embedding index.
 
-The original chunk text is preserved separately from `embedding_text`, which can include contextual information to improve retrieval.
+These figures describe the current local corpus and may change when documents are added or reviewed.
 
-### 3.3 Data organization
+## 4. Project Structure
 
-The main data files are located under `rag/data/`:
-
-```text
-rag/data/
-├── raw/
-│   └── Official regulatory PDF files
-├── manifest.json
-├── processed/
-│   ├── extracted_text.json
-│   ├── regulations.json
-│   ├── chunks.json
-│   ├── chunks_review.json
-│   └── embeddings/
-│       ├── vectors.npy
-│       ├── metadata.json
-│       └── index_info.json
-└── backups/
-```
-
-- `raw/`: source PDF documents.
-- `manifest.json`: source document inventory and associated metadata.
-- `extracted_text.json`: extracted source text and page information.
-- `regulations.json`: normalized regulatory document data.
-- `chunks.json`: generated retrieval chunks.
-- `chunks_review.json`: review-oriented representation of the chunks.
-- `embeddings/vectors.npy`: numerical embedding vectors.
-- `embeddings/metadata.json`: metadata corresponding to indexed chunks.
-- `embeddings/index_info.json`: index configuration and build information.
-- `backups/`: local snapshots created during data preparation.
-
-Backup files may differ depending on the local development environment. They are not part of the runtime index.
-
----
-
-## 4. Document Processing Pipeline
-
-The current preparation pipeline transforms regulatory PDFs into structured, searchable content.
+The principal files and directories are organized as follows:
 
 ```text
-Official PDF documents
-        |
-        v
-Text extraction
-        |
-        v
-Document normalization
-        |
-        v
-Article-aware segmentation
-        |
-        v
-Chunk creation and review
-        |
-        v
-Embedding generation
-        |
-        v
-Local vector index
-        |
-        v
-Retrieval experiments and evaluation
+rag/
+├── app/
+│   ├── main.py
+│   └── retrieval/
+│       └── search.py
+├── data/
+│   ├── raw/
+│   ├── manifest.json
+│   └── processed/
+│       ├── extracted_text.json
+│       ├── regulations.json
+│       ├── chunks.json
+│       ├── chunks_review.json
+│       ├── evaluation_catalog.txt
+│       ├── retrieval_eval.json
+│       └── embeddings/
+│           ├── vectors.npy
+│           ├── metadata.json
+│           └── index_info.json
+├── scripts/
+│   ├── build_embeddings.py
+│   ├── evaluate_retrieval_methods.py
+│   └── ...
+├── tests/
+│   └── test_api.py
+├── .env.example
+├── requirements.txt
+└── README.md
 ```
 
-### 4.1 Text extraction and normalization
+Some scripts and data files support exploratory experiments or review workflows. The structure above highlights the principal artifacts; it is not intended to be an exhaustive list of every experimental file.
 
-Text is extracted from the source documents and stored with document and page information.
+### Important data artifacts
 
-The pipeline retains source references so that retrieved passages can be traced back to their originating legal document.
+- `data/manifest.json`: source-document manifest and associated metadata.
+- `data/processed/extracted_text.json`: extracted document text.
+- `data/processed/regulations.json`: normalized regulatory content.
+- `data/processed/chunks.json`: generated chunks and their metadata.
+- `data/processed/chunks_review.json`: chunk-review artifact.
+- `data/processed/embeddings/vectors.npy`: numerical embedding vectors.
+- `data/processed/embeddings/metadata.json`: metadata associated with indexed chunks.
+- `data/processed/embeddings/index_info.json`: information about the generated index.
+- `data/processed/evaluation_catalog.txt`: evaluation questions and relevant targets.
+- `data/processed/retrieval_eval.json`: evaluation data used by the retrieval evaluation workflow.
 
-Scanned pages, complex layouts, tables, and annexes may require additional extraction or manual verification.
+Do not manually modify generated vectors or metadata independently. If the corpus changes, regenerate the affected artifacts using the appropriate processing workflow.
 
-### 4.2 Article-aware chunking
+## 5. Retrieval Architecture
 
-The segmentation process identifies article boundaries and creates chunks suitable for retrieval.
+### 5.1 Embedding generation
 
-Each chunk preserves relevant document and article metadata. The pipeline also distinguishes indexable regulatory passages from structural content that should not enter the current index.
-
-The current configuration uses a maximum chunk length of 2,400 characters. This is not equivalent to a rule that keeps every article below 800 tokens intact.
-
-A future chunking refinement may use token-aware limits, preserve article boundaries where practical, and split exceptionally long articles into smaller passages without losing their source references.
-
-### 4.3 Embedding generation
-
-The project uses the multilingual embedding model:
+The current embedding model is:
 
 `intfloat/multilingual-e5-small`
 
-The model generates 384-dimensional vectors and supports multilingual retrieval, including French and Arabic content.
+The model generates 384-dimensional embeddings and supports multilingual text, making it suitable for experimentation with French and other languages used in the regulatory corpus.
 
-The implementation uses the E5 task prefixes:
+The embedding workflow produces:
 
-- Documents: `passage: `
-- User queries: `query: `
+- A NumPy array containing the vectors.
+- Metadata associating indexed vectors with their corresponding chunks.
+- Index information describing the generated artifacts.
 
-Only chunks marked `index: true` are included in the current index.
+The current index contains 70 vectors, corresponding to the 70 indexable chunks.
 
-### 4.4 Local index
+### 5.2 Retrieval methods
 
-The current index is file-based and uses:
+Three retrieval approaches are evaluated.
 
-- NumPy for the vector matrix.
-- JSON for chunk metadata and index information.
-- A local embedding model for vector generation.
+**Vector retrieval**
 
-This is a local vector index, not a PostgreSQL or pgvector deployment.
+Uses embedding similarity to retrieve passages semantically related to a question.
 
----
+**BM25 retrieval**
 
-## 5. Retrieval Experiments
+Uses lexical matching to retrieve passages that share relevant terms with the question. This can be useful for article numbers, legal references, and specific expressions.
 
-Several retrieval strategies have been implemented and compared.
+**Hybrid retrieval using Reciprocal Rank Fusion**
 
-### 5.1 Semantic retrieval
+Combines rankings from multiple retrieval methods. RRF uses the positions of documents in the component rankings rather than directly combining their raw scores.
 
-Semantic retrieval compares the query embedding with the stored chunk embeddings to identify passages that are semantically relevant to the question.
+The evaluation script compares these methods using the same labeled evaluation dataset.
 
-This helps retrieve conceptually related passages even when the wording differs.
+### 5.3 Current retrieval path
 
-### 5.2 BM25 lexical retrieval
+The tested local retrieval path uses:
 
-BM25 provides a lexical baseline based on term matching and term importance.
+- `vectors.npy` for embeddings.
+- `metadata.json` for chunk metadata.
+- The processed regulatory chunks as the underlying source content.
 
-It can be particularly useful for queries containing exact article references, legal terminology, activity names, or administrative expressions.
+This is a local file-based index. PostgreSQL/pgvector should not be considered the active retrieval backend unless a separate integration has been implemented and tested.
 
-### 5.3 Reciprocal Rank Fusion
+## 6. Retrieval Evaluation
 
-Reciprocal Rank Fusion (RRF) combines ranked results from different retrieval methods.
+### 6.1 Evaluation setup
 
-The objective is to benefit from both semantic similarity and lexical matching rather than relying exclusively on one ranking method.
+The latest recorded evaluation used:
 
-### 5.4 Two-stage retrieval
+- **70** indexable chunks.
+- **20** evaluation questions.
+- **Top K = 5** retrieved results.
+- Three methods: vector, BM25, and hybrid RRF.
 
-The two-stage experiment first identifies potentially relevant documents and then retrieves relevant chunks from the selected documents.
+The evaluation uses labeled relevant targets. The quality of the results therefore depends partly on the accuracy and completeness of those labels.
 
-The current experimental configuration selects two documents and retrieves up to ten candidate chunks for further ranking.
+### 6.2 Latest recorded results
 
-These are experimental parameters, not final production settings.
+| Method | Mean first relevant rank | Recall@5 | MRR |
+|---|---:|---:|---:|
+| Vector | 3.55 | 0.867 | 0.808 |
+| BM25 | 2.15 | 0.850 | 0.783 |
+| Hybrid RRF | 1.80 | 0.867 | 0.852 |
 
-### 5.5 Evaluation limitations
+**Interpretation**
 
-Initial evaluation scripts compare retrieval methods on a small set of manually defined questions and target chunk IDs.
+- **Hybrid RRF** achieved the best mean first relevant rank and MRR in this evaluation.
+- Hybrid RRF and vector retrieval tied on Recall@5 at 0.867.
+- BM25 achieved a Recall@5 of 0.850 and can still contribute useful lexical matches.
+- The results support using hybrid retrieval as the current candidate for further testing, but do not establish that it is optimal for every question or legal document.
 
-This is useful for debugging and comparing approaches, but it is not sufficient to establish production-level reliability.
+The metrics should be recalculated whenever the corpus, retrieval configuration, or evaluation labels change.
 
-Further evaluation should include:
+### 6.3 Known evaluation gaps
 
-- Questions with known supporting articles.
-- Questions requiring exact article or activity-code matching.
-- Paraphrased questions in French and Arabic.
-- Questions whose answers require passages from multiple documents.
-- Questions outside the indexed corpus.
-- Ambiguous questions and questions with insufficient evidence.
-- Recall@k, Precision@k, MRR, and nDCG where applicable.
-- Manual assessment of source relevance and legal completeness.
+The current evaluation is small and does not establish production-level retrieval quality.
 
-Retrieval quality and answer correctness must be evaluated separately.
+In the latest recorded run, the expected target for question Q01 appeared at rank 6 in the hybrid results, while the target for Q11 appeared at rank 8. Both were therefore outside the top five results for those questions.
 
----
+Further work should include:
 
-## 6. Local Setup
+- Reviewing relevant-target labels and difficult questions.
+- Testing article-specific and number-heavy questions.
+- Evaluating French and Arabic questions separately where applicable.
+- Measuring retrieval quality as the corpus grows.
+- Validating that generated answers are supported by retrieved passages.
 
-### 6.1 Requirements
+## 7. Installation and Configuration
 
-The development environment uses Python 3.12 and a CPU-compatible PyTorch installation.
+### 7.1 Requirements
 
-The embedding model can run locally, without requiring a paid LLM API for embedding generation. Initial model downloads require access to the relevant model repository.
+The current development setup uses Python 3.12 in a local virtual environment.
 
-### 6.2 Create and activate the virtual environment
+Dependencies are listed in `requirements.txt`, including:
 
-From the repository root, run:
+- FastAPI
+- Uvicorn
+- Pydantic
+- `python-dotenv`
+- NumPy
+- `sentence-transformers`
+- `rank-bm25`
+- `google-genai`
+
+### 7.2 Create and activate a virtual environment
+
+From the `rag/` directory, run the following commands in PowerShell:
 
 ```powershell
-cd rag
 py -3.12 -m venv .venv
 .\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+pip install -r requirements.txt
 ```
 
-If PowerShell blocks environment activation, use the virtual environment's Python executable directly:
+If the virtual environment already exists, activate it instead of recreating it.
+
+### 7.3 Configure environment variables
+
+Copy the example configuration file:
 
 ```powershell
-.\.venv\Scripts\python.exe --version
+Copy-Item .env.example .env
 ```
 
-### 6.3 Install dependencies
+Configure the variables in `rag/.env`:
 
-Install the dependencies listed in the project requirements file:
+```dotenv
+GEMINI_API_KEY=your_gemini_api_key
+GEMINI_MODEL=gemini-2.5-flash
+```
+
+Replace the placeholder with your own valid API key. Never commit `.env` or publish API keys. The `.env.example` file should contain placeholders only.
+
+The API key is required for Gemini answer generation. Retrieval and embedding generation use their own local artifacts and dependency setup.
+
+## 8. Running the API
+
+Run the following command from the `rag/` directory with the virtual environment activated:
 
 ```powershell
-python -m pip install -r requirements.txt
+python -m uvicorn app.main:app --reload
 ```
 
-The embedding and retrieval experiments also depend on the packages used by their scripts, including `sentence-transformers`, `torch`, `numpy`, and `rank-bm25`.
+The local development server runs at:
 
-Install any missing experimental dependencies in the virtual environment before running those scripts.
+`http://127.0.0.1:8000`
+
+The `--reload` option is intended for local development, not production deployment.
+
+### 8.1 Health check
+
+Endpoint:
+
+`GET /health`
+
+PowerShell example:
+
+```powershell
+Invoke-RestMethod -Uri "http://127.0.0.1:8000/health"
+```
+
+The endpoint can be used to verify that the API process is responding. It should not, by itself, be treated as proof that Gemini generation or every retrieval artifact is functioning correctly.
+
+### 8.2 Retrieve and generate an answer
+
+Endpoint:
+
+`POST /retrieve`
+
+Example request:
+
+```json
+{
+  "question": "Quelle est la loi qui définit le statut de l'auto-entrepreneur en Algérie ?",
+  "top_k": 3
+}
+```
+
+PowerShell example:
+
+```powershell
+$json = '{"question":"Quelle est la loi qui définit le statut de l auto-entrepreneur en Algérie ?","top_k":3}'
+
+$response = Invoke-RestMethod `
+  -Uri "http://127.0.0.1:8000/retrieve" `
+  -Method Post `
+  -ContentType "application/json; charset=utf-8" `
+  -Body ([System.Text.Encoding]::UTF8.GetBytes($json))
+
+$response | Select-Object question, answer, fallback, results_count |
+  Format-List
+```
+
+Using UTF-8 encoded request bytes helps avoid PowerShell request-body encoding issues.
+
+The latest recorded successful end-to-end local test returned an answer identifying Law No. 22-23, with `fallback` set to `False` and three retrieval results. This demonstrates one successful local request, not a guarantee of availability for every request.
+
+### 8.3 Response structure
+
+The endpoint response includes the following fields:
+
+| Field | Description |
+|---|---|
+| `question` | The submitted question |
+| `answer` | The generated answer or fallback response |
+| `sources` | Source information associated with the answer |
+| `fallback` | Indicates whether the fallback response was used |
+| `results_count` | Number of retrieved results returned |
+| `results` | Retrieved passages and associated metadata |
+
+The precise structure of individual result and source objects is defined by the API implementation.
+
+## 9. Answer Generation and Fallback Behavior
+
+The service uses the Google GenAI SDK to send the question and retrieved passages to the configured Gemini model.
+
+The intended flow is:
+
+1. Receive a question through the API.
+2. Retrieve relevant regulatory passages.
+3. Supply the question and retrieved evidence to the generation component.
+4. Generate an answer based on the available evidence.
+5. Return the answer, source information, retrieval results, and fallback status.
+
+If answer generation fails, the application has a fallback path. This is important because a retrieval request may succeed even when the external generation service is temporarily unavailable.
+
+A previous local request encountered a Gemini `503 UNAVAILABLE` error, while a subsequent request succeeded. External model availability can therefore affect end-to-end behavior.
+
+**Important limitations**
+
+- A generated answer is not automatically legally correct just because retrieval returned relevant passages.
+- Returning source information does not, by itself, prove that every claim is supported by the cited passage.
+- The fallback mechanism should not be confused with a fully calibrated legal refusal system.
+- Citation validation, unsupported-claim detection, and behavior when evidence is insufficient require further testing.
+
+## 10. Running Tests
+
+From the `rag/` directory, run:
+
+```powershell
+python -m pytest tests/test_api.py -v
+```
+
+The latest recorded run passed all six tests in `tests/test_api.py`.
+
+The retrieval endpoint tests include mocked answer-generation behavior. Consequently, passing these tests does **not** prove that the live Gemini API is available or that every generated answer is correct.
+
+For an end-to-end smoke test, start the server in one terminal and send a request to `POST /retrieve` from another terminal using the example above.
+
+A useful verification sequence is:
+
+1. Confirm that the server starts.
+2. Check `GET /health`.
+3. Send a question to `POST /retrieve`.
+4. Inspect `results_count` and the returned passages.
+5. Check whether `fallback` is `False`.
+6. Verify that the answer and source references are supported by the retrieved legal text.
+
+## 11. Re-running Retrieval Evaluation
+
+From the `rag/` directory, run:
+
+```powershell
+python .\scripts\evaluate_retrieval_methods.py
+```
+
+The evaluation script compares vector, BM25, and hybrid RRF retrieval against the labeled evaluation dataset.
+
+The latest recorded run completed with 70 indexable chunks and 20 evaluation questions.
+
+The evaluation may display a Hugging Face Hub authentication warning when using an unauthenticated account. Such a warning is not, on its own, evidence that the evaluation failed.
+
+Use the printed metrics and question-level rankings to identify weak retrieval cases. Do not modify evaluation labels merely to improve the reported scores; review them against the actual regulatory content.
+
+## 12. Current Limitations and Next Steps
+
+The service has progressed beyond retrieval-only experimentation: it now includes a question-answer API, Gemini integration, and an initial retrieval evaluation workflow.
+
+The remaining work should focus on reliability and validation.
+
+### Priority 1 — Validate legal grounding
+
+- Inspect whether each answer is supported by the retrieved passages.
+- Check that source identifiers and article references are correct.
+- Test questions whose answers require multiple articles or documents.
+- Test questions for which the current corpus contains insufficient evidence.
+
+### Priority 2 — Improve retrieval evaluation
+
+- Review the labeled targets for Q01 and Q11 and other difficult cases.
+- Expand the evaluation set with realistic regulatory questions.
+- Evaluate article-specific, lexical, and multilingual queries.
+- Recalculate metrics after retrieval changes.
+
+### Priority 3 — Improve failure handling
+
+- Test missing or invalid Gemini credentials.
+- Test external API errors and timeouts.
+- Verify the behavior when no useful passages are retrieved.
+- Distinguish generation failures from insufficient retrieval evidence.
+
+### Priority 4 — Verify integration and deployment
+
+- Confirm that the environment used for deployment has the required dependencies and configuration.
+- Verify that the intended frontend or backend integration calls the correct endpoint and uses the expected request and response fields.
+- Test the deployed service independently of the local development environment.
+
+These are validation tasks, not claims that the corresponding work has already been completed.
+
+## 13. Current Milestone
+
+The current milestone is an initial, locally tested RAG API with hybrid retrieval evaluation and Gemini-based answer generation.
+
+The latest recorded results show that hybrid RRF is a promising retrieval candidate on the current 20-question evaluation set. The API and its six tests have also been exercised locally.
+
+The next milestone is to strengthen evidence grounding, citation correctness, insufficient-evidence handling, and broader evaluation before treating the service as production-ready.
 
 ---
 
-## 7. Running the Current Pipeline
-
-Run commands from the repository root unless otherwise specified.
-
-### 7.1 Build the embeddings
-
-```powershell
-python rag/scripts/build_embeddings.py
-```
-
-This script generates the local embeddings and associated index metadata from the prepared chunks.
-
-Review the script's configuration and output paths before rebuilding the index, because regeneration can replace existing artifacts.
-
-### 7.2 Run semantic retrieval
-
-```powershell
-python rag/scripts/search_index.py
-```
-
-Use this to test semantic retrieval with individual queries.
-
-### 7.3 Compare retrieval strategies
-
-```powershell
-python rag/scripts/compare_retrieval.py
-```
-
-This compares the retrieval approaches implemented in the experiment.
-
-### 7.4 Test two-stage retrieval
-
-```powershell
-python rag/scripts/test_two_stage_retrieval.py
-```
-
-### 7.5 Evaluate two-stage retrieval
-
-```powershell
-python rag/scripts/evaluate_two_stage.py
-```
-
-### 7.6 Compare document-level retrieval
-
-```powershell
-python rag/scripts/test_document_retrieval.py
-```
-
-### 7.7 Test metadata-enriched BM25
-
-```powershell
-python rag/scripts/test_bm25_context.py
-```
-
-### 7.8 Inspect activity retrieval
-
-```powershell
-python rag/scripts/test_activity_retrieval.py
-python rag/scripts/compare_activity_rankings.py
-```
-
-The scripts above are development and evaluation utilities. They do not collectively constitute a deployed, end-to-end conversational RAG service.
-
----
-
-## 8. Regulatory RAG Intelligence Service — Target Architecture
-
-The long-term objective is a specialized regulatory intelligence microservice that answers legal and administrative questions using verified official sources.
-
-The target architecture is:
-
-```text
-User question
-      |
-      v
-Query processing
-      |
-      v
-Hybrid retrieval
-      |
-      v
-Evidence ranking and validation
-      |
-      +---- Insufficient evidence ----> Deterministic refusal
-      |
-      v
-Context construction
-      |
-      v
-LLM answer generation
-      |
-      v
-Claim and citation validation
-      |
-      v
-Answer with supporting legal sources
-```
-
-This is the target design, not a claim that every component is already implemented.
-
-### 8.1 Planned corpus expansion
-
-The broader regulatory scope may include:
-
-| Candidate source | Intended coverage | Status |
-|---|---|---|
-| Law No. 22-23 | Auto-entrepreneur status, rights, and obligations | Processed |
-| Executive Decree No. 23-196 | ANAE organization and procedures | Processed |
-| Executive Decree No. 23-197 | Eligible activities and associated codes | Processed |
-| Executive Decree No. 23-198 | Auto-entrepreneur card model | Processed |
-| Finance Law No. 23-22 | Fiscal provisions relevant to auto-entrepreneurs | Additional ingestion and validation required |
-| Executive Decree No. 05-468 | Invoicing and supporting-document requirements | Additional ingestion and validation required |
-| Executive Decree No. 26-257 | CASNOS contribution provisions | Additional ingestion and validation required |
-| Relevant provisions of the Commercial Code | Commercial record-retention requirements | Relevant official text and provisions must be identified and validated |
-
-The additional sources must be processed, indexed, and checked against the official legal texts before being presented as searchable, verified knowledge.
-
-A document's inclusion in the broader target corpus does not establish that every legal claim associated with it has been verified.
-
-### 8.2 Metadata and traceability
-
-The target system should retain, for each indexed passage:
-
-- Stable document identifier.
-- Official document title and legal reference.
-- Article or provision reference.
-- Source PDF and page information.
-- Official source URL, when available and validated.
-- Verification status and verification date.
-- Original text and contextualized embedding text.
-
-The source URL and verification status should be supported by actual source checks rather than assigned automatically without review.
-
-### 8.3 Evidence-grounded generation
-
-The generation component should answer from retrieved regulatory evidence.
-
-The target response format should distinguish:
-
-1. The direct answer to the user's question.
-2. The legal provision supporting each material claim.
-3. The source document and article reference.
-4. Relevant limitations, exceptions, or ambiguity.
-5. A refusal or request for clarification when the evidence does not support a reliable answer.
-
-The system should not invent article numbers, statutory rates, deadlines, obligations, or exceptions.
-
-### 8.4 Refusal behavior
-
-A similarity threshold of `0.70` has been proposed as a possible initial refusal rule.
-
-However, a similarity score is not, by itself, a calibrated measure of legal certainty. The threshold must be tested against answerable and unanswerable questions before it can be used as a production decision rule.
-
-A robust refusal mechanism should consider:
-
-- Retrieval relevance and evidence quality.
-- Whether the retrieved passages actually support the requested claim.
-- Conflicting or outdated provisions.
-- Missing context or ambiguous questions.
-- Questions outside the indexed corpus.
-- Retrieval failures and generation failures.
-
-The service should bypass answer generation when the refusal policy determines that sufficient evidence is unavailable.
-
-A proposed fallback message is:
-
-> This query cannot be resolved with high statutory certainty from the currently verified official legal sources. Please consult the competent authority, such as the Direction Générale des Impôts (mfdgi.gov.dz), ANAE (anae.dz), or CASNOS (casnos.com.dz), as appropriate to your question.
-
-The appropriate authority should be selected according to the subject of the question. The wording should not imply that these institutions are interchangeable or that the fallback replaces professional legal or fiscal advice.
-
-These controls can reduce unsupported answers, but no similarity threshold or prompt alone can guarantee that a generative system will never hallucinate. The system must be evaluated end to end.
-
----
-
-## 9. API Status
-
-The current FastAPI application exposes a basic `/health` endpoint.
-
-At this stage, the health endpoint confirms the basic service interface; it does not establish that the complete retrieval and generation pipeline is operational.
-
-The next API milestone is to implement and test a regulatory question-answering endpoint that:
-
-1. Accepts a user question.
-2. Retrieves relevant regulatory passages.
-3. Applies evidence sufficiency and refusal rules.
-4. Constructs a traceable context.
-5. Generates a response only when permitted.
-6. Returns the answer with source citations and relevant metadata.
-
-The API should also handle invalid requests, retrieval errors, and model failures explicitly.
-
----
-
-## 10. Recommended Development Roadmap
-
-### Phase 1 — Corpus quality
-
-- Finish checking the current chunks against their official sources.
-- Validate document metadata and source references.
-- Inspect complex layouts, scanned pages, and annexes.
-- Expand the corpus only after confirming the official source and scope of each document.
-
-### Phase 2 — Retrieval quality
-
-- Build a reproducible evaluation dataset.
-- Compare semantic, BM25, and hybrid retrieval.
-- Evaluate exact article matching and activity-code retrieval.
-- Tune chunking and ranking using measured results.
-
-### Phase 3 — Evidence and refusal policy
-
-- Define answerable, ambiguous, and unanswerable question sets.
-- Test candidate refusal thresholds.
-- Require source evidence for material legal claims.
-- Test conflicting, missing, and insufficient evidence.
-
-### Phase 4 — RAG API integration
-
-- Implement the question-answering endpoint.
-- Connect retrieval, context construction, and generation.
-- Return structured source citations.
-- Add error handling and integration tests.
-
-### Phase 5 — End-to-end validation
-
-- Measure retrieval and answer quality independently.
-- Check citation correctness and legal claim support.
-- Evaluate refusal behavior and unsupported-answer rates.
-- Document known limitations before deployment.
-
----
-
-## 11. Known Limitations
-
-- The current indexed MVP covers four target legal texts, not the entire Algerian legal and fiscal framework.
-- The presence of a raw PDF does not guarantee that it is included in the index.
-- The current chunking limit is character-based rather than an 800-token article-preservation rule.
-- Retrieval experiments use a small evaluation set.
-- Retrieval similarity does not establish legal correctness.
-- The full generation, citation-validation, and deterministic-refusal workflow is not yet integrated into the API.
-- Official source verification and legal updates require explicit review.
-- The system is intended to support access to regulatory information, not to replace competent authorities or qualified legal and fiscal professionals.
-
----
-
-## 12. Repository Status
-
-The `feat/regulatory-corpus` branch contains the initial regulatory corpus preparation and retrieval pipeline.
-
-The next major milestone is to move from retrieval experiments to a tested, evidence-grounded RAG service, while keeping the corpus scope, source verification, evaluation results, and implementation status transparent.
+**Current implementation summary**
+
+- Corpus: 79 total chunks, including 70 indexable chunks.
+- Embeddings: `intfloat/multilingual-e5-small`, 384 dimensions.
+- Retrieval: vector, BM25, and hybrid RRF evaluation.
+- Generation: Google Gemini via `google-genai`.
+- API: FastAPI, with `GET /health` and `POST /retrieve`.
+- Evaluation: 20 questions, with hybrid RRF achieving Recall@5 of 0.867 and MRR of 0.852 in the latest recorded run.
+- Tests: six API tests passed in the latest recorded run.
+- Remaining focus: legal evidence validation, citation checks, failure handling, and broader testing.
