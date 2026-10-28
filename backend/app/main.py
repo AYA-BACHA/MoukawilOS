@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api import (
     analytics,
     assistant,
+    auth,
     clients,
     compliance,
     health,
@@ -56,11 +57,13 @@ app.include_router(assistant.router)
 app.include_router(analytics.router)
 app.include_router(compliance.router)
 app.include_router(manual_income.router)
+app.include_router(auth.router)
 
 # Mount /api aliases to match docs/api.md specifications
 app.include_router(analytics.router, prefix="/api")
 app.include_router(compliance.router, prefix="/api")
 app.include_router(manual_income.router, prefix="/api")
+app.include_router(auth.router, prefix="/api")
 app.include_router(invoices.router, prefix="/api")
 app.include_router(clients.router, prefix="/api")
 app.include_router(profile.router, prefix="/api")

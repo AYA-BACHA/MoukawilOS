@@ -6,3 +6,4 @@ psycopg[binary,pool]
 PyJWT
 httpx
 PyJWT[crypto]
+email-validator

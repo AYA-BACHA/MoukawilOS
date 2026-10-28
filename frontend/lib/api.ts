@@ -1098,7 +1098,72 @@ export async function askAssistant(question: string): Promise<AssistantMessage> 
     };
   }
 
-  // Deterministic Refusal Fallback (No hallucination)
+
+  // 3. Invoice Compliance, Credit Notes & Executive Decree 05-468
+  if (/(facture|invoice|avoir|credit note|num[eé]rot|s[eé]quence|fa-|av-|05-468|mentions)/i.test(q)) {
+    return {
+      id: `msg_rag_${Date.now()}`,
+      userId: CURRENT_USER_ID,
+      role: "assistant",
+      content: isAr
+        ? "وفقاً لـ **المرسوم التنفيذي رقم 05-468** (المادة 11) و**القانون 22-23**، تخضع فواتير المقاول الذاتي لقواعد قانونية صارمة:\n\n1. **الترقيم التسلسلي غير المنقطع:** ترقيم تسلسلي إجباري لكل سنة بصيغة `FA-YYYY-NNN`.\n2. **منع الحذف (عدم القابلية للتعديل):** لا يمكن حذف الفاتورة الصادرة إطلاقاً؛ في حال الإلغاء أو التعديل يجب إصدار **فاتورة دائنة / إشعار دائن (Facture d'Avoir)** برقم تسلسلي `AV-YYYY-NNN`.\n3. **البيانات الإلزامية:** يجب تضمين رقم التعريف الجبائي (15 رقماً)، رقم بطاقة المقاول الذاتي، والعبارة القانونية الإلزامية للإعفاء من الرسم على القيمة المضافة (TVA 0% - Art. 282 bis CIDTA)."
+        : isFr
+        ? "En vertu du **Décret exécutif n° 05-468 (Art. 11)** et de la **Loi 22-23**, les factures d'auto-entrepreneur répondent à des normes légales strictes :\n\n1. **Numérotation continue et sans rupture :** Séquence chronologique annuelle de type `FA-YYYY-NNN`.\n2. **Immutabilité des factures :** Une facture émise ne peut être supprimée. Tout ajustement ou annulation impose l'émission d'une **Facture d'Avoir (Credit Note)** normée `AV-YYYY-NNN` déduisant le chiffre d'affaires net.\n3. **Mentions légales obligatoires :** NIF à 15 chiffres, numéro de carte ANAE, RIB/IBAN, et mention obligatoire d'exonération : *'TVA Non-Assujetti (Art. 282 bis CIDTA)'*."
+        : "Under **Executive Decree No. 05-468 (Art. 11)** and **Law 22-23**, auto-entrepreneur billing complies with strict legal requirements:\n\n1. **Gapless Sequential Numbering:** Chronological numbering format `FA-YYYY-NNN`.\n2. **Invoice Immutability:** Once issued, an invoice cannot be deleted. Corrections or cancellations legally require an official **Credit Note (*Facture d'Avoir*)** numbered `AV-YYYY-NNN` that reduces net turnover.\n3. **Mandatory Citations:** 15-digit NIF, RNAE card number, and the mandatory 0% VAT exemption notice (*TVA Non-Assujetti - Art. 282 bis CIDTA*).",
+      citations: ["JORADP-2005-080:art-11", "CIDTA-282-bis"],
+      createdAt: new Date().toISOString(),
+    };
+  }
+
+  // 4. Dual-Filing Statutory Calendar (G12 vs G12 bis)
+  if (/(g12|g12 bis|g12bis|calendrier|calendar|[eé]ch[eé]ance|deadline|d[eé]claration)/i.test(q)) {
+    return {
+      id: `msg_rag_${Date.now()}`,
+      userId: CURRENT_USER_ID,
+      role: "assistant",
+      content: isAr
+        ? "وفقاً لـ **المادة 282 رابعاً من قانون الضرائب المباشرة (CIDTA)**، يتبع المقاول الذاتي روزنامة تصريحية مزدوجة:\n\n1. **30 جوان:** إيداع استمارة **G n° 12** (التصريح التقديري برقم الأعمال السنوي) ودفع الضريبة الجزافية (IFU 0.5%) إما كلياً أو بالقسط الأول (50%)، بالإضافة إلى تسديد اشتراك **CASNOS** السنوي (24,000 دج).\n2. **20 جانفي (من السنة الموالية):** إيداع استمارة **G n° 12 bis** (التصريح التكميلي للتسوية النهائية) لتسوية الضريبة بناءً على رقم الأعمال المحصل فعلياً."
+        : isFr
+        ? "Selon l'**Article 282 quater du Code des Impôts Directs (CIDTA)**, l'auto-entrepreneur est soumis à un calendrier déclaratif dual :\n\n1. **30 juin :** Dépôt de la déclaration prévisionnelle **G n° 12** (chiffre d'affaires estimé) et paiement de l'IFU (intégral ou 1er acompte de 50 %), ainsi que le règlement de la cotisation annuelle **CASNOS** (24 000 DA).\n2. **20 janvier (de l'année suivante) :** Dépôt de la déclaration de régularisation définitive **G n° 12 bis** sur le chiffre d'affaires réellement encaissé sur l'année écoulée."
+        : "Under **Article 282 quater of CIDTA**, auto-entrepreneurs follow a dual statutory calendar:\n\n1. **June 30th:** Filing of provisional declaration **Formulaire G n° 12** (with full IFU payment or 50% first installment) and annual **CASNOS** social contribution (24,000 DZD).\n2. **January 20th (following year):** Filing of definitive regularisation **Formulaire G n° 12 bis** calculating exact 0.5% IFU based on cleared cash turnover.",
+      citations: ["CIDTA-282-quater"],
+      createdAt: new Date().toISOString(),
+    };
+  }
+
+  // 5. Cash-Basis Accounting & Pending Invoices
+  if (/(cash-basis|encaissement|impay[eé]|unpaid|pending|cr[eé]ance)/i.test(q)) {
+    return {
+      id: `msg_rag_${Date.now()}`,
+      userId: CURRENT_USER_ID,
+      role: "assistant",
+      content: isAr
+        ? "وفقاً لـ **المادة 282 ثالثاً من قانون الضرائب المباشرة (CIDTA)**، يعتمد نظام المقاول الذاتي **المحاسبة على أساس القبض النقدي (Comptabilité d'encaissement)**. الفواتير الصادرة غير المحصلة لا تخضع لأي ضريبة ولا تستهلك سقف الـ 5 ملايين دينار إلا بعد تحويل الأموال فعلياً لحسابك البنكي أو البريدي."
+        : isFr
+        ? "En vertu de l'**Article 282 ter du CIDTA**, l'auto-entrepreneur est soumis à une stricte **comptabilité d'encaissement**. Seuls les règlements effectivement reçus sur votre compte bancaire ou CCP consomment le plafond de 5 000 000 DA et déclenchent l'IFU de 0,5 %. Les factures en attente (impayées) bénéficient d'une **imposition de 0 %**."
+        : "Under **Article 282 ter of CIDTA**, auto-entrepreneurs operate strictly under **cash-basis accounting (*comptabilité d'encaissement*)**. Only cleared and received payments consume the 5,000,000 DZD annual ceiling and trigger the 0.5% IFU tax. Pending client invoices carry **0% tax liability** until cashed.",
+      citations: ["CIDTA-282-ter"],
+      createdAt: new Date().toISOString(),
+    };
+  }
+
+  // 6. Registration Steps, 30-day NIF & 10-day CASNOS
+  if (/(commencer|start|inscri|regist|carte anae|30 jours|30 days|10 jours|d[eé]lai)/i.test(q)) {
+    return {
+      id: `msg_rag_${Date.now()}`,
+      userId: CURRENT_USER_ID,
+      role: "assistant",
+      content: isAr
+        ? "وفقاً لـ **القانون 22-23 (المادتان 6 و 11)**:\n\n1. **التسجيل:** عبر المنصة الوطنية (anae.dz) للحصول على بطاقة المقاول الذاتي.\n2. **التصريح بالوجود (NIF):** إيداع التصريح بالوجود لدى مفتشية الضرائب خلال **30 يوماً** من استلام البطاقة للحصول على رقم التعريف الجبائي (15 رقماً).\n3. **الانتساب للضمان الاجتماعي (CASNOS):** إلزامي خلال **10 أيام** من بدء النشاط (المادة 6 من القانون 83-14)."
+        : isFr
+        ? "Selon la **Loi 22-23 (Articles 6 et 11)** :\n\n1. **Inscription :** Sur la plateforme nationale (anae.dz) pour obtenir la carte d'auto-entrepreneur.\n2. **Déclaration d'existence (NIF) :** À souscrire auprès de l'inspection fiscale (DGI) dans un délai de **30 jours** suivant la délivrance de la carte pour obtenir votre NIF à 15 chiffres.\n3. **Affiliation CASNOS :** Obligatoire dans les **10 jours** suivant le début d'activité (Loi 83-14 Art. 6)."
+        : "Under **Law 22-23 (Articles 6 & 11)**:\n\n1. **Registration:** Via the national ANAE platform (anae.dz) to obtain your auto-entrepreneur card.\n2. **Tax Declaration (NIF):** File an existence declaration with the DGI inspection within **30 days** of receiving your card to secure your 15-digit NIF.\n3. **CASNOS Affiliation:** Mandatory within **10 days** of starting operations (Law 83-14 Art. 6).",
+      citations: ["JORADP-2022-085:art-11", "CIDTA-282-quater"],
+      createdAt: new Date().toISOString(),
+    };
+  }
+
+    // Deterministic Refusal Fallback (No hallucination)
   return {
     id: `msg_rag_${Date.now()}`,
     userId: CURRENT_USER_ID,
