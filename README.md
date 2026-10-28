@@ -653,7 +653,6 @@ MoukawilOS/
 | **Kawther Yakoub** | Backend Developer | FastAPI microservices, PostgreSQL schemas, and deterministic 0.5% fiscal engine |
 | **Rahima Hamouda** | Data & ML Engineer | Regulatory RAG corpus, JORADP Gazette indexing, and anti-hallucination guardrails |
 | **Ilyes Guebabi** | Business & Operations | ANAE/CASNOS compliance, enterprise billing models, and freelancer field interviews |
-| **Achouri Dalia** | QA & Statutory Compliance | User journey validation, calculation boundary stress testing, and legal compliance audit |
 
 ---
 
