@@ -645,7 +645,6 @@ MoukawilOS/
 | **Bacha Aya** | Founder & Project Lead | System architecture, regulatory domain modeling, sprint direction, and full-stack integration |
 | **Yasmine Hamaili** | Frontend Developer | Design system implementation, client dashboard UI, and invoice builder |
 | **Kawther Yakoub** | Backend Developer | FastAPI microservices, PostgreSQL schemas, and deterministic 0.5% fiscal engine |
-| **Achouri Dalia & Rahima Hamouda** | Data / ML | Regulatory RAG pipeline, Gazette corpus indexing, and anti-hallucination guardrails |
 | **Ilyes Guebabi** | Business & Operations | ANAE/CASNOS compliance, enterprise billing models, and freelancer field interviews |
 
 ---
