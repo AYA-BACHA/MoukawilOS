@@ -32,45 +32,48 @@ export function LandingNav({ signedIn }: { signedIn: boolean }) {
         <div className="flex items-center gap-1.5 sm:gap-2">
           <LanguageSwitcher />
           <ThemeToggle />
-          {signedIn ? (
-            <Link href="/dashboard" className={buttonClass("primary", "ms-1 h-9 rounded-lg px-4")}>
-              {t("Open dashboard")}
-            </Link>
-          ) : (
-            <div className="flex items-center gap-1.5 sm:gap-2 ms-1">
-              {/* Evaluator / Tester instant 1-click Demo */}
-              <form
-                action={demoSignInAction}
-                onSubmit={() => {
-                  if (typeof window !== "undefined") {
-                    sessionStorage.removeItem("moukawil_session_tour_shown");
-                    sessionStorage.setItem("moukawil_demo_login", "true");
-                  }
-                }}
+          <div className="flex items-center gap-1.5 sm:gap-2 ms-1">
+            {/* Evaluator / Tester instant 1-click Demo (Always available) */}
+            <form
+              action={demoSignInAction}
+              onSubmit={() => {
+                if (typeof window !== "undefined") {
+                  sessionStorage.removeItem("moukawil_session_tour_shown");
+                  sessionStorage.setItem("moukawil_demo_login", "true");
+                }
+              }}
+            >
+              <button
+                type="submit"
+                className="flex h-9 items-center gap-1.5 rounded-lg border border-emerald-300/80 bg-mint px-2.5 sm:px-3 text-xs font-bold text-mint-ink shadow-2xs hover:bg-mint/80 active:scale-95 transition-all"
+                title={t("Instant demo access with pre-loaded data")}
               >
-                <button
-                  type="submit"
-                  className="flex h-9 items-center gap-1.5 rounded-lg border border-emerald-300/80 bg-mint px-2.5 sm:px-3 text-xs font-bold text-mint-ink shadow-2xs hover:bg-mint/80 active:scale-95 transition-all"
-                  title={t("Instant demo access with pre-loaded data")}
+                <Sparkles className="size-3.5 text-emerald-800 shrink-0" />
+                <span>{t("Try Demo")}</span>
+              </button>
+            </form>
+
+            {signedIn ? (
+              <Link href="/dashboard" className={buttonClass("primary", "h-9 rounded-lg px-3 text-xs font-semibold")}>
+                {t("Dashboard")}
+              </Link>
+            ) : (
+              <>
+                <Link
+                  href="/sign-in"
+                  className="rounded-lg px-2 sm:px-2.5 py-1.5 text-xs font-semibold text-body transition-colors hover:text-ink hover:bg-surface"
                 >
-                  <Sparkles className="size-3.5 text-emerald-800 shrink-0" />
-                  <span>{t("Try Demo")}</span>
-                </button>
-              </form>
-              <Link
-                href="/sign-in"
-                className="rounded-lg px-2 sm:px-2.5 py-1.5 text-xs font-semibold text-body transition-colors hover:text-ink hover:bg-surface"
-              >
-                {t("Sign in")}
-              </Link>
-              <Link
-                href="/sign-up"
-                className={buttonClass("primary", "h-9 rounded-lg px-3 text-xs font-semibold")}
-              >
-                {t("Sign up")}
-              </Link>
-            </div>
-          )}
+                  {t("Sign in")}
+                </Link>
+                <Link
+                  href="/sign-up"
+                  className={buttonClass("primary", "h-9 rounded-lg px-3 text-xs font-semibold")}
+                >
+                  {t("Sign up")}
+                </Link>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </header>

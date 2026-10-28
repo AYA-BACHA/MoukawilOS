@@ -29,97 +29,127 @@ export function LandingHero({ signedIn }: { signedIn: boolean }) {
             {t("MoukawilOS is the fiscal workspace for Algerian auto-entrepreneurs: track your cash-basis turnover, issue 0% VAT invoices and never miss your G50-A deadline.")}
           </p>
 
-          {signedIn ? (
-            <div className="flex flex-wrap items-center gap-3">
-              <Link href="/dashboard" className={buttonClass("primary", "h-12 rounded-xl px-6 text-sm")}>
-                {t("Open dashboard")}
-                <ArrowRight className="size-4 rtl:-scale-x-100" />
-              </Link>
-              <a href="#how-it-works" className={buttonClass("outline", "h-12 rounded-xl px-6 text-sm")}>
-                {t("See how it works")}
-              </a>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-4 w-full max-w-xl">
-              {/* Dual-choice interactive cards: completely removes confusion */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                {/* Path 1: 1-Click Demo for Evaluators */}
-                <div className="relative flex flex-col justify-between rounded-2xl border-2 border-emerald-500/30 bg-card p-4.5 shadow-sm hover:border-emerald-500/60 hover:shadow-md transition-all group">
-                  <div className="flex flex-col gap-2">
-                    <div className="flex items-center justify-between">
-                      <span className="inline-flex items-center gap-1.5 rounded-full bg-mint px-2.5 py-0.5 text-[10px] font-bold text-mint-ink">
-                        <Sparkles className="size-3 text-emerald-700" />
-                        {t("Instant Demo")}
-                      </span>
-                      <span className="text-[10px] font-semibold text-emerald-700 font-num">1-Click</span>
-                    </div>
-                    <h3 className="text-sm font-bold text-ink">{t("Test & Evaluate")}</h3>
-                    <p className="text-[11px] leading-relaxed text-muted">
-                      {t("Pre-loaded with 40% turnover, compliant invoices, and an interactive 11-step spotlight tour.")}
-                    </p>
-                  </div>
+          <div className="flex flex-col gap-3.5 w-full max-w-xl">
+            {signedIn && (
+              <div className="flex items-center justify-between gap-3 rounded-xl bg-mint/50 border border-emerald-300/80 px-3.5 py-2 text-xs text-ink">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="relative flex size-2 shrink-0">
+                    <span className="relative inline-flex size-2 rounded-full bg-emerald-600" />
+                  </span>
+                  <span className="font-semibold truncate">{t("Active session detected")}</span>
+                </div>
+                <Link
+                  href="/dashboard"
+                  className="font-bold text-accent hover:underline inline-flex items-center gap-1 shrink-0 text-xs"
+                >
+                  <span>{t("Open dashboard")}</span>
+                  <ArrowRight className="size-3 rtl:-scale-x-100" />
+                </Link>
+              </div>
+            )}
 
-                  <form
-                    action={demoSignInAction}
-                    className="mt-4"
-                    onSubmit={() => {
-                      if (typeof window !== "undefined") {
-                        sessionStorage.removeItem("moukawil_session_tour_shown");
-                        sessionStorage.setItem("moukawil_demo_login", "true");
-                      }
-                    }}
-                  >
-                    <button
-                      type="submit"
-                      className="flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 text-xs font-bold text-white shadow-xs hover:bg-primary-ink active:scale-98 transition-all"
-                    >
-                      <span>{t("Launch Demo Mode")}</span>
-                      <ArrowRight className="size-3.5 rtl:-scale-x-100" />
-                    </button>
-                    <p className="mt-1.5 text-center text-[10px] text-muted">
-                      {t("No registration required")}
-                    </p>
-                  </form>
+            {/* Dual-choice interactive cards: Always visible for evaluators & users */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              {/* Path 1: 1-Click Demo for Evaluators */}
+              <div className="relative flex flex-col justify-between rounded-2xl border-2 border-emerald-500/30 bg-card p-4.5 shadow-sm hover:border-emerald-500/60 hover:shadow-md transition-all group">
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-mint px-2.5 py-0.5 text-[10px] font-bold text-mint-ink">
+                      <Sparkles className="size-3 text-emerald-700" />
+                      {t("Instant Demo")}
+                    </span>
+                    <span className="text-[10px] font-semibold text-emerald-700 font-num">1-Click</span>
+                  </div>
+                  <h3 className="text-sm font-bold text-ink">{t("Test & Evaluate")}</h3>
+                  <p className="text-[11px] leading-relaxed text-muted">
+                    {t("Pre-loaded with 40% turnover, compliant invoices, and an interactive 11-step spotlight tour.")}
+                  </p>
                 </div>
 
-                {/* Path 2: Real Account for Freelancers */}
-                <div className="flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-card p-4.5 shadow-xs hover:border-slate-300 hover:shadow-md transition-all">
-                  <div className="flex flex-col gap-2">
-                    <div className="flex items-center justify-between">
-                      <span className="inline-flex items-center gap-1.5 rounded-full bg-surface px-2.5 py-0.5 text-[10px] font-bold text-body">
-                        <UserPlus className="size-3 text-accent" />
-                        {t("Real Account")}
-                      </span>
-                      <span className="text-[10px] font-semibold text-muted">{t("ANAE")}</span>
-                    </div>
-                    <h3 className="text-sm font-bold text-ink">{t("Algerian Freelancers")}</h3>
-                    <p className="text-[11px] leading-relaxed text-muted">
-                      {t("Create your official workspace, issue 0% VAT invoices, and track your CASNOS obligations.")}
-                    </p>
-                  </div>
+                <form
+                  action={demoSignInAction}
+                  className="mt-4"
+                  onSubmit={() => {
+                    if (typeof window !== "undefined") {
+                      sessionStorage.removeItem("moukawil_session_tour_shown");
+                      sessionStorage.setItem("moukawil_demo_login", "true");
+                    }
+                  }}
+                >
+                  <button
+                    type="submit"
+                    className="flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 text-xs font-bold text-white shadow-xs hover:bg-primary-ink active:scale-98 transition-all"
+                  >
+                    <span>{t("Launch Demo Mode")}</span>
+                    <ArrowRight className="size-3.5 rtl:-scale-x-100" />
+                  </button>
+                  <p className="mt-1.5 text-center text-[10px] text-muted">
+                    {t("No registration required")}
+                  </p>
+                </form>
+              </div>
 
-                  <div className="mt-4 flex flex-col gap-2">
-                    <Link
-                      href="/sign-up"
-                      className="flex h-10 w-full items-center justify-center gap-1.5 rounded-xl border border-slate-300 bg-surface-low px-4 text-xs font-semibold text-ink hover:bg-surface hover:border-slate-400 active:scale-98 transition-all"
-                    >
-                      <UserPlus className="size-3.5 text-accent" />
-                      <span>{t("Create Free Account")}</span>
-                    </Link>
-                    <div className="text-center">
-                      <Link
-                        href="/sign-in"
-                        className="inline-flex items-center gap-1 text-[11px] font-medium text-body hover:text-ink hover:underline"
-                      >
-                        <LogIn className="size-3 text-muted" />
-                        <span>{t("Already registered? Sign in")}</span>
-                      </Link>
-                    </div>
+              {/* Path 2: Real Account for Freelancers */}
+              <div className="flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-card p-4.5 shadow-xs hover:border-slate-300 hover:shadow-md transition-all">
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-surface px-2.5 py-0.5 text-[10px] font-bold text-body">
+                      <UserPlus className="size-3 text-accent" />
+                      {signedIn ? t("Active Account") : t("Real Account")}
+                    </span>
+                    <span className="text-[10px] font-semibold text-muted">{t("ANAE")}</span>
                   </div>
+                  <h3 className="text-sm font-bold text-ink">{signedIn ? t("Your Workspace") : t("Algerian Freelancers")}</h3>
+                  <p className="text-[11px] leading-relaxed text-muted">
+                    {signedIn
+                      ? t("Access your registered auto-entrepreneur workspace, invoices, and statutory declarations.")
+                      : t("Create your official workspace, issue 0% VAT invoices, and track your CASNOS obligations.")}
+                  </p>
+                </div>
+
+                <div className="mt-4 flex flex-col gap-2">
+                  {signedIn ? (
+                    <>
+                      <Link
+                        href="/dashboard"
+                        className="flex h-10 w-full items-center justify-center gap-1.5 rounded-xl bg-primary px-4 text-xs font-bold text-white hover:bg-primary-ink active:scale-98 transition-all"
+                      >
+                        <span>{t("Open dashboard")}</span>
+                        <ArrowRight className="size-3.5 rtl:-scale-x-100" />
+                      </Link>
+                      <div className="text-center">
+                        <Link
+                          href="/dashboard"
+                          className="inline-flex items-center gap-1 text-[11px] font-medium text-body hover:text-ink hover:underline"
+                        >
+                          <span>{t("Continue to active workspace")}</span>
+                        </Link>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <Link
+                        href="/sign-up"
+                        className="flex h-10 w-full items-center justify-center gap-1.5 rounded-xl border border-slate-300 bg-surface-low px-4 text-xs font-semibold text-ink hover:bg-surface hover:border-slate-400 active:scale-98 transition-all"
+                      >
+                        <UserPlus className="size-3.5 text-accent" />
+                        <span>{t("Create Free Account")}</span>
+                      </Link>
+                      <div className="text-center">
+                        <Link
+                          href="/sign-in"
+                          className="inline-flex items-center gap-1 text-[11px] font-medium text-body hover:text-ink hover:underline"
+                        >
+                          <LogIn className="size-3 text-muted" />
+                          <span>{t("Already registered? Sign in")}</span>
+                        </Link>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
-          )}
+          </div>
         </div>
 
         {/* Product preview */}
