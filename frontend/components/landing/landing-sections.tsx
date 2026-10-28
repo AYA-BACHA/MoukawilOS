@@ -13,7 +13,7 @@ const features = [
   { icon: Wallet, title: "True cash-basis accounting", text: "Only cleared payments count. Unpaid invoices never consume your ceiling or your tax." },
   { icon: FileText, title: "Compliant invoices", text: "Every invoice carries your ANAE number, the 0% VAT clause and the client's NIF and NIS, ready to print or download as PDF." },
   { icon: Percent, title: "Automatic IFU estimate", text: "Your flat 0.5% IFU is calculated on collected turnover, so you always know what you owe." },
-  { icon: CalendarClock, title: "Deadlines, handled", text: "Keep your G50-A filing date and CASNOS regularization in one place." },
+  { icon: CalendarClock, title: "Deadlines, handled", text: "Keep your G12 / G12 bis filing date and CASNOS regularization in one place." },
   { icon: Bot, title: "Legal assistant", text: "Ask about the ceiling, VAT or declarations and get answers grounded in the official texts." },
 ];
 
@@ -33,7 +33,7 @@ const stats = [
 const faqs = [
   { q: "What is an auto-entrepreneur under Law 22-23?", a: "A status created by Law 22-23 that lets independent professionals work legally with a flat 0.5% IFU, no commercial register requirement and an exemption from VAT, up to an annual turnover ceiling of 5,000,000 DZD." },
   { q: "Do unpaid invoices count toward my ceiling?", a: "No. Turnover is recognized on a cash basis, so an invoice only counts once the payment is credited to your bank account or CCP." },
-  { q: "Which tax do I pay?", a: "A flat 0.5% IFU on collected turnover, declared once a year with form G50-A before June 30th." },
+  { q: "Which tax do I pay?", a: "A flat 0.5% IFU on collected turnover, declared once a year with form G12 / G12 bis before June 30th." },
   { q: "Does MoukawilOS replace my accountant?", a: "No. MoukawilOS provides compliance tooling and information, not legal or tax advice. Confirm your situation with the tax administration or a qualified professional." },
 ];
 

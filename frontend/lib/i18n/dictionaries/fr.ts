@@ -1,7 +1,7 @@
 // French (English source text -> French). Missing keys fall back to English.
 export const fr: Record<string, string> = {
   "0% VAT invoices with the statutory clause built in": "Factures à 0 % de TVA avec la clause légale intégrée",
-  "A flat 0.5% IFU on collected turnover, declared once a year with form G50-A before June 30th.": "Un IFU forfaitaire de 0,5 % sur le chiffre d'affaires encaissé, déclaré une fois par an avec le formulaire G50-A avant le 30 juin.",
+  "A flat 0.5% IFU on collected turnover, declared once a year with form G12 / G12 bis before June 30th.": "Un IFU forfaitaire de 0,5 % sur le chiffre d'affaires encaissé, déclaré une fois par an avec le formulaire G12 / G12 bis avant le 30 juin.",
   "A status created by Law 22-23 that lets independent professionals work legally with a flat 0.5% IFU, no commercial register requirement and an exemption from VAT, up to an annual turnover ceiling of 5,000,000 DZD.": "Un statut créé par la Loi 22-23 qui permet aux indépendants d'exercer légalement avec un IFU forfaitaire de 0,5 %, sans obligation d'inscription au registre du commerce et avec une exonération de TVA, jusqu'à un plafond de chiffre d'affaires annuel de 5 000 000 DA.",
   "Already have an account?": "Vous avez déjà un compte ?",
   "Arabic, French and English, including right-to-left": "Arabe, français et anglais, y compris l'écriture de droite à gauche",
@@ -39,12 +39,12 @@ export const fr: Record<string, string> = {
   "How it works": "Comment ça marche",
   "I understand MoukawilOS provides compliance tooling, not legal or tax advice.": "Je comprends que MoukawilOS fournit des outils de conformité, et non des conseils juridiques ou fiscaux.",
   "Issue invoices": "Émettez des factures",
-  "Keep your G50-A filing date and CASNOS regularization in one place.": "Gardez la date de dépôt du G50-A et la régularisation CASNOS au même endroit.",
+  "Keep your G12 / G12 bis filing date and CASNOS regularization in one place.": "Gardez la date de dépôt du G12 / G12 bis et la régularisation CASNOS au même endroit.",
   "Languages: AR, FR, EN": "Langues : AR, FR, EN",
   "Legal assistant": "Assistant juridique",
   "Live ceiling tracker": "Suivi du plafond en direct",
   "Mark an invoice as paid when the money clears and watch your ceiling update.": "Marquez une facture comme payée dès que l'argent est encaissé et voyez votre plafond se mettre à jour.",
-  "MoukawilOS is the fiscal workspace for Algerian auto-entrepreneurs: track your cash-basis turnover, issue 0% VAT invoices and never miss your G50-A deadline.": "MoukawilOS est l'espace de travail fiscal des auto-entrepreneurs algériens : suivez votre chiffre d'affaires à l'encaissement, émettez des factures à 0 % de TVA et ne manquez plus jamais votre échéance G50-A.",
+  "MoukawilOS is the fiscal workspace for Algerian auto-entrepreneurs: track your cash-basis turnover, issue 0% VAT invoices and never miss your G12 / G12 bis deadline.": "MoukawilOS est l'espace de travail fiscal des auto-entrepreneurs algériens : suivez votre chiffre d'affaires à l'encaissement, émettez des factures à 0 % de TVA et ne manquez plus jamais votre échéance G12 / G12 bis.",
   "MoukawilOS provides compliance tooling and information, not legal or tax advice. Confirm your situation with the tax administration or a qualified professional.": "MoukawilOS fournit des outils de conformité et de l'information, et non des conseils juridiques ou fiscaux. Confirmez votre situation auprès de l'administration fiscale ou d'un professionnel qualifié.",
   "New to MoukawilOS?": "Nouveau sur MoukawilOS ?",
   "No. MoukawilOS provides compliance tooling and information, not legal or tax advice. Confirm your situation with the tax administration or a qualified professional.": "Non. MoukawilOS fournit des outils de conformité et de l'information, et non des conseils juridiques ou fiscaux. Confirmez votre situation auprès de l'administration fiscale ou d'un professionnel qualifié.",

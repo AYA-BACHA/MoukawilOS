@@ -38,7 +38,7 @@ export function LandingHero({ signedIn }: { signedIn: boolean }) {
           </h1>
 
           <p className="max-w-xl text-base leading-7 text-body">
-            {t("MoukawilOS is the fiscal workspace for Algerian auto-entrepreneurs: track your cash-basis turnover, issue 0% VAT invoices and never miss your G50-A deadline.")}
+            {t("MoukawilOS is the fiscal workspace for Algerian auto-entrepreneurs: track your cash-basis turnover, issue 0% VAT invoices and never miss your G12 / G12 bis deadline.")}
           </p>
 
           <div className="flex flex-col gap-3.5 w-full max-w-xl">

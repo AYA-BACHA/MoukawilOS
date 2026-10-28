@@ -1,7 +1,7 @@
 // Arabic (English source text -> Arabic). Missing keys fall back to English.
 export const ar: Record<string, string> = {
   "0% VAT invoices with the statutory clause built in": "فواتير بإعفاء 0% من الرسم على القيمة المضافة مع البند القانوني مدمجاً",
-  "A flat 0.5% IFU on collected turnover, declared once a year with form G50-A before June 30th.": "ضريبة جزافية وحيدة بنسبة 0.5% على رقم الأعمال المحصَّل، يُصرَّح بها مرة في السنة باستمارة G50-A قبل 30 جوان.",
+  "A flat 0.5% IFU on collected turnover, declared once a year with form G12 / G12 bis before June 30th.": "ضريبة جزافية وحيدة بنسبة 0.5% على رقم الأعمال المحصَّل، يُصرَّح بها مرة في السنة باستمارة G12 / G12 bis قبل 30 جوان.",
   "A status created by Law 22-23 that lets independent professionals work legally with a flat 0.5% IFU, no commercial register requirement and an exemption from VAT, up to an annual turnover ceiling of 5,000,000 DZD.": "صفة أنشأها القانون 22-23 تتيح للمهنيين المستقلين العمل بشكل قانوني بضريبة جزافية وحيدة 0.5% ودون إلزامية القيد في السجل التجاري ومع إعفاء من الرسم على القيمة المضافة، في حدود سقف رقم أعمال سنوي قدره 5,000,000 دج.",
   "Already have an account?": "لديك حساب بالفعل؟",
   "Arabic, French and English, including right-to-left": "العربية والفرنسية والإنجليزية، مع دعم الكتابة من اليمين إلى اليسار",
@@ -39,12 +39,12 @@ export const ar: Record<string, string> = {
   "How it works": "كيف يعمل",
   "I understand MoukawilOS provides compliance tooling, not legal or tax advice.": "أدرك أن MoukawilOS يوفّر أدوات للمطابقة وليس استشارة قانونية أو جبائية.",
   "Issue invoices": "أصدر الفواتير",
-  "Keep your G50-A filing date and CASNOS regularization in one place.": "احتفظ بموعد إيداع G50-A وتسوية CASNOS في مكان واحد.",
+  "Keep your G12 / G12 bis filing date and CASNOS regularization in one place.": "احتفظ بموعد إيداع G12 / G12 bis وتسوية CASNOS في مكان واحد.",
   "Languages: AR, FR, EN": "اللغات: عربية، فرنسية، إنجليزية",
   "Legal assistant": "المساعد القانوني",
   "Live ceiling tracker": "تتبّع السقف لحظة بلحظة",
   "Mark an invoice as paid when the money clears and watch your ceiling update.": "وسم الفاتورة كمدفوعة عند تحصيل المبلغ وشاهد سقفك يتحدّث.",
-  "MoukawilOS is the fiscal workspace for Algerian auto-entrepreneurs: track your cash-basis turnover, issue 0% VAT invoices and never miss your G50-A deadline.": "MoukawilOS هو فضاء العمل الجبائي للمقاولين الذاتيين الجزائريين: تتبّع رقم أعمالك على أساس التحصيل وأصدر فواتير بإعفاء 0% من الرسم على القيمة المضافة ولا تفوّت أبداً أجل G50-A.",
+  "MoukawilOS is the fiscal workspace for Algerian auto-entrepreneurs: track your cash-basis turnover, issue 0% VAT invoices and never miss your G12 / G12 bis deadline.": "MoukawilOS هو فضاء العمل الجبائي للمقاولين الذاتيين الجزائريين: تتبّع رقم أعمالك على أساس التحصيل وأصدر فواتير بإعفاء 0% من الرسم على القيمة المضافة ولا تفوّت أبداً أجل G12 / G12 bis.",
   "MoukawilOS provides compliance tooling and information, not legal or tax advice. Confirm your situation with the tax administration or a qualified professional.": "يوفّر MoukawilOS أدوات للمطابقة ومعلومات، وليس استشارة قانونية أو جبائية. تأكد من وضعيتك لدى الإدارة الجبائية أو لدى مختص مؤهل.",
   "New to MoukawilOS?": "جديد في MoukawilOS؟",
   "No. MoukawilOS provides compliance tooling and information, not legal or tax advice. Confirm your situation with the tax administration or a qualified professional.": "لا. يوفّر MoukawilOS أدوات للمطابقة ومعلومات، وليس استشارة قانونية أو جبائية. تأكد من وضعيتك لدى الإدارة الجبائية أو لدى مختص مؤهل.",
