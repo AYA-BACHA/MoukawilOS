@@ -216,33 +216,91 @@ def list_all(freelancer_id: int, status: str | None, client_id: int | None,
         params += [like, like]
     w = " and ".join(where)
     with pool.connection() as conn:
-        total = conn.execute(
-            f"select count(*) from {FROM} where {w}", params).fetchone()[0]
         rows = conn.execute(
-            f"select {COLUMNS} from {FROM} where {w} "
+            f"select count(*) over(), {COLUMNS} from {FROM} where {w} "
             f"order by coalesce(i.issue_date, i.created_at::date) desc, i.id desc "
             f"limit %s offset %s",
             (*params, limit, offset),
         ).fetchall()
-        items = _items_by_invoice(conn, [r[0] for r in rows])
-        cns = _credit_notes_by_invoice(conn, [r[0] for r in rows])
-        return [_to_out(r, items[r[0]], cns[r[0]]) for r in rows], total
+        if not rows:
+            if offset > 0:
+                total = conn.execute(f"select count(*) from {FROM} where {w}", params).fetchone()[0]
+            else:
+                total = 0
+            return [], total
+        total = rows[0][0]
+        unwrapped = [r[1:] for r in rows]
+        items = _items_by_invoice(conn, [r[0] for r in unwrapped])
+        cns = _credit_notes_by_invoice(conn, [r[0] for r in unwrapped])
+        return [_to_out(r, items[r[0]], cns[r[0]]) for r in unwrapped], total
     
 
 
 # ---------------- drafts ----------------
 def create(freelancer_id: int, d: InvoiceCreate) -> InvoiceOut:
-    _check_client(freelancer_id, d.client_id)
     with pool.connection() as conn:
-        new_id = conn.execute(
+        c = conn.execute(
+            "select name from public.clients where id = %s and freelancer_id = %s and archived_at is null",
+            (d.client_id, freelancer_id),
+        ).fetchone()
+        if c is None:
+            raise ClientInvalid()
+        client_name = c[0]
+
+        total = Decimal("0")
+        item_rows = []
+        for it in d.items:
+            line = _money(it.quantity * it.unit_price)
+            total += line
+            item_rows.append((it.description, it.quantity, it.unit, it.unit_price, line))
+
+        row = conn.execute(
             """insert into public.invoices
-               (freelancer_id, client_id, due_date, note, currency)
-               values (%s,%s,%s,%s,%s) returning id""",
-            (freelancer_id, d.client_id, d.due_date, d.note, d.currency),
-        ).fetchone()[0]
-        total = _write_items(conn, new_id, d.items)
-        conn.execute("update public.invoices set total=%s where id=%s", (total, new_id))
-    return get(freelancer_id, new_id)
+               (freelancer_id, client_id, due_date, note, currency, total, status)
+               values (%s,%s,%s,%s,%s,%s,'draft')
+               returning id, created_at""",
+            (freelancer_id, d.client_id, d.due_date, d.note, d.currency, total),
+        ).fetchone()
+        new_id, created_at = row[0], row[1]
+
+        inserted_items = []
+        for it in item_rows:
+            r = conn.execute(
+                """insert into public.invoice_items
+                   (invoice_id, description, quantity, unit, unit_price, line_total)
+                   values (%s,%s,%s,%s,%s,%s) returning id""",
+                (new_id, it[0], it[1], it[2], it[3], it[4]),
+            ).fetchone()
+            inserted_items.append(ItemOut(
+                id=r[0], description=it[0], quantity=it[1],
+                unit=it[2], unit_price=it[3], line_total=it[4],
+            ))
+
+        return InvoiceOut(
+            id=new_id,
+            client_id=d.client_id,
+            client_name=client_name,
+            status="draft",
+            number=None,
+            sequence_number=None,
+            number_year=None,
+            issue_date=None,
+            due_date=d.due_date,
+            currency=d.currency,
+            total=total,
+            paid_at=None,
+            cancelled_at=None,
+            cancellation_reason=None,
+            note=d.note,
+            created_at=created_at,
+            items=inserted_items,
+            payment_rail=None,
+            credit_notes=[],
+            has_credit_notes=False,
+            total_credited=Decimal("0.00"),
+            snapshot=None,
+            audit_log=[],
+        )
 
 
 def update_draft(freelancer_id: int, invoice_id: int, d: InvoiceUpdate) -> InvoiceOut | None:
@@ -294,31 +352,42 @@ def issue(freelancer_id: int, invoice_id: int) -> InvoiceOut | None:
                    from public.freelancers where id=%s for update""",
                 (freelancer_id,),
             )
-            f = dict(zip([d.name for d in cur.description], cur.fetchone()))
+            f_row = cur.fetchone()
+            if not f_row:
+                return None
+            f = dict(zip([d.name for d in cur.description], f_row))
 
             report = completeness(f)
             if not report["can_issue_invoices"]:
                 raise ProfileIncomplete(report["missing_for_invoicing"])
 
-            inv = conn.execute(
-                """select status, client_id, total from public.invoices
-                   where id=%s and freelancer_id=%s for update""",
+            # 2. Combine invoice check, item count, and client lookup in 1 query
+            inv_row = conn.execute(
+                """select i.status, i.client_id, i.total,
+                          (select count(*) from public.invoice_items where invoice_id = i.id),
+                          t.code, c.name, c.address, c.rc, c.nif, c.nis
+                   from public.invoices i
+                   join public.clients c on c.id = i.client_id
+                   join public.client_types t on t.id = c.client_type_id
+                   where i.id = %s and i.freelancer_id = %s and c.archived_at is null
+                   for update of i""",
                 (invoice_id, freelancer_id),
             ).fetchone()
-            if inv is None:
-                return None
-            if inv[0] != "draft":
-                raise InvalidState("invoice already issued")
 
-            n_items = conn.execute(
-                "select count(*) from public.invoice_items where invoice_id=%s",
-                (invoice_id,),
-            ).fetchone()[0]
+            if inv_row is None:
+                exists = conn.execute("select id from public.invoices where id=%s and freelancer_id=%s", (invoice_id, freelancer_id)).fetchone()
+                if not exists:
+                    return None
+                raise ClientInvalid()
+
+            inv_status, client_id, inv_total, n_items, c_type, c_name, c_addr, c_rc, c_nif, c_nis = inv_row
+
+            if inv_status != "draft":
+                raise InvalidState("invoice already issued")
             if n_items == 0:
                 raise InvalidState("add at least one item before issuing")
 
-            # 2. next number: counter (restarts each year), never below the
-            #    highest number already used this year
+            # 3. next number: counter (restarts each year), never below highest used
             counter = f["last_invoice_number"] if f["last_invoice_year"] == year else 0
             highest = conn.execute(
                 """select coalesce(max(sequence_number), 0) from public.invoices
@@ -327,17 +396,7 @@ def issue(freelancer_id: int, invoice_id: int) -> InvoiceOut | None:
             ).fetchone()[0]
             seq = max(counter, highest) + 1
 
-            # 3. snapshot (immutable)
-                        
-            c = conn.execute(
-                """select t.code, c.name, c.address, c.rc, c.nif, c.nis
-                   from public.clients c
-                   join public.client_types t on t.id = c.client_type_id
-                   where c.id=%s and c.freelancer_id=%s and c.archived_at is null""",
-                (inv[1], freelancer_id),
-            ).fetchone()
-            if c is None:
-                raise ClientInvalid()
+            # 4. snapshot (immutable)
             conn.execute(
                 """insert into public.invoice_snapshots
                    (invoice_id, seller_name, seller_address, seller_nif, seller_ai,
@@ -347,7 +406,7 @@ def issue(freelancer_id: int, invoice_id: int) -> InvoiceOut | None:
                 (invoice_id, f"{f['first_name']} {f['last_name']}",
                  f["trade_address"], f["nif"], f["ai_number"],
                  f["anae_card_number"], f["rib"],
-                 c[0], c[1], c[2], c[3], c[4], c[5]),
+                 c_type, c_name, c_addr, c_rc, c_nif, c_nis),
             )
 
             # 4. issue + advance the counter
@@ -365,7 +424,7 @@ def issue(freelancer_id: int, invoice_id: int) -> InvoiceOut | None:
             _event(conn, invoice_id, freelancer_id, "issued", details={
                 "number": _number(seq, year),
                 "issue_date": today.isoformat(),
-                "total": str(inv[2]),
+                "total": str(inv_total),
             })
     except UniqueViolation as exc:
         raise NumberTaken() from exc
@@ -385,7 +444,20 @@ def _transition(freelancer_id, invoice_id, allowed, fn):
         if row[0] not in allowed:
             raise InvalidState(f"not allowed from status '{row[0]}'")
         fn(conn, row)
-    return get(freelancer_id, invoice_id)
+
+        # Retrieve updated invoice and relations within the same connection
+        r = conn.execute(
+            f"select {COLUMNS} from {FROM} where i.id = %s and i.freelancer_id = %s",
+            (invoice_id, freelancer_id),
+        ).fetchone()
+        if not r:
+            return None
+        items = _items_by_invoice(conn, [r[0]])[r[0]]
+        cns = _credit_notes_by_invoice(conn, [invoice_id])[invoice_id]
+        out = _to_out(r, items, cns)
+        out.snapshot = _snapshot(conn, invoice_id)
+        out.audit_log = _audit_log(conn, invoice_id)
+        return out
 
 
 class InvalidPaymentDate(Exception):
@@ -454,10 +526,11 @@ def create_credit_note(freelancer_id: int, invoice_id: int, reason: str, credit_
     year = today.year
     with pool.connection() as conn:
         inv = conn.execute(
-            """select id, status, sequence_number, number_year, total
-               from public.invoices
-               where id = %s and freelancer_id = %s
-               for update""",
+            """select i.id, i.status, i.sequence_number, i.number_year, i.total,
+                      coalesce((select sum(c.amount) from public.credit_notes c where c.invoice_id = i.id), 0)
+               from public.invoices i
+               where i.id = %s and i.freelancer_id = %s
+               for update of i""",
             (invoice_id, freelancer_id),
         ).fetchone()
         if inv is None:
@@ -465,12 +538,7 @@ def create_credit_note(freelancer_id: int, invoice_id: int, reason: str, credit_
         if inv[1] not in ("issued", "paid"):
             raise InvalidState(f"Cannot issue credit note for invoice in status '{inv[1]}'. Must be issued or paid.")
 
-        # Check existing credited amount
-        credited_row = conn.execute(
-            "select coalesce(sum(amount), 0) from public.credit_notes where invoice_id = %s",
-            (invoice_id,),
-        ).fetchone()
-        already_credited = Decimal(str(credited_row[0]))
+        already_credited = Decimal(str(inv[5]))
         invoice_total = Decimal(str(inv[4]))
 
         if already_credited + credit_amount > invoice_total:

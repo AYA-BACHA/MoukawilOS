@@ -41,11 +41,17 @@ export function DashboardView({
   }, [fiscalYear]);
 
   const handleCompleteObligation = async (code: string) => {
+    // Optimistic update for instant responsiveness
+    setCompletedCodes((prev) => new Set(prev).add(code));
     try {
       await completeObligation(code, Number(fiscalYear));
-      setCompletedCodes((prev) => new Set(prev).add(code));
     } catch {
-      // ignore
+      // Revert if backend call fails
+      setCompletedCodes((prev) => {
+        const next = new Set(prev);
+        next.delete(code);
+        return next;
+      });
     }
   };
 

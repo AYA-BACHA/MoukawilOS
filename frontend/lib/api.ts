@@ -147,10 +147,20 @@ export async function getAuthHeader(): Promise<Record<string, string>> {
   });
 }
 
-async function fetchBackend<T>(endpoint: string, options: RequestInit = {}): Promise<T | null> {
+interface BackendResponse<T> {
+  data: T | null;
+  status: number;
+  error?: any;
+}
+
+async function fetchBackendDetailed<T>(
+  endpoint: string,
+  options: RequestInit = {}
+): Promise<BackendResponse<T>> {
   const url = `${API_BASE_URL.replace(/\/$/, "")}/${endpoint.replace(/^\//, "")}`;
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 15000);
+  // 12s timeout based on cross-region measurements: gives headroom for DB pool while preventing 15s hangs
+  const timeout = setTimeout(() => controller.abort(), 12000);
   try {
     const headers = await getAuthHeader();
     const res = await fetch(url, {
@@ -163,18 +173,44 @@ async function fetchBackend<T>(endpoint: string, options: RequestInit = {}): Pro
     });
 
     if (!res.ok) {
-      const body = await res.text().catch(() => "");
-      console.error(`[api] ${res.status} ${options.method || "GET"} ${url}`, body.slice(0, 200));
-      return null;
+      let errBody: any = null;
+      try {
+        errBody = await res.json();
+      } catch {
+        errBody = await res.text().catch(() => "");
+      }
+
+      // Log genuine server errors (5xx) with error, statutory validation (422) with warn,
+      // and distinguish expected client fallbacks (401 demo mode, 404 un-onboarded profile) without spamming
+      if (res.status >= 500) {
+        console.error(`[api] ${res.status} ${options.method || "GET"} ${url}`, errBody);
+      } else if (res.status === 422) {
+        console.warn(`[api] 422 Statutory validation ${url}`, errBody?.detail || errBody);
+      } else if (res.status !== 401 && res.status !== 404) {
+        console.warn(`[api] ${res.status} ${options.method || "GET"} ${url}`, errBody);
+      }
+
+      return { data: null, status: res.status, error: errBody };
     }
-    return (await res.json()) as T;
+
+    const data = (await res.json()) as T;
+    return { data, status: res.status };
   } catch (err) {
     const aborted = err instanceof DOMException && err.name === "AbortError";
-    console.error(`[api] ${aborted ? "timeout" : "network error"} ${url}`, err);
-    return null;
+    if (aborted) {
+      console.warn(`[api] Request timeout (12s): ${url}`);
+    } else {
+      console.warn(`[api] Network unreachable: ${url}`);
+    }
+    return { data: null, status: 0, error: err };
   } finally {
     clearTimeout(timeout);
   }
+}
+
+async function fetchBackend<T>(endpoint: string, options: RequestInit = {}): Promise<T | null> {
+  const res = await fetchBackendDetailed<T>(endpoint, options);
+  return res.data;
 }
 
 export async function checkBackendHealth(): Promise<boolean> {
@@ -374,10 +410,22 @@ export const DEFAULT_CLIENTS: Client[] = [
   },
 ];
 
+let cachedClients: { data: Client[]; timestamp: number } | null = null;
+const CLIENTS_CACHE_TTL_MS = 60_000;
+
+export function invalidateClientsCache(): void {
+  cachedClients = null;
+}
+
 export async function getClients(): Promise<Client[]> {
+  const now = Date.now();
+  if (cachedClients && now - cachedClients.timestamp < CLIENTS_CACHE_TTL_MS) {
+    return cachedClients.data;
+  }
+
   const res = await fetchBackend<{ items: BackendClientOut[]; total: number }>("/clients?limit=100");
   if (res && res.items && res.items.length > 0) {
-    return res.items.map((item) => ({
+    const clients = res.items.map((item) => ({
       id: String(item.id),
       userId: CURRENT_USER_ID,
       name: item.name,
@@ -392,6 +440,8 @@ export async function getClients(): Promise<Client[]> {
       phone: item.phone,
       anaeVerified: Boolean(item.nif && item.nif.length === 15),
     }));
+    cachedClients = { data: clients, timestamp: now };
+    return clients;
   }
 
   if (typeof window !== "undefined") {
@@ -400,6 +450,7 @@ export async function getClients(): Promise<Client[]> {
       if (local) {
         const parsed = JSON.parse(local);
         if (Array.isArray(parsed) && parsed.length > 0) {
+          cachedClients = { data: parsed, timestamp: now };
           return parsed;
         }
       }
@@ -412,6 +463,7 @@ export async function getClients(): Promise<Client[]> {
 }
 
 export async function createClient(input: ClientInput): Promise<Client> {
+  invalidateClientsCache();
   const payload: Record<string, unknown> = {
     client_type: input.type,
     name: input.name,
@@ -472,6 +524,7 @@ export async function createClient(input: ClientInput): Promise<Client> {
 }
 
 export async function updateClient(client: Client, input: ClientInput): Promise<Client> {
+  invalidateClientsCache();
   const payload: Record<string, unknown> = {
     client_type: input.type,
     name: input.name,
@@ -611,7 +664,12 @@ function applyLocalOverrides(invoices: InvoiceWithClient[]): InvoiceWithClient[]
 
 export async function getInvoices(explicitScenario?: DemoScenario): Promise<InvoiceWithClient[]> {
   const scenario = explicitScenario || getDemoScenario();
-  const clients = await getClients();
+  const [clients, backendRes] = await Promise.all([
+    getClients(),
+    scenario === "new_user"
+      ? Promise.resolve(null)
+      : fetchBackend<{ items: BackendInvoiceOut[]; total: number }>("/invoices?limit=100"),
+  ]);
   const clientMap = new Map(clients.map((c) => [c.id, c]));
 
   if (scenario === "new_user") {
@@ -731,7 +789,7 @@ export async function getInvoices(explicitScenario?: DemoScenario): Promise<Invo
     },
   ];
 
-  const res = await fetchBackend<{ items: BackendInvoiceOut[]; total: number }>("/invoices?limit=100");
+  const res = backendRes;
 
   if (res && res.items && res.items.length > 0) {
     let resList = res.items
@@ -949,7 +1007,13 @@ export async function saveDraftApi(draft: InvoiceDraft): Promise<{ success: bool
   return { success: true, invoice: draftInvoice };
 }
 
-export async function issueInvoiceApi(draft: InvoiceDraft): Promise<{ success: boolean; invoiceNumber: string; invoice: InvoiceWithClient }> {
+export async function issueInvoiceApi(draft: InvoiceDraft): Promise<{
+  success: boolean;
+  invoiceNumber: string;
+  invoice: InvoiceWithClient;
+  error?: string;
+  missing?: string[];
+}> {
   let clientId: number | null = null;
   let issuedNumber = draft.number;
 
@@ -993,11 +1057,31 @@ export async function issueInvoiceApi(draft: InvoiceDraft): Promise<{ success: b
       });
 
       if (newInv && newInv.id) {
-        const issued = await fetchBackend<BackendInvoiceOut>(`/invoices/${newInv.id}/issue`, {
+        const issueRes = await fetchBackendDetailed<BackendInvoiceOut>(`/invoices/${newInv.id}/issue`, {
           method: "POST",
         });
-        if (issued && issued.number) {
-          issuedNumber = issued.number;
+        if (issueRes.data && issueRes.data.number) {
+          issuedNumber = issueRes.data.number;
+        } else if (issueRes.status === 422 && issueRes.error?.detail?.code === "profile_incomplete") {
+          return {
+            success: false,
+            invoiceNumber: draft.number,
+            invoice: draft as unknown as InvoiceWithClient,
+            error: "profile_incomplete",
+            missing: issueRes.error.detail.missing || [],
+          };
+        } else {
+          // Fallback check if failure is due to profile incomplete under Law 22-23 Art. 4
+          const profileRes = await fetchBackend<{ completeness?: { can_issue_invoices: boolean; missing_for_invoicing: string[] } }>("/profile");
+          if (profileRes?.completeness && !profileRes.completeness.can_issue_invoices) {
+            return {
+              success: false,
+              invoiceNumber: draft.number,
+              invoice: draft as unknown as InvoiceWithClient,
+              error: "profile_incomplete",
+              missing: profileRes.completeness.missing_for_invoicing,
+            };
+          }
         }
       }
     }

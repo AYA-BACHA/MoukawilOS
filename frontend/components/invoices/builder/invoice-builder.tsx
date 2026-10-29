@@ -44,6 +44,17 @@ export function InvoiceBuilder({ user, draft: initialDraft }: { user: User; draf
     setIsIssuing(true);
     try {
       const res = await issueInvoiceApi(draft);
+      if (!res.success && res.error === "profile_incomplete") {
+        const missingLabels = res.missing && res.missing.length > 0
+          ? ` (${res.missing.map((m) => m.replace(/_/g, " ")).join(", ")})`
+          : "";
+        setToast({
+          message: t("Statutory profile incomplete{missing}: Please add these required fields in Settings to issue official invoices (Law 22-23 Art. 4).", { missing: missingLabels }),
+          actionText: t("Complete Settings"),
+          actionHref: "/settings",
+        });
+        return;
+      }
       if (res.invoiceNumber) {
         setDraft((cur) => ({ ...cur, number: res.invoiceNumber }));
       }
@@ -104,6 +115,8 @@ export function InvoiceBuilder({ user, draft: initialDraft }: { user: User; draf
           onSave={save}
           onIssue={handleIssue}
           onResetSample={handleResetSample}
+          isSaving={isSaving}
+          isIssuing={isIssuing}
         />
       </div>
 

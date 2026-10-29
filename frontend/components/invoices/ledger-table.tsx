@@ -33,6 +33,7 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
   const { t, formatAmount, formatDate } = useI18n();
   const [viewingReceipt, setViewingReceipt] = useState<InvoiceWithClient | null>(null);
   const [printingInvoice, setPrintingInvoice] = useState<InvoiceWithClient | null>(null);
+  const [autoPrint, setAutoPrint] = useState(false);
   const [creditingInvoice, setCreditingInvoice] = useState<InvoiceWithClient | null>(null);
 
   return (
@@ -71,7 +72,10 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
                 <div className="flex items-center justify-between gap-2">
                   <button
                     type="button"
-                    onClick={() => setPrintingInvoice(invoice)}
+                    onClick={() => {
+                      setAutoPrint(false);
+                      setPrintingInvoice(invoice);
+                    }}
                     className="font-num text-sm font-bold text-ink hover:text-primary transition-colors text-start"
                   >
                     {invoice.number}
@@ -124,7 +128,10 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
                 <div className="flex flex-wrap items-center justify-end gap-2 border-t border-slate-100 pt-2">
                   <button
                     type="button"
-                    onClick={() => setPrintingInvoice(invoice)}
+                    onClick={() => {
+                      setAutoPrint(false);
+                      setPrintingInvoice(invoice);
+                    }}
                     className="inline-flex min-h-[40px] items-center gap-1 rounded-lg border border-slate-200 bg-surface-low px-3 py-1.5 text-xs font-medium text-body active:scale-95"
                   >
                     <Eye className="size-3.5 text-muted" />
@@ -244,7 +251,10 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
                     <td className={cn(cellClass, "font-num text-xs font-bold text-ink whitespace-nowrap")}>
                       <button
                         type="button"
-                        onClick={() => setPrintingInvoice(invoice)}
+                        onClick={() => {
+                          setAutoPrint(false);
+                          setPrintingInvoice(invoice);
+                        }}
                         className="hover:text-primary transition-colors flex items-center gap-1.5 text-start"
                       >
                         <span>{invoice.number}</span>
@@ -315,7 +325,10 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
                       <div className="flex items-center justify-end gap-1.5 whitespace-nowrap">
                         <button
                           type="button"
-                          onClick={() => setPrintingInvoice(invoice)}
+                          onClick={() => {
+                            setAutoPrint(false);
+                            setPrintingInvoice(invoice);
+                          }}
                           title={t("View invoice")}
                           className="rounded-lg border border-slate-200/80 bg-surface-low px-2 py-1 text-xs font-medium text-body transition-colors hover:bg-surface hover:text-ink flex items-center gap-1"
                         >
@@ -382,7 +395,10 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
                           <button
                             type="button"
                             aria-label={t("Download PDF")}
-                            onClick={() => setPrintingInvoice(invoice)}
+                            onClick={() => {
+                              setAutoPrint(true);
+                              setPrintingInvoice(invoice);
+                            }}
                             className="rounded-lg p-1.5 text-body transition-colors hover:bg-surface hover:text-ink"
                           >
                             <FileDown className="size-3.5 text-accent" />
@@ -480,7 +496,7 @@ export function LedgerTable({ invoices, activeId, onMarkPaid, onDeleteDraft }: L
         <PrintInvoiceModal
           invoice={printingInvoice}
           onClose={() => setPrintingInvoice(null)}
-          autoPrint={false}
+          autoPrint={autoPrint}
         />
       )}
 
