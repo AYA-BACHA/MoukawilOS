@@ -143,11 +143,11 @@ export function PaymentModal({ invoice, stats, onClose, onConfirm }: PaymentModa
         aria-modal="true"
         aria-labelledby="payment-modal-title"
         onClick={(event) => event.stopPropagation()}
-        className="flex max-h-[92dvh] w-full max-w-lg flex-col rounded-2xl bg-card shadow-2xl border border-slate-100 animate-in zoom-in-95 duration-200"
+        className="flex max-h-[90dvh] w-full max-w-lg flex-col overflow-hidden rounded-2xl bg-card shadow-2xl border border-slate-100 animate-in zoom-in-95 duration-200"
       >
         <ShimmerProgressBar active={status === "loading"} />
 
-        <div className="flex items-start gap-3 bg-surface-low p-4 rounded-t-2xl">
+        <div className="flex shrink-0 items-start gap-3 bg-surface-low p-4 border-b border-slate-100">
           <span className="grid size-10 place-items-center rounded-xl bg-mint text-accent shrink-0">
             <BadgeCheck className="size-[22px]" />
           </span>
@@ -170,7 +170,7 @@ export function PaymentModal({ invoice, stats, onClose, onConfirm }: PaymentModa
           </div>
         </div>
 
-        <div className="flex flex-1 flex-col gap-4 p-4 overflow-y-visible">
+        <div className="flex flex-1 min-h-0 flex-col gap-3.5 p-4 overflow-y-auto">
           <ActionFeedbackBanner
             status={status}
             loadingText={t("Validation statutaire du règlement...")}
@@ -270,7 +270,7 @@ export function PaymentModal({ invoice, stats, onClose, onConfirm }: PaymentModa
               {railDropdownOpen && (
                 <div
                   role="listbox"
-                  className="absolute start-0 end-0 top-full mt-1.5 z-50 flex flex-col gap-1 rounded-2xl border border-slate-200 bg-card p-1.5 shadow-2xl shadow-teal-950/15 backdrop-blur-md animate-in fade-in zoom-in-95"
+                  className="absolute start-0 end-0 bottom-full mb-1.5 z-50 flex flex-col gap-1 rounded-2xl border border-slate-200 bg-card p-1.5 shadow-2xl shadow-teal-950/20 backdrop-blur-md animate-in fade-in zoom-in-95 max-h-60 overflow-y-auto"
                 >
                   {RAIL_OPTIONS.map((option) => {
                     const isSelected = option.value === rail;
@@ -286,7 +286,7 @@ export function PaymentModal({ invoice, stats, onClose, onConfirm }: PaymentModa
                           setRailDropdownOpen(false);
                         }}
                         className={cn(
-                          "flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-start transition-all",
+                          "flex w-full items-center justify-between gap-2.5 rounded-xl px-2.5 py-2 text-start transition-all",
                           isSelected
                             ? "bg-mint/40 border border-primary/20 shadow-2xs"
                             : "hover:bg-slate-50 border border-transparent"
@@ -295,22 +295,22 @@ export function PaymentModal({ invoice, stats, onClose, onConfirm }: PaymentModa
                         <div className="flex items-center gap-2.5 min-w-0">
                           <span
                             className={cn(
-                              "grid size-8 place-items-center rounded-lg shrink-0 transition-colors",
+                              "grid size-7 place-items-center rounded-lg shrink-0 transition-colors",
                               isSelected ? "bg-mint text-accent" : "bg-slate-100 text-body"
                             )}
                           >
-                            <OptionIcon className="size-4" />
+                            <OptionIcon className="size-3.5" />
                           </span>
                           <div className="flex flex-col min-w-0">
                             <span
                               className={cn(
-                                "text-xs sm:text-sm font-medium tracking-tight truncate",
+                                "text-xs font-medium tracking-tight truncate",
                                 isSelected ? "font-semibold text-primary-ink" : "text-ink"
                               )}
                             >
                               {t(option.label)}
                             </span>
-                            <span className="text-[10px] sm:text-[11px] text-muted truncate">
+                            <span className="text-[10px] text-muted truncate">
                               {t(option.sublabel)}
                             </span>
                           </div>
@@ -327,7 +327,7 @@ export function PaymentModal({ invoice, stats, onClose, onConfirm }: PaymentModa
                           >
                             {t(option.badge)}
                           </span>
-                          {isSelected && <Check className="size-4 text-accent shrink-0" />}
+                          {isSelected && <Check className="size-3.5 text-accent shrink-0" />}
                         </div>
                       </button>
                     );
@@ -338,7 +338,7 @@ export function PaymentModal({ invoice, stats, onClose, onConfirm }: PaymentModa
           </div>
         </div>
 
-        <div className="flex items-center justify-end gap-2.5 bg-surface-low/80 p-4 border-t border-slate-100 rounded-b-2xl">
+        <div className="flex shrink-0 items-center justify-end gap-2.5 bg-surface-low/80 p-3.5 sm:p-4 border-t border-slate-100">
           <button
             type="button"
             disabled={status === "loading"}
