@@ -24,13 +24,23 @@ def get_current_user_id(
         return settings.test_user_id
 
     try:
-        key = _jwks.get_signing_key_from_jwt(creds.credentials)
-        payload = jwt.decode(
-            creds.credentials,
-            key.key,
-            algorithms=["ES256"],
-            audience="authenticated",
-        )
+        header = jwt.get_unverified_header(creds.credentials)
+        alg = header.get("alg", "ES256")
+        if alg == "HS256" and settings.supabase_jwt_secret:
+            payload = jwt.decode(
+                creds.credentials,
+                settings.supabase_jwt_secret,
+                algorithms=["HS256"],
+                audience="authenticated",
+            )
+        else:
+            key = _jwks.get_signing_key_from_jwt(creds.credentials)
+            payload = jwt.decode(
+                creds.credentials,
+                key.key,
+                algorithms=["ES256"],
+                audience="authenticated",
+            )
     except jwt.PyJWTError as exc:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "invalid token") from exc
     return payload["sub"]
@@ -46,9 +56,8 @@ def get_current_freelancer_id(user_id: str = Depends(get_current_user_id)) -> in
             row is None
             and settings.app_env == "development"
             and not os.getenv("PYTEST_CURRENT_TEST")
-            and user_id != settings.test_user_id
         ):
-            # In development fallback to the populated demo freelancer (Sara Benali / id 399)
+            # In development fallback to the populated demo freelancer (e.g. Sara Benali)
             row = conn.execute(
                 "select id from public.freelancers order by (select count(*) from public.invoices where freelancer_id = public.freelancers.id) desc limit 1"
             ).fetchone()

@@ -91,13 +91,15 @@ export async function signUpAction(_prev: AuthState, formData: FormData): Promis
 
     if (res.ok) {
       const data = await res.json();
-      if (data.access_token) {
-        (await cookies()).set("moukawil_token", data.access_token, {
+      const token = data.access_token || data.session?.access_token;
+      const expiresIn = data.expires_in || data.session?.expires_in || 60 * 60 * 24 * 7;
+      if (token) {
+        (await cookies()).set("moukawil_token", token, {
           httpOnly: false,
           sameSite: "lax",
           secure: process.env.NODE_ENV === "production",
           path: "/",
-          maxAge: data.expires_in || 60 * 60 * 24 * 7,
+          maxAge: expiresIn,
         });
       }
     } else if (res.status === 409) {
@@ -117,6 +119,8 @@ export async function demoSignInAction() {
 }
 
 export async function signOutAction() {
-  (await cookies()).delete(SESSION_COOKIE);
+  const cookieStore = await cookies();
+  cookieStore.delete(SESSION_COOKIE);
+  cookieStore.delete("moukawil_token");
   redirect("/");
 }
