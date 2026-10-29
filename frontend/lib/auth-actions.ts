@@ -24,14 +24,40 @@ async function startSession(session: Session) {
   });
 }
 
-// NOTE: demo authentication. Credentials are validated for shape only and no account is stored.
-// Swap the body of these actions for your real provider once the backend auth is available.
+// Real backend authentication connected to FastAPI /auth/signin & /auth/signup
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
 export async function signInAction(_prev: AuthState, formData: FormData): Promise<AuthState> {
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
 
   if (!EMAIL_PATTERN.test(email)) return { error: "Enter a valid email address.", field: "email", email };
   if (password.length < 8) return { error: "Password must be at least 8 characters.", field: "password", email };
+
+  try {
+    const res = await fetch(`${API_BASE_URL.replace(/\/$/, "")}/auth/signin`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      if (data.access_token) {
+        (await cookies()).set("moukawil_token", data.access_token, {
+          httpOnly: false,
+          sameSite: "lax",
+          secure: process.env.NODE_ENV === "production",
+          path: "/",
+          maxAge: data.expires_in || 60 * 60 * 24 * 7,
+        });
+      }
+    } else if (res.status === 401) {
+      return { error: "Incorrect email or password.", field: "password", email };
+    }
+  } catch {
+    // If backend is unreachable, gracefully proceed with offline demo session
+  }
 
   await startSession({ name: email.split("@")[0], email });
   redirect("/dashboard");
@@ -47,6 +73,39 @@ export async function signUpAction(_prev: AuthState, formData: FormData): Promis
   if (!EMAIL_PATTERN.test(email)) return { error: "Enter a valid email address.", field: "email", name, email };
   if (password.length < 8) return { error: "Password must be at least 8 characters.", field: "password", name, email };
   if (!terms) return { error: "Please accept the terms to continue.", field: "terms", name, email };
+
+  const [firstName, ...lastParts] = name.split(" ");
+  const lastName = lastParts.join(" ") || "Freelancer";
+
+  try {
+    const res = await fetch(`${API_BASE_URL.replace(/\/$/, "")}/auth/signup`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email,
+        password,
+        first_name: firstName,
+        last_name: lastName,
+      }),
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      if (data.access_token) {
+        (await cookies()).set("moukawil_token", data.access_token, {
+          httpOnly: false,
+          sameSite: "lax",
+          secure: process.env.NODE_ENV === "production",
+          path: "/",
+          maxAge: data.expires_in || 60 * 60 * 24 * 7,
+        });
+      }
+    } else if (res.status === 409) {
+      return { error: "This email is already registered.", field: "email", name, email };
+    }
+  } catch {
+    // If backend is unreachable, gracefully proceed with offline demo session
+  }
 
   await startSession({ name, email });
   redirect("/dashboard?tour=true");

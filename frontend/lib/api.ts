@@ -120,13 +120,18 @@ async function getAuthHeader(): Promise<Record<string, string>> {
     if (local) {
       token = local;
     } else {
-      try {
-        const { data } = await supabase.auth.getSession();
-        if (data.session?.access_token) {
-          token = data.session.access_token;
+      const match = document.cookie.match(/(?:^|;\s*)moukawil_token=([^;]+)/);
+      if (match) {
+        token = decodeURIComponent(match[1]);
+      } else {
+        try {
+          const { data } = await supabase.auth.getSession();
+          if (data.session?.access_token) {
+            token = data.session.access_token;
+          }
+        } catch {
+          // use fallback token
         }
-      } catch {
-        // use fallback token
       }
     }
   }
