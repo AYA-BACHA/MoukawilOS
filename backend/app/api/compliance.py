@@ -1,5 +1,7 @@
 from datetime import date, datetime
 from decimal import Decimal
+import logging
+import time
 from typing import Optional
 from zoneinfo import ZoneInfo
 
@@ -25,23 +27,33 @@ from app.calculation.turnover import calculate_turnover_metrics
 
 router = APIRouter(tags=["compliance"])
 TZ = ZoneInfo("Africa/Algiers")
+logger = logging.getLogger(__name__)
+
+ALERT_RULE_CODES = svc.CAP_RULE_CODES + ("REMINDER_DAYS",)
 
 
-def _calendar_items(fid, year, today):
-    card_date, start_date = repo.get_dates(fid)
+def _calendar_items(fid, year, today, dates=None, done=None):
+    if dates is None:
+        card_date, start_date = repo.get_dates(fid)
+    else:
+        card_date, start_date = dates
+    if done is None:
+        done = repo.completions(fid)
     return svc.build_calendar(
-        repo.obligation_defs(date(year, 1, 1)), repo.completions(fid),
+        repo.obligation_defs(date(year, 1, 1)), done,
         card_date, start_date, year, today,
     )
 
 
-def _amounts_by_year(fid, items, today):
+def _amounts_by_year(fid, items, today, rules_today=None, turnover_cache=None):
     """Estimated amounts per deadline code, for each period year in the items."""
     years = {i["period_year"] for i in items if i["code"] in svc.AMOUNT_CODES}
     out = {}
     for y in sorted(years):
-        rules = repo.get_rules(svc.RULE_CODES, min(today, date(y, 12, 31)))
-        s = svc.build_summary(y, repo.paid_turnover(fid, y), rules)
+        target_date = min(today, date(y, 12, 31))
+        rules = rules_today if (rules_today and target_date == today) else repo.get_rules(svc.RULE_CODES, target_date)
+        t_val = turnover_cache.get(y) if (turnover_cache and y in turnover_cache) else repo.paid_turnover(fid, y)
+        s = svc.build_summary(y, t_val, rules)
         out[y] = {
             "G12": s["ifu_estimate_da"],
             "G12_BIS": s["ifu_estimate_da"],
@@ -50,15 +62,21 @@ def _amounts_by_year(fid, items, today):
     return out
 
 
-def _cap_alert(fid, today):
+def _cap_alert(fid, today, rules=None, turnover_cache=None, ceilings_cache=None):
     y = today.year
-    rules = repo.get_rules(svc.CAP_RULE_CODES, today)
+    if rules is None:
+        rules = repo.get_rules(svc.CAP_RULE_CODES, today)
     strikes = int(rules["CEILING_STRIKES"]["value"]) if "CEILING_STRIKES" in rules else 3
     turnover, ceilings = {}, {}
     for yr in range(y - strikes, y + 1):
-        r = rules if yr == y else repo.get_rules(("CEILING",), date(yr, 12, 31))
-        turnover[yr] = repo.paid_turnover(fid, yr)
-        ceilings[yr] = r["CEILING"]["value"] if "CEILING" in r else None
+        turnover[yr] = turnover_cache.get(yr) if (turnover_cache and yr in turnover_cache) else repo.paid_turnover(fid, yr)
+        if yr == y:
+            ceilings[yr] = rules["CEILING"]["value"] if "CEILING" in rules else None
+        elif ceilings_cache and yr in ceilings_cache:
+            ceilings[yr] = ceilings_cache[yr]
+        else:
+            r = repo.get_rules(("CEILING",), date(yr, 12, 31))
+            ceilings[yr] = r["CEILING"]["value"] if "CEILING" in r else None
     n = svc.consecutive_years_over(turnover, ceilings, y, strikes)
     return svc.build_cap_alert(y, turnover[y], rules, n)
 
@@ -70,7 +88,9 @@ def compliance_calendar(
 ):
     today = svc.today_dz()
     y = year or today.year
-    items = _calendar_items(fid, y, today)
+    dates = repo.get_dates(fid)
+    done = repo.completions(fid)
+    items = _calendar_items(fid, y, today, dates=dates, done=done)
     amounts = _amounts_by_year(fid, items, today)
     for i in items:
         i["amount_da"] = svc.amount_for(i["code"], i["period_year"], amounts)
@@ -87,27 +107,52 @@ def compliance_calendar(
 
 @router.get("/compliance/alerts", response_model=AlertList)
 def compliance_alerts(
+    response: Response,
     on: Optional[date] = Query(None, description="test only: pretend it is this date"),
     fid: int = Depends(get_current_freelancer_id),
 ):
+    t0 = time.perf_counter()
     today = on or svc.today_dz()
+
+    dates = repo.get_dates(fid)
+    _, activity_start = dates
+    done = repo.completions(fid)
+
     items = (
-        _calendar_items(fid, today.year, today)
-        + _calendar_items(fid, today.year + 1, today)
+        _calendar_items(fid, today.year, today, dates=dates, done=done)
+        + _calendar_items(fid, today.year + 1, today, dates=dates, done=done)
     )  # January deadlines in December
-    rules = repo.get_rules(("REMINDER_DAYS",), today)
+
+    rules_today = repo.get_rules(ALERT_RULE_CODES, today)
     reminder = (
-        int(rules["REMINDER_DAYS"]["value"])
-        if "REMINDER_DAYS" in rules
+        int(rules_today["REMINDER_DAYS"]["value"])
+        if "REMINDER_DAYS" in rules_today
         else svc.DEFAULT_REMINDER_DAYS
     )
-    _, activity_start = repo.get_dates(fid)
+
     if activity_start is None:
         items = [i for i in items if i["status"] != "overdue"]
-    alerts = svc.build_alerts(items, reminder, _amounts_by_year(fid, items, today))
-    cap = _cap_alert(fid, today)
+
+    strikes = int(rules_today["CEILING_STRIKES"]["value"]) if "CEILING_STRIKES" in rules_today else 3
+    cap_years = set(range(today.year - strikes, today.year + 1))
+    amount_years = {i["period_year"] for i in items if i["code"] in svc.AMOUNT_CODES}
+    needed_years = sorted(cap_years | amount_years)
+
+    turnover_cache = repo.paid_turnover_by_years(fid, needed_years)
+    past_years = [yr for yr in cap_years if yr < today.year]
+    ceilings_cache = repo.get_ceilings_by_years(past_years)
+
+    amounts = _amounts_by_year(fid, items, today, rules_today=rules_today, turnover_cache=turnover_cache)
+    alerts = svc.build_alerts(items, reminder, amounts)
+    cap = _cap_alert(fid, today, rules=rules_today, turnover_cache=turnover_cache, ceilings_cache=ceilings_cache)
     if cap:
         alerts.insert(0, cap)
+
+    elapsed = time.perf_counter() - t0
+    if response is not None:
+        response.headers["Server-Timing"] = f"compliance_alerts;dur={elapsed * 1000:.1f}"
+    logger.info("compliance_alerts: fid=%s total=%d in %.3fs", fid, len(alerts), elapsed)
+
     return {"items": alerts, "total": len(alerts)}
 
 

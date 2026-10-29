@@ -21,6 +21,26 @@ def get_rules(codes, on_date: date) -> dict:
     return {r[0]: {"value": r[1], "source": r[2]} for r in rows}
 
 
+def get_ceilings_by_years(years: list[int]) -> dict[int, Decimal | None]:
+    """Historical CEILING rule values for the given years in a single batched query."""
+    if not years:
+        return {}
+    unique_years = sorted(set(years))
+    with pool.connection() as conn:
+        rows = conn.execute(
+            """select y.yr, r.value
+               from unnest(%s::int[]) as y(yr)
+               left join public.rule_definitions d on d.code = 'CEILING'
+               left join lateral (
+                 select value from public.rules
+                 where rule_definition_id = d.id and valid_from <= make_date(y.yr, 12, 31)
+                 order by valid_from desc limit 1
+               ) r on true""",
+            (unique_years,),
+        ).fetchall()
+    return {r[0]: Decimal(str(r[1])) if r[1] is not None else None for r in rows}
+
+
 def paid_turnover(freelancer_id: int, year: int) -> Decimal:
     """Collected turnover: paid invoices (by paid_at) + manual income (by received_date)."""
     start, end = date(year, 1, 1), date(year + 1, 1, 1)
@@ -35,6 +55,35 @@ def paid_turnover(freelancer_id: int, year: int) -> Decimal:
                      and received_date >= %s and received_date < %s)""",
             (freelancer_id, start, end, freelancer_id, start, end),
         ).fetchone()[0]
+
+
+def paid_turnover_by_years(freelancer_id: int, years: list[int]) -> dict[int, Decimal]:
+    """Collected turnover for multiple years in a single batched query."""
+    if not years:
+        return {}
+    unique_years = sorted(set(years))
+    with pool.connection() as conn:
+        rows = conn.execute(
+            """select y.yr,
+                      coalesce(inv.tot, 0) + coalesce(man.tot, 0) as total
+               from unnest(%s::int[]) as y(yr)
+               left join (
+                   select extract(year from paid_at)::int as yr, sum(total) as tot
+                   from public.invoices
+                   where freelancer_id = %s and status = 'paid'
+                     and extract(year from paid_at)::int = any(%s)
+                   group by 1
+               ) inv on inv.yr = y.yr
+               left join (
+                   select extract(year from received_date)::int as yr, sum(amount) as tot
+                   from public.manual_income_entries
+                   where freelancer_id = %s
+                     and extract(year from received_date)::int = any(%s)
+                   group by 1
+               ) man on man.yr = y.yr""",
+            (unique_years, freelancer_id, unique_years, freelancer_id, unique_years),
+        ).fetchall()
+    return {r[0]: Decimal(str(r[1])) for r in rows}
 
 
 def get_dates(freelancer_id: int):
