@@ -1,5 +1,13 @@
 import { computeNextDeadline, type ExtendedDeadline } from "@/lib/deadline";
 import { supabase } from "@/lib/supabase";
+import {
+  extractBrowserTokens,
+  resolveAuthToken,
+  type BrowserTokenDeps,
+  type TokenSourceOptions,
+} from "./auth-token";
+
+export { extractBrowserTokens, resolveAuthToken, type BrowserTokenDeps, type TokenSourceOptions };
 import type {
   AssistantMessage,
   BackendComplianceAlert,
@@ -117,32 +125,26 @@ interface BackendInvoiceOut {
   };
 }
 
-async function getAuthHeader(): Promise<Record<string, string>> {
-  let token = process.env.NEXT_PUBLIC_DEV_AUTH_TOKEN || "demo";
+export async function getAuthHeader(): Promise<Record<string, string>> {
+  let sessionToken: string | null = null;
+
   if (typeof window !== "undefined") {
-    const local = localStorage.getItem("moukawil_token");
-    if (local) {
-      token = local;
-    } else {
-      const match = document.cookie.match(/(?:^|;\s*)moukawil_token=([^;]+)/);
-      if (match) {
-        token = decodeURIComponent(match[1]);
-      } else {
-        try {
-          const { data } = await supabase.auth.getSession();
-          if (data.session?.access_token) {
-            token = data.session.access_token;
-          }
-        } catch {
-          // use fallback token
-        }
+    try {
+      const { data } = await supabase.auth.getSession();
+      if (data.session?.access_token) {
+        sessionToken = data.session.access_token;
       }
+    } catch {
+      // use fallback token
     }
   }
-  return {
-    Authorization: `Bearer ${token}`,
-    "Content-Type": "application/json",
-  };
+
+  return extractBrowserTokens({
+    storage: typeof window !== "undefined" ? localStorage : undefined,
+    cookieStr: typeof document !== "undefined" ? document.cookie : undefined,
+    sessionToken,
+    envToken: process.env.NEXT_PUBLIC_DEV_AUTH_TOKEN,
+  });
 }
 
 async function fetchBackend<T>(endpoint: string, options: RequestInit = {}): Promise<T | null> {

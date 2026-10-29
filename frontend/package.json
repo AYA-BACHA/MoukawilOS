@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --experimental-strip-types --test lib/deadline.test.ts"
+    "test": "node --experimental-strip-types --test lib/deadline.test.ts lib/auth-token.test.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.118.0",
