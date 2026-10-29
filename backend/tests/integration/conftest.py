@@ -93,7 +93,7 @@ def db():
 def frozen_today(monkeypatch):
     """Pin 'today' to 2026-10-28 for every module that computes it."""
     import app.services.compliance as comp
-    import app.services.invoices as inv
+    import app.services.compliance as inv
     monkeypatch.setattr(comp, "today_dz", lambda: FROZEN_TODAY)
     monkeypatch.setattr(inv, "_today", lambda: FROZEN_TODAY)
 

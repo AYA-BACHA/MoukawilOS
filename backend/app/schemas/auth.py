@@ -1,12 +1,15 @@
 """app/schemas/auth.py"""
-from typing import Annotated
+from typing import TYPE_CHECKING, Annotated
 from pydantic import BaseModel, Field, StringConstraints
 
-try:
-    import email_validator  # noqa: F401
+if TYPE_CHECKING:
     from pydantic import EmailStr
-except Exception:
-    EmailStr = Annotated[str, StringConstraints(pattern=r"^[^@\s]+@[^@\s]+\.[^@\s]+$")]  # type: ignore
+else:
+    try:
+        import email_validator  # noqa: F401
+        from pydantic import EmailStr
+    except Exception:
+        EmailStr = Annotated[str, StringConstraints(pattern=r"^[^@\s]+@[^@\s]+\.[^@\s]+$")]
 
 from app.schemas.onboarding import OnboardingIn
 
