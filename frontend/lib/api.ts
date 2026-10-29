@@ -17,7 +17,11 @@ import type {
 } from "@/types/models";
 
 const CURRENT_USER_ID = "usr_1";
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  (process.env.NODE_ENV === "production"
+    ? "https://moukawil-backend.onrender.com"
+    : "http://localhost:8000");
 
 export type DemoScenario = "standard" | "near_ceiling" | "new_user";
 

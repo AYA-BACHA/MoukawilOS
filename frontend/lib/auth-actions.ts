@@ -25,7 +25,11 @@ async function startSession(session: Session) {
 }
 
 // Real backend authentication connected to FastAPI /auth/signin & /auth/signup
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  (process.env.NODE_ENV === "production"
+    ? "https://moukawil-backend.onrender.com"
+    : "http://localhost:8000");
 
 export async function signInAction(_prev: AuthState, formData: FormData): Promise<AuthState> {
   const email = String(formData.get("email") ?? "").trim();
