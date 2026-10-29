@@ -150,7 +150,7 @@ async function fetchBackend<T>(endpoint: string, options: RequestInit = {}): Pro
     const headers = await getAuthHeader();
     const url = `${API_BASE_URL.replace(/\/$/, "")}/${endpoint.replace(/^\//, "")}`;
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 3500);
+    const timeout = setTimeout(() => controller.abort(), 10000);
 
     const res = await fetch(url, {
       ...options,
