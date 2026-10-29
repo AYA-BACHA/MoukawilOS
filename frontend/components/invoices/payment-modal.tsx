@@ -1,18 +1,69 @@
 "use client";
 
-import { useState } from "react";
-import { BadgeCheck, CalendarDays, ChevronDown, Landmark, ShieldCheck, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import {
+  BadgeCheck,
+  Banknote,
+  CalendarDays,
+  Check,
+  ChevronDown,
+  CreditCard,
+  FileCheck,
+  Landmark,
+  Mail,
+  ShieldCheck,
+  X,
+} from "lucide-react";
 
 import type { InvoiceWithClient, PaymentConfirmation, TurnoverStats } from "@/types/models";
 import { useI18n } from "@/lib/i18n/provider";
+import { cn } from "@/lib/cn";
 import { ActionFeedbackBanner, MoukawilSpinner, ShimmerProgressBar } from "@/components/ui/action-loading";
 
-const RAIL_OPTIONS = [
-  { value: "bank_transfer", label: "Bank Transfer (BNA / CPA / CCP)" },
-  { value: "cheque", label: "Cheque" },
-  { value: "cash", label: "Cash (Espèces)" },
-  { value: "ccp", label: "CCP Transfer" },
-  { value: "card", label: "EDAHABIA / CIB Card" },
+interface RailOption {
+  value: string;
+  label: string;
+  sublabel: string;
+  badge: string;
+  icon: React.ComponentType<{ className?: string }>;
+}
+
+const RAIL_OPTIONS: RailOption[] = [
+  {
+    value: "bank_transfer",
+    label: "Bank Transfer (BNA / CPA / BEA)",
+    sublabel: "Banques commerciales algériennes (BNA, CPA, BEA...)",
+    badge: "Interbancaire",
+    icon: Landmark,
+  },
+  {
+    value: "ccp",
+    label: "CCP Transfer (Algérie Poste)",
+    sublabel: "Virement postal compte à compte / RIP",
+    badge: "Algérie Poste",
+    icon: Mail,
+  },
+  {
+    value: "cheque",
+    label: "Cheque (Bank / Certified)",
+    sublabel: "Chèque bancaire ou chèque certifié",
+    badge: "Compensé",
+    icon: FileCheck,
+  },
+  {
+    value: "card",
+    label: "EDAHABIA / CIB Card",
+    sublabel: "Paiement électronique GIE Monétique",
+    badge: "CIB / Edahabia",
+    icon: CreditCard,
+  },
+  {
+    value: "cash",
+    label: "Cash (Espèces)",
+    sublabel: "Règlement en liquide sous le seuil légal",
+    badge: "Seuil légal",
+    icon: Banknote,
+  },
 ];
 
 const fieldClass =
@@ -32,8 +83,32 @@ export function PaymentModal({ invoice, stats, onClose, onConfirm }: PaymentModa
   const { t, tx, formatAmount } = useI18n();
   const [settlementDate, setSettlementDate] = useState(today);
   const [rail, setRail] = useState(RAIL_OPTIONS[0].value);
+  const [railDropdownOpen, setRailDropdownOpen] = useState(false);
+  const railDropdownRef = useRef<HTMLDivElement>(null);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (railDropdownRef.current && !railDropdownRef.current.contains(event.target as Node)) {
+        setRailDropdownOpen(false);
+      }
+    }
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") setRailDropdownOpen(false);
+    }
+    if (railDropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("keydown", handleKeyDown);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [railDropdownOpen]);
+
+  const selectedRail = RAIL_OPTIONS.find((opt) => opt.value === rail) ?? RAIL_OPTIONS[0];
+  const SelectedRailIcon = selectedRail.icon;
 
   const { collected, ceiling } = stats;
   const after = collected + invoice.amount;
@@ -68,11 +143,11 @@ export function PaymentModal({ invoice, stats, onClose, onConfirm }: PaymentModa
         aria-modal="true"
         aria-labelledby="payment-modal-title"
         onClick={(event) => event.stopPropagation()}
-        className="flex max-h-[92dvh] w-full max-w-lg flex-col overflow-hidden rounded-2xl bg-card shadow-2xl border border-slate-100 animate-in zoom-in-95 duration-200"
+        className="flex max-h-[92dvh] w-full max-w-lg flex-col rounded-2xl bg-card shadow-2xl border border-slate-100 animate-in zoom-in-95 duration-200"
       >
         <ShimmerProgressBar active={status === "loading"} />
 
-        <div className="flex items-start gap-3 bg-surface-low p-4">
+        <div className="flex items-start gap-3 bg-surface-low p-4 rounded-t-2xl">
           <span className="grid size-10 place-items-center rounded-xl bg-mint text-accent shrink-0">
             <BadgeCheck className="size-[22px]" />
           </span>
@@ -95,7 +170,7 @@ export function PaymentModal({ invoice, stats, onClose, onConfirm }: PaymentModa
           </div>
         </div>
 
-        <div className="flex flex-1 flex-col gap-4 p-4 overflow-y-auto">
+        <div className="flex flex-1 flex-col gap-4 p-4 overflow-y-visible">
           <ActionFeedbackBanner
             status={status}
             loadingText={t("Validation statutaire du règlement...")}
@@ -157,27 +232,113 @@ export function PaymentModal({ invoice, stats, onClose, onConfirm }: PaymentModa
               </span>
               <span className="text-xs tracking-[0.01em] text-muted">{t("Date bank transfer or CCP check was credited.")}</span>
             </label>
-            <label className="flex flex-col gap-1">
+
+            <div className="flex flex-col gap-1 relative" ref={railDropdownRef}>
               <span className={labelClass}>{t("Settlement Rail")}</span>
-              <span className={fieldClass}>
-                <Landmark className="pointer-events-none absolute start-3 size-[15px] text-body" />
-                <select
-                  value={rail}
-                  disabled={status === "loading"}
-                  onChange={(event) => setRail(event.target.value)}
-                  className="h-full w-full appearance-none bg-transparent ps-9 pe-8 text-base sm:text-sm font-medium text-ink outline-none disabled:opacity-60"
+              <button
+                type="button"
+                disabled={status === "loading"}
+                onClick={() => setRailDropdownOpen(!railDropdownOpen)}
+                className={cn(
+                  "flex h-11 w-full items-center justify-between rounded-xl border border-slate-300 bg-slate-50/80 px-3 text-start transition-all hover:border-slate-400 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:opacity-60",
+                  railDropdownOpen && "border-primary ring-2 ring-primary/20 bg-card shadow-sm"
+                )}
+                aria-haspopup="listbox"
+                aria-expanded={railDropdownOpen}
+              >
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <span className="grid size-7 place-items-center rounded-lg bg-mint text-accent shrink-0">
+                    <SelectedRailIcon className="size-4" />
+                  </span>
+                  <div className="flex items-center gap-2 truncate">
+                    <span className="text-xs sm:text-sm font-semibold text-ink truncate">
+                      {t(selectedRail.label)}
+                    </span>
+                    <span className="hidden sm:inline-flex rounded bg-mint px-1.5 py-0.5 text-[10px] font-semibold text-mint-ink shrink-0">
+                      {t(selectedRail.badge)}
+                    </span>
+                  </div>
+                </div>
+                <ChevronDown
+                  className={cn(
+                    "size-4 text-body transition-transform duration-200 shrink-0 ms-2",
+                    railDropdownOpen && "rotate-180 text-accent"
+                  )}
+                />
+              </button>
+
+              {railDropdownOpen && (
+                <div
+                  role="listbox"
+                  className="absolute start-0 end-0 top-full mt-1.5 z-50 flex flex-col gap-1 rounded-2xl border border-slate-200 bg-card p-1.5 shadow-2xl shadow-teal-950/15 backdrop-blur-md animate-in fade-in zoom-in-95"
                 >
-                  {RAIL_OPTIONS.map((option) => (
-                    <option key={option.value} value={option.value}>{t(option.label)}</option>
-                  ))}
-                </select>
-                <ChevronDown className="pointer-events-none absolute end-3 size-3 text-body" />
-              </span>
-            </label>
+                  {RAIL_OPTIONS.map((option) => {
+                    const isSelected = option.value === rail;
+                    const OptionIcon = option.icon;
+                    return (
+                      <button
+                        key={option.value}
+                        type="button"
+                        role="option"
+                        aria-selected={isSelected}
+                        onClick={() => {
+                          setRail(option.value);
+                          setRailDropdownOpen(false);
+                        }}
+                        className={cn(
+                          "flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-start transition-all",
+                          isSelected
+                            ? "bg-mint/40 border border-primary/20 shadow-2xs"
+                            : "hover:bg-slate-50 border border-transparent"
+                        )}
+                      >
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <span
+                            className={cn(
+                              "grid size-8 place-items-center rounded-lg shrink-0 transition-colors",
+                              isSelected ? "bg-mint text-accent" : "bg-slate-100 text-body"
+                            )}
+                          >
+                            <OptionIcon className="size-4" />
+                          </span>
+                          <div className="flex flex-col min-w-0">
+                            <span
+                              className={cn(
+                                "text-xs sm:text-sm font-medium tracking-tight truncate",
+                                isSelected ? "font-semibold text-primary-ink" : "text-ink"
+                              )}
+                            >
+                              {t(option.label)}
+                            </span>
+                            <span className="text-[10px] sm:text-[11px] text-muted truncate">
+                              {t(option.sublabel)}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 shrink-0">
+                          <span
+                            className={cn(
+                              "rounded px-1.5 py-0.5 text-[10px] font-semibold transition-colors",
+                              isSelected
+                                ? "bg-primary/10 text-primary-ink"
+                                : "bg-slate-100 text-body"
+                            )}
+                          >
+                            {t(option.badge)}
+                          </span>
+                          {isSelected && <Check className="size-4 text-accent shrink-0" />}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
-        <div className="flex items-center justify-end gap-2.5 bg-surface-low/80 p-4 border-t border-slate-100">
+        <div className="flex items-center justify-end gap-2.5 bg-surface-low/80 p-4 border-t border-slate-100 rounded-b-2xl">
           <button
             type="button"
             disabled={status === "loading"}
