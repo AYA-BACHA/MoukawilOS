@@ -142,28 +142,29 @@ async function getAuthHeader(): Promise<Record<string, string>> {
 }
 
 async function fetchBackend<T>(endpoint: string, options: RequestInit = {}): Promise<T | null> {
+  const url = `${API_BASE_URL.replace(/\/$/, "")}/${endpoint.replace(/^\//, "")}`;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15000); // was 3500
   try {
     const headers = await getAuthHeader();
-    const url = `${API_BASE_URL.replace(/\/$/, "")}/${endpoint.replace(/^\//, "")}`;
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 3500);
-
     const res = await fetch(url, {
       ...options,
-      headers: {
-        ...headers,
-        ...(options.headers || {}),
-      },
+      headers: { ...headers, ...(options.headers || {}) },
       signal: controller.signal,
     });
-    clearTimeout(timeout);
 
     if (!res.ok) {
+      const body = await res.text().catch(() => "");
+      console.error(`[api] ${res.status} ${options.method || "GET"} ${url}`, body.slice(0, 200));
       return null;
     }
     return (await res.json()) as T;
-  } catch {
+  } catch (err) {
+    const aborted = err instanceof DOMException && err.name === "AbortError";
+    console.error(`[api] ${aborted ? "timeout" : "network error"} ${url}`, err);
     return null;
+  } finally {
+    clearTimeout(timeout);
   }
 }
 
