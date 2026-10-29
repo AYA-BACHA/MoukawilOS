@@ -20,6 +20,14 @@ def get_current_user_id(
     if creds is None:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "missing token")
 
+    # Explicit, opt-in guest demo mode (requires enable_demo_mode=True and exact token match)
+    if (
+        settings.enable_demo_mode
+        and settings.demo_auth_token
+        and creds.credentials == settings.demo_auth_token
+    ):
+        return settings.demo_user_id
+
     if settings.app_env == "development" and settings.test_user_id and creds.credentials in ("test", "demo", "dev", settings.test_user_id):
         return settings.test_user_id
 
@@ -54,10 +62,13 @@ def get_current_freelancer_id(user_id: str = Depends(get_current_user_id)) -> in
         ).fetchone()
         if (
             row is None
-            and settings.app_env == "development"
             and not os.getenv("PYTEST_CURRENT_TEST")
+            and (
+                (settings.enable_demo_mode and user_id == settings.demo_user_id)
+                or settings.app_env == "development"
+            )
         ):
-            # In development fallback to the populated demo freelancer (e.g. Sara Benali)
+            # In demo mode or development, fallback to the populated demo freelancer (Sara Benali)
             row = conn.execute(
                 "select id from public.freelancers order by (select count(*) from public.invoices where freelancer_id = public.freelancers.id) desc limit 1"
             ).fetchone()
