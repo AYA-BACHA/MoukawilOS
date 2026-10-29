@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AlertCircle, Check, Loader2, RotateCcw, ShieldCheck, X } from "lucide-react";
+import { AlertCircle, Check, RotateCcw, ShieldCheck, X } from "lucide-react";
 import { useI18n } from "@/lib/i18n/provider";
 import { issueCreditNoteApi } from "@/lib/api";
 import type { CreditNoteDetail, InvoiceWithClient } from "@/types/models";
+import { MoukawilSpinner, ShimmerProgressBar } from "@/components/ui/action-loading";
 
 interface CreditNoteModalProps {
   invoice: InvoiceWithClient;
@@ -107,8 +108,10 @@ export function CreditNoteModal({ invoice, onClose, onSuccess }: CreditNoteModal
         aria-modal="true"
         aria-labelledby="credit-note-modal-title"
         onClick={(e) => e.stopPropagation()}
-        className="relative z-10 flex max-h-[94dvh] w-full max-w-lg flex-col rounded-2xl border border-slate-200 bg-card p-5 sm:p-6 shadow-2xl animate-in zoom-in-95 overflow-y-auto"
+        className="relative z-10 flex max-h-[94dvh] w-full max-w-lg flex-col overflow-hidden rounded-2xl border border-slate-200 bg-card p-5 sm:p-6 shadow-2xl animate-in zoom-in-95 overflow-y-auto"
       >
+        <ShimmerProgressBar active={isLoading} />
+
         {/* Header */}
         <div className="flex items-start justify-between border-b border-slate-100 pb-3.5">
           <div className="flex flex-col gap-1">
@@ -275,7 +278,7 @@ export function CreditNoteModal({ invoice, onClose, onSuccess }: CreditNoteModal
             >
               {isLoading ? (
                 <>
-                  <Loader2 className="size-3.5 animate-spin" />
+                  <MoukawilSpinner size="sm" className="text-white" />
                   <span>{t("Issuing Avoir...")}</span>
                 </>
               ) : (

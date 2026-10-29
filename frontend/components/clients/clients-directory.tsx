@@ -69,15 +69,20 @@ export function ClientsDirectory({ clients: initialClients, invoices }: { client
     };
 
   const submit = async (input: ClientInput) => {
-    if (modal === "edit" && selected) {
-      const updated = await updateClient(selected.client, input);
-      setClients((current) => current.map((client) => (client.id === updated.id ? updated : client)));
-    } else {
-      const created = await createClient(input);
-      setClients((current) => [...current, created]);
-      setSelectedId(created.id);
+    try {
+      if (modal === "edit" && selected) {
+        const updated = await updateClient(selected.client, input);
+        setClients((current) => current.map((client) => (client.id === updated.id ? updated : client)));
+      } else {
+        const created = await createClient(input);
+        setClients((current) => [...current, created]);
+        setSelectedId(created.id);
+      }
+      return { success: true };
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : t("Erreur lors de l'enregistrement de la fiche client.");
+      return { success: false, error: msg };
     }
-    setModal(null);
   };
 
   const tabs: { value: TypeFilter; label: string; count: number }[] = [

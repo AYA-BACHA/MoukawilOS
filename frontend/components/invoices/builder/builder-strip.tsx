@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { Bookmark, ChevronRight, Loader2, RotateCcw, ShieldCheck, Sparkles } from "lucide-react";
+import { Bookmark, ChevronRight, RotateCcw, ShieldCheck, Sparkles } from "lucide-react";
 import { buttonClass } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n/provider";
+import { MoukawilSpinner } from "@/components/ui/action-loading";
 
 interface BuilderStripProps {
   number: string;
@@ -59,7 +60,7 @@ export function BuilderStrip({ number, saved, onSave, onIssue, onResetSample, is
           disabled={isSaving || isIssuing}
           className="flex-1 sm:flex-initial min-h-[44px] inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-surface-low hover:bg-surface px-4 py-2 text-xs font-semibold text-ink shadow-2xs active:scale-95 transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
         >
-          {isSaving ? <Loader2 className="size-3.5 text-accent animate-spin" /> : <Bookmark className="size-3.5 text-accent" />}
+          {isSaving ? <MoukawilSpinner size="sm" className="text-accent" /> : <Bookmark className="size-3.5 text-accent" />}
           <span>{isSaving ? t("Saving...") : (saved ? t("Draft Saved") : t("Save as Draft"))}</span>
         </button>
         <button
@@ -68,7 +69,7 @@ export function BuilderStrip({ number, saved, onSave, onIssue, onResetSample, is
           disabled={isSaving || isIssuing}
           className={buttonClass("primary", "flex-1 sm:flex-initial min-h-[44px] rounded-lg px-4 py-2 text-xs font-semibold shadow-xs transition-all hover:bg-primary-ink active:scale-95 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed")}
         >
-          {isIssuing ? <Loader2 className="size-3.5 animate-spin" /> : <ShieldCheck className="size-3.5" />}
+          {isIssuing ? <MoukawilSpinner size="sm" className="text-white" /> : <ShieldCheck className="size-3.5" />}
           <span>{isIssuing ? t("Issuing...") : t("Issue & Download PDF")}</span>
         </button>
       </div>

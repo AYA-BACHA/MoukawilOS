@@ -224,12 +224,16 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
 
   // Calculate popover coordinates
   const PADDING = 8;
-  const TOOLTIP_WIDTH = typeof window !== "undefined" ? Math.min(350, window.innerWidth - 32) : 340;
+  const winHeight = typeof window !== "undefined" ? window.innerHeight : 800;
+  const winWidth = typeof window !== "undefined" ? (document.documentElement.clientWidth || window.innerWidth) : 1200;
+  const TOOLTIP_WIDTH = Math.min(350, Math.max(280, winWidth - 32));
   const TOOLTIP_HEIGHT = 220; // Safe height including header, multi-line description, step indicator, and 44px buttons
 
   let tooltipStyle: React.CSSProperties = {
     position: "fixed",
     zIndex: 60,
+    width: TOOLTIP_WIDTH,
+    maxWidth: "calc(100vw - 32px)",
     transition: "top 350ms cubic-bezier(0.16, 1, 0.3, 1), left 350ms cubic-bezier(0.16, 1, 0.3, 1), opacity 200ms ease",
   };
 
@@ -240,9 +244,9 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
     let placement = step.placement ?? "bottom";
 
     const spaceAbove = targetRect.top - PADDING - 12;
-    const spaceBelow = (typeof window !== "undefined" ? window.innerHeight : 800) - (targetRect.bottom + PADDING + 12);
+    const spaceBelow = winHeight - (targetRect.bottom + PADDING + 12);
     const spaceLeft = targetRect.left - PADDING - 12;
-    const spaceRight = (typeof window !== "undefined" ? window.innerWidth : 1200) - (targetRect.right + PADDING + 12);
+    const spaceRight = winWidth - (targetRect.right + PADDING + 12);
 
     // Auto-flip if selected side does not have sufficient space
     if (placement === "bottom" && spaceBelow < TOOLTIP_HEIGHT && spaceAbove > spaceBelow) {
@@ -255,8 +259,6 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
       placement = "right";
     }
 
-    const winHeight = typeof window !== "undefined" ? window.innerHeight : 800;
-    const winWidth = typeof window !== "undefined" ? window.innerWidth : 1200;
     const maxTop = Math.max(16, winHeight - TOOLTIP_HEIGHT - 24);
 
     if (placement === "bottom") {
@@ -349,7 +351,7 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
       {/* Popover Card (matching user screenshot) */}
       <div
         style={tooltipStyle}
-        className="pointer-events-auto flex max-h-[calc(100dvh-32px)] w-[350px] max-w-[calc(100vw-32px)] flex-col justify-between rounded-2xl border border-slate-100 bg-card p-4 sm:p-5 shadow-2xl animate-in fade-in zoom-in-95 duration-200 overflow-hidden"
+        className="pointer-events-auto flex max-h-[calc(100dvh-32px)] w-full max-w-[350px] flex-col justify-between rounded-2xl border border-slate-100 bg-card p-4 sm:p-5 shadow-2xl animate-in fade-in zoom-in-95 duration-200 overflow-hidden box-border"
       >
         {/* Caret Arrow pointing to target */}
         {targetRect && (
@@ -382,7 +384,7 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
         )}
 
         {/* Card Content with crossfade */}
-        <div key={currentStep} className="flex-1 overflow-y-auto pe-1 animate-in fade-in duration-200">
+        <div key={currentStep} className="flex-1 overflow-y-auto overflow-x-hidden pe-1 animate-in fade-in duration-200">
           <div className="flex items-start justify-between">
             <h4 className="text-sm font-bold tracking-tight text-slate-900 pe-2">{t(step.title)}</h4>
             <button

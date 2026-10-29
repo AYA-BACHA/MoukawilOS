@@ -510,9 +510,17 @@ export async function createClient(input: ClientInput): Promise<Client> {
     };
   }
 
+  if (cachedClients) {
+    cachedClients = {
+      data: [created, ...cachedClients.data.filter((c) => c.id !== created.id)],
+      timestamp: Date.now(),
+    };
+  }
+
   if (typeof window !== "undefined") {
     try {
-      const existing = await getClients();
+      const stored = localStorage.getItem("moukawil_clients");
+      const existing: Client[] = stored ? JSON.parse(stored) : [];
       const updated = [created, ...existing.filter((c) => c.id !== created.id)];
       localStorage.setItem("moukawil_clients", JSON.stringify(updated));
     } catch {
@@ -564,9 +572,17 @@ export async function updateClient(client: Client, input: ClientInput): Promise<
     }
   }
 
+  if (cachedClients) {
+    cachedClients = {
+      data: cachedClients.data.map((c) => (c.id === client.id ? updatedClient : c)),
+      timestamp: Date.now(),
+    };
+  }
+
   if (typeof window !== "undefined") {
     try {
-      const existing = await getClients();
+      const stored = localStorage.getItem("moukawil_clients");
+      const existing: Client[] = stored ? JSON.parse(stored) : [];
       const nextList = existing.map((c) => (c.id === client.id ? updatedClient : c));
       localStorage.setItem("moukawil_clients", JSON.stringify(nextList));
     } catch {
@@ -922,39 +938,63 @@ export async function issueCreditNoteApi(
   return { success: true, data: resultData };
 }
 
+export function normalizePaymentRail(rail: string): string {
+  const r = (rail || "").toLowerCase().trim();
+  if (r.includes("bank") || r.includes("virement") || r.includes("bna") || r.includes("cpa")) return "bank_transfer";
+  if (r.includes("cheque") || r.includes("check")) return "cheque";
+  if (r.includes("ccp")) return "ccp";
+  if (r.includes("cash") || r.includes("espece") || r.includes("espèce")) return "cash";
+  if (r.includes("card") || r.includes("carte") || r.includes("edahabia") || r.includes("cib")) return "card";
+  return "bank_transfer";
+}
+
 export async function payInvoiceApi(
   invoiceId: string,
   settlementDate: string,
   rail: string,
-): Promise<{ success: boolean; invoiceId: string }> {
-  // 1. Immediately persist locally so changes never reset across navigation
+): Promise<{ success: boolean; invoiceId: string; error?: string }> {
+  const normalizedRail = normalizePaymentRail(rail);
+
+  // 1. Persist to backend database for persistent records
+  if (/^\d+$/.test(invoiceId)) {
+    const res = await fetchBackendDetailed<BackendInvoiceOut>(`/invoices/${invoiceId}/pay`, {
+      method: "POST",
+      body: JSON.stringify({
+        paid_at: settlementDate,
+        payment_rail: normalizedRail,
+      }),
+    });
+
+    if (res.status !== 200 || !res.data) {
+      let errorMsg = "Impossible d'enregistrer le paiement.";
+      if (res.status === 409) {
+        if (typeof res.error === "object" && res.error?.message) {
+          errorMsg = res.error.message;
+        } else if (typeof res.error === "string") {
+          errorMsg = res.error;
+        } else {
+          errorMsg = "La date de paiement est invalide ou la facture n'est pas éligible.";
+        }
+      } else if (res.status === 422) {
+        errorMsg = "Données de règlement non conformes. Vérifiez la date et le mode d'encaissement.";
+      }
+      return { success: false, invoiceId, error: errorMsg };
+    }
+  }
+
+  // 2. Persist locally only when operation succeeds
   if (typeof window !== "undefined") {
     try {
       const existing = JSON.parse(localStorage.getItem("moukawil_paid_invoices") || "{}");
-      existing[invoiceId] = { paidAt: settlementDate, paymentRail: rail };
+      existing[invoiceId] = { paidAt: settlementDate, paymentRail: normalizedRail };
       localStorage.setItem("moukawil_paid_invoices", JSON.stringify(existing));
       window.dispatchEvent(
         new CustomEvent("moukawil_invoice_paid", {
-          detail: { invoiceId, settlementDate, rail },
+          detail: { invoiceId, settlementDate, rail: normalizedRail },
         }),
       );
     } catch {
       // ignore
-    }
-  }
-
-  // 2. Persist to backend database
-  if (/^\d+$/.test(invoiceId)) {
-    try {
-      await fetchBackend(`/invoices/${invoiceId}/pay`, {
-        method: "POST",
-        body: JSON.stringify({
-          paid_at: settlementDate,
-          payment_rail: rail,
-        }),
-      });
-    } catch (e) {
-      console.error("Backend pay error:", e);
     }
   }
 

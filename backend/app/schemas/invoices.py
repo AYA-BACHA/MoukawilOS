@@ -3,7 +3,7 @@ from decimal import Decimal
 from typing import Literal
 from app.core.lookups import PaymentRail
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class ItemIn(BaseModel):
@@ -33,6 +33,24 @@ class InvoiceBase(BaseModel):
 class PayRequest(BaseModel):
     paid_at: date
     payment_rail: PaymentRail | None = None
+
+    @field_validator("payment_rail", mode="before")
+    @classmethod
+    def normalize_rail(cls, v):
+        if not v:
+            return None
+        v_str = str(v).lower().strip()
+        if any(w in v_str for w in ("bank", "virement", "bna", "cpa")):
+            return "bank_transfer"
+        if any(w in v_str for w in ("cheque", "check")):
+            return "cheque"
+        if "ccp" in v_str:
+            return "ccp"
+        if any(w in v_str for w in ("cash", "espece", "espèce")):
+            return "cash"
+        if any(w in v_str for w in ("card", "carte", "edahabia", "cib")):
+            return "card"
+        return v
 
 
 class InvoiceCreate(InvoiceBase):

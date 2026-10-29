@@ -280,8 +280,11 @@ export function InvoicesLedger({
   } | null>(null);
   const payingInvoice = activeInvoices.find((invoice) => invoice.id === payingId) ?? null;
 
-  const confirmPayment = ({ invoiceId, settlementDate, rail }: PaymentConfirmation) => {
-    payInvoiceApi(invoiceId, settlementDate, rail).catch(console.error);
+  const confirmPayment = async ({ invoiceId, settlementDate, rail }: PaymentConfirmation) => {
+    const res = await payInvoiceApi(invoiceId, settlementDate, rail);
+    if (!res.success) {
+      return { success: false, error: res.error };
+    }
     const target = activeInvoices.find((inv) => inv.id === invoiceId);
     setInvoices((current) =>
       current.map((invoice) => (invoice.id === invoiceId ? { ...invoice, status: "paid", paidAt: settlementDate, paymentRail: rail } : invoice)),
@@ -290,6 +293,7 @@ export function InvoicesLedger({
       setSettledToast({ number: target.number, amount: target.amount, isCreditNote: false });
     }
     setPayingId(null);
+    return { success: true };
   };
 
   const deleteDraft = (invoiceId: string) => {

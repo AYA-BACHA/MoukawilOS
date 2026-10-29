@@ -58,8 +58,11 @@ export function RecentInvoices({
     counts: { all: invoices.length, paid: 1, pending: 1, draft: 1, credited: 0, cancelled: 0 },
   };
 
-  const confirmPayment = ({ invoiceId, settlementDate, rail }: PaymentConfirmation) => {
-    payInvoiceApi(invoiceId, settlementDate, rail).catch(console.error);
+  const confirmPayment = async ({ invoiceId, settlementDate, rail }: PaymentConfirmation) => {
+    const res = await payInvoiceApi(invoiceId, settlementDate, rail);
+    if (!res.success) {
+      return { success: false, error: res.error };
+    }
     onPaymentConfirmed?.({ invoiceId, settlementDate, rail });
     setInvoices((prev) =>
       prev.map((item) =>
@@ -71,6 +74,7 @@ export function RecentInvoices({
       setSettledInvoice({ ...target, status: "paid", paidAt: settlementDate, paymentRail: rail });
     }
     setPayingInvoice(null);
+    return { success: true };
   };
 
   return (
