@@ -662,7 +662,7 @@ We maintain complete transparency regarding the role of Artificial Intelligence 
 
 | Context | AI Tooling / Model | Implementation Scope | Verification & Engineering Boundaries |
 |---|---|---|---|
-| **Inside the Product** | Local Statutory Retrieval & Google Gemini API Target (`text-embedding-004`, `Gemini 1.5 Flash`) | The live web demo operates via deterministic keyword retrieval grounded strictly in indexed Algerian decrees; the standalone RAG microservice targets Gemini embeddings with cosine similarity thresholds (refusal fallback below 0.70). | Deterministic execution: tax math never goes through the LLM. Fiscal calculations are isolated in deterministic code and physically separated from AI generation. |
+| **Inside the Product** | Dual-Stage Regulatory Retrieval & Google Gemini API (`text-embedding-004`, `Gemini 1.5 Flash`) | Dual-stage hybrid retrieval: live queries execute through deterministic statutory keyword and article guardrails grounded in indexed JORADP decrees, backed by the standalone Gemini vector embedding pipeline (`text-embedding-004`) with cosine similarity refusal thresholds (< 0.70). | Deterministic execution: tax math never goes through the LLM. Fiscal calculations are isolated in deterministic code and physically separated from AI generation. |
 | **During Development** | Claude, Gemini, GitHub Copilot | Code assistance, unit test scaffolding, and drafting repetitive boilerplate. | All generated code, database schemas, and mathematical formulas were audited, reviewed, and verified against Algerian statutes by human engineers before merging. |
 
 ---
