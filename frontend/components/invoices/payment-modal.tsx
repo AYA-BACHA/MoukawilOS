@@ -89,6 +89,14 @@ export function PaymentModal({ invoice, stats, onClose, onConfirm }: PaymentModa
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
+    if (railDropdownOpen && railDropdownRef.current) {
+      setTimeout(() => {
+        railDropdownRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }, 50);
+    }
+  }, [railDropdownOpen]);
+
+  useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (railDropdownRef.current && !railDropdownRef.current.contains(event.target as Node)) {
         setRailDropdownOpen(false);
@@ -270,7 +278,7 @@ export function PaymentModal({ invoice, stats, onClose, onConfirm }: PaymentModa
               {railDropdownOpen && (
                 <div
                   role="listbox"
-                  className="absolute start-0 end-0 bottom-full mb-1.5 z-50 flex flex-col gap-1 rounded-2xl border border-slate-200 bg-card p-1.5 shadow-2xl shadow-teal-950/20 backdrop-blur-md animate-in fade-in zoom-in-95 max-h-60 overflow-y-auto"
+                  className="mt-1.5 flex flex-col gap-1 rounded-2xl border border-slate-200 bg-card p-1.5 shadow-lg animate-in fade-in zoom-in-95"
                 >
                   {RAIL_OPTIONS.map((option) => {
                     const isSelected = option.value === rail;

@@ -109,10 +109,42 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
   const { t } = useI18n();
   const [currentStep, setCurrentStep] = useState(0);
   const [targetRect, setTargetRect] = useState<DOMRect | null>(null);
+  const [viewport, setViewport] = useState({ width: 1200, height: 800 });
   const router = useRouter();
   const pathname = usePathname();
 
   const step = TOUR_STEPS[currentStep];
+
+  // Keep true visible viewport dimensions reactive to rotation, DPI, and window resize
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const updateViewport = () => {
+      const vv = window.visualViewport;
+      const w = Math.min(
+        vv ? vv.width : window.innerWidth,
+        window.innerWidth,
+        document.documentElement.clientWidth || window.innerWidth
+      );
+      const h = Math.min(
+        vv ? vv.height : window.innerHeight,
+        window.innerHeight,
+        document.documentElement.clientHeight || window.innerHeight
+      );
+      setViewport({ width: Math.max(300, w), height: Math.max(400, h) });
+    };
+
+    updateViewport();
+    window.addEventListener("resize", updateViewport, { passive: true });
+    window.addEventListener("orientationchange", updateViewport, { passive: true });
+    window.visualViewport?.addEventListener("resize", updateViewport);
+
+    return () => {
+      window.removeEventListener("resize", updateViewport);
+      window.removeEventListener("orientationchange", updateViewport);
+      window.visualViewport?.removeEventListener("resize", updateViewport);
+    };
+  }, []);
 
   // Helper to check if element is already comfortably in view
   const isElementInViewport = (el: HTMLElement) => {
@@ -222,11 +254,11 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
 
   if (!isOpen) return null;
 
-  // Calculate popover coordinates
+  // Calculate popover coordinates using reactive true visible viewport
   const PADDING = 8;
-  const winHeight = typeof window !== "undefined" ? window.innerHeight : 800;
-  const winWidth = typeof window !== "undefined" ? (document.documentElement.clientWidth || window.innerWidth) : 1200;
-  const TOOLTIP_WIDTH = Math.min(350, Math.max(280, winWidth - 32));
+  const winHeight = viewport.height;
+  const winWidth = viewport.width;
+  const TOOLTIP_WIDTH = Math.min(350, Math.max(260, winWidth - 32));
   const TOOLTIP_HEIGHT = 220; // Safe height including header, multi-line description, step indicator, and 44px buttons
 
   let tooltipStyle: React.CSSProperties = {
@@ -234,6 +266,7 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
     zIndex: 60,
     width: TOOLTIP_WIDTH,
     maxWidth: "calc(100vw - 32px)",
+    boxSizing: "border-box",
     transition: "top 350ms cubic-bezier(0.16, 1, 0.3, 1), left 350ms cubic-bezier(0.16, 1, 0.3, 1), opacity 200ms ease",
   };
 
@@ -259,33 +292,40 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
       placement = "right";
     }
 
-    const maxTop = Math.max(16, winHeight - TOOLTIP_HEIGHT - 24);
+    const minTop = 16;
+    const maxTop = Math.max(minTop, winHeight - TOOLTIP_HEIGHT - 24);
+    const minLeft = 16;
+    const maxLeft = Math.max(minLeft, winWidth - TOOLTIP_WIDTH - 16);
+
+    let rawTop = targetRect.bottom + PADDING + 12;
+    let rawLeft = targetRect.left + targetRect.width / 2 - TOOLTIP_WIDTH / 2;
 
     if (placement === "bottom") {
-      const rawTop = targetRect.bottom + PADDING + 12;
-      const top = Math.max(16, Math.min(maxTop, rawTop));
-      const left = Math.max(16, Math.min(winWidth - TOOLTIP_WIDTH - 16, targetRect.left + targetRect.width / 2 - TOOLTIP_WIDTH / 2));
-      tooltipStyle = { ...tooltipStyle, top, left };
+      rawTop = targetRect.bottom + PADDING + 12;
+      rawLeft = targetRect.left + targetRect.width / 2 - TOOLTIP_WIDTH / 2;
       arrowPlacement = "top";
-      arrowOffset = Math.max(16, Math.min(TOOLTIP_WIDTH - 24, targetRect.left + targetRect.width / 2 - left));
     } else if (placement === "top") {
-      const rawTop = targetRect.top - PADDING - TOOLTIP_HEIGHT - 12;
-      const top = Math.max(16, Math.min(maxTop, rawTop));
-      const left = Math.max(16, Math.min(winWidth - TOOLTIP_WIDTH - 16, targetRect.left + targetRect.width / 2 - TOOLTIP_WIDTH / 2));
-      tooltipStyle = { ...tooltipStyle, top, left };
+      rawTop = targetRect.top - PADDING - TOOLTIP_HEIGHT - 12;
+      rawLeft = targetRect.left + targetRect.width / 2 - TOOLTIP_WIDTH / 2;
       arrowPlacement = "bottom";
-      arrowOffset = Math.max(16, Math.min(TOOLTIP_WIDTH - 24, targetRect.left + targetRect.width / 2 - left));
     } else if (placement === "right") {
-      const left = Math.max(16, Math.min(winWidth - TOOLTIP_WIDTH - 16, targetRect.right + PADDING + 12));
-      const top = Math.max(16, Math.min(maxTop, targetRect.top + targetRect.height / 2 - TOOLTIP_HEIGHT / 2));
-      tooltipStyle = { ...tooltipStyle, top, left };
+      rawLeft = targetRect.right + PADDING + 12;
+      rawTop = targetRect.top + targetRect.height / 2 - TOOLTIP_HEIGHT / 2;
       arrowPlacement = "left";
-      arrowOffset = Math.max(16, Math.min(TOOLTIP_HEIGHT - 24, targetRect.top + targetRect.height / 2 - top));
     } else if (placement === "left") {
-      const left = Math.max(16, Math.min(winWidth - TOOLTIP_WIDTH - 16, targetRect.left - PADDING - TOOLTIP_WIDTH - 12));
-      const top = Math.max(16, Math.min(maxTop, targetRect.top + targetRect.height / 2 - TOOLTIP_HEIGHT / 2));
-      tooltipStyle = { ...tooltipStyle, top, left };
+      rawLeft = targetRect.left - PADDING - TOOLTIP_WIDTH - 12;
+      rawTop = targetRect.top + targetRect.height / 2 - TOOLTIP_HEIGHT / 2;
       arrowPlacement = "right";
+    }
+
+    const top = Math.max(minTop, Math.min(maxTop, rawTop));
+    const left = Math.max(minLeft, Math.min(maxLeft, rawLeft));
+
+    tooltipStyle = { ...tooltipStyle, top, left };
+
+    if (arrowPlacement === "top" || arrowPlacement === "bottom") {
+      arrowOffset = Math.max(16, Math.min(TOOLTIP_WIDTH - 24, targetRect.left + targetRect.width / 2 - left));
+    } else {
       arrowOffset = Math.max(16, Math.min(TOOLTIP_HEIGHT - 24, targetRect.top + targetRect.height / 2 - top));
     }
   } else {
@@ -336,9 +376,9 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
         <div
           className="fixed rounded-2xl pointer-events-none"
           style={{
-            left: targetRect.left - PADDING,
-            top: targetRect.top - PADDING,
-            width: targetRect.width + PADDING * 2,
+            left: Math.max(4, targetRect.left - PADDING),
+            top: Math.max(4, targetRect.top - PADDING),
+            width: Math.min(winWidth - 8, targetRect.width + PADDING * 2),
             height: targetRect.height + PADDING * 2,
             borderRadius: "18px",
             boxShadow: "0 0 0 3px #10b981, 0 0 30px 4px rgba(16, 185, 129, 0.35), 0 0 0 9999px rgba(15, 23, 42, 0.72)",
@@ -384,9 +424,12 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
         )}
 
         {/* Card Content with crossfade */}
-        <div key={currentStep} className="flex-1 overflow-y-auto overflow-x-hidden pe-1 animate-in fade-in duration-200">
+        <div
+          key={currentStep}
+          className="flex-1 overflow-y-auto overflow-x-hidden pe-1 animate-in fade-in duration-200 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+        >
           <div className="flex items-start justify-between">
-            <h4 className="text-sm font-bold tracking-tight text-slate-900 pe-2">{t(step.title)}</h4>
+            <h4 className="text-sm font-bold tracking-tight text-slate-900 pe-2 leading-tight">{t(step.title)}</h4>
             <button
               type="button"
               onClick={onClose}
@@ -397,7 +440,7 @@ export function SpotlightTour({ isOpen, onClose }: SpotlightTourProps) {
             </button>
           </div>
 
-          <p className="mt-1.5 text-xs leading-relaxed text-slate-600">{t(step.description)}</p>
+          <p className="mt-1.5 text-xs leading-relaxed text-slate-600 break-words">{t(step.description)}</p>
         </div>
 
         {/* Card Footer: Step Counter + Progress Dots + Pill Buttons */}

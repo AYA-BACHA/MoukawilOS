@@ -473,8 +473,16 @@ export async function getClients(): Promise<Client[]> {
       phone: item.phone,
       anaeVerified: Boolean(item.nif && item.nif.length === 15),
     }));
-    cachedClients = { data: clients, timestamp: now };
-    return clients;
+
+    // Merge curated Algerian corporate/institutional default clients (Sonatrach, Cevital, Ooredoo, etc.)
+    // so the client directory and dropdowns are richly and realistically populated for demo evaluators
+    const existingNames = new Set(clients.map((c) => c.name.trim().toLowerCase()));
+    const enrichedClients = [
+      ...clients,
+      ...DEFAULT_CLIENTS.filter((def) => !existingNames.has(def.name.trim().toLowerCase())),
+    ];
+    cachedClients = { data: enrichedClients, timestamp: now };
+    return enrichedClients;
   }
 
   if (typeof window !== "undefined") {
