@@ -53,8 +53,22 @@ def get_current_user_id(
     return payload["sub"]
 
 
+_cached_demo_fid: int | None = None
+
+
 def get_current_freelancer_id(user_id: str = Depends(get_current_user_id)) -> int:
     """Return the freelancer id of the logged-in user (404 if onboarding not done)."""
+    global _cached_demo_fid
+    is_demo_user = (
+        not os.getenv("PYTEST_CURRENT_TEST")
+        and (
+            (settings.enable_demo_mode and user_id == settings.demo_user_id)
+            or settings.app_env == "development"
+        )
+    )
+    if is_demo_user and _cached_demo_fid is not None:
+        return _cached_demo_fid
+
     if pool.closed:
         try:
             pool.open(wait=True, timeout=10)
@@ -64,18 +78,13 @@ def get_current_freelancer_id(user_id: str = Depends(get_current_user_id)) -> in
         row = conn.execute(
             "select id from public.freelancers where profile_id = %s", (user_id,)
         ).fetchone()
-        if (
-            row is None
-            and not os.getenv("PYTEST_CURRENT_TEST")
-            and (
-                (settings.enable_demo_mode and user_id == settings.demo_user_id)
-                or settings.app_env == "development"
-            )
-        ):
+        if row is None and is_demo_user:
             # In demo mode or development, fallback to the populated demo freelancer (Sara Benali)
             row = conn.execute(
                 "select id from public.freelancers order by (select count(*) from public.invoices where freelancer_id = public.freelancers.id) desc limit 1"
             ).fetchone()
     if row is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "freelancer profile not created")
+    if is_demo_user:
+        _cached_demo_fid = row[0]
     return row[0]

@@ -7,6 +7,7 @@ from zoneinfo import ZoneInfo
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Response
 
+from app.core.db import pool
 from app.core.security import get_current_freelancer_id
 from app.repositories import compliance as repo
 from app.schemas.compliance import (
@@ -88,8 +89,9 @@ def compliance_calendar(
 ):
     today = svc.today_dz()
     y = year or today.year
-    dates = repo.get_dates(fid)
-    done = repo.completions(fid)
+    with pool.connection() as conn:
+        dates = repo.get_dates(fid, conn=conn)
+        done = repo.completions(fid, conn=conn)
     items = _calendar_items(fid, y, today, dates=dates, done=done)
     amounts = _amounts_by_year(fid, items, today)
     for i in items:
@@ -114,31 +116,32 @@ def compliance_alerts(
     t0 = time.perf_counter()
     today = on or svc.today_dz()
 
-    dates = repo.get_dates(fid)
-    _, activity_start = dates
-    done = repo.completions(fid)
-
-    items = (
-        _calendar_items(fid, today.year, today, dates=dates, done=done)
-        + _calendar_items(fid, today.year + 1, today, dates=dates, done=done)
-    )  # January deadlines in December
-
     rules_today = repo.get_rules(ALERT_RULE_CODES, today)
     reminder = (
         int(rules_today["REMINDER_DAYS"]["value"])
         if "REMINDER_DAYS" in rules_today
         else svc.DEFAULT_REMINDER_DAYS
     )
-
-    if activity_start is None:
-        items = [i for i in items if i["status"] != "overdue"]
-
     strikes = int(rules_today["CEILING_STRIKES"]["value"]) if "CEILING_STRIKES" in rules_today else 3
     cap_years = set(range(today.year - strikes, today.year + 1))
-    amount_years = {i["period_year"] for i in items if i["code"] in svc.AMOUNT_CODES}
-    needed_years = sorted(cap_years | amount_years)
 
-    turnover_cache = repo.paid_turnover_by_years(fid, needed_years)
+    with pool.connection() as conn:
+        dates = repo.get_dates(fid, conn=conn)
+        _, activity_start = dates
+        done = repo.completions(fid, conn=conn)
+
+        items = (
+            _calendar_items(fid, today.year, today, dates=dates, done=done)
+            + _calendar_items(fid, today.year + 1, today, dates=dates, done=done)
+        )  # January deadlines in December
+
+        if activity_start is None:
+            items = [i for i in items if i["status"] != "overdue"]
+
+        amount_years = {i["period_year"] for i in items if i["code"] in svc.AMOUNT_CODES}
+        needed_years = sorted(cap_years | amount_years)
+        turnover_cache = repo.paid_turnover_by_years(fid, needed_years, conn=conn)
+
     past_years = [yr for yr in cap_years if yr < today.year]
     ceilings_cache = repo.get_ceilings_by_years(past_years)
 
@@ -164,8 +167,9 @@ def dashboard_summary(
     today = svc.today_dz()
     y = year or today.year
     rules = repo.get_rules(svc.CAP_RULE_CODES, min(today, date(y, 12, 31)))
-    out = svc.build_summary(y, repo.paid_turnover(fid, y), rules)
-    counts, pending = repo.invoice_stats(fid, y)
+    with pool.connection() as conn:
+        out = svc.build_summary(y, repo.paid_turnover(fid, y), rules)
+        counts, pending = repo.invoice_stats(fid, y, conn=conn)
     return {**out, "pending_da": pending, "invoice_counts": counts}
 
 

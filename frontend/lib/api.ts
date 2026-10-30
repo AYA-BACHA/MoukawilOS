@@ -153,9 +153,14 @@ interface BackendResponse<T> {
   error?: any;
 }
 
+export interface FetchBackendOptions extends RequestInit {
+  timeoutMs?: number;
+  silentOnTimeout?: boolean;
+}
+
 async function fetchBackendDetailed<T>(
   endpoint: string,
-  options: RequestInit = {}
+  options: FetchBackendOptions = {}
 ): Promise<BackendResponse<T>> {
   const url = `${API_BASE_URL.replace(/\/$/, "")}/${endpoint.replace(/^\//, "")}`;
   const controller = new AbortController();
@@ -163,7 +168,7 @@ async function fetchBackendDetailed<T>(
   const isServer = typeof window === "undefined";
   const isGuestDemo = !headers.Authorization || headers.Authorization.includes("demo");
   // For SSR guest demo requests, use a short 2.5s timeout so cold starts never freeze page delivery
-  const timeoutMs = isServer && isGuestDemo ? 2500 : 12000;
+  const timeoutMs = options.timeoutMs ?? (isServer && isGuestDemo ? 2500 : isGuestDemo ? 6000 : 12000);
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
   try {
     const res = await fetch(url, {
@@ -200,10 +205,13 @@ async function fetchBackendDetailed<T>(
     return { data, status: res.status };
   } catch (err) {
     const aborted = err instanceof DOMException && err.name === "AbortError";
-    if (aborted) {
-      console.warn(`[api] Request timeout (12s): ${url}`);
-    } else {
-      console.warn(`[api] Network unreachable: ${url}`);
+    const silent = options.silentOnTimeout || (isGuestDemo && aborted);
+    if (!silent) {
+      if (aborted) {
+        console.warn(`[api] Request timeout (${Math.round(timeoutMs / 1000)}s): ${url}`);
+      } else {
+        console.warn(`[api] Network unreachable: ${url}`);
+      }
     }
     return { data: null, status: 0, error: err };
   } finally {
@@ -211,7 +219,7 @@ async function fetchBackendDetailed<T>(
   }
 }
 
-async function fetchBackend<T>(endpoint: string, options: RequestInit = {}): Promise<T | null> {
+async function fetchBackend<T>(endpoint: string, options: FetchBackendOptions = {}): Promise<T | null> {
   const res = await fetchBackendDetailed<T>(endpoint, options);
   return res.data;
 }
@@ -1646,11 +1654,20 @@ export async function askAssistant(question: string, lang?: string): Promise<Ass
 
 export async function getDashboardSummary(year?: number): Promise<BackendDashboardSummary | null> {
   const query = year ? `?year=${year}` : "";
-  return await fetchBackend<BackendDashboardSummary>(`/dashboard/summary${query}`);
+  return await fetchBackend<BackendDashboardSummary>(`/dashboard/summary${query}`, {
+    timeoutMs: 6000,
+    silentOnTimeout: true,
+  });
 }
 
 export async function getComplianceAlerts(): Promise<BackendComplianceAlert[]> {
-  const res = await fetchBackend<{ items: BackendComplianceAlert[]; total: number }>("/compliance/alerts");
+  const res = await fetchBackend<{ items: BackendComplianceAlert[]; total: number }>(
+    "/compliance/alerts",
+    {
+      timeoutMs: 5000,
+      silentOnTimeout: true,
+    }
+  );
   return res?.items || [];
 }
 
