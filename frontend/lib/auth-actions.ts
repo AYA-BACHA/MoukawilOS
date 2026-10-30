@@ -12,7 +12,7 @@ export interface AuthState {
 }
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const DEMO_USER: Session = { name: "Amine Boudiaf", email: "demo@moukawil.dz" };
+const DEMO_USER: Session = { name: "Sara Benali", email: "demo@moukawil.dz" };
 
 async function startSession(session: Session) {
   (await cookies()).set(SESSION_COOKIE, encodeURIComponent(JSON.stringify(session)), {

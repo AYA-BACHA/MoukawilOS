@@ -16,6 +16,8 @@ import { DemoSwitcher } from "@/components/layout/demo-switcher";
 import { useMobileNav } from "@/components/layout/mobile-nav-context";
 import { useTour } from "@/components/layout/tour-context";
 import { useI18n } from "@/lib/i18n/provider";
+import { getInvoices } from "@/lib/api";
+import { computeStats } from "@/lib/stats";
 
 const yearOptions = [
   { value: "2026", label: "FY 2026", badge: "Active" },
@@ -38,12 +40,37 @@ export function Topbar({ utilization }: { utilization: number }) {
   const { open } = useMobileNav();
   const { startTour } = useTour();
   const [fiscalYear, setFiscalYear] = useState("2026");
+  const [currentUtilization, setCurrentUtilization] = useState(utilization);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncToast, setSyncToast] = useState(false);
   const notifRef = useRef<HTMLDivElement>(null);
   const userRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setCurrentUtilization(utilization);
+  }, [utilization]);
+
+  useEffect(() => {
+    const refreshUtilization = () => {
+      getInvoices().then((invs) => {
+        const active = invs.filter((i) => !i.issueDate || i.issueDate.startsWith(fiscalYear));
+        const mockUser = { ceiling: 5000000, ifuRate: 0.005 } as any;
+        const stats = computeStats(mockUser, active);
+        setCurrentUtilization(stats.utilization);
+      });
+    };
+
+    window.addEventListener("moukawil_scenario_change", refreshUtilization);
+    window.addEventListener("moukawil_invoice_paid", refreshUtilization);
+    window.addEventListener("moukawil_invoices_updated", refreshUtilization);
+    return () => {
+      window.removeEventListener("moukawil_scenario_change", refreshUtilization);
+      window.removeEventListener("moukawil_invoice_paid", refreshUtilization);
+      window.removeEventListener("moukawil_invoices_updated", refreshUtilization);
+    };
+  }, [fiscalYear]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -166,8 +193,18 @@ export function Topbar({ utilization }: { utilization: number }) {
             <RefreshCw className={cn("size-3.5 text-accent transition-transform", isSyncing && "animate-spin")} />
             <span className="hidden xl:inline">{isSyncing ? t("Recalculating...") : t("Recalculate")}</span>
           </button>
-          <Pill dot="size-2 bg-primary" className="hidden 2xl:inline-flex bg-mint px-3 py-1 text-mint-ink shadow-xs">
-            {t("Status: {v1}% Utilized • In Compliance", { v1: Math.round(utilization * 100) })}
+          <Pill
+            dot={Math.round(currentUtilization * 100) >= 80 ? "size-2 bg-amber-500" : "size-2 bg-primary"}
+            className={cn(
+              "hidden 2xl:inline-flex px-3 py-1 shadow-xs transition-colors",
+              Math.round(currentUtilization * 100) >= 80
+                ? "bg-amber-50 text-amber-900 border border-amber-200"
+                : "bg-mint text-mint-ink"
+            )}
+          >
+            {Math.round(currentUtilization * 100) >= 80
+              ? t("Status: {v1}% Utilized • Near Statutory Ceiling", { v1: Math.round(currentUtilization * 100) })
+              : t("Status: {v1}% Utilized • In Compliance", { v1: Math.round(currentUtilization * 100) })}
           </Pill>
         </div>
 

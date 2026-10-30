@@ -212,13 +212,23 @@ export function DashboardView({
       }
     };
 
+    const handleInvoicesUpdated = () => {
+      getInvoices().then((updated) => setInvoices(updated));
+    };
+
     window.addEventListener("moukawil_scenario_change", handleScenarioChange);
     window.addEventListener("moukawil_fy_change", handleFyChange);
     window.addEventListener("moukawil_invoice_paid", handlePaidEvent);
+    window.addEventListener("moukawil_invoices_updated", handleInvoicesUpdated);
+
+    // Refresh on mount to ensure fresh local overrides and scenario consistency
+    getInvoices().then((updated) => setInvoices(updated));
+
     return () => {
       window.removeEventListener("moukawil_scenario_change", handleScenarioChange);
       window.removeEventListener("moukawil_fy_change", handleFyChange);
       window.removeEventListener("moukawil_invoice_paid", handlePaidEvent);
+      window.removeEventListener("moukawil_invoices_updated", handleInvoicesUpdated);
     };
   }, []);
 

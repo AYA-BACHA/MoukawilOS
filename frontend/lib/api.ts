@@ -46,8 +46,10 @@ export function getDemoScenario(): DemoScenario {
 export function setDemoScenario(scenario: DemoScenario) {
   if (typeof window !== "undefined") {
     localStorage.removeItem("moukawil_paid_invoices");
+    localStorage.removeItem("moukawil_user_invoices");
+    localStorage.removeItem("moukawil_credited_invoices");
     localStorage.setItem("moukawil_demo_scenario", scenario);
-    document.cookie = `moukawil_demo_scenario=${scenario}; path=/; max-age=31536000`;
+    document.cookie = `moukawil_demo_scenario=${scenario}; path=/; max-age=31536000; SameSite=Lax`;
     window.dispatchEvent(new CustomEvent("moukawil_scenario_change", { detail: scenario }));
     window.location.reload();
   }
@@ -261,21 +263,49 @@ const DEFAULT_USER: User = {
   exemptionClause: "TVA non applicable - Art. 13 de la LFR 2023 / Art. 282 ter du CIDTA",
 };
 
-export async function getCurrentUser(): Promise<User> {
-  const fallbackUser = DEFAULT_USER;
-
-  // On server during guest demo sessions, serve canonical demo user instantly (0ms SSR)
+export async function isDemoSession(): Promise<boolean> {
   if (typeof window === "undefined") {
     try {
       const { cookies } = await import("next/headers");
       const cookieStore = await cookies();
-      const sessionRaw = cookieStore.get("moukawil_session")?.value;
-      if (sessionRaw && sessionRaw.includes("demo%40moukawil.dz")) {
-        return fallbackUser;
-      }
+      const token = cookieStore.get("moukawil_token")?.value;
+      const session = cookieStore.get("moukawil_session")?.value;
+      // Live authenticated accounts have an explicit Supabase JWT starting with 'ey'
+      if (token && token.startsWith("ey")) return false;
+      return true;
     } catch {
-      // ignore
+      return true;
     }
+  }
+
+  // Client-side in the browser:
+  const token = localStorage.getItem("moukawil_token");
+  if (token && token.startsWith("ey")) return false;
+  const cookieMatch = document.cookie.match(/(?:^|;\s*)moukawil_token=([^;]+)/);
+  if (cookieMatch) {
+    const val = decodeURIComponent(cookieMatch[1]);
+    if (val.startsWith("ey")) return false;
+  }
+  return true;
+}
+
+export async function getCurrentUser(): Promise<User> {
+  const fallbackUser = DEFAULT_USER;
+  const isDemo = await isDemoSession();
+
+  if (isDemo) {
+    if (typeof window !== "undefined") {
+      try {
+        const stored = localStorage.getItem("moukawil_user_settings");
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          return { ...fallbackUser, ...parsed };
+        }
+      } catch {
+        // ignore
+      }
+    }
+    return fallbackUser;
   }
 
   const [profileData, preferencesData] = await Promise.all([
@@ -478,18 +508,26 @@ export async function getClients(): Promise<Client[]> {
     return cachedClients.data;
   }
 
-  // On server during guest demo sessions, serve canonical verified clients instantly (0ms SSR)
-  if (typeof window === "undefined") {
-    try {
-      const { cookies } = await import("next/headers");
-      const cookieStore = await cookies();
-      const sessionRaw = cookieStore.get("moukawil_session")?.value;
-      if (sessionRaw && sessionRaw.includes("demo%40moukawil.dz")) {
-        return DEFAULT_CLIENTS;
+  const isDemo = await isDemoSession();
+  if (isDemo) {
+    let demoClients = DEFAULT_CLIENTS;
+    if (typeof window !== "undefined") {
+      try {
+        const local = localStorage.getItem("moukawil_clients");
+        if (local) {
+          const parsed = JSON.parse(local);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            const existingIds = new Set(demoClients.map((c) => c.id));
+            const userClients = parsed.filter((c: Client) => !existingIds.has(c.id));
+            demoClients = [...userClients, ...demoClients];
+          }
+        }
+      } catch {
+        // ignore
       }
-    } catch {
-      // ignore
     }
+    cachedClients = { data: demoClients, timestamp: now };
+    return demoClients;
   }
 
   const res = await fetchBackend<{ items: BackendClientOut[]; total: number }>("/clients?limit=100");
@@ -878,39 +916,36 @@ export function getDemoScenarioInvoices(scenario: DemoScenario = "standard"): In
 }
 
 export async function getInvoices(explicitScenario?: DemoScenario): Promise<InvoiceWithClient[]> {
-  const scenario = explicitScenario || getDemoScenario();
-
-  // On server during guest demo sessions, serve scenario baseline instantly (0ms SSR)
-  if (typeof window === "undefined") {
+  let scenario = explicitScenario;
+  if (!scenario && typeof window === "undefined") {
     try {
       const { cookies } = await import("next/headers");
       const cookieStore = await cookies();
-      const sessionRaw = cookieStore.get("moukawil_session")?.value;
-      if (sessionRaw && sessionRaw.includes("demo%40moukawil.dz")) {
-        return getDemoScenarioInvoices(scenario);
+      const sc = cookieStore.get("moukawil_demo_scenario")?.value as DemoScenario;
+      if (sc === "standard" || sc === "near_ceiling" || sc === "new_user") {
+        scenario = sc;
       }
     } catch {
       // ignore
     }
   }
+  if (!scenario) {
+    scenario = getDemoScenario();
+  }
+
+  const isDemo = await isDemoSession();
+  if (isDemo) {
+    return getDemoScenarioInvoices(scenario);
+  }
 
   const [clients, backendRes] = await Promise.all([
     getClients(),
-    scenario === "new_user"
-      ? Promise.resolve(null)
-      : fetchBackend<{ items: BackendInvoiceOut[]; total: number }>("/invoices?limit=100"),
+    fetchBackend<{ items: BackendInvoiceOut[]; total: number }>("/invoices?limit=100"),
   ]);
   const clientMap = new Map(clients.map((c) => [c.id, c]));
 
-  if (scenario === "new_user") {
-    return [];
-  }
-
-  const standardInvoices = getDemoScenarioInvoices(scenario);
-  const res = backendRes;
-
-  if (res && res.items && res.items.length > 0) {
-    let resList = res.items
+  if (backendRes && backendRes.items && backendRes.items.length > 0) {
+    const resList = backendRes.items
       .filter((inv) => inv.status !== "cancelled")
       .map((item) => {
         const cns = (item.credit_notes || []).map((cn) => ({
@@ -970,17 +1005,10 @@ export async function getInvoices(explicitScenario?: DemoScenario): Promise<Invo
         };
       });
 
-    // Merge baseline standard invoices with any newly issued backend invoices
-    const merged = [...standardInvoices];
-    for (const inv of resList) {
-      if (!merged.some((m) => m.number === inv.number)) {
-        merged.unshift(inv);
-      }
-    }
-    return applyLocalOverrides(merged);
+    return applyLocalOverrides(resList);
   }
 
-  return applyLocalOverrides(standardInvoices);
+  return [];
 }
 
 export async function issueCreditNoteApi(
