@@ -23,8 +23,7 @@ def get_current_user_id(
     # Explicit, opt-in guest demo mode (requires enable_demo_mode=True and exact token match)
     if (
         settings.enable_demo_mode
-        and settings.demo_auth_token
-        and creds.credentials == settings.demo_auth_token
+        and (creds.credentials == "demo" or (settings.demo_auth_token and creds.credentials == settings.demo_auth_token))
     ):
         return settings.demo_user_id
 

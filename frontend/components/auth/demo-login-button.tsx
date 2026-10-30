@@ -106,9 +106,8 @@ export function DemoLoginButton({
         return;
       }
 
-      // Navigate to demo workspace
-      router.push("/dashboard?tour=true");
-      router.refresh();
+      // Navigate directly to demo workspace without duplicate RSC re-fetching
+      window.location.href = "/dashboard?tour=true";
     } catch (err: unknown) {
       if (timerRef.current) clearInterval(timerRef.current);
       if (timeoutGuardRef.current) clearTimeout(timeoutGuardRef.current);

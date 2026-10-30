@@ -13,8 +13,8 @@ import { cn } from "@/lib/cn";
 import { signOutAction } from "@/lib/auth-actions";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
 import { DemoSwitcher } from "@/components/layout/demo-switcher";
-import { SpotlightTour } from "@/components/layout/spotlight-tour";
 import { useMobileNav } from "@/components/layout/mobile-nav-context";
+import { useTour } from "@/components/layout/tour-context";
 import { useI18n } from "@/lib/i18n/provider";
 
 const yearOptions = [
@@ -36,12 +36,12 @@ export function Topbar({ utilization }: { utilization: number }) {
   const { t } = useI18n();
   const pathname = usePathname();
   const { open } = useMobileNav();
+  const { startTour } = useTour();
   const [fiscalYear, setFiscalYear] = useState("2026");
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncToast, setSyncToast] = useState(false);
-  const [showTour, setShowTour] = useState(false);
   const notifRef = useRef<HTMLDivElement>(null);
   const userRef = useRef<HTMLDivElement>(null);
 
@@ -133,7 +133,7 @@ export function Topbar({ utilization }: { utilization: number }) {
         </div>
 
         <div className="flex items-center gap-1.5 shrink-0">
-          <DemoSwitcher onStartTour={() => setShowTour(true)} />
+          <DemoSwitcher onStartTour={startTour} />
           <LanguageSwitcher />
           <ThemeToggle />
           <Link
@@ -173,7 +173,7 @@ export function Topbar({ utilization }: { utilization: number }) {
 
         <div className="flex items-center gap-1.5 xl:gap-3 shrink-0">
           <div id="tour-demo-switcher">
-            <DemoSwitcher onStartTour={() => setShowTour(true)} />
+            <DemoSwitcher onStartTour={startTour} />
           </div>
           <LanguageSwitcher />
           <ThemeToggle />
@@ -284,8 +284,6 @@ export function Topbar({ utilization }: { utilization: number }) {
           <span className="text-xs font-semibold text-ink">{t("Ledger recalculated from recorded payments")}</span>
         </div>
       )}
-
-      <SpotlightTour isOpen={showTour} onClose={() => setShowTour(false)} />
     </header>
   );
 }

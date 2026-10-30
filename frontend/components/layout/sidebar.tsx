@@ -1,45 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CircleHelp, X } from "lucide-react";
 import { navItems } from "@/lib/nav";
 import { cn } from "@/lib/cn";
-import { SpotlightTour } from "@/components/layout/spotlight-tour";
 import { useMobileNav } from "@/components/layout/mobile-nav-context";
+import { useTour } from "@/components/layout/tour-context";
 import type { User } from "@/types/models";
 import { useI18n } from "@/lib/i18n/provider";
 
 export function Sidebar({ user }: { user: User }) {
   const { t } = useI18n();
   const pathname = usePathname();
-  const [showTour, setShowTour] = useState(false);
   const { isOpen, close } = useMobileNav();
-
-  // Auto-launch spotlight tour on first login / new session or when ?tour=true is provided
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const urlParams = new URLSearchParams(window.location.search);
-      const forceTour =
-        urlParams.get("tour") === "true" ||
-        urlParams.get("tour") === "1" ||
-        sessionStorage.getItem("moukawil_demo_login") === "true";
-      const sessionShown = sessionStorage.getItem("moukawil_session_tour_shown");
-
-      if (forceTour || !sessionShown) {
-        sessionStorage.setItem("moukawil_session_tour_shown", "true");
-        sessionStorage.removeItem("moukawil_demo_login");
-        if (urlParams.has("tour")) {
-          const cleanUrl = window.location.pathname;
-          window.history.replaceState({}, "", cleanUrl);
-        }
-        const timer = setTimeout(() => setShowTour(true), 900);
-        return () => clearTimeout(timer);
-      }
-    }
-  }, []);
+  const { startTour } = useTour();
 
   // Lock body scroll and listen for Escape when mobile drawer is open
   useEffect(() => {
@@ -121,7 +98,7 @@ export function Sidebar({ user }: { user: User }) {
           type="button"
           onClick={() => {
             if (isMobile) close();
-            setShowTour(true);
+            startTour();
           }}
           className="group flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-slate-200/80 bg-surface-low p-2.5 text-xs font-semibold tracking-[0.02em] text-ink transition-all duration-150 hover:bg-surface hover:border-slate-300 active:scale-95 shadow-2xs hover:shadow-xs"
         >
@@ -173,8 +150,6 @@ export function Sidebar({ user }: { user: User }) {
           </aside>
         </div>
       )}
-
-      <SpotlightTour isOpen={showTour} onClose={() => setShowTour(false)} />
     </>
   );
 }

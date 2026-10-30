@@ -256,6 +256,20 @@ const DEFAULT_USER: User = {
 export async function getCurrentUser(): Promise<User> {
   const fallbackUser = DEFAULT_USER;
 
+  // On server during guest demo sessions, serve canonical demo user instantly (0ms SSR)
+  if (typeof window === "undefined") {
+    try {
+      const { cookies } = await import("next/headers");
+      const cookieStore = await cookies();
+      const sessionRaw = cookieStore.get("moukawil_session")?.value;
+      if (sessionRaw && sessionRaw.includes("demo%40moukawil.dz")) {
+        return fallbackUser;
+      }
+    } catch {
+      // ignore
+    }
+  }
+
   const [profileData, preferencesData] = await Promise.all([
     fetchBackend<{
       profile: {
@@ -454,6 +468,20 @@ export async function getClients(): Promise<Client[]> {
   const now = Date.now();
   if (cachedClients && now - cachedClients.timestamp < CLIENTS_CACHE_TTL_MS) {
     return cachedClients.data;
+  }
+
+  // On server during guest demo sessions, serve canonical verified clients instantly (0ms SSR)
+  if (typeof window === "undefined") {
+    try {
+      const { cookies } = await import("next/headers");
+      const cookieStore = await cookies();
+      const sessionRaw = cookieStore.get("moukawil_session")?.value;
+      if (sessionRaw && sessionRaw.includes("demo%40moukawil.dz")) {
+        return DEFAULT_CLIENTS;
+      }
+    } catch {
+      // ignore
+    }
   }
 
   const res = await fetchBackend<{ items: BackendClientOut[]; total: number }>("/clients?limit=100");
@@ -719,20 +747,12 @@ function applyLocalOverrides(invoices: InvoiceWithClient[]): InvoiceWithClient[]
   return resList.sort((a, b) => b.issueDate.localeCompare(a.issueDate));
 }
 
-export async function getInvoices(explicitScenario?: DemoScenario): Promise<InvoiceWithClient[]> {
-  const scenario = explicitScenario || getDemoScenario();
-  const [clients, backendRes] = await Promise.all([
-    getClients(),
-    scenario === "new_user"
-      ? Promise.resolve(null)
-      : fetchBackend<{ items: BackendInvoiceOut[]; total: number }>("/invoices?limit=100"),
-  ]);
-  const clientMap = new Map(clients.map((c) => [c.id, c]));
-
+export function getDemoScenarioInvoices(scenario: DemoScenario = "standard"): InvoiceWithClient[] {
   if (scenario === "new_user") {
     return [];
   }
 
+  const clients = DEFAULT_CLIENTS;
   const sonatrach = clients.find((c) => c.name.includes("Sonatrach")) || clients[0];
   const ooredoo = clients.find((c) => c.name.includes("Ooredoo")) || clients[1] || sonatrach;
   const cevital = clients.find((c) => c.name.includes("Cevital")) || clients[2] || sonatrach;
@@ -846,6 +866,39 @@ export async function getInvoices(explicitScenario?: DemoScenario): Promise<Invo
     },
   ];
 
+  return applyLocalOverrides(standardInvoices);
+}
+
+export async function getInvoices(explicitScenario?: DemoScenario): Promise<InvoiceWithClient[]> {
+  const scenario = explicitScenario || getDemoScenario();
+
+  // On server during guest demo sessions, serve scenario baseline instantly (0ms SSR)
+  if (typeof window === "undefined") {
+    try {
+      const { cookies } = await import("next/headers");
+      const cookieStore = await cookies();
+      const sessionRaw = cookieStore.get("moukawil_session")?.value;
+      if (sessionRaw && sessionRaw.includes("demo%40moukawil.dz")) {
+        return getDemoScenarioInvoices(scenario);
+      }
+    } catch {
+      // ignore
+    }
+  }
+
+  const [clients, backendRes] = await Promise.all([
+    getClients(),
+    scenario === "new_user"
+      ? Promise.resolve(null)
+      : fetchBackend<{ items: BackendInvoiceOut[]; total: number }>("/invoices?limit=100"),
+  ]);
+  const clientMap = new Map(clients.map((c) => [c.id, c]));
+
+  if (scenario === "new_user") {
+    return [];
+  }
+
+  const standardInvoices = getDemoScenarioInvoices(scenario);
   const res = backendRes;
 
   if (res && res.items && res.items.length > 0) {
