@@ -14,6 +14,14 @@ const tinos = Tinos({ subsets: ["latin"], weight: ["400", "700"], style: ["norma
 export const metadata: Metadata = {
   title: "MoukawilOS",
   description: "Fiscal OS for Algerian auto-entrepreneurs",
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/brand/monogram.png", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/brand/monogram.png",
+  },
 };
 
 export const viewport: Viewport = {

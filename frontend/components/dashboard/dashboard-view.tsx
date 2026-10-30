@@ -9,7 +9,7 @@ import { SecondaryKpis } from "@/components/dashboard/secondary-kpis";
 import { computeStats } from "@/lib/stats";
 import { getInvoices, type DemoScenario } from "@/lib/api";
 import { TaxSimulatorModal } from "@/components/dashboard/tax-simulator-modal";
-import { getDashboardSummary, getComplianceAlerts, completeObligation } from "@/lib/api";
+import { getComplianceAlerts, completeObligation } from "@/lib/api";
 import type { BackendComplianceAlert } from "@/types/models";
 import { AlertCircle, CheckCircle2 } from "lucide-react";
 
@@ -37,7 +37,6 @@ export function DashboardView({
     getComplianceAlerts().then((alerts) => {
       if (alerts && alerts.length > 0) setBackendAlerts(alerts);
     }).catch(() => {});
-    getDashboardSummary(Number(fiscalYear)).catch(() => {});
   }, [fiscalYear]);
 
   const handleCompleteObligation = async (code: string) => {

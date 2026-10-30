@@ -56,6 +56,11 @@ def get_current_user_id(
 
 def get_current_freelancer_id(user_id: str = Depends(get_current_user_id)) -> int:
     """Return the freelancer id of the logged-in user (404 if onboarding not done)."""
+    if pool.closed:
+        try:
+            pool.open(wait=True, timeout=10)
+        except Exception as exc:
+            raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, "database pool unavailable") from exc
     with pool.connection() as conn:
         row = conn.execute(
             "select id from public.freelancers where profile_id = %s", (user_id,)

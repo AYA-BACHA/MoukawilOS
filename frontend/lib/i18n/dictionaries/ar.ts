@@ -878,4 +878,12 @@ export const ar: Record<string, string> = {
   "Saving Draft...": "جارٍ حفظ المسودة...",
   "Go to Invoices Ledger": "الذهاب إلى سجل الفواتير",
   "Edit Draft": "تعديل المسودة",
+  "Waking up the demo…": "تشغيل النسخة التجريبية…",
+  "The server may take a moment to start. Thanks for your patience.": "قد يستغرق الخادم لحظات للبدء. شكراً لصبركم.",
+  "Connecting to the server…": "جارٍ الاتصال بالخادم…",
+  "Loading your demo workspace…": "تحميل مساحة العمل التجريبية…",
+  "Almost there…": "على وشك الانتهاء…",
+  "Unable to connect to the demo server.": "تعذّر الاتصال بخادم النسخة التجريبية.",
+  "The demo server took too long to respond. The server may still be spinning up.": "استغرق الخادم وقتاً أطول من المتوقع للاستجابة. قد يكون قيد التشغيل.",
+  "Retry": "إعادة المحاولة",
 };

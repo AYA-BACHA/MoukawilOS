@@ -20,3 +20,7 @@ services:
         sync: false
       - key: SUPABASE_JWT_SECRET
         sync: false
+      - key: ENABLE_DEMO_MODE
+        value: "true"
+      - key: DEMO_AUTH_TOKEN
+        value: "demo"

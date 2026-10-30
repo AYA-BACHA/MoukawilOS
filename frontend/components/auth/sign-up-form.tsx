@@ -2,11 +2,12 @@
 
 import { useActionState } from "react";
 import Link from "next/link";
-import { ArrowRight, BadgeCheck, Loader2, Lock, Mail, Sparkles, User } from "lucide-react";
+import { ArrowRight, BadgeCheck, Loader2, Lock, Mail, User } from "lucide-react";
 import { AuthField } from "@/components/auth/auth-field";
 import { AuthShell } from "@/components/auth/auth-shell";
+import { DemoLoginButton } from "@/components/auth/demo-login-button";
 import { buttonClass } from "@/components/ui/button";
-import { demoSignInAction, signUpAction, type AuthState } from "@/lib/auth-actions";
+import { signUpAction, type AuthState } from "@/lib/auth-actions";
 import { useI18n } from "@/lib/i18n/provider";
 
 export function SignUpForm() {
@@ -47,22 +48,7 @@ export function SignUpForm() {
         </button>
       </form>
 
-      <form
-        action={demoSignInAction}
-        onSubmit={() => {
-          if (typeof window !== "undefined") {
-            sessionStorage.removeItem("moukawil_session_tour_shown");
-            sessionStorage.setItem("moukawil_demo_login", "true");
-          }
-        }}
-        className="flex flex-col gap-2"
-      >
-        <button type="submit" className={buttonClass("outline", "h-11 justify-center gap-2 rounded-lg text-sm border-slate-300 font-semibold hover:bg-surface-low")}>
-          <Sparkles className="size-4 text-accent shrink-0" />
-          {t("Continue with the demo account")}
-        </button>
-        <p className="text-center text-[11px] text-muted">{t("Demo environment: no real account is created or stored.")}</p>
-      </form>
+      <DemoLoginButton variant="outline" />
     </AuthShell>
   );
 }

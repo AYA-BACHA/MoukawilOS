@@ -117,6 +117,15 @@ export async function signUpAction(_prev: AuthState, formData: FormData): Promis
   redirect("/dashboard?tour=true");
 }
 
+export async function setupDemoSessionAction(): Promise<{ success: boolean; error?: string }> {
+  try {
+    await startSession(DEMO_USER);
+    return { success: true };
+  } catch (err: unknown) {
+    return { success: false, error: err instanceof Error ? err.message : "Failed to establish demo session" };
+  }
+}
+
 export async function demoSignInAction() {
   await startSession(DEMO_USER);
   redirect("/dashboard?tour=true");

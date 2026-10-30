@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { ArrowRight, Bot, CalendarClock, ChevronDown, FileText, Gauge, LogIn, Percent, ShieldCheck, Sparkles, UserPlus, Wallet } from "lucide-react";
+import { DemoLoginButton } from "@/components/auth/demo-login-button";
 import { buttonClass } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n/provider";
-import { demoSignInAction } from "@/lib/auth-actions";
 
 const trust = ["Law 22-23", "Executive Decree 23-197", "ANAE", "CASNOS", "DGI"];
 
@@ -160,23 +160,7 @@ export function LandingSections({ signedIn }: { signedIn: boolean }) {
             ) : (
               <div className="flex flex-col items-center gap-3">
                 <div className="flex flex-wrap items-center justify-center gap-3">
-                  <form
-                    action={demoSignInAction}
-                    onSubmit={() => {
-                      if (typeof window !== "undefined") {
-                        sessionStorage.removeItem("moukawil_session_tour_shown");
-                        sessionStorage.setItem("moukawil_demo_login", "true");
-                      }
-                    }}
-                  >
-                    <button
-                      type="submit"
-                      className="flex h-12 items-center gap-2 rounded-xl bg-white px-6 text-sm font-bold text-[#0c312d] shadow-lg hover:bg-white/90 active:scale-95 transition-all"
-                    >
-                      <Sparkles className="size-4 text-emerald-700" />
-                      <span>{t("Try Demo Account (Instant)")}</span>
-                    </button>
-                  </form>
+                  <DemoLoginButton variant="cta" showSubtext={false} />
                   <Link
                     href="/sign-up"
                     className="flex h-12 items-center gap-2 rounded-xl border border-white/30 bg-white/10 px-5 text-sm font-semibold text-white hover:bg-white/20 active:scale-95 transition-all backdrop-blur-xs"

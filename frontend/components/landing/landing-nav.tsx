@@ -5,9 +5,9 @@ import { Sparkles } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
+import { DemoLoginButton } from "@/components/auth/demo-login-button";
 import { buttonClass } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n/provider";
-import { demoSignInAction } from "@/lib/auth-actions";
 
 const links = [
   { href: "#features", label: "Features" },
@@ -34,24 +34,7 @@ export function LandingNav({ signedIn }: { signedIn: boolean }) {
           <ThemeToggle />
           <div className="flex items-center gap-1.5 sm:gap-2 ms-1">
             {/* Evaluator / Tester instant 1-click Demo (Always available) */}
-            <form
-              action={demoSignInAction}
-              onSubmit={() => {
-                if (typeof window !== "undefined") {
-                  sessionStorage.removeItem("moukawil_session_tour_shown");
-                  sessionStorage.setItem("moukawil_demo_login", "true");
-                }
-              }}
-            >
-              <button
-                type="submit"
-                className="flex h-9 items-center gap-1.5 rounded-lg border border-emerald-300/80 bg-mint px-2.5 sm:px-3 text-xs font-bold text-mint-ink shadow-2xs hover:bg-mint/80 active:scale-95 transition-all"
-                title={t("Instant demo access with pre-loaded data")}
-              >
-                <Sparkles className="size-3.5 text-emerald-800 shrink-0" />
-                <span>{t("Try Demo")}</span>
-              </button>
-            </form>
+            <DemoLoginButton variant="nav" showSubtext={false} />
 
             {signedIn ? (
               <Link href="/dashboard" className={buttonClass("primary", "h-9 rounded-lg px-3 text-xs font-semibold")}>

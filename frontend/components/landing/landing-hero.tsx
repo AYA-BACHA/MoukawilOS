@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, LogIn, ShieldCheck, Sparkles, UserPlus } from "lucide-react";
+import { DemoLoginButton } from "@/components/auth/demo-login-button";
 import { buttonClass } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n/provider";
-import { demoSignInAction } from "@/lib/auth-actions";
 
 const sampleInvoices = [
   { ref: "2026-0042", client: "Sahel Tech SARL", amount: 1250000, status: "Pending", tone: "bg-amber-50 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200/60 dark:border-amber-900/40" },
@@ -80,27 +80,9 @@ export function LandingHero({ signedIn }: { signedIn: boolean }) {
                   </p>
                 </div>
 
-                <form
-                  action={demoSignInAction}
-                  className="mt-4"
-                  onSubmit={() => {
-                    if (typeof window !== "undefined") {
-                      sessionStorage.removeItem("moukawil_session_tour_shown");
-                      sessionStorage.setItem("moukawil_demo_login", "true");
-                    }
-                  }}
-                >
-                  <button
-                    type="submit"
-                    className="flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 text-xs font-bold text-white shadow-xs hover:bg-primary-ink active:scale-98 transition-all group-hover:shadow-md group-hover:shadow-primary/20"
-                  >
-                    <span>{t("Launch Demo Mode")}</span>
-                    <ArrowRight className="size-3.5 rtl:-scale-x-100 transition-transform group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5" />
-                  </button>
-                  <p className="mt-1.5 text-center text-[10px] text-muted">
-                    {t("No registration required")}
-                  </p>
-                </form>
+                <div className="mt-4">
+                  <DemoLoginButton variant="primary" />
+                </div>
               </div>
 
               {/* Path 2: Real Account for Freelancers */}

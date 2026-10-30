@@ -878,4 +878,12 @@ export const fr: Record<string, string> = {
   "Saving Draft...": "Enregistrement du brouillon...",
   "Go to Invoices Ledger": "Aller au registre des factures",
   "Edit Draft": "Modifier le brouillon",
+  "Waking up the demo…": "Démarrage de la démo…",
+  "The server may take a moment to start. Thanks for your patience.": "Le serveur peut prendre un instant pour démarrer. Merci pour votre patience.",
+  "Connecting to the server…": "Connexion au serveur en cours…",
+  "Loading your demo workspace…": "Chargement de votre espace démo…",
+  "Almost there…": "Presque prêt…",
+  "Unable to connect to the demo server.": "Impossible de se connecter au serveur de démo.",
+  "The demo server took too long to respond. The server may still be spinning up.": "Le serveur met trop de temps à répondre. Il est peut-être encore en cours de démarrage.",
+  "Retry": "Réessayer",
 };

@@ -159,10 +159,13 @@ async function fetchBackendDetailed<T>(
 ): Promise<BackendResponse<T>> {
   const url = `${API_BASE_URL.replace(/\/$/, "")}/${endpoint.replace(/^\//, "")}`;
   const controller = new AbortController();
-  // 12s timeout based on cross-region measurements: gives headroom for DB pool while preventing 15s hangs
-  const timeout = setTimeout(() => controller.abort(), 12000);
+  const headers = await getAuthHeader();
+  const isServer = typeof window === "undefined";
+  const isGuestDemo = !headers.Authorization || headers.Authorization.includes("demo");
+  // For SSR guest demo requests, use a short 2.5s timeout so cold starts never freeze page delivery
+  const timeoutMs = isServer && isGuestDemo ? 2500 : 12000;
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    const headers = await getAuthHeader();
     const res = await fetch(url, {
       ...options,
       headers: {

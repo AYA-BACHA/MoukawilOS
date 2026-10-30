@@ -67,7 +67,6 @@ export function DemoSwitcher({ onStartTour }: DemoSwitcherProps) {
 
   useEffect(() => {
     setScenario(getDemoScenario());
-    checkBackendHealth().then((healthy) => setBackendHealthy(healthy));
 
     // Show friendly evaluator callout hint on fresh session if not dismissed
     if (typeof window !== "undefined") {
@@ -116,8 +115,12 @@ export function DemoSwitcher({ onStartTour }: DemoSwitcherProps) {
       <button
         type="button"
         onClick={() => {
-          setIsOpen(!isOpen);
+          const next = !isOpen;
+          setIsOpen(next);
           dismissJudgeHint();
+          if (next && backendHealthy === null) {
+            checkBackendHealth().then((healthy) => setBackendHealthy(healthy)).catch(() => setBackendHealthy(false));
+          }
         }}
         aria-label={t("Demo Scenario Switcher & System Status")}
         className={cn(
